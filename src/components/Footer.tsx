@@ -1,9 +1,38 @@
-import { Instagram, MapPin, Mail, Phone } from "lucide-react";
+import { Instagram, MapPin, Mail, Phone, Facebook, Youtube, Music } from "lucide-react";
+import { useSiteData } from "@/hooks/useSiteData";
+
+const iconMap: Record<string, React.ElementType> = {
+  Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube,
+};
 
 export function Footer() {
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const { pages, socialMedia, images } = useSiteData();
+
+  const scrollTo = (href: string) => {
+    if (href.startsWith("#")) {
+      const id = href.replace("#", "");
+      if (id === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
   };
+
+  const navLinks = pages.length > 0
+    ? pages.map((p) => ({ label: p.title, href: p.href }))
+    : [
+        { label: "Inicio", href: "#top" },
+        { label: "Passeios", href: "#tours" },
+        { label: "Sobre Nós", href: "#about" },
+        { label: "Contato", href: "#contact" },
+      ];
+
+  const activeSocials = socialMedia.length > 0
+    ? socialMedia.map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
+    : [
+        { platform: "instagram", url: "https://www.instagram.com/passeiorio/", icon: Instagram },
+        { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
+      ];
+
+  const logoUrl = images["logo"];
 
   return (
     <footer className="bg-[hsl(145,30%,12%)] text-[hsl(140,10%,96%)]">
@@ -11,9 +40,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[hsl(145,40%,40%)] flex items-center justify-center">
-                <span className="font-bold text-lg font-sans">P</span>
-              </div>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" className="h-10 w-10 rounded-full object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[hsl(145,40%,40%)] flex items-center justify-center">
+                  <span className="font-bold text-lg font-sans">P</span>
+                </div>
+              )}
               <div>
                 <span className="font-serif text-xl font-semibold">Passeio</span>
                 <span className="text-[hsl(145,40%,40%)] font-medium ml-1 font-sans">Rio</span>
@@ -27,14 +60,9 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4 font-sans">Links Rápidos</h3>
             <ul className="space-y-3 font-sans">
-              {[
-                { label: "Inicio", id: "top" },
-                { label: "Passeios", id: "tours" },
-                { label: "Sobre Nós", id: "about" },
-                { label: "Contato", id: "contact" },
-              ].map((link) => (
-                <li key={link.id}>
-                  <button onClick={() => link.id === "top" ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollTo(link.id)} className="text-[hsl(140,10%,96%)]/80 hover:text-[hsl(145,40%,40%)] transition-colors text-sm">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <button onClick={() => scrollTo(link.href)} className="text-[hsl(140,10%,96%)]/80 hover:text-[hsl(145,40%,40%)] transition-colors text-sm">
                     {link.label}
                   </button>
                 </li>
@@ -63,14 +91,12 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4 font-sans">Siga-nos</h3>
             <div className="flex items-center gap-4 mb-6">
-              <a href="https://www.instagram.com/passeiorio/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label="Instagram">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="https://www.tripadvisor.com.br/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label="TripAdvisor">
-                <MapPin className="w-5 h-5" />
-              </a>
+              {activeSocials.map((s) => (
+                <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label={s.platform}>
+                  <s.icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
-            <p className="text-[hsl(140,10%,96%)]/80 text-sm font-sans">Confira nossas avaliações no TripAdvisor</p>
           </div>
         </div>
 
