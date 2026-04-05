@@ -7,7 +7,7 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 export function Footer() {
-  const { pages, socialMedia, images } = useSiteData();
+  const { pages, socialMedia, images, siteSettings } = useSiteData();
   const { t } = useLocale();
 
   const scrollTo = (href: string) => {
@@ -50,8 +50,8 @@ export function Footer() {
                 </div>
               )}
               <div>
-                <span className="font-serif text-xl font-semibold">Passeio</span>
-                <span className="text-[hsl(145,40%,40%)] font-medium ml-1 font-sans">Rio</span>
+                <span className="font-serif text-xl font-semibold">{siteSettings?.site_title?.split('|')[0].trim() || "Passeio"}</span>
+                <span className="text-[hsl(145,40%,40%)] font-medium ml-1 font-sans">{siteSettings?.site_subtitle || "Rio"}</span>
               </div>
             </div>
             <p className="text-[hsl(140,10%,96%)]/80 text-sm leading-relaxed font-sans">

@@ -13,7 +13,7 @@ const iconMap: Record<string, React.ElementType> = {
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { pages, socialMedia, images } = useSiteData();
+  const { pages, socialMedia, images, siteSettings } = useSiteData();
   const { language, setLanguage, currency, setCurrency, t } = useLocale();
   const { items } = useCart();
   const navigate = useNavigate();
@@ -82,8 +82,8 @@ export function Header() {
               </div>
             )}
             <div className="flex flex-col -gap-1">
-              <span className="font-serif text-lg md:text-xl font-bold text-foreground leading-tight">Passeio</span>
-              <span className="text-primary font-bold text-xs md:text-sm font-sans tracking-widest uppercase">Rio</span>
+              <span className="font-serif text-lg md:text-xl font-bold text-foreground leading-tight">{siteSettings?.site_title?.split('|')[0].trim() || "Passeio"}</span>
+              <span className="text-primary font-bold text-xs md:text-sm font-sans tracking-widest uppercase">{siteSettings?.site_subtitle || "Rio"}</span>
             </div>
           </Link>
 

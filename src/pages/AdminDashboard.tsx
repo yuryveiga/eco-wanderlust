@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
-import { fetchLovable, updateLovable, LovableSiteSetting } from "@/integrations/lovable/client";
+import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,12 +48,17 @@ const AdminDashboard = () => {
           const settingRecord = settingsList.find(s => s.key === key);
           if (settingRecord?.id) {
             await updateLovable("site_settings", settingRecord.id, { value: settings[key] });
+          } else {
+            await insertLovable("site_settings", { key, value: settings[key] });
           }
         }
       }
       toast({ title: "Configurações da Home salvas!" });
+      // Reload settings to get IDs
+      const settingsData = await fetchLovable<LovableSiteSetting>("site_settings");
+      setSettingsList(settingsData);
     } catch (err) {
-      toast({ title: "Erro ao salvar", description: "Verifique o console para mais detalhes", variant: "destructive" });
+      toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -68,12 +73,17 @@ const AdminDashboard = () => {
           const settingRecord = settingsList.find(s => s.key === key);
           if (settingRecord?.id) {
             await updateLovable("site_settings", settingRecord.id, { value: settings[key] });
+          } else {
+            await insertLovable("site_settings", { key, value: settings[key] });
           }
         }
       }
       toast({ title: "Configurações Gerais salvas!" });
+      // Reload settings to get IDs
+      const settingsData = await fetchLovable<LovableSiteSetting>("site_settings");
+      setSettingsList(settingsData);
     } catch (err) {
-      toast({ title: "Erro ao salvar", description: "Verifique o console para mais detalhes", variant: "destructive" });
+      toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
       setIsSavingGeneral(false);
     }
