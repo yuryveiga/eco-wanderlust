@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Link as LinkIcon, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
@@ -116,11 +116,15 @@ const AdminTours = () => {
         translateText(editing.short_description || "", targetLang)
       ]);
 
+      const titleKey = `title${suffix}` as keyof LovableTour;
+      const categoryKey = `category${suffix}` as keyof LovableTour;
+      const descKey = `short_description${suffix}` as keyof LovableTour;
+
       setEditing({
         ...editing,
-        [`title${suffix}` as any]: tTitle,
-        [`category${suffix}` as any]: tCat,
-        [`short_description${suffix}` as any]: tDesc
+        [titleKey]: tTitle,
+        [categoryKey]: tCat,
+        [descKey]: tDesc
       });
       
       toast({ title: "Sucesso!", description: `Tradução para ${targetLang === 'en' ? 'Inglês' : 'Espanhol'} concluída.` });
@@ -132,10 +136,10 @@ const AdminTours = () => {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_published: true }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
       </div>
@@ -170,7 +174,10 @@ const AdminTours = () => {
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="font-serif font-bold text-xl leading-tight mb-3 line-clamp-2">{tour.title}</h3>
                   <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
-                    <span className="text-primary font-black font-sans text-lg">R$ {tour.price}</span>
+                    <div className="flex flex-col">
+                      <span className="text-primary font-black font-sans text-lg">R$ {tour.price}</span>
+                      {!tour.is_active && <span className="text-[10px] text-red-500 font-bold uppercase tracking-tighter">Inativo</span>}
+                    </div>
                     <span className="text-xs text-muted-foreground font-sans font-medium uppercase tracking-wider">{tour.duration}</span>
                   </div>
                 </div>
@@ -182,19 +189,18 @@ const AdminTours = () => {
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
-          <DialogHeader className="p-6 pb-0 border-b bg-muted/20 shrink-0">
-            <DialogTitle className="font-serif text-2xl mb-4">{isNew ? "Criar Experiência Premium" : "Ajustar Detalhes do Passeio"}</DialogTitle>
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="w-full justify-start gap-4 bg-transparent border-none p-0 mb-[-1px]">
-                <TabsTrigger value="content" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Conteúdo e Tradução</TabsTrigger>
-                <TabsTrigger value="gallery" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Imagens e Grid 📸</TabsTrigger>
-                <TabsTrigger value="settings" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Preços e Config</TabsTrigger>
-              </TabsList>
-          </DialogHeader>
-
           {editing && (
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <Tabs defaultValue="content" className="flex-1 flex flex-col">
+            <Tabs defaultValue="content" className="flex-1 flex flex-col h-full overflow-hidden">
+              <DialogHeader className="p-6 pb-0 border-b bg-muted/20 shrink-0">
+                <DialogTitle className="font-serif text-2xl mb-4">{isNew ? "Criar Experiência Premium" : "Ajustar Detalhes do Passeio"}</DialogTitle>
+                <TabsList className="w-full justify-start gap-4 bg-transparent border-none p-0 mb-[-1px]">
+                  <TabsTrigger value="content" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Conteúdo e Tradução</TabsTrigger>
+                  <TabsTrigger value="gallery" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Imagens e Grid 📸</TabsTrigger>
+                  <TabsTrigger value="settings" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Preços e Config</TabsTrigger>
+                </TabsList>
+              </DialogHeader>
+
+              <div className="flex-1 overflow-hidden flex flex-col">
                 <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
                   <TabsContent value="content" className="m-0 space-y-6">
                     <Tabs defaultValue="pt" className="w-full">
@@ -298,7 +304,7 @@ const AdminTours = () => {
                   </TabsContent>
 
                   <TabsContent value="gallery" className="m-0 space-y-6">
-                    <div className="p-6 border-2 border-dashed rounded-3xl bg-muted/10 flex flex-col items-center justify-center gap-4 transition-colors hover:bg-muted/20 text-center">
+                    <div className="p-6 border-2 border-dashed rounded-3xl bg-muted/10 flex flex-col items-center justify-center gap-4 transition-colors hover:bg-muted/20 text-center relative">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                         <Upload className="w-6 h-6" />
                       </div>
@@ -348,9 +354,9 @@ const AdminTours = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                       <div className="flex items-center gap-3 bg-muted/20 p-4 rounded-2xl border">
-                        <Switch checked={editing.is_published ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
+                        <Switch checked={editing.is_active ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_active: v })} />
                         <div>
-                          <Label className="font-bold block">Publicado</Label>
+                          <Label className="font-bold block">Ativo</Label>
                           <p className="text-[10px] text-muted-foreground">Visível para clientes</p>
                         </div>
                       </div>
@@ -364,15 +370,15 @@ const AdminTours = () => {
                     </div>
                   </TabsContent>
                 </div>
-              </Tabs>
-              
-              <div className="p-6 border-t bg-muted/10 shrink-0 flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans px-8 h-12 rounded-xl">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans px-12 h-12 bg-primary hover:bg-primary/90 text-white shadow-xl rounded-xl font-black">
-                  {isNew ? "Publicar Experiência" : "Salvar Alterações"}
-                </Button>
+                
+                <div className="p-6 border-t bg-muted/10 shrink-0 flex justify-end gap-3">
+                  <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans px-8 h-12 rounded-xl">Cancelar</Button>
+                  <Button onClick={handleSave} className="font-sans px-12 h-12 bg-primary hover:bg-primary/90 text-white shadow-xl rounded-xl font-black" disabled={isUploading}>
+                    {isNew ? "Publicar Experiência" : "Salvar Alterações"}
+                  </Button>
+                </div>
               </div>
-            </div>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>

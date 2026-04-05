@@ -24,9 +24,12 @@ export function BlogCarousel() {
     }).catch(() => setIsLoading(false));
   }, []);
 
-  const getTranslated = (post: LovableBlogPost, field: string) => {
-    if (language === 'pt') return (post as any)[field];
-    return (post as any)[`${field}_${language}`] || (post as any)[field];
+  const getTranslated = (post: LovableBlogPost, field: 'title' | 'content'): string => {
+    if (language === 'pt') return post[field] as string;
+    const key = `${field}_${language}` as keyof LovableBlogPost;
+    const val = post[key];
+    if (typeof val === 'string') return val;
+    return post[field] as string;
   };
 
   if (isLoading || posts.length === 0) return null;

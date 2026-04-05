@@ -16,7 +16,7 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
     
     // Google Translate returns array of arrays for sentences
     if (data && data[0]) {
-      return data[0].map((s: any) => s[0]).join('');
+      return (data[0] as string[][]).map((s) => s[0]).join('');
     }
     return text;
   } catch (error) {
