@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Map, FileText, Image, Share2 } from "lucide-react";
+import { ChangePassword } from "@/components/admin/ChangePassword";
+import { fetchLovable } from "@/integrations/lovable/client";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0 });
@@ -8,16 +9,16 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchCounts = async () => {
       const [t, p, i, s] = await Promise.all([
-        supabase.from("tours").select("id", { count: "exact", head: true }),
-        supabase.from("pages").select("id", { count: "exact", head: true }),
-        supabase.from("site_images").select("id", { count: "exact", head: true }),
-        supabase.from("social_media").select("id", { count: "exact", head: true }),
+        fetchLovable<{ id: string }>("tours"),
+        fetchLovable<{ id: string }>("pages"),
+        fetchLovable<{ id: string }>("site_images"),
+        fetchLovable<{ id: string }>("social_media"),
       ]);
       setCounts({
-        tours: t.count ?? 0,
-        pages: p.count ?? 0,
-        images: i.count ?? 0,
-        social: s.count ?? 0,
+        tours: t.length,
+        pages: p.length,
+        images: i.length,
+        social: s.length,
       });
     };
     fetchCounts();
@@ -33,7 +34,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <h1 className="font-serif text-3xl font-bold text-foreground mb-6">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {cards.map((card) => (
           <div key={card.label} className="bg-card rounded-xl border border-border/50 p-6 shadow-sm">
             <div className="flex items-center gap-4">
@@ -48,6 +49,8 @@ const AdminDashboard = () => {
           </div>
         ))}
       </div>
+
+      <ChangePassword />
     </div>
   );
 };
