@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableBlogPost } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Globe } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Globe, Type } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import 'react-quill/dist/quill.snow.css';
+
+const ReactQuill = lazy(() => import('react-quill'));
 
 const AdminBlog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
@@ -73,12 +75,76 @@ const AdminBlog = () => {
     }
   };
 
+  const imageHandler = (langSuffix: "" | "_en" | "_es") => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      if (!file) return;
+
+      toast({ title: "Enviando imagem..." });
+      try {
+        const url = await uploadLovableFile(file);
+        if (url) {
+          const field = `content${langSuffix}` as keyof LovableBlogPost;
+          setEditing(prev => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              [field]: (prev[field] || "") + `<p><img src="${url}" alt="image" style="max-width:100%; border-radius:12px; margin: 20px 0;" /></p>`
+            };
+          });
+          toast({ title: "Imagem inserida no post!" });
+        }
+      } catch (err) {
+        toast({ title: "Erro", description: "Falha ao enviar." });
+      }
+    };
+  };
+
+  const quillModules = (langSuffix: "" | "_en" | "_es") => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+      handlers: {
+        image: () => imageHandler(langSuffix)
+      }
+    }
+  });
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      <style>{`
+        .editor-container .ql-container {
+          min-height: 400px;
+          font-family: inherit;
+          font-size: 16px;
+        }
+        .editor-container .ql-editor {
+          min-height: 400px;
+        }
+        .editor-container .ql-toolbar {
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+          background: #f8fafc;
+        }
+        .editor-container .ql-container {
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
+      `}</style>
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <h1 className="font-serif text-3xl font-bold text-foreground">Blog</h1>
-          <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie artigos, dicas de viagem e notícias.</p>
+          <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie artigos com editor rico e multi-idioma.</p>
         </div>
         <Button onClick={() => { setEditing({ title: "", slug: "", content: "", is_published: true }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Post
@@ -125,11 +191,11 @@ const AdminBlog = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-6">
+        <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-6">
           <DialogHeader className="shrink-0 mb-4">
             <DialogTitle className="font-serif text-2xl flex items-center gap-2">
-              <Globe className="w-6 h-6 text-primary" />
-              {isNew ? "Criar Novo Post" : "Editar Post"}
+              <Type className="w-6 h-6 text-primary" />
+              {isNew ? "Criar Novo Post Premium" : "Editar Artigo do Blog"}
             </DialogTitle>
           </DialogHeader>
           
@@ -137,28 +203,28 @@ const AdminBlog = () => {
             <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2 pb-4">
                <Tabs defaultValue="portuguese" className="w-full h-full flex flex-col">
                 <TabsList className="grid w-80 grid-cols-3 mb-4">
-                  <TabsTrigger value="portuguese">PT</TabsTrigger>
-                  <TabsTrigger value="english">EN</TabsTrigger>
-                  <TabsTrigger value="spanish">ES</TabsTrigger>
+                  <TabsTrigger value="portuguese">Português</TabsTrigger>
+                  <TabsTrigger value="english">English</TabsTrigger>
+                  <TabsTrigger value="spanish">Español</TabsTrigger>
                 </TabsList>
 
                 {/* Common Fields */}
                 <div className="grid grid-cols-2 gap-4 mb-4 shrink-0 bg-muted/20 p-4 rounded-xl border border-border/50">
                   <div className="space-y-2">
-                    <Label className="font-sans">Slug (ex: melhores-praias-rj)</Label>
+                    <Label className="font-sans font-bold">Slug / URL do Post</Label>
                     <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} placeholder="melhores-praias-rj" required />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-sans">Imagem de Capa</Label>
+                    <Label className="font-sans font-bold">Imagem de Capa (Principal)</Label>
                     <div className="flex items-center gap-4">
                       {editing.image_url && (
-                        <img src={editing.image_url} alt="Capa" className="h-10 w-10 object-cover rounded shadow" />
+                        <img src={editing.image_url} alt="Capa" className="h-10 w-10 object-cover rounded shadow border" />
                       )}
                       <div className="relative flex-1">
                         <Input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="blog-image-upload" disabled={isUploading} />
                         <Label htmlFor="blog-image-upload" className={`flex items-center justify-center h-10 w-full border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors ${isUploading ? 'opacity-50' : ''}`}>
                           <Upload className="w-4 h-4 mr-2 text-muted-foreground" />
-                          <span className="text-xs font-sans text-muted-foreground">{isUploading ? 'Enviando...' : 'Fazer Upload'}</span>
+                          <span className="text-xs font-sans text-muted-foreground">{isUploading ? 'Enviando...' : 'Fazer Upload da Capa'}</span>
                         </Label>
                       </div>
                     </div>
@@ -168,82 +234,76 @@ const AdminBlog = () => {
                 {/* PORTUGUESE CONTENT */}
                 <TabsContent value="portuguese" className="flex-1 flex flex-col gap-4 m-0">
                   <div className="space-y-2">
-                    <Label className="font-sans">Título do Post (PT)</Label>
-                    <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+                    <Label className="font-sans font-bold">Título do Post</Label>
+                    <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} placeholder="Título em Português..." required />
                   </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4 min-h-[300px]">
-                    <div className="flex flex-col">
-                      <Label className="mb-2">Conteúdo (Markdown PT)</Label>
-                      <Textarea 
+                  <div className="flex-1 flex flex-col">
+                    <Label className="mb-2 font-bold">Conteúdo Principal do Artigo</Label>
+                    <Suspense fallback={<div className="p-12 text-center text-muted-foreground">Carregando editor rico...</div>}>
+                      <ReactQuill 
+                        theme="snow" 
                         value={editing.content || ""} 
-                        onChange={(e) => setEditing({ ...editing, content: e.target.value })} 
-                        className="flex-1 font-mono text-sm leading-relaxed p-4 bg-background resize-none"
-                        placeholder="Escreva em Português..."
+                        onChange={(val) => setEditing({ ...editing, content: val })} 
+                        className="editor-container"
+                        modules={quillModules("")}
+                        placeholder="Escreva seu artigo aqui..."
                       />
-                    </div>
-                    <div className="flex flex-col">
-                       <Label className="mb-2">Preview</Label>
-                       <div className="flex-1 border rounded-md p-4 bg-muted/10 overflow-y-auto prose prose-xs dark:prose-invert max-w-none">
-                         <div dangerouslySetInnerHTML={{ __html: (editing.content || "").replace(/\n/g, '<br/>') }} />
-                       </div>
-                    </div>
+                    </Suspense>
                   </div>
                 </TabsContent>
 
                 {/* ENGLISH CONTENT */}
                 <TabsContent value="english" className="flex-1 flex flex-col gap-4 m-0">
                   <div className="space-y-2">
-                    <Label className="font-sans text-blue-500">Post Title (EN)</Label>
+                    <Label className="font-sans font-bold text-blue-600">Post Title (English)</Label>
                     <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} placeholder="English title..." />
                   </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4 min-h-[300px]">
-                    <div className="flex flex-col">
-                      <Label className="mb-2">Content (Markdown EN)</Label>
-                      <Textarea 
+                  <div className="flex-1 flex flex-col">
+                    <Label className="mb-2 font-bold text-blue-600">Article Content (English)</Label>
+                    <Suspense fallback={<div className="p-12 text-center text-muted-foreground">Loading editor...</div>}>
+                      <ReactQuill 
+                        theme="snow" 
                         value={editing.content_en || ""} 
-                        onChange={(e) => setEditing({ ...editing, content_en: e.target.value })} 
-                        className="flex-1 font-mono text-sm leading-relaxed p-4 bg-background resize-none border-blue-200"
+                        onChange={(val) => setEditing({ ...editing, content_en: val })} 
+                        className="editor-container"
+                        modules={quillModules("_en")}
                         placeholder="Write in English..."
                       />
-                    </div>
-                    <div className="flex-1 border rounded-md p-4 bg-muted/10 overflow-y-auto prose prose-xs dark:prose-invert max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: (editing.content_en || "").replace(/\n/g, '<br/>') }} />
-                    </div>
+                    </Suspense>
                   </div>
                 </TabsContent>
 
                 {/* SPANISH CONTENT */}
                 <TabsContent value="spanish" className="flex-1 flex flex-col gap-4 m-0">
                   <div className="space-y-2">
-                    <Label className="font-sans text-red-500">Título del Post (ES)</Label>
+                    <Label className="font-sans font-bold text-red-600">Título del Post (Español)</Label>
                     <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} placeholder="Título en Español..." />
                   </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4 min-h-[300px]">
-                    <div className="flex flex-col">
-                      <Label className="mb-2">Contenido (Markdown ES)</Label>
-                      <Textarea 
+                  <div className="flex-1 flex flex-col">
+                    <Label className="mb-2 font-bold text-red-600">Contenido del Artículo (Español)</Label>
+                    <Suspense fallback={<div className="p-12 text-center text-muted-foreground">Cargando editor...</div>}>
+                      <ReactQuill 
+                        theme="snow" 
                         value={editing.content_es || ""} 
-                        onChange={(e) => setEditing({ ...editing, content_es: e.target.value })} 
-                        className="flex-1 font-mono text-sm leading-relaxed p-4 bg-background resize-none border-red-200"
+                        onChange={(val) => setEditing({ ...editing, content_es: val })} 
+                        className="editor-container"
+                        modules={quillModules("_es")}
                         placeholder="Escribe en Español..."
                       />
-                    </div>
-                    <div className="flex-1 border rounded-md p-4 bg-muted/10 overflow-y-auto prose prose-xs dark:prose-invert max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: (editing.content_es || "").replace(/\n/g, '<br/>') }} />
-                    </div>
+                    </Suspense>
                   </div>
                 </TabsContent>
               </Tabs>
 
-              <div className="flex items-center gap-2 pt-4 border-t mt-auto shrink-0">
+              <div className="flex items-center gap-2 pt-6 border-t mt-auto shrink-0">
                 <Switch checked={editing.is_published ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
-                <Label className="font-sans">Postar publicamente (Publicado)</Label>
+                <Label className="font-sans font-semibold">Tornar este artigo público para os clientes</Label>
               </div>
               
-              <div className="flex justify-end gap-2 pt-4 bg-background shrink-0 pb-2">
-                <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans px-8 bg-primary hover:bg-primary/90" disabled={isUploading}>
-                  {isNew ? "Publicar" : "Salvar Alterações"}
+              <div className="flex justify-end gap-3 pt-4 bg-background shrink-0 pb-2">
+                <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans px-8">Cancelar</Button>
+                <Button onClick={handleSave} className="font-sans px-12 bg-primary hover:bg-primary/90 text-white shadow-lg" disabled={isUploading}>
+                  {isNew ? "Publicar Artigo" : "Salvar Alterações"}
                 </Button>
               </div>
             </div>

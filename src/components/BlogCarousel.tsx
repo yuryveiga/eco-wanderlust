@@ -76,7 +76,7 @@ export function BlogCarousel() {
                               {title}
                             </h3>
                             <p className="text-white/80 font-sans text-sm line-clamp-4 leading-relaxed">
-                              {content ? content.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : title}
+                            {content ? content.replace(/<[^>]*>/g, ' ').substring(0, 150) + "..." : title}
                             </p>
                           </div>
                           

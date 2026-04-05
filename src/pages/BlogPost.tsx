@@ -82,8 +82,8 @@ const BlogPost = () => {
             </h1>
             
             <div 
-              className="prose prose-lg dark:prose-invert max-w-none font-sans"
-              dangerouslySetInnerHTML={{ __html: (content || "").replace(/\n/g, '<br/>') }}
+              className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor"
+              dangerouslySetInnerHTML={{ __html: content || "" }}
             />
           </div>
         </div>
