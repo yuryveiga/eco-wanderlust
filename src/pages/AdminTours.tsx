@@ -74,7 +74,7 @@ const AdminTours = () => {
         const { error } = await supabase.from("tours").update(payload).eq("id", tour.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("tours").insert([payload as any]);
+        const { error } = await supabase.from("tours").insert([payload as Tour]);
         if (error) throw error;
       }
     },

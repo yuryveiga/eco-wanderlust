@@ -8,7 +8,19 @@ const fallbackTours = [
   { id: "3", title: "Angra dos Reis", short_description: "Navegue pelas ilhas paradisíacas de Angra dos Reis.", price: 200, duration: "10 horas", max_group_size: 25, image_url: "https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=600", is_featured: true, category: "Barco" },
 ];
 
-function TourCard({ tour }: { tour: any }) {
+type TourCardProps = {
+  id: string;
+  title: string;
+  short_description: string;
+  price: number;
+  duration: string;
+  max_group_size: number;
+  image_url: string;
+  is_featured: boolean;
+  category: string;
+};
+
+function TourCard({ tour }: { tour: TourCardProps }) {
   return (
     <div className="bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-56 overflow-hidden">

@@ -51,7 +51,7 @@ const AdminSocial = () => {
         const { error } = await supabase.from("social_media").update(social).eq("id", social.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("social_media").insert([social as any]);
+        const { error } = await supabase.from("social_media").insert([social as SocialMedia]);
         if (error) throw error;
       }
     },

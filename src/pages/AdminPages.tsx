@@ -38,7 +38,7 @@ const AdminPages = () => {
         const { error } = await supabase.from("pages").update(page).eq("id", page.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("pages").insert([page as any]);
+        const { error } = await supabase.from("pages").insert([page as Page]);
         if (error) throw error;
       }
     },
