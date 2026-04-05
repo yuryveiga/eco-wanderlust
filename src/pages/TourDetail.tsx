@@ -135,40 +135,39 @@ export function TourDetail() {
             <span className="text-foreground">{tour.title}</span>
           </nav>
 
+          {/* Premium Image Gallery Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 h-[400px] lg:h-[500px] gap-2 lg:gap-4 mb-8">
+            <div className="md:col-span-3 relative h-full rounded-2xl overflow-hidden group shadow-lg">
+               <img 
+                 src={tour.image_url || images[0]} 
+                 alt={tour.title} 
+                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+            </div>
+
+            <div className="hidden md:grid grid-rows-2 gap-4 h-full">
+              <div className="relative rounded-2xl overflow-hidden group shadow-md border border-border/10">
+                 <img 
+                   src={images[1] || images[0]} 
+                   alt="Gallery 1" 
+                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                 />
+                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+              </div>
+              <div className="relative rounded-2xl overflow-hidden group shadow-md border border-border/10">
+                 <img 
+                   src={images[2] || images[0]} 
+                   alt="Gallery 2" 
+                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                 />
+                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="relative rounded-2xl overflow-hidden bg-muted shadow-lg">
-                <img 
-                  src={images[currentImage]} 
-                  alt={tour.title}
-                  className="w-full h-[400px] lg:h-[500px] object-cover"
-                />
-                {images.length > 1 && (
-                  <>
-                    <button 
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center shadow-lg transition-all"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center shadow-lg transition-all"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {images.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setCurrentImage(i)}
-                          className={`w-2 h-2 rounded-full transition-all ${i === currentImage ? "bg-primary w-6" : "bg-background/60"}`}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <div className="flex items-start justify-between gap-4 mb-4">

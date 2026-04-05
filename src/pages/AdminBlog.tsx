@@ -159,14 +159,30 @@ const AdminBlog = () => {
                 </div>
               </div>
 
-              <div className="flex-1 flex flex-col min-h-[350px]">
-                <Label className="font-sans mb-2 shrink-0">Conteúdo do Post</Label>
-                <Textarea 
-                  value={editing.content || ""} 
-                  onChange={(e) => setEditing({ ...editing, content: e.target.value })} 
-                  className="flex-1 w-full bg-background font-sans leading-relaxed min-h-[300px]"
-                  placeholder="Escreva o conteúdo do seu post aqui..."
-                />
+              <div className="flex-1 flex flex-col min-h-[400px]">
+                <div className="flex items-center justify-between mb-2 shrink-0">
+                  <Label className="font-sans font-bold">Conteúdo do Post (Markdown)</Label>
+                  <div className="flex bg-muted rounded-md p-1 gap-1 text-[10px] font-bold font-sans uppercase">
+                     <span className="px-2">Editor & Preview</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 overflow-hidden">
+                  <Textarea 
+                    value={editing.content || ""} 
+                    onChange={(e) => setEditing({ ...editing, content: e.target.value })} 
+                    className="flex-1 w-full bg-background font-mono text-sm leading-relaxed p-4 resize-none border-primary/20 focus:ring-0 focus:border-primary"
+                    placeholder="Use Markdown: # Título, **Negrito**, [Link](url)..."
+                  />
+                  <div className="border rounded-md p-6 bg-muted/10 overflow-y-auto prose prose-sm dark:prose-invert max-w-none shadow-inner">
+                    {editing.content ? (
+                      <div dangerouslySetInnerHTML={{ __html: editing.content.replace(/\n/g, '<br/>') }} />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-muted-foreground font-sans italic opacity-50">
+                         Prévia do conteúdo...
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-4 border-t mt-2 shrink-0">
