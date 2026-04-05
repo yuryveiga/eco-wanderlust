@@ -5,11 +5,15 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ArrowRight, Calendar } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const Blog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t, language } = useLocale();
+
+  const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
   useEffect(() => {
     loadPosts();
@@ -36,10 +40,10 @@ const Blog = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-4">
-              Nosso Blog
+              {t("nosso_blog")}
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-              Dicas, roteiros e curiosidades sobre o Rio de Janeiro para tornar sua viagem inesquecível.
+              {t("blog_home_desc")}
             </p>
           </div>
           
@@ -49,7 +53,7 @@ const Blog = () => {
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground font-sans">
-              Nenhum post publicado ainda. Volte em breve!
+              {t("nenhum_post")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -77,7 +81,7 @@ const Blog = () => {
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3 font-sans">
                       <Calendar className="w-3 h-3" />
-                      {post.created_at ? format(new Date(post.created_at), "dd 'de' MMMM, yyyy", { locale: ptBR }) : "Publicado recentemente"}
+                      {post.created_at ? format(new Date(post.created_at), language === 'en' ? "MMMM dd, yyyy" : "dd 'de' MMMM, yyyy", { locale: dateLocale }) : t("publicado_recentemente")}
                     </div>
                     
                     <h3 className="font-serif text-xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
@@ -85,7 +89,7 @@ const Blog = () => {
                     </h3>
                     
                     <div className="mt-auto pt-4 flex items-center text-primary font-medium text-sm font-sans gap-1 group-hover:gap-2 transition-all">
-                      Ler mais <ArrowRight className="w-4 h-4" />
+                      {t("ler_mais")} <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
                 </Link>

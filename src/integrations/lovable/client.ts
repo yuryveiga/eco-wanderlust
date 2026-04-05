@@ -160,6 +160,7 @@ export type LovableBlogPost = {
   title: string;
   slug: string;
   content: string;
+  excerpt?: string;
   image_url?: string;
   is_published: boolean;
   created_at?: string;

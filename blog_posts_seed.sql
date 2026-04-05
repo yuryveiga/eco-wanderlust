@@ -1,3 +1,6 @@
+-- Ensure table has excerpt column
+ALTER TABLE public.blog_posts ADD COLUMN IF NOT EXISTS excerpt TEXT;
+
 -- Inserting 4 blog posts about Rio de Janeiro
 INSERT INTO public.blog_posts (title, slug, content, excerpt, image_url, is_published, created_at)
 VALUES 

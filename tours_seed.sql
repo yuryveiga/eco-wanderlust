@@ -59,4 +59,5 @@ VALUES
     true, true, false,
     '[{"time": "09:00", "description": "Encontro na Praça Corumbá"}, {"time": "09:30", "description": "Subida de Bondinho social"}, {"time": "11:00", "description": "Workshop de percussão ou grafite"}]',
     '[{"icon": "MapPin", "text": "Guia Comunitário"}, {"icon": "Shield", "text": "Contribuição para o Projeto"}]'
-);
+)
+ON CONFLICT (slug) DO NOTHING;

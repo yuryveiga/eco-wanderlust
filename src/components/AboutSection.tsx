@@ -1,13 +1,16 @@
 import { Bus, Shield, Heart, Users } from "lucide-react";
-
-const features = [
-  { icon: Bus, title: "Transporte Confortável", description: "Veículos com ar-condicionado, assentos confortáveis e amplo espaço para bagagens." },
-  { icon: Shield, title: "Segurança Garantida", description: "Todos os passeios são conduzidos por motoristas experientes e guias certificados." },
-  { icon: Heart, title: "Experiências Autênticas", description: "Conheça os pontos turísticos mais icônicos e descubra lugares fora do roteiro tradicional." },
-  { icon: Users, title: "Grupos Reduzidos", description: "Grupos pequenos garantem atenção personalizada e uma experiência mais intimista." },
-];
+import { useLocale } from "@/contexts/LocaleContext";
 
 export function AboutSection() {
+  const { t } = useLocale();
+
+  const features = [
+    { icon: Bus, title: t("feat_transporte"), description: t("feat_transporte_desc") },
+    { icon: Shield, title: t("feat_seguranca"), description: t("feat_seguranca_desc") },
+    { icon: Heart, title: t("feat_experiencia"), description: t("feat_experiencia_desc") },
+    { icon: Users, title: t("feat_grupos"), description: t("feat_grupos_desc") },
+  ];
+
   return (
     <section id="about" className="py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,20 +27,17 @@ export function AboutSection() {
           </div>
 
           <div>
-            <p className="text-primary font-medium mb-3 font-sans">Sobre a Passeio Rio</p>
+            <p className="text-primary font-medium mb-3 font-sans">{t("sobre_passeiorio")}</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-              Sua Porta de Entrada para a
+              {t("porta_entrada")}
               <br />
-              <span className="text-primary">Cidade Maravilhosa</span>
+              <span className="text-primary">{t("cidade_maravilhosa")}</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-6 leading-relaxed font-sans">
-              A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor
-              do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo
-              a Angra dos Reis, revelamos a beleza incomparável desta cidade magnífica.
+              {t("sobre_desc1")}
             </p>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
-              Com guias locais especializados e saídas diárias confirmadas, garantimos
-              uma experiência segura, confortável e inesquecível.
+              {t("sobre_desc2")}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

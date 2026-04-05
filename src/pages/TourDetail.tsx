@@ -7,6 +7,14 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from "@/components/ui/carousel";
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
@@ -14,13 +22,14 @@ export function TourDetail() {
   const [currentImage, setCurrentImage] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
+  const { t, language } = useLocale();
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
   const availablePeriods = tour ? [
-    { id: 'morning', label: 'Manhã', active: tour.has_morning !== false, Icon: Sunrise },
-    { id: 'afternoon', label: 'Tarde', active: tour.has_afternoon === true, Icon: Sun },
-    { id: 'night', label: 'Noite', active: tour.has_night === true, Icon: Moon },
+    { id: 'morning', label: t('amanha'), active: tour.has_morning !== false, Icon: Sunrise },
+    { id: 'afternoon', label: t('tarde'), active: tour.has_afternoon === true, Icon: Sun },
+    { id: 'night', label: t('noite'), active: tour.has_night === true, Icon: Moon },
   ].filter(p => p.active) : [];
 
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
@@ -31,7 +40,6 @@ export function TourDetail() {
 
   useEffect(() => {
     if (tour) {
-      // If only private is allowed, default to it
       if (tour.allows_private && !tour.allows_open) {
         setIsPrivate(true);
       } else {
@@ -48,7 +56,7 @@ export function TourDetail() {
     return (
       <main className="min-h-screen bg-background flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-        <p className="mt-4 font-sans text-muted-foreground">Carregando passeio...</p>
+        <p className="mt-4 font-sans text-muted-foreground">{t("carregando_passeio")}</p>
       </main>
     );
   }
@@ -58,10 +66,10 @@ export function TourDetail() {
       <main>
         <Header />
         <div className="min-h-screen flex flex-col items-center justify-center pt-20">
-          <h1 className="font-serif text-3xl font-bold text-foreground mb-4">Passeio não encontrado</h1>
+          <h1 className="font-serif text-3xl font-bold text-foreground mb-4">{t("nao_encontrado")}</h1>
           <Link to="/">
             <Button variant="outline" className="font-sans">
-              <ArrowLeft className="w-4 h-4 mr-2" />Voltar para home
+              <ArrowLeft className="w-4 h-4 mr-2" />{t("voltar_home")}
             </Button>
           </Link>
         </div>
@@ -78,15 +86,15 @@ export function TourDetail() {
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
 
   const highlights = tour.included_json || [
-    { icon: "MapPin", text: "Transporte ida e volta" },
-    { icon: "Utensils", text: "Almoço incluso" },
-    { icon: "Shield", text: "Equipamento de segurança" },
-    { icon: "Activity", text: "Instrutor especializado" },
+    { icon: "MapPin", text: t("transporte_trans") },
+    { icon: "Utensils", text: t("almoco_inc") },
+    { icon: "Shield", text: t("equip_seg") },
+    { icon: "Activity", text: t("instrutor_esp") },
   ];
 
   const faqItems = tour.faq_json || [
-    { q: "O que está incluído?", a: "Transporte, almoço, equipamento de segurança e instrutor especializado." },
-    { q: "O que devo levar?", a: "Roupas confortáveis, tênis (que possam molhar), protetor solar e repelente." },
+    { q: t("o_que_inclui"), a: t("o_que_inclui_desc") },
+    { q: t("o_que_levar"), a: t("o_que_levar_desc") },
   ];
 
   const getIcon = (name: string) => {
@@ -104,8 +112,6 @@ export function TourDetail() {
     }
   };
 
-
-
   return (
     <main className="min-h-screen bg-background">
       <Helmet>
@@ -122,9 +128,9 @@ export function TourDetail() {
       <div className="pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <nav className="flex items-center gap-2 text-sm text-muted-foreground font-sans mb-6">
-            <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
+            <Link to="/" className="hover:text-foreground transition-colors">{t("inicio")}</Link>
             <span>/</span>
-            <Link to="/#tours" className="hover:text-foreground transition-colors">Passeios</Link>
+            <Link to="/#tours" className="hover:text-foreground transition-colors">{t("passeios")}</Link>
             <span>/</span>
             <span className="text-foreground">{tour.title}</span>
           </nav>
@@ -188,11 +194,11 @@ export function TourDetail() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-primary/70" />
-                    <span className="font-medium">Até {tour.max_group_size} pessoas</span>
+                    <span className="font-medium">Até {tour.max_group_size} {language === 'pt' ? 'pessoas' : language === 'es' ? 'personas' : 'people'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-primary/70" />
-                    <span className="font-medium">Todos os dias</span>
+                    <span className="font-medium">{language === 'pt' ? 'Todos os dias' : language === 'es' ? 'Todos los días' : 'Every day'}</span>
                   </div>
                 </div>
 
@@ -206,10 +212,10 @@ export function TourDetail() {
               {tour.itinerary_json && tour.itinerary_json.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#2A9D8F] mb-2">
-                    Itinerário e Detalhes
+                    {t("itinerario_detalhes")}
                   </h2>
                   <p className="text-muted-foreground font-sans text-sm mb-8">
-                    Apenas para referência. Os itinerários estão sujeitos a alterações.
+                    {t("ref_alteracoes")}
                   </p>
                   
                   <div className="space-y-0 relative">
@@ -231,7 +237,7 @@ export function TourDetail() {
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
-                  O que está incluído
+                  {t("o_que_inclui")}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {highlights.map((item, i) => {
@@ -251,7 +257,7 @@ export function TourDetail() {
               {faqItems.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
-                    Para seu conhecimento
+                    {t("para_conhecimento")}
                   </h2>
                   <div className="space-y-4">
                     {faqItems.map((item, i) => (
@@ -286,11 +292,11 @@ export function TourDetail() {
               <div className="sticky top-24">
                 <div className="bg-card rounded-3xl border border-border/50 p-6 shadow-2xl overflow-hidden">
                   <div className="mb-6 pb-6 border-b text-center">
-                    <span className="text-sm text-muted-foreground font-sans uppercase tracking-widest block mb-1">A partir de</span>
+                    <span className="text-sm text-muted-foreground font-sans uppercase tracking-widest block mb-1">{t("a_partir_de")}</span>
                     <span className="text-5xl font-bold text-primary font-sans">
                       R$ {tour.price}
                     </span>
-                    <span className="text-muted-foreground font-sans text-sm block mt-1"> por pessoa</span>
+                    <span className="text-muted-foreground font-sans text-sm block mt-1"> {t("por_pessoa")}</span>
                   </div>
                   
                   {(tour.allows_open || tour.allows_private) && (
@@ -305,7 +311,7 @@ export function TourDetail() {
                                 : "text-muted-foreground hover:text-foreground"
                             }`}
                           >
-                            Open grupo
+                            {t("open_grupo")}
                           </button>
                         )}
                         {tour.allows_private && (
@@ -317,7 +323,7 @@ export function TourDetail() {
                                 : "text-muted-foreground hover:text-foreground"
                             }`}
                           >
-                            Grupo Privado
+                            {t("grupo_privado")}
                           </button>
                         )}
                       </div>
@@ -325,8 +331,8 @@ export function TourDetail() {
                       <div className="min-h-[44px] flex items-center justify-center px-4 bg-muted/20 rounded-2xl border border-dashed border-border py-2">
                         <p className="text-center text-[12px] text-muted-foreground font-sans leading-snug">
                           {isPrivate 
-                            ? "Passeios privados oferecem uma experiência exclusiva apenas para o seu grupo."
-                            : "Os grupos abertos são formados automaticamente de acordo com as disponibilidades."
+                            ? t("privado_desc")
+                            : t("aberto_desc")
                           }
                         </p>
                       </div>
@@ -336,7 +342,7 @@ export function TourDetail() {
                   <div className="space-y-8 mb-8">
                     {availablePeriods.length > 0 && (
                       <div className="border-t pt-6">
-                        <h4 className="font-serif font-bold text-foreground mb-4 text-center">Qual período você prefere?</h4>
+                        <h4 className="font-serif font-bold text-foreground mb-4 text-center">{t("qual_periodo")}</h4>
                         <div className="grid grid-cols-1 gap-2">
                           {availablePeriods.map((p) => (
                             <button 
@@ -361,7 +367,7 @@ export function TourDetail() {
 
                     <div className="border-t pt-6 border-b pb-6 flex flex-col gap-4">
                        <div className="flex items-center justify-between text-sm font-sans px-2">
-                         <span className="text-foreground font-bold font-sans text-base">Data da Viagem</span>
+                         <span className="text-foreground font-bold font-sans text-base">{t("data_viagem")}</span>
                          <Calendar className="w-5 h-5 text-primary" />
                        </div>
                        <input 
@@ -372,17 +378,17 @@ export function TourDetail() {
                   </div>
 
                   <Button className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    RESERVAR AGORA
+                    {t("reservar_agora")}
                   </Button>
 
                   <div className="mt-8 pt-6 border-t border-border space-y-3">
                     <div className="flex items-center gap-3 text-sm text-muted-foreground font-sans">
                       <Shield className="w-5 h-5 text-green-600" />
-                      <span className="font-semibold text-foreground/80">Pagamento 100% Seguro</span>
+                      <span className="font-semibold text-foreground/80">{t("pagamento_seguro")}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground font-sans">
                       <Check className="w-5 h-5 text-green-600" />
-                      <span className="font-semibold text-foreground/80">Cancelamento Grátis até 24h</span>
+                      <span className="font-semibold text-foreground/80">{t("cancelamento_gratis")}</span>
                     </div>
                   </div>
                 </div>
@@ -390,12 +396,83 @@ export function TourDetail() {
                 <Link to="/" className="block mt-6">
                   <Button variant="ghost" className="w-full font-sans group text-muted-foreground hover:text-primary">
                     <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                    Explorar outros destinos
+                    {t("explorar_outros")}
                   </Button>
                 </Link>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-muted/30 py-20 mt-12 bg-[#2A9D8F]/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
+             <div>
+               <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground tracking-tight mb-2">
+                 {t("voce_tambem_pode_gostar")}
+               </h2>
+               <div className="w-20 h-1.5 bg-[#F4A261] rounded-full" />
+             </div>
+             <Link to="/#tours">
+               <Button variant="ghost" className="font-sans font-bold text-[#E76F51] hover:text-[#E76F51] hover:bg-[#E76F51]/10">
+                 {t("explorar_outros")} →
+               </Button>
+             </Link>
+          </div>
+          
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {tours
+                .filter((t_item) => t_item.id !== tour.id && t_item.slug !== tour.slug)
+                .slice(0, 8)
+                .map((relatedTour) => (
+                  <CarouselItem key={relatedTour.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                    <Link to={`/passeio/${relatedTour.slug}`} className="group">
+                      <div className="bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col group/card">
+                        <div className="aspect-[4/5] overflow-hidden relative">
+                          <img 
+                            src={relatedTour.image_url || "https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"} 
+                            alt={relatedTour.title}
+                            className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
+                          />
+                          <div className="absolute top-4 right-4 bg-background/95 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black font-sans text-primary shadow-sm uppercase tracking-widest">
+                            {relatedTour.category}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                            <span className="text-white/70 text-[10px] font-bold font-sans uppercase tracking-[0.2em]">{relatedTour.duration}</span>
+                            <h3 className="text-white font-serif text-xl font-bold mt-1 leading-tight group-hover/card:text-primary transition-colors">
+                              {relatedTour.title}
+                            </h3>
+                          </div>
+                        </div>
+                        <div className="p-6 bg-card border-t border-border/10">
+                           <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <span className="text-[10px] uppercase font-bold text-muted-foreground font-sans tracking-wide">{t("a_partir_de")}</span>
+                                <span className="text-primary font-black font-sans text-lg">R$ {relatedTour.price}</span>
+                              </div>
+                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/card:bg-primary group-hover/card:text-white transition-all duration-300">
+                                <ArrowLeft className="w-5 h-5 rotate-[135deg]" />
+                              </div>
+                           </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+            <div className="flex items-center justify-center gap-4 mt-12">
+               <CarouselPrevious className="static translate-y-0 w-12 h-12 border-2 text-primary hover:bg-primary hover:text-white transition-all shadow-md" />
+               <CarouselNext className="static translate-y-0 w-12 h-12 border-2 text-primary hover:bg-primary hover:text-white transition-all shadow-md" />
+            </div>
+          </Carousel>
         </div>
       </div>
 

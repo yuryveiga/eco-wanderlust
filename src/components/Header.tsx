@@ -53,7 +53,7 @@ export function Header() {
   const baseLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
-    { label: "Sobre Nós", href: "#about" },
+    { label: t("sobre"), href: "#about" },
     { label: t("contato"), href: "#contact" },
     { label: "Blog", href: "/blog" },
   ];

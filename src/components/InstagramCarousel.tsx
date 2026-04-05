@@ -1,9 +1,12 @@
 import { Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const INSTAGRAM_USERNAME = "tocorimerio";
 
 export function InstagramCarousel() {
+  const { t } = useLocale();
+
   return (
     <section className="py-20 lg:py-28 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,10 +16,10 @@ export function InstagramCarousel() {
             <p className="text-primary font-medium font-sans">@{INSTAGRAM_USERNAME}</p>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-            Sigue-nos no Instagram
+            {t("siga_instagram")}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-            Veja nossas últimas aventuras e fotos dos nossos passeios
+            {t("insta_desc")}
           </p>
         </div>
 
@@ -40,7 +43,7 @@ export function InstagramCarousel() {
           >
             <Button variant="outline" size="lg" className="font-sans">
               <Instagram className="w-4 h-4 mr-2" />
-              Ver mais no Instagram
+              {t("ver_mais_insta")}
             </Button>
           </a>
         </div>

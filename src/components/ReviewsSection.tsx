@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Review {
   id: string;
@@ -80,6 +81,7 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 function ReviewCard({ review }: { review: Review }) {
+  const { language } = useLocale();
   return (
     <div className="bg-card rounded-2xl p-8 shadow-lg border border-border/50 h-full flex flex-col">
       <div className="flex items-start gap-4 mb-6">
@@ -100,7 +102,7 @@ function ReviewCard({ review }: { review: Review }) {
       <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between font-sans">
         <span className="text-sm text-primary font-medium">{review.tour_name}</span>
         <span className="text-sm text-muted-foreground">
-          {new Date(review.review_date).toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
+          {new Date(review.review_date).toLocaleDateString(language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : 'en-US', { month: "short", year: "numeric" })}
         </span>
       </div>
     </div>
@@ -110,6 +112,7 @@ function ReviewCard({ review }: { review: Review }) {
 export function ReviewsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const { t } = useLocale();
 
   useEffect(() => {
     const update = () => setItemsPerView(window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
@@ -148,10 +151,10 @@ export function ReviewsSection() {
             <span className="text-lg font-semibold text-foreground font-sans">TripAdvisor Reviews</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4 text-balance">
-            O Que Nossos Visitantes Dizem
+            {t("visitantes_dizem")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto font-sans">
-            Leia avaliações autênticas de viajantes que exploraram o Rio conosco
+            {t("reviews_desc")}
           </p>
         </div>
 
@@ -201,7 +204,7 @@ export function ReviewsSection() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors font-sans"
           >
-            Ver todas as avaliações no TripAdvisor
+            {t("ver_todas_tripadvisor")}
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>

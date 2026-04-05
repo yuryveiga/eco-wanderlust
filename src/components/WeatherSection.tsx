@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Cloud, Sun, CloudRain, Wind, Thermometer, MapPin, Loader2, Calendar, Clock as ClockIcon } from "lucide-react";
 import { format, addDays, startOfHour } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export function WeatherSection() {
+  const { t, language } = useLocale();
   const [forecast, setForecast] = useState<{
     time: string[];
     temp: number[];
@@ -13,6 +15,8 @@ export function WeatherSection() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   
+  const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
+
   // Selection state
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHour, setSelectedHour] = useState(startOfHour(new Date()).getHours());
@@ -45,11 +49,11 @@ export function WeatherSection() {
   }, []);
 
   const getWeatherDesc = (code: number) => {
-    if (code === 0) return "Céu Limpo";
-    if (code <= 3) return "Parcialmente Nublado";
-    if (code >= 51 && code <= 67) return "Chuva Leve";
-    if (code >= 71) return "Chuva Forte / Temporal";
-    return "Nublado";
+    if (code === 0) return t("ceu_limpo");
+    if (code <= 3) return t("nublado_parcial");
+    if (code >= 51 && code <= 67) return t("chuva_leve");
+    if (code >= 71) return t("chuva_forte");
+    return t("nublado");
   };
 
   const getWeatherIcon = (code: number) => {
@@ -58,7 +62,6 @@ export function WeatherSection() {
     return <CloudRain className="w-12 h-12 text-blue-500" />;
   };
 
-  // Find the index for selected date and hour
   const getSelectedIndex = () => {
     if (!forecast) return -1;
     const dateStr = format(selectedDate, "yyyy-MM-dd");
@@ -76,7 +79,6 @@ export function WeatherSection() {
     description: getWeatherDesc(forecast.code[index])
   } : null;
 
-  // Generate options for next 7 days
   const dateOptions = Array.from({ length: 7 }).map((_, i) => addDays(new Date(), i));
   const hourOptions = Array.from({ length: 24 }).map((_, i) => i);
 
@@ -90,16 +92,15 @@ export function WeatherSection() {
               <div className="flex items-center gap-2 text-primary font-sans font-bold uppercase tracking-widest text-xs">
                 <MapPin className="w-4 h-4" /> Rio de Janeiro, Brasil
               </div>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Planeje seu passeio!</h2>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">{t("planeje_passeio")}</h2>
               <p className="text-muted-foreground font-sans max-w-md">
-                Escolha o dia e horário do seu passeio para ver a previsão do tempo detalhada.
+                {t("previsao_desc")}
               </p>
             </div>
 
-            {/* Selection Controls */}
             <div className="flex flex-wrap items-center gap-4 bg-muted/40 p-4 rounded-2xl border border-border/50">
               <div className="flex flex-col gap-1.5">
-                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">Data</Label>
+                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("data")}</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                   <select 
@@ -109,7 +110,7 @@ export function WeatherSection() {
                   >
                     {dateOptions.map(d => (
                       <option key={d.toISOString()} value={d.toISOString()}>
-                        {format(d, "eeee, dd 'de' MMM", { locale: ptBR })}
+                        {format(d, language === 'pt' ? "eeee, dd 'de' MMM" : "eeee, MMM dd", { locale: dateLocale })}
                       </option>
                     ))}
                   </select>
@@ -117,7 +118,7 @@ export function WeatherSection() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">Horário</Label>
+                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("horario")}</Label>
                 <div className="relative">
                   <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                   <select 
@@ -138,7 +139,7 @@ export function WeatherSection() {
             {loading ? (
               <div className="flex flex-col items-center gap-2 py-6">
                 <Loader2 className="w-10 h-10 animate-spin text-primary/40" />
-                <span className="text-xs text-muted-foreground font-sans">Carregando previsão...</span>
+                <span className="text-xs text-muted-foreground font-sans">{t("carregando_previsao")}</span>
               </div>
             ) : weather ? (
               <div className="flex flex-col sm:flex-row items-center gap-8 md:gap-20">
@@ -158,13 +159,13 @@ export function WeatherSection() {
                   </div>
                   <div className="flex gap-8 mt-4">
                     <div className="flex flex-col">
-                      <span className="text-[10px] uppercase font-sans font-bold text-muted-foreground tracking-widest">Vento</span>
+                      <span className="text-[10px] uppercase font-sans font-bold text-muted-foreground tracking-widest">{t("vento")}</span>
                       <div className="flex items-center gap-1.5 font-sans font-bold text-lg text-foreground/80">
                         <Wind className="w-4 h-4 text-primary" /> {weather.wind} km/h
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] uppercase font-sans font-bold text-muted-foreground tracking-widest">Umidade</span>
+                      <span className="text-[10px] uppercase font-sans font-bold text-muted-foreground tracking-widest">{t("umidade")}</span>
                       <div className="flex items-center gap-1.5 font-sans font-bold text-lg text-foreground/80">
                         <CloudRain className="w-4 h-4 text-primary" /> {weather.humidity}%
                       </div>
@@ -173,12 +174,12 @@ export function WeatherSection() {
                 </div>
               </div>
             ) : (
-              <p className="text-muted-foreground italic font-sans py-8">Dados indisponíveis para este horário.</p>
+              <p className="text-muted-foreground italic font-sans py-8">{t("dados_indisponiveis")}</p>
             )}
           </div>
 
           <div className="w-full flex items-center justify-center gap-2 text-[10px] text-muted-foreground font-sans z-10 pt-2 opacity-50">
-             <ClockIcon className="w-3 h-3" /> Atualizado em tempo real via Open-Meteo
+             <ClockIcon className="w-3 h-3" /> {t("atualizado_open_meteo")}
           </div>
         </div>
       </div>
@@ -186,7 +187,6 @@ export function WeatherSection() {
   );
 }
 
-// Small helper for labels inside the component
 function Label({ children, className }: { children: React.ReactNode, className?: string }) {
   return <span className={`block ${className}`}>{children}</span>;
 }

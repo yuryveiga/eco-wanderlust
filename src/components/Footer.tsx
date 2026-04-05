@@ -1,5 +1,6 @@
 import { Instagram, MapPin, Mail, Phone, Facebook, Youtube, Music } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube,
@@ -7,6 +8,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function Footer() {
   const { pages, socialMedia, images } = useSiteData();
+  const { t } = useLocale();
 
   const scrollTo = (href: string) => {
     if (href.startsWith("#")) {
@@ -19,10 +21,10 @@ export function Footer() {
   const navLinks = pages.length > 0
     ? pages.map((p) => ({ label: p.title, href: p.href }))
     : [
-        { label: "Inicio", href: "#top" },
-        { label: "Passeios", href: "#tours" },
-        { label: "Sobre Nós", href: "#about" },
-        { label: "Contato", href: "#contact" },
+        { label: t("inicio"), href: "#top" },
+        { label: t("passeios"), href: "#tours" },
+        { label: t("sobre"), href: "#about" },
+        { label: t("contato"), href: "#contact" },
       ];
 
   const activeSocials = socialMedia.length > 0
@@ -53,12 +55,12 @@ export function Footer() {
               </div>
             </div>
             <p className="text-[hsl(140,10%,96%)]/80 text-sm leading-relaxed font-sans">
-              Descubra as maravilhas naturais do Rio de Janeiro através de experiências de ecoturismo sustentável.
+              {t("footer_desc")}
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4 font-sans">Links Rápidos</h3>
+            <h3 className="font-semibold text-lg mb-4 font-sans">{t("links_rapidos")}</h3>
             <ul className="space-y-3 font-sans">
               {navLinks.map((link) => (
                 <li key={link.href}>
@@ -71,7 +73,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4 font-sans">Contato</h3>
+            <h3 className="font-semibold text-lg mb-4 font-sans">{t("contato")}</h3>
             <ul className="space-y-3 font-sans">
               <li className="flex items-center gap-2 text-[hsl(140,10%,96%)]/80 text-sm">
                 <Mail className="w-4 h-4 text-[hsl(145,40%,40%)]" />
@@ -89,7 +91,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4 font-sans">Siga-nos</h3>
+            <h3 className="font-semibold text-lg mb-4 font-sans">{t("siga_nos")}</h3>
             <div className="flex items-center gap-4 mb-6">
               {activeSocials.map((s) => (
                 <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label={s.platform}>
@@ -102,8 +104,8 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Passeio Rio. Todos os direitos reservados.</p>
-            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">Turismo Sustentável no Rio de Janeiro</p>
+            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Passeio Rio. {t("direitos")}</p>
+            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">{t("turismo_sustentavel")}</p>
           </div>
         </div>
       </div>

@@ -5,12 +5,16 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Calendar, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState<LovableBlogPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t, language } = useLocale();
+
+  const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,12 +61,12 @@ const BlogPost = () => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10">
           <div className="bg-card rounded-2xl shadow-xl p-8 sm:p-12 border border-border/50">
             <Link to="/blog" className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
-              <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para o blog
+              <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
             </Link>
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-sans">
               <Calendar className="w-4 h-4" />
-              {post.created_at ? format(new Date(post.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Publicado recentemente"}
+              {post.created_at ? format(new Date(post.created_at), language === 'en' ? "MMMM dd, yyyy" : "dd 'de' MMMM 'de' yyyy", { locale: dateLocale }) : t("publicado_recentemente")}
             </div>
             
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-10 leading-tight">

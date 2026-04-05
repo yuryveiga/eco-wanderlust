@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export function GallerySection() {
   const { images } = useSiteData();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const { t } = useLocale();
 
   const galleryImages = Object.entries(images)
     .filter(([key]) => !['logo', 'hero_bg'].includes(key))
@@ -20,14 +22,14 @@ export function GallerySection() {
               <Images className="w-6 h-6 text-primary" />
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-              Galeria de Fotos
+              {t("galeria")}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-              Fotos dos nossos passeios e paisagens do Rio de Janeiro
+              {t("galeria_sub")}
             </p>
           </div>
           <div className="text-center py-12 text-muted-foreground font-sans">
-            Nenhuma foto na galeria ainda.
+            {t("nenhuma_foto")}
           </div>
         </div>
       </section>
@@ -47,10 +49,10 @@ export function GallerySection() {
             <Images className="w-6 h-6 text-primary" />
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-            Galeria de Fotos
+            {t("galeria")}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-            Fotos dos nossos passeios e paisagens do Rio de Janeiro
+            {t("galeria_sub")}
           </p>
         </div>
 
