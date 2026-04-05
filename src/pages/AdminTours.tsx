@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Gauge } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
@@ -160,7 +160,7 @@ const AdminTours = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [], difficulty: "Leve" }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [], difficulty: "Leve", meeting_point_address: "", youtube_video_url: "" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
       </div>
@@ -209,7 +209,7 @@ const AdminTours = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl font-sans">
           {editing && (
             <Tabs defaultValue="content" className="flex-1 flex flex-col h-full overflow-hidden">
               <DialogHeader className="p-6 pb-0 border-b bg-muted/20 shrink-0">
@@ -243,6 +243,18 @@ const AdminTours = () => {
                           <div className="space-y-2">
                             <Label className="text-xs uppercase font-bold text-muted-foreground">Resumo (PT)</Label>
                             <textarea className="w-full min-h-[150px] rounded-xl border p-4 text-sm font-sans" value={editing.short_description ?? ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} />
+                          </div>
+                          <div className="space-y-2 bg-red-50/50 p-4 rounded-2xl border border-red-100">
+                             <Label className="text-[10px] font-black uppercase tracking-widest text-[#E76F51] flex items-center gap-2">
+                                <Youtube className="w-4 h-4" /> Link do Vídeo (YouTube)
+                             </Label>
+                             <Input 
+                                value={editing.youtube_video_url ?? ""} 
+                                onChange={(e) => setEditing({ ...editing, youtube_video_url: e.target.value })} 
+                                placeholder="https://www.youtube.com/watch?v=..." 
+                                className="h-10 border-red-200"
+                             />
+                             <p className="text-[10px] text-muted-foreground">Cole o link completo do vídeo que deseja exibir.</p>
                           </div>
                        </div>
                        

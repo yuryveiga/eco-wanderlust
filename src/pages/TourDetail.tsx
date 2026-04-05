@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
@@ -45,6 +45,15 @@ export function TourDetail() {
   const translatedItinerary = getTranslated(tour, `itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json;
   const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
   const translatedFaq = getTranslated(tour, `faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json;
+
+  const getYoutubeId = (url: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const youtubeId = tour?.youtube_video_url ? getYoutubeId(tour.youtube_video_url) : null;
 
   const availablePeriods = tour ? [
     { id: 'morning', label: t('amanha'), active: tour.has_morning !== false, Icon: Sunrise },
@@ -156,7 +165,7 @@ export function TourDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background font-sans">
       <Helmet>
         <title>{translatedTitle} | Eco-Wanderlust</title>
         <meta name="description" content={translatedShortDesc || "Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."} />
@@ -229,14 +238,7 @@ export function TourDetail() {
                    <h2 className="font-serif text-2xl font-bold text-foreground mb-4 flex items-center gap-2"><MapPin className="text-primary w-6 h-6" /> {language === 'pt' ? 'Ponto de Encontro' : 'Meeting Point'}</h2>
                    <p className="text-muted-foreground font-sans text-sm mb-6">{translatedMeetingPoint}</p>
                    <div className="w-full h-[300px] rounded-2xl overflow-hidden shadow-inner border bg-muted/20">
-                      <iframe 
-                        width="100%" 
-                        height="100%" 
-                        frameBorder="0" 
-                        style={{ border: 0 }} 
-                        src={`https://www.google.com/maps/embed/v1/place?key=REPLACE_WITH_YOUR_KEY&q=${encodeURIComponent(translatedMeetingPoint)}`} 
-                        allowFullScreen
-                      ></iframe>
+                      <iframe width="100%" height="100%" frameBorder="0" style={{ border: 0 }} src={`https://www.google.com/maps/embed/v1/place?key=REPLACE_WITH_YOUR_KEY&q=${encodeURIComponent(translatedMeetingPoint)}`} allowFullScreen></iframe>
                    </div>
                    <p className="text-[10px] text-muted-foreground mt-2 italic">* O local exato será confirmado após a reserva.</p>
                 </div>
@@ -279,6 +281,26 @@ export function TourDetail() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {youtubeId && (
+                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm mt-8">
+                   <h3 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                     <Youtube className="w-6 h-6 text-red-600" />
+                     {language === 'pt' ? 'Vídeo da Experiência' : 'Experience Video'}
+                   </h3>
+                   <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border bg-black">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${youtubeId}`}
+                        title="Experience Video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                   </div>
                 </div>
               )}
             </div>

@@ -141,6 +141,13 @@ export type LovableTour = {
   faq_json_en?: { q: string; a: string }[];
   faq_json_es?: { q: string; a: string }[];
   images_json?: string[];
+  difficulty?: string;
+  difficulty_en?: string;
+  difficulty_es?: string;
+  meeting_point_address?: string;
+  meeting_point_address_en?: string;
+  meeting_point_address_es?: string;
+  youtube_video_url?: string;
 };
 
 export type LovablePage = {
