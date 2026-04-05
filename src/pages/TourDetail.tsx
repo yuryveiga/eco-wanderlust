@@ -25,6 +25,10 @@ export function TourDetail() {
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
     if (tour) {
       // If only private is allowed, default to it
       if (tour.allows_private && !tour.allows_open) {

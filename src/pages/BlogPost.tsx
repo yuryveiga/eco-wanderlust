@@ -13,6 +13,7 @@ const BlogPost = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     loadPost();
   }, [slug]);
 
