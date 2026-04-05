@@ -1,4 +1,4 @@
-import { Map, FileText, Image, Share2, LayoutDashboard, LogOut, ExternalLink } from "lucide-react";
+import { Map, FileText, Image, Share2, LayoutDashboard, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -65,15 +65,6 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => window.open("/", "_blank")} 
-          className="w-full justify-start mb-2"
-        >
-          <ExternalLink className="h-4 w-4 mr-2" />
-          {!collapsed && "Ver o Site"}
-        </Button>
         {!collapsed && (
           <p className="text-xs text-muted-foreground px-2 mb-2 truncate">
             {user?.email}
