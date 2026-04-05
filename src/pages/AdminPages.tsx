@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovablePage } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovablePage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { lazy, Suspense } from 'react';
@@ -57,14 +57,49 @@ const AdminPages = () => {
     toast({ title: "Página removida" });
   };
 
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      if (!file) return;
+
+      try {
+        const url = await uploadLovableFile(file);
+        if (url) {
+          // Em um componente funcional, a forma mais garantida sem ref
+          // é injetar o HTML da tag img manualmente.
+          setEditing(prev => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              content: (prev.content || "") + `\n<img src="${url}" alt="image" />\n`
+            };
+          });
+          toast({ title: "Imagem anexada no final do texto!" });
+        }
+      } catch (err) {
+        toast({ title: "Erro", description: "Falha ao enviar." });
+      }
+    };
+  };
+
   const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image', 'video'],
-      ['clean'],
-    ],
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
   };
 
   return (
