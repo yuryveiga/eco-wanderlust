@@ -56,7 +56,7 @@ const BlogPost = () => {
       <Header />
       
       <main className="flex-1 bg-background pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">
           <div className="bg-card rounded-2xl shadow-xl p-8 sm:p-12 border border-border/50">
             <Link to="/blog" className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
               <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}

@@ -91,6 +91,8 @@ export function TourDetail() {
     );
   }
 
+  const [selectedImageIdx, setSelectedImageIdx] = useState(0);
+
   const images = tour.images_json && tour.images_json.length > 0
     ? tour.images_json 
     : tour.image_url 
@@ -149,9 +151,9 @@ export function TourDetail() {
 
           {/* Premium Image Gallery Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 h-[400px] lg:h-[500px] gap-2 lg:gap-4 mb-8">
-            <div className="md:col-span-3 relative h-full rounded-2xl overflow-hidden group shadow-lg">
+            <div className="md:col-span-3 relative h-full rounded-2xl overflow-hidden group shadow-lg cursor-pointer">
                <img 
-                 src={tour.image_url || images[0]} 
+                 src={images[selectedImageIdx]} 
                  alt={tour.title} 
                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                />
@@ -159,7 +161,10 @@ export function TourDetail() {
             </div>
 
             <div className="hidden md:grid grid-rows-2 gap-4 h-full">
-              <div className="relative rounded-2xl overflow-hidden group shadow-md border border-border/10">
+              <div 
+                className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all ${selectedImageIdx === 1 ? "ring-2 ring-primary ring-offset-2" : "border-border/10"}`}
+                onClick={() => setSelectedImageIdx(selectedImageIdx === 1 ? 0 : 1)}
+              >
                  <img 
                    src={images[1] || images[0]} 
                    alt="Gallery 1" 
@@ -167,7 +172,10 @@ export function TourDetail() {
                  />
                  <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
               </div>
-              <div className="relative rounded-2xl overflow-hidden group shadow-md border border-border/10">
+              <div 
+                className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all ${selectedImageIdx === 2 ? "ring-2 ring-primary ring-offset-2" : "border-border/10"}`}
+                onClick={() => setSelectedImageIdx(selectedImageIdx === 2 ? 0 : 2)}
+              >
                  <img 
                    src={images[2] || images[0]} 
                    alt="Gallery 2" 

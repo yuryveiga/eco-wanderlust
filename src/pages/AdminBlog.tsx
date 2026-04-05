@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,7 +105,7 @@ const AdminBlog = () => {
     };
   };
 
-  const quillModules = (langSuffix: "" | "_en" | "_es") => ({
+  const modulesPT = useMemo(() => ({
     toolbar: {
       container: [
         [{ header: [1, 2, 3, false] }],
@@ -114,11 +114,35 @@ const AdminBlog = () => {
         ['link', 'image', 'video'],
         ['clean'],
       ],
-      handlers: {
-        image: () => imageHandler(langSuffix)
-      }
+      handlers: { image: () => imageHandler("") }
     }
-  });
+  }), []);
+
+  const modulesEN = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+      handlers: { image: () => imageHandler("_en") }
+    }
+  }), []);
+
+  const modulesES = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+      handlers: { image: () => imageHandler("_es") }
+    }
+  }), []);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -245,7 +269,7 @@ const AdminBlog = () => {
                         value={editing.content || ""} 
                         onChange={(val) => setEditing({ ...editing, content: val })} 
                         className="editor-container"
-                        modules={quillModules("")}
+                        modules={modulesPT}
                         placeholder="Escreva seu artigo aqui..."
                       />
                     </Suspense>
@@ -266,7 +290,7 @@ const AdminBlog = () => {
                         value={editing.content_en || ""} 
                         onChange={(val) => setEditing({ ...editing, content_en: val })} 
                         className="editor-container"
-                        modules={quillModules("_en")}
+                        modules={modulesEN}
                         placeholder="Write in English..."
                       />
                     </Suspense>
@@ -287,7 +311,7 @@ const AdminBlog = () => {
                         value={editing.content_es || ""} 
                         onChange={(val) => setEditing({ ...editing, content_es: val })} 
                         className="editor-container"
-                        modules={quillModules("_es")}
+                        modules={modulesES}
                         placeholder="Escribe en Español..."
                       />
                     </Suspense>
