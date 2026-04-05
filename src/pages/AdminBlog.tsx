@@ -175,15 +175,24 @@ const AdminBlog = () => {
   return (
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <style>{`
+        .editor-container {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+        }
         .editor-container .ql-container {
-          min-height: 450px;
+          flex: 1;
+          min-height: 0;
           font-family: inherit;
           font-size: 16px;
           border-bottom-left-radius: 12px;
           border-bottom-right-radius: 12px;
+          background: white;
         }
         .editor-container .ql-editor {
-          min-height: 450px;
+          height: 100%;
+          min-height: 400px;
           line-height: 1.6;
         }
         .editor-container .ql-toolbar {
@@ -234,7 +243,7 @@ const AdminBlog = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-[1400px] w-[95vw] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="max-w-[1400px] w-[95vw] min-h-[85vh] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
           <DialogHeader className="p-6 pb-0 border-b bg-muted/10 shrink-0">
             <DialogTitle className="font-serif text-2xl flex items-center gap-3 mb-4">
               <Type className="w-7 h-7 text-primary" />
@@ -298,20 +307,20 @@ const AdminBlog = () => {
                    </div>
 
                    {/* Editor Primary Area */}
-                   <div className="flex-1 flex flex-col gap-6 overflow-hidden">
-                      <TabsContent value="pt" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden">
+                   <div className="flex-1 flex flex-col gap-6 overflow-hidden min-h-0">
+                      <TabsContent value="pt" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
                          <div className="space-y-2 shrink-0">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título em Português</Label>
                             <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
                          </div>
-                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white">
+                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
                             <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
                                <ReactQuill 
                                   ref={quillRef}
                                   theme="snow" 
                                   value={editing.content || ""} 
                                   onChange={(val) => setEditing({ ...editing, content: val })} 
-                                  className="editor-container h-full"
+                                  className="editor-container"
                                   modules={modules}
                                   formats={formats}
                                   placeholder="Comece a contar sua história..."
@@ -320,18 +329,18 @@ const AdminBlog = () => {
                          </div>
                       </TabsContent>
 
-                      <TabsContent value="en" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden">
+                      <TabsContent value="en" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
                          <div className="space-y-2 shrink-0">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-blue-500">English Title</Label>
                             <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="English title..." />
                          </div>
-                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white">
+                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
                             <Suspense fallback={<div className="p-24 text-center font-sans">Loading Editor...</div>}>
                                <ReactQuill 
                                   theme="snow" 
                                   value={editing.content_en || ""} 
                                   onChange={(val) => setEditing({ ...editing, content_en: val })} 
-                                  className="editor-container h-full"
+                                  className="editor-container"
                                   modules={modules}
                                   formats={formats}
                                   placeholder="Switch language for editing..."
@@ -340,18 +349,18 @@ const AdminBlog = () => {
                          </div>
                       </TabsContent>
 
-                      <TabsContent value="es" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden">
+                      <TabsContent value="es" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
                          <div className="space-y-2 shrink-0">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-red-500">Título en Español</Label>
                             <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título en Español..." />
                          </div>
-                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white">
+                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
                             <Suspense fallback={<div className="p-24 text-center font-sans">Cargando Editor...</div>}>
                                <ReactQuill 
                                   theme="snow" 
                                   value={editing.content_es || ""} 
                                   onChange={(val) => setEditing({ ...editing, content_es: val })} 
-                                  className="editor-container h-full"
+                                  className="editor-container"
                                   modules={modules}
                                   formats={formats}
                                   placeholder="Cambiar el idioma para editar..."
