@@ -238,9 +238,17 @@ export function TourDetail() {
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                    <h2 className="font-serif text-2xl font-bold text-foreground mb-4 flex items-center gap-2"><MapPin className="text-primary w-6 h-6" /> {language === 'pt' ? 'Ponto de Encontro' : 'Meeting Point'}</h2>
                    <p className="text-muted-foreground font-sans text-sm mb-6">{translatedMeetingPoint}</p>
-                   <div className="w-full h-[300px] rounded-2xl overflow-hidden shadow-inner border bg-muted/20">
-                      <iframe width="100%" height="100%" frameBorder="0" style={{ border: 0 }} src={`https://www.google.com/maps/embed/v1/place?key=REPLACE_WITH_YOUR_KEY&q=${encodeURIComponent(translatedMeetingPoint)}`} allowFullScreen></iframe>
-                   </div>
+                    <div className="w-full h-[300px] rounded-2xl overflow-hidden shadow-inner border bg-muted/20">
+                       <iframe 
+                         width="100%" 
+                         height="100%" 
+                         frameBorder="0" 
+                         scrolling="no"
+                         style={{ border: 0 }} 
+                         src={`https://www.openstreetmap.org/export/embed.html?bbox=-43.3,-22.9,-43.1,-22.8&layer=mapnik&marker=-22.9,-43.2`}
+                         allowFullScreen
+                       />
+                    </div>
                    <p className="text-[10px] text-muted-foreground mt-2 italic">* O local exato será confirmado após a reserva.</p>
                 </div>
               )}
