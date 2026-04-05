@@ -61,7 +61,7 @@ const AdminImages = () => {
         const { error } = await supabase.from("site_images").update(payload).eq("id", img.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("site_images").insert(payload);
+        const { error } = await supabase.from("site_images").insert([payload as any]);
         if (error) throw error;
       }
     },
