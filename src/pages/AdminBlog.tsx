@@ -11,6 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText, translateHtml } from "@/utils/translate";
 import 'react-quill/dist/quill.snow.css';
 
+// Importing Quill and registering the module
+import { Quill } from "react-quill";
+// @ts-ignore
+import ImageResize from "quill-image-resize-module-react";
+Quill.register("modules/imageResize", ImageResize);
+
 const ReactQuill = lazy(() => import('react-quill'));
 
 const AdminBlog = () => {
@@ -149,10 +155,15 @@ const AdminBlog = () => {
         [{ header: [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ 'align': [] }],
         ['link', 'image', 'video'],
         ['clean'],
       ],
       handlers: { image: () => imageHandler("") }
+    },
+    imageResize: {
+      parrentElement: "body",
+      modules: ["Resize", "DisplaySize", "Toolbar"],
     }
   }), [imageHandler]);
 
@@ -162,10 +173,15 @@ const AdminBlog = () => {
         [{ header: [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ 'align': [] }],
         ['link', 'image', 'video'],
         ['clean'],
       ],
       handlers: { image: () => imageHandler("_en") }
+    },
+    imageResize: {
+      parrentElement: "body",
+      modules: ["Resize", "DisplaySize", "Toolbar"],
     }
   }), [imageHandler]);
 
@@ -175,12 +191,22 @@ const AdminBlog = () => {
         [{ header: [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ 'align': [] }],
         ['link', 'image', 'video'],
         ['clean'],
       ],
       handlers: { image: () => imageHandler("_es") }
+    },
+    imageResize: {
+      parrentElement: "body",
+      modules: ["Resize", "DisplaySize", "Toolbar"],
     }
   }), [imageHandler]);
+
+  const formats = [
+    "header", "bold", "italic", "underline", "strike",
+    "list", "bullet", "align", "link", "image", "video"
+  ];
 
   return (
     <div className="flex flex-col h-full overflow-hidden font-sans">
@@ -309,6 +335,7 @@ const AdminBlog = () => {
                           onChange={(val) => setEditing({ ...editing, content: val })} 
                           className="editor-container"
                           modules={modulesPT}
+                          formats={formats}
                           placeholder="Escreva seu artigo aqui..."
                         />
                       </Suspense>
@@ -340,6 +367,7 @@ const AdminBlog = () => {
                           onChange={(val) => setEditing({ ...editing, content_en: val })} 
                           className="editor-container border-blue-100"
                           modules={modulesEN}
+                          formats={formats}
                           placeholder="Clique em 'Traduzir com IA' para autocompletar"
                         />
                       </Suspense>
@@ -371,6 +399,7 @@ const AdminBlog = () => {
                           onChange={(val) => setEditing({ ...editing, content_es: val })} 
                           className="editor-container border-red-100"
                           modules={modulesES}
+                          formats={formats}
                           placeholder="Clique em 'Traducir con IA' para autocompletar"
                         />
                       </Suspense>

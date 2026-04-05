@@ -7,6 +7,7 @@ import { Calendar, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
+import "react-quill/dist/quill.snow.css";
 
 const BlogPost = () => {
   const { slug } = useParams();

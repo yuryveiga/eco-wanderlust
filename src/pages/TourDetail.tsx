@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { 
   Carousel, 
@@ -20,9 +19,11 @@ export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const { tours, isLoading } = useSiteData();
   const [currentImage, setCurrentImage] = useState(0);
+  const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const { t, language } = useLocale();
+  const [selectedPeriod, setSelectedPeriod] = useState('morning');
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
@@ -45,8 +46,6 @@ export function TourDetail() {
     { id: 'night', label: t('noite'), active: tour.has_night === true, Icon: Moon },
   ].filter(p => p.active) : [];
 
-  const [selectedPeriod, setSelectedPeriod] = useState('morning');
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -63,7 +62,7 @@ export function TourDetail() {
         setSelectedPeriod(availablePeriods[0].id);
       }
     }
-  }, [tour]);
+  }, [tour, availablePeriods.length]); // Added length for stability
   
   if (isLoading) {
     return (
@@ -91,22 +90,20 @@ export function TourDetail() {
     );
   }
 
-  const [selectedImageIdx, setSelectedImageIdx] = useState(0);
-
   const images = tour.images_json && tour.images_json.length > 0
     ? tour.images_json 
     : tour.image_url 
       ? [tour.image_url, tour.image_url, tour.image_url] 
       : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
 
-  const highlights = translatedIncluded || [
+  const highlights = (translatedIncluded as any[]) || [
     { icon: "MapPin", text: t("transporte_trans") },
     { icon: "Utensils", text: t("almoco_inc") },
     { icon: "Shield", text: t("equip_seg") },
     { icon: "Activity", text: t("instrutor_esp") },
   ];
 
-  const faqItems = translatedFaq || [
+  const faqItems = (translatedFaq as any[]) || [
     { q: t("o_que_inclui"), a: t("o_que_inclui_desc") },
     { q: t("o_que_levar"), a: t("o_que_levar_desc") },
   ];
@@ -228,7 +225,7 @@ export function TourDetail() {
                 </div>
               </div>
 
-              {translatedItinerary && translatedItinerary.length > 0 && (
+              {translatedItinerary && (translatedItinerary as any[]).length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#2A9D8F] mb-2">
                     {t("itinerario_detalhes")}
@@ -238,9 +235,9 @@ export function TourDetail() {
                   </p>
                   
                   <div className="space-y-0 relative">
-                    {translatedItinerary.map((step, i) => (
+                    {(translatedItinerary as any[]).map((step, i) => (
                       <div key={i} className="relative pl-10 pb-8 last:pb-0">
-                        {translatedItinerary && i !== translatedItinerary.length - 1 && (
+                        {translatedItinerary && i !== (translatedItinerary as any[]).length - 1 && (
                           <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[2px] border-dashed border-[#F4A261]/40 z-0"></div>
                         )}
                         <div className="absolute top-0 left-0 z-10 bg-background pt-1 pb-1">
