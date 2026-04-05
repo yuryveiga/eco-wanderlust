@@ -187,7 +187,7 @@ export function TourDetail() {
             <span className="text-foreground">{translatedTitle}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
             <div className="lg:col-span-2 space-y-6">
                <div className="grid grid-cols-1 md:grid-cols-4 aspect-video md:aspect-[2/1] gap-2 lg:gap-3 mb-4 rounded-3xl overflow-hidden shadow-2xl bg-muted/20">
                   <div className="md:col-span-3 relative h-full group cursor-zoom-in">
@@ -285,21 +285,13 @@ export function TourDetail() {
               )}
 
               {youtubeId && (
-                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm mt-8">
+                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                    <h3 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                      <Youtube className="w-6 h-6 text-red-600" />
                      {language === 'pt' ? 'Vídeo da Experiência' : 'Experience Video'}
                    </h3>
                    <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border bg-black">
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://www.youtube.com/embed/${youtubeId}`}
-                        title="Experience Video"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+                      <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${youtubeId}`} title="Experience Video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                    </div>
                 </div>
               )}
@@ -340,6 +332,45 @@ export function TourDetail() {
                   <Button onClick={handleBooking} className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all">{t("reservar_agora")}</Button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-muted/30 py-20 mt-12 bg-primary/5 rounded-[40px]">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="font-serif text-3xl font-bold text-foreground mb-12 text-center uppercase tracking-widest">{t("voce_tambem_pode_gostar")}</h2>
+              <Carousel className="w-full">
+                <CarouselContent className="-ml-4">
+                  {tours
+                    .filter((t_item) => t_item.id !== tour.id && t_item.slug !== tour.slug)
+                    .slice(0, 6)
+                    .map((item) => (
+                      <CarouselItem key={item.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                        <Link to={`/passeio/${item.slug || item.id}`} className="block h-full group">
+                          <div className="bg-card rounded-3xl border border-border/50 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
+                            <div className="relative h-64 overflow-hidden">
+                              <img src={item.image_url || ""} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black font-sans text-primary">
+                                {getTranslated(item, 'category')}
+                              </div>
+                            </div>
+                            <div className="p-6 flex-1 flex flex-col">
+                              <h3 className="font-serif font-bold text-xl mb-2 text-foreground group-hover:text-primary transition-colors line-clamp-1">{getTranslated(item, 'title')}</h3>
+                              <p className="text-muted-foreground font-sans text-sm mb-6 line-clamp-2">{getTranslated(item, 'short_description')}</p>
+                              <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/40">
+                                 <span className="text-primary font-black font-sans">{formatPrice(item.price)}</span>
+                                 <span className="text-xs font-bold text-muted-foreground font-sans uppercase tracking-widest">{item.duration}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <div className="hidden md:block">
+                  <CarouselPrevious className="-left-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white" />
+                  <CarouselNext className="-right-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white" />
+                </div>
+              </Carousel>
             </div>
           </div>
         </div>
