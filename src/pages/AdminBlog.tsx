@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableBlogPost } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Globe, Type } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Globe, Type, Sparkles, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { translateText, translateHtml } from "@/utils/translate";
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = lazy(() => import('react-quill'));
@@ -18,6 +19,7 @@ const AdminBlog = () => {
   const [editing, setEditing] = useState<Partial<LovableBlogPost> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,6 +74,39 @@ const AdminBlog = () => {
       toast({ title: "Erro", description: "Falha ao enviar imagem.", variant: "destructive" });
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const autoTranslate = async (targetLang: 'en' | 'es') => {
+    if (!editing) return;
+    if (!editing.title && !editing.content) {
+      toast({ title: "Atenção", description: "Escreva algo em Português primeiro." });
+      return;
+    }
+
+    setIsTranslating(true);
+    toast({ title: "Mágica em andamento...", description: "Traduzindo conteúdo..." });
+
+    try {
+      const title_key = targetLang === 'en' ? 'title_en' : 'title_es';
+      const content_key = targetLang === 'en' ? 'content_en' : 'content_es';
+      
+      const [translatedTitle, translatedContent] = await Promise.all([
+        translateText(editing.title || "", targetLang),
+        translateHtml(editing.content || "", targetLang)
+      ]);
+
+      setEditing({
+        ...editing,
+        [title_key]: translatedTitle,
+        [content_key]: translatedContent
+      });
+      
+      toast({ title: "Sucesso!", description: `Tradução para ${targetLang === 'en' ? 'Inglês' : 'Espanhol'} concluída.` });
+    } catch (err) {
+      toast({ title: "Erro na tradução", description: "Tente novamente daqui a pouco.", variant: "destructive" });
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -227,9 +262,9 @@ const AdminBlog = () => {
             <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2 pb-4">
                <Tabs defaultValue="portuguese" className="w-full h-full flex flex-col">
                 <TabsList className="grid w-80 grid-cols-3 mb-4">
-                  <TabsTrigger value="portuguese">Português</TabsTrigger>
-                  <TabsTrigger value="english">English</TabsTrigger>
-                  <TabsTrigger value="spanish">Español</TabsTrigger>
+                  <TabsTrigger value="portuguese">Português (PT)</TabsTrigger>
+                  <TabsTrigger value="english">English (EN)</TabsTrigger>
+                  <TabsTrigger value="spanish">Español (ES)</TabsTrigger>
                 </TabsList>
 
                 {/* Common Fields */}
@@ -258,7 +293,7 @@ const AdminBlog = () => {
                 {/* PORTUGUESE CONTENT */}
                 <TabsContent value="portuguese" className="flex-1 flex flex-col gap-4 m-0">
                   <div className="space-y-2">
-                    <Label className="font-sans font-bold">Título do Post</Label>
+                    <Label className="font-sans font-bold">Título do Post (Origem da Tradução)</Label>
                     <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} placeholder="Título em Português..." required />
                   </div>
                   <div className="flex-1 flex flex-col">
@@ -278,12 +313,22 @@ const AdminBlog = () => {
 
                 {/* ENGLISH CONTENT */}
                 <TabsContent value="english" className="flex-1 flex flex-col gap-4 m-0">
-                  <div className="space-y-2">
-                    <Label className="font-sans font-bold text-blue-600">Post Title (English)</Label>
-                    <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} placeholder="English title..." />
+                  <div className="flex items-center justify-between">
+                    <Label className="font-sans font-bold text-blue-600 uppercase tracking-tighter">Post Title & Content (EN)</Label>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => autoTranslate('en')}
+                      disabled={isTranslating}
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 font-black gap-1"
+                    >
+                      {isTranslating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                      {t("traduzir_auto") || "Traduzir via IA"} 🪄
+                    </Button>
                   </div>
+                  <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} placeholder="English title..." />
                   <div className="flex-1 flex flex-col">
-                    <Label className="mb-2 font-bold text-blue-600">Article Content (English)</Label>
                     <Suspense fallback={<div className="p-12 text-center text-muted-foreground">Loading editor...</div>}>
                       <ReactQuill 
                         theme="snow" 
@@ -291,7 +336,7 @@ const AdminBlog = () => {
                         onChange={(val) => setEditing({ ...editing, content_en: val })} 
                         className="editor-container"
                         modules={modulesEN}
-                        placeholder="Write in English..."
+                        placeholder="Clique em 'Traduzir via IA' para preencher automaticamente"
                       />
                     </Suspense>
                   </div>
@@ -299,12 +344,22 @@ const AdminBlog = () => {
 
                 {/* SPANISH CONTENT */}
                 <TabsContent value="spanish" className="flex-1 flex flex-col gap-4 m-0">
-                  <div className="space-y-2">
-                    <Label className="font-sans font-bold text-red-600">Título del Post (Español)</Label>
-                    <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} placeholder="Título en Español..." />
+                  <div className="flex items-center justify-between">
+                    <Label className="font-sans font-bold text-red-600 uppercase tracking-tighter">Título y Contenido (ES)</Label>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => autoTranslate('es')}
+                      disabled={isTranslating}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 font-black gap-1"
+                    >
+                      {isTranslating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                      {t("traduzir_auto") || "Traducir con IA"} 🪄
+                    </Button>
                   </div>
+                  <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} placeholder="Título en Español..." />
                   <div className="flex-1 flex flex-col">
-                    <Label className="mb-2 font-bold text-red-600">Contenido del Artículo (Español)</Label>
                     <Suspense fallback={<div className="p-12 text-center text-muted-foreground">Cargando editor...</div>}>
                       <ReactQuill 
                         theme="snow" 
@@ -312,7 +367,7 @@ const AdminBlog = () => {
                         onChange={(val) => setEditing({ ...editing, content_es: val })} 
                         className="editor-container"
                         modules={modulesES}
-                        placeholder="Escribe en Español..."
+                        placeholder="Haz clic en 'Traducir con IA' para autocompletar"
                       />
                     </Suspense>
                   </div>
