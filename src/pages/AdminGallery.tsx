@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Images, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadLovableFile } from "@/integrations/lovable/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES = [
@@ -87,19 +88,10 @@ const AdminGallery = () => {
     setIsUploading(true);
 
     try {
-      const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('site-images')
-        .upload(filePath, selectedFile);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('site-images')
-        .getPublicUrl(filePath);
+      const publicUrl = await uploadLovableFile(selectedFile);
+      if (!publicUrl) {
+        throw new Error("Erro ao gerar URL da imagem.");
+      }
 
       const key = `gallery__${uploadCategory}__${Date.now()}`;
       
