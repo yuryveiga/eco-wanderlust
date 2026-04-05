@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
@@ -27,6 +27,7 @@ export function TourDetail() {
   const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
@@ -82,7 +83,7 @@ export function TourDetail() {
       date: selectedDate,
       period: selectedPeriod,
       isPrivate: isPrivate,
-      quantity: 1
+      quantity: quantity
     });
 
     navigate("/carrinho");
@@ -177,7 +178,6 @@ export function TourDetail() {
           {/* Premium Image Gallery Grid: 1 Large + 3 Small */}
           <div className="grid grid-cols-1 md:grid-cols-4 h-[500px] lg:h-[600px] gap-2 lg:gap-4 mb-8">
             <div className="md:col-span-3 relative h-full rounded-3xl overflow-hidden group shadow-2xl cursor-zoom-in bg-muted/20">
-               {/* Background Blur for resize fit effect */}
                <div className="absolute inset-0 z-0">
                   <img src={images[selectedImageIdx]} alt="" className="w-full h-full object-cover blur-3xl opacity-20" />
                </div>
@@ -339,9 +339,11 @@ export function TourDetail() {
                   <div className="mb-6 pb-6 border-b text-center">
                     <span className="text-sm text-muted-foreground font-sans uppercase tracking-widest block mb-1">{t("a_partir_de")}</span>
                     <span className="text-5xl font-bold text-primary font-sans">
-                      R$ {tour.price}
+                      {formatPrice(tour.price * quantity)}
                     </span>
-                    <span className="text-muted-foreground font-sans text-sm block mt-1"> {t("por_pessoa")}</span>
+                    <span className="text-muted-foreground font-sans text-sm block mt-2"> 
+                       {quantity} {quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}
+                    </span>
                   </div>
                   
                   {(tour.allows_open || tour.allows_private) && (
@@ -383,8 +385,29 @@ export function TourDetail() {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="space-y-8 mb-8">
+                    {/* QUANTITY PICKER */}
+                    <div className="border-t pt-6">
+                       <h4 className="font-serif font-bold text-foreground mb-4 text-center">{language === 'pt' ? 'Quantas pessoas?' : 'How many people?'}</h4>
+                       <div className="flex items-center justify-between bg-muted/30 p-2 rounded-2xl border border-border/50 w-48 mx-auto">
+                          <button 
+                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                            className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-30"
+                            disabled={quantity <= 1}
+                          >
+                            <Minus className="w-5 h-5" />
+                          </button>
+                          <span className="font-sans font-black text-xl w-10 text-center">{quantity}</span>
+                          <button 
+                            onClick={() => setQuantity(Math.min(tour.max_group_size || 10, quantity + 1))}
+                            className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                       </div>
+                    </div>
+
                     {availablePeriods.length > 0 && (
                       <div className="border-t pt-6">
                         <h4 className="font-serif font-bold text-foreground mb-4 text-center">{t("qual_periodo")}</h4>
