@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { WhatsAppButton } from "./components/WhatsAppButton";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -35,6 +36,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <ThemeApplier />
+          <WhatsAppButton />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
