@@ -102,6 +102,9 @@ const AdminPages = () => {
     }
   };
 
+  const systemPageLabels = ["inicio", "início", "home", "passeios", "blog", "contato"];
+  const displayPages = pages.filter(p => !systemPageLabels.includes(p.title.toLowerCase()));
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between mb-6 shrink-0">
@@ -117,11 +120,11 @@ const AdminPages = () => {
       <div className="flex-1 overflow-auto pr-2 pb-8">
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground font-sans">Carregando...</div>
-        ) : pages.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground font-sans">Nenhuma página cadastrada.</div>
+        ) : displayPages.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground font-sans">Nenhuma página personalizada cadastrada.</div>
         ) : (
           <div className="bg-card rounded-xl border border-border/50 divide-y divide-border/50">
-            {pages.map((page) => (
+            {displayPages.map((page) => (
               <div key={page.id} className="flex items-center gap-4 p-4">
                 <GripVertical className="w-4 h-4 text-muted-foreground" />
                 <div className="flex-1">

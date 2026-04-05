@@ -50,11 +50,23 @@ export function Header() {
     }
   };
 
-  const navLinks = [
+  const baseLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
     { label: "Blog", href: "/blog" },
-    ...(pages.filter(p => p.is_visible).map((p) => ({ label: p.title, href: p.href.startsWith("/") ? p.href : `/p/${p.href}` }))),
+  ];
+
+  const cmsLinks = pages
+    .filter(p => p.is_visible)
+    .map((p) => ({ 
+      label: p.title, 
+      href: p.href.startsWith("/") || p.href.startsWith("http") ? p.href : `/p/${p.href}` 
+    }));
+
+  // Deduplicate and merge: hardcoded base links + CMS links that don't match base labels
+  const navLinks = [
+    ...baseLinks,
+    ...cmsLinks.filter(cms => !baseLinks.some(base => base.label.toLowerCase() === cms.label.toLowerCase())),
     { label: t("contato"), href: "#contact" },
   ];
 
