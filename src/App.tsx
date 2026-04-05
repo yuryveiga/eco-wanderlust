@@ -13,6 +13,7 @@ import AdminTours from "./pages/AdminTours.tsx";
 import AdminPages from "./pages/AdminPages.tsx";
 import AdminImages from "./pages/AdminImages.tsx";
 import AdminSocial from "./pages/AdminSocial.tsx";
+import { TourDetail } from "./pages/TourDetail";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/passeio/:id" element={<TourDetail />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="tours" element={<AdminTours />} />

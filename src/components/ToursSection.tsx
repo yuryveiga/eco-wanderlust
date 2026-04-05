@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
@@ -22,7 +23,7 @@ type TourCardProps = {
 
 function TourCard({ tour }: { tour: TourCardProps }) {
   return (
-    <div className="bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+    <Link to={`/passeio/${tour.id}`} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-56 overflow-hidden">
         <img src={tour.image_url} alt={tour.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
@@ -47,7 +48,7 @@ function TourCard({ tour }: { tour: TourCardProps }) {
           <Button size="sm" className="font-sans">Reservar</Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
