@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export function GallerySection() {
   const { images } = useSiteData();
@@ -39,7 +40,7 @@ export function GallerySection() {
   const nextImage = () => setSelectedIndex((prev) => prev! < galleryImages.length - 1 ? prev! + 1 : 0);
 
   return (
-    <section className="py-20 lg:py-28 bg-muted/30">
+    <section className="py-20 lg:py-28 bg-muted/30 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 lg:mb-16">
           <div className="flex items-center justify-center gap-2 mb-3">
@@ -53,24 +54,39 @@ export function GallerySection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {galleryImages.map((img, index) => (
-            <button
-              key={img.key}
-              onClick={() => openLightbox(index)}
-              className="relative aspect-square rounded-xl overflow-hidden group bg-card"
-            >
-              <img
-                src={img.url}
-                alt={img.key}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                <Images className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            </button>
-          ))}
+        <div className="px-12">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-3 md:-ml-4">
+              {galleryImages.map((img, index) => (
+                <CarouselItem key={img.key} className="pl-3 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="p-1">
+                    <button
+                      onClick={() => openLightbox(index)}
+                      className="relative w-full aspect-square rounded-xl overflow-hidden group bg-card border"
+                    >
+                      <img
+                        src={img.url}
+                        alt={img.key}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                        <Images className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                    </button>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="-left-12 lg:-left-16 w-12 h-12" />
+            <CarouselNext className="-right-12 lg:-right-16 w-12 h-12" />
+          </Carousel>
         </div>
       </div>
 
@@ -113,7 +129,7 @@ export function GallerySection() {
             <ChevronRight className="w-6 h-6 text-white" />
           </button>
           
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full">
             {selectedIndex + 1} / {galleryImages.length}
           </div>
         </div>

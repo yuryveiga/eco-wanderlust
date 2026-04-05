@@ -7,6 +7,8 @@ import { Trash2, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
 const PRESET_KEYS = [
   { key: "logo", label: "Logo do Site" },
   { key: "hero_bg", label: "Fundo do Hero Principal" },
+  { key: "hero_bg_2", label: "Fundo do Hero (Opção 2)" },
+  { key: "hero_bg_3", label: "Fundo do Hero (Opção 3)" },
   { key: "about_1", label: "Sobre a Eco-Wanderlust - Imagem 1" },
   { key: "about_2", label: "Sobre a Eco-Wanderlust - Imagem 2" },
   { key: "about_3", label: "Sobre a Eco-Wanderlust - Imagem 3" },

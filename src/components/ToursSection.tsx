@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type TourCardProps = {
   id: string;
@@ -16,13 +17,15 @@ type TourCardProps = {
 };
 
 function TourCard({ tour }: { tour: TourCardProps }) {
+  const { t, formatPrice } = useLocale();
+
   return (
     <Link to={`/passeio/${tour.id}`} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-56 overflow-hidden">
         <img src={tour.image_url} alt={tour.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
           <div className="absolute top-4 left-4 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full font-sans flex items-center gap-1">
-            <Star className="w-3 h-3 fill-current" />Destaque
+            <Star className="w-3 h-3 fill-current" /> Destaque
           </div>
         )}
         <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium px-3 py-1 rounded-full font-sans">{tour.category}</div>
@@ -32,14 +35,14 @@ function TourCard({ tour }: { tour: TourCardProps }) {
         <p className="text-muted-foreground text-sm mb-4 font-sans line-clamp-2">{tour.short_description}</p>
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 font-sans">
           <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{tour.duration}</span></div>
-          <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>Até {tour.max_group_size} pessoas</span></div>
+          <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>Max {tour.max_group_size}</span></div>
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-2xl font-bold text-primary font-sans">R$ {tour.price}</span>
-            <span className="text-muted-foreground text-sm font-sans"> /pessoa</span>
+            <span className="text-2xl font-bold text-primary font-sans">{formatPrice(tour.price)}</span>
+            <span className="text-muted-foreground text-sm font-sans"> / {t("por_pessoa")}</span>
           </div>
-          <Button size="sm" className="font-sans">Reservar</Button>
+          <Button size="sm" className="font-sans">{t("reservar")}</Button>
         </div>
       </div>
     </Link>
@@ -48,15 +51,18 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 
 export function ToursSection() {
   const { tours, isLoading } = useSiteData();
+  const { t } = useLocale();
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 lg:mb-16">
-          <p className="text-primary font-medium mb-3 font-sans">Nossos Passeios</p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">Experiências Inesquecíveis</h2>
+          <p className="text-primary font-medium mb-3 font-sans">{t("passeios")}</p>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
+            {t("conhecaPasseios")}
+          </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-            Escolha entre nossa seleção de passeios cuidadosamente planejados, cada um projetado para proporcionar momentos únicos na Cidade Maravilhosa.
+            {t("conheca_sub")}
           </p>
         </div>
         {isLoading ? (
