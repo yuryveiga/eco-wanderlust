@@ -17,8 +17,13 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
 );
 
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+
+-- Remove as políticas antigas para evitar erro de duplicação caso rode duas vezes
+DROP POLICY IF EXISTS "Public can view settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Admins can modify settings" ON public.site_settings;
+
 CREATE POLICY "Public can view settings" ON public.site_settings FOR SELECT USING (true);
-CREATE POLICY "Admins can modify settings" ON public.site_settings USING (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can modify settings" ON public.site_settings USING (public.has_role(auth.uid(), 'admin'::public.app_role));
 
 -- Inserir estilo padrão para que não fique vazio
 INSERT INTO public.site_settings (key, value) VALUES ('hero_style', 'style1') ON CONFLICT (key) DO NOTHING;
@@ -36,5 +41,10 @@ CREATE TABLE IF NOT EXISTS public.blog_posts (
 );
 
 ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+
+-- Remove as políticas antigas para evitar erro de duplicação
+DROP POLICY IF EXISTS "Public can view published posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Admins can modify blog" ON public.blog_posts;
+
 CREATE POLICY "Public can view published posts" ON public.blog_posts FOR SELECT USING (is_published = true);
-CREATE POLICY "Admins can modify blog" ON public.blog_posts USING (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can modify blog" ON public.blog_posts USING (public.has_role(auth.uid(), 'admin'::public.app_role));
