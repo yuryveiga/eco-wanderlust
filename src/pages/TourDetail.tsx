@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
-  const { tours } = useSiteData();
+  const { tours, isLoading } = useSiteData();
   const [currentImage, setCurrentImage] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -43,6 +43,15 @@ export function TourDetail() {
     }
   }, [tour]);
   
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+        <p className="mt-4 font-sans text-muted-foreground">Carregando passeio...</p>
+      </main>
+    );
+  }
+
   if (!tour) {
     return (
       <main>
