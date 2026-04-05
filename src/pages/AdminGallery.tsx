@@ -27,8 +27,8 @@ const AdminGallery = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   // Form Upload state
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploadCategory, setUploadCategory] = useState("todas");
   const [uploadLabel, setUploadLabel] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -58,20 +58,22 @@ const AdminGallery = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setSelectedFiles(fileArray);
+      
+      const urls = fileArray.map(file => URL.createObjectURL(file));
+      // Cleanup old preview URLs
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      setPreviewUrls(urls);
     }
   };
 
   const clearForm = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
+    setSelectedFiles([]);
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    setPreviewUrls([]);
     setUploadLabel("");
     setUploadCategory("todas");
     if (fileInputRef.current) {
@@ -80,37 +82,43 @@ const AdminGallery = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      toast({ title: "Aviso", description: "Selecione uma imagem primeiro.", variant: "destructive" });
+    if (selectedFiles.length === 0) {
+      toast({ title: "Aviso", description: "Selecione ao menos uma imagem primeiro.", variant: "destructive" });
       return;
     }
 
     setIsUploading(true);
+    let successCount = 0;
 
     try {
-      const publicUrl = await uploadLovableFile(selectedFile);
-      if (!publicUrl) {
-        throw new Error("Erro ao gerar URL da imagem.");
+      for (const selectedFile of selectedFiles) {
+        const publicUrl = await uploadLovableFile(selectedFile);
+        if (!publicUrl) continue;
+
+        const key = `gallery__${uploadCategory}__${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+        
+        const { error: insertError } = await supabase
+          .from('site_images')
+          .insert({
+            key,
+            image_url: publicUrl,
+            label: selectedFiles.length > 1 ? `${uploadLabel || 'Galeria'} (${successCount + 1})` : uploadLabel
+          });
+
+        if (insertError) throw insertError;
+        successCount++;
       }
 
-      const key = `gallery__${uploadCategory}__${Date.now()}`;
-      
-      const { error: insertError } = await supabase
-        .from('site_images')
-        .insert({
-          key,
-          image_url: publicUrl,
-          label: uploadLabel
-        });
-
-      if (insertError) throw insertError;
-
-      toast({ title: "Foto salva com sucesso!" });
-      clearForm();
-      await loadImages();
-    } catch (error) {
+      if (successCount > 0) {
+        toast({ title: `${successCount} foto(s) salva(s) com sucesso!` });
+        clearForm();
+        await loadImages();
+      } else {
+        throw new Error("Nenhuma imagem foi salva corretamente.");
+      }
+    } catch (error: any) {
       console.error(error);
-      toast({ title: "Erro", description: "Ocorreu um erro no upload da imagem.", variant: "destructive" });
+      toast({ title: "Erro", description: error.message || "Ocorreu um erro no upload da imagem.", variant: "destructive" });
     } finally {
       setIsUploading(false);
     }
@@ -181,7 +189,7 @@ const AdminGallery = () => {
           <Input 
             value={uploadLabel} 
             onChange={(e) => setUploadLabel(e.target.value)} 
-            placeholder="Legenda (opcional)" 
+            placeholder="Legenda compartilhada (opcional)" 
             className="flex-1 bg-background"
           />
           <div className="w-full md:w-64">
@@ -204,19 +212,25 @@ const AdminGallery = () => {
               ref={fileInputRef} 
               type="file" 
               accept="image/*" 
+              multiple
               onChange={handleFileChange} 
               className="absolute inset-0 opacity-0 cursor-pointer hidden" 
             />
              <div className="bg-muted px-4 py-2 border-r text-sm whitespace-nowrap cursor-pointer hover:bg-muted/80">Escolher arquivos</div>
              <div className="text-sm text-muted-foreground truncate ml-2">
-                 {selectedFile ? selectedFile.name : "Nenhum arquivo escolhido"}
+                 {selectedFiles.length > 0 ? `${selectedFiles.length} arquivo(s) selecionado(s)` : "Nenhum arquivo escolhido"}
              </div>
           </div>
-          {previewUrl && (
-            <img src={previewUrl} alt="Preview" className="h-10 w-16 object-cover rounded" />
+          {previewUrls.length > 0 && (
+            <div className="flex gap-1 overflow-hidden max-w-[120px]">
+               {previewUrls.slice(0, 3).map((url, i) => (
+                  <img key={i} src={url} alt="Preview" className="h-10 w-10 object-cover rounded" />
+               ))}
+               {previewUrls.length > 3 && <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs font-semibold">+{previewUrls.length - 3}</div>}
+            </div>
           )}
-          <Button onClick={handleUpload} disabled={isUploading || !selectedFile} className="w-full md:w-auto">
-            {isUploading ? "Enviando..." : "Adicionar Foto"}
+          <Button onClick={handleUpload} disabled={isUploading || selectedFiles.length === 0} className="w-full md:w-auto">
+            {isUploading ? "Enviando..." : "Adicionar Fotos"}
           </Button>
         </div>
       </div>

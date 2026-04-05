@@ -36,41 +36,53 @@ export async function fetchLovable<T>(table: string): Promise<T[]> {
     const { data, error } = await supabase.from(table as any).select('*');
     if (error) throw error;
     return (data || []) as T[];
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error fetching ${table}:`, error);
+    alert(`Erro ao carregar ${table}: ` + error?.message);
     return [];
   }
 }
 
 export async function insertLovable<T extends { id?: string }>(table: string, data: T): Promise<T | null> {
   try {
-    const { id, ...insertData } = data; // Prevent forcing empty/invalid ID
+    // Strip id, created_at, updated_at out of the data to avoid Postgres primary key or timestamp errors
+    const sanitizedData = { ...data } as any;
+    delete sanitizedData.id;
+    delete sanitizedData.created_at;
+    delete sanitizedData.updated_at;
     
     const { data: result, error } = await supabase
       .from(table as any)
-      .insert(insertData)
+      .insert(sanitizedData)
       .select()
       .single();
       
     if (error) throw error;
     return result as T;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error inserting ${table}:`, error);
+    alert(`Erro ao salvar no banco (${table}): \n\n` + JSON.stringify(error));
     return null;
   }
 }
 
 export async function updateLovable<T>(table: string, id: string, data: Partial<T>): Promise<boolean> {
   try {
+    const sanitizedData = { ...data } as any;
+    delete sanitizedData.id;
+    delete sanitizedData.created_at;
+    delete sanitizedData.updated_at;
+
     const { error } = await supabase
       .from(table as any)
-      .update(data)
+      .update(sanitizedData)
       .eq('id', id);
       
     if (error) throw error;
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error updating ${table}:`, error);
+    alert(`Erro ao atualizar no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }
 }
@@ -84,8 +96,9 @@ export async function deleteLovable(table: string, id: string): Promise<boolean>
       
     if (error) throw error;
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error deleting ${table}:`, error);
+    alert(`Erro ao excluir no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }
 }
