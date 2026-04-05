@@ -7,6 +7,8 @@ import { Calendar, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
+import { Helmet } from "react-helmet-async";
+import { useSiteData } from "@/hooks/useSiteData";
 import "react-quill/dist/quill.snow.css";
 
 const BlogPost = () => {
@@ -14,8 +16,10 @@ const BlogPost = () => {
   const [post, setPost] = useState<LovableBlogPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
+  const { siteSettings } = useSiteData();
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
+  const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -51,9 +55,16 @@ const BlogPost = () => {
 
   const title = getTranslated('title');
   const content = getTranslated('content');
+  const excerpt = getTranslated('excerpt');
 
   return (
-    <div className="min-h-screen flex flex-col pt-20">
+    <div className="min-h-screen flex flex-col pt-20 font-sans">
+      <Helmet>
+        <title>{title} | {siteTitle}</title>
+        <meta name="description" content={excerpt || title} />
+        <meta property="og:title" content={`${title} | ${siteTitle}`} />
+        {post.image_url && <meta property="og:image" content={post.image_url} />}
+      </Helmet>
       <Header />
       
       <main className="flex-1 bg-background pb-16">
@@ -84,6 +95,7 @@ const BlogPost = () => {
             
             <div 
               className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor"
+              style={{ padding: 0 }}
               dangerouslySetInnerHTML={{ __html: content || "" }}
             />
           </div>

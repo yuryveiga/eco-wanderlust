@@ -19,7 +19,7 @@ import {
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tours, isLoading } = useSiteData();
+  const { tours, isLoading, siteSettings } = useSiteData();
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -30,6 +30,7 @@ export function TourDetail() {
   const [quantity, setQuantity] = useState(1);
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
+  const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
 
   const getTranslated = (obj: any, field: string) => {
     if (!obj) return "";
@@ -167,7 +168,7 @@ export function TourDetail() {
   return (
     <main className="min-h-screen bg-background font-sans">
       <Helmet>
-        <title>{translatedTitle} | Eco-Wanderlust</title>
+        <title>{translatedTitle} | {siteTitle}</title>
         <meta name="description" content={translatedShortDesc || "Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."} />
         <meta property="og:title" content={`${translatedTitle} | Eco-Wanderlust`} />
         <meta property="og:description" content={translatedShortDesc} />
