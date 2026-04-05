@@ -16,6 +16,14 @@ export function TourDetail() {
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
+  const availablePeriods = tour ? [
+    { id: 'morning', label: 'Manhã', active: tour.has_morning !== false, Icon: Sunrise },
+    { id: 'afternoon', label: 'Tarde', active: tour.has_afternoon === true, Icon: Sun },
+    { id: 'night', label: 'Noite', active: tour.has_night === true, Icon: Moon },
+  ].filter(p => p.active) : [];
+
+  const [selectedPeriod, setSelectedPeriod] = useState('morning');
+
   useEffect(() => {
     if (tour) {
       // If only private is allowed, default to it
@@ -23,6 +31,10 @@ export function TourDetail() {
         setIsPrivate(true);
       } else {
         setIsPrivate(false);
+      }
+
+      if (availablePeriods.length > 0) {
+        setSelectedPeriod(availablePeriods[0].id);
       }
     }
   }, [tour]);
@@ -78,13 +90,7 @@ export function TourDetail() {
     }
   };
 
-  const availablePeriods = [
-    { id: 'morning', label: 'Manhã', active: tour.has_morning !== false, Icon: Sunrise },
-    { id: 'afternoon', label: 'Tarde', active: tour.has_afternoon === true, Icon: Sun },
-    { id: 'night', label: 'Noite', active: tour.has_night === true, Icon: Moon },
-  ].filter(p => p.active);
 
-  const [selectedPeriod, setSelectedPeriod] = useState(availablePeriods[0]?.id || 'morning');
 
   return (
     <main className="min-h-screen bg-background">
