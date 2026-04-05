@@ -79,7 +79,7 @@ export function TourDetail() {
       id: tour.id,
       title: translatedTitle,
       price: tour.price,
-      image_url: tour.image_url || "",
+      image_url: tour.image_url || images[0],
       date: selectedDate,
       period: selectedPeriod,
       isPrivate: isPrivate,
@@ -175,45 +175,41 @@ export function TourDetail() {
             <span className="text-foreground">{translatedTitle}</span>
           </nav>
 
-          {/* Premium Image Gallery Grid: 1 Large + 3 Small */}
-          <div className="grid grid-cols-1 md:grid-cols-4 h-[500px] lg:h-[600px] gap-2 lg:gap-4 mb-8">
-            <div className="md:col-span-3 relative h-full rounded-3xl overflow-hidden group shadow-2xl cursor-zoom-in bg-muted/20">
-               <div className="absolute inset-0 z-0">
-                  <img src={images[selectedImageIdx]} alt="" className="w-full h-full object-cover blur-3xl opacity-20" />
-               </div>
-               <img 
-                 src={images[selectedImageIdx]} 
-                 alt={tour.title} 
-                 className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-all duration-1000" 
-               />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-20" />
-            </div>
-
-            <div className="hidden md:grid grid-rows-3 gap-2 lg:gap-4 h-full">
-              {[1, 2, 3].map((idx) => (
-                <div 
-                  key={idx}
-                  className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all duration-300 ${selectedImageIdx === idx ? "ring-4 ring-primary ring-offset-2 scale-95" : "border-border/10 hover:border-primary/50"}`}
-                  onClick={() => handleImageSwap(idx)}
-                >
-                   <img 
-                     src={images[idx] || images[0]} 
-                     alt={`Gallery ${idx}`} 
-                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                   />
-                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                   {selectedImageIdx === idx && (
-                     <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                        <Check className="text-primary w-8 h-8 drop-shadow-lg" />
-                     </div>
-                   )}
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+               {/* Fixed Gallery Grid inside the content area for better alignment */}
+               <div className="grid grid-cols-1 md:grid-cols-4 aspect-video md:aspect-[2/1] gap-2 lg:gap-3 mb-4 rounded-3xl overflow-hidden shadow-2xl bg-muted/20">
+                  <div className="md:col-span-3 relative h-full group cursor-zoom-in">
+                    <img 
+                      src={images[selectedImageIdx]} 
+                      alt={tour.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-20" />
+                  </div>
+
+                  <div className="hidden md:grid grid-rows-3 gap-2 lg:gap-3 h-full">
+                    {[1, 2, 3].map((idx) => (
+                      <div 
+                        key={idx}
+                        className={`relative h-full overflow-hidden group cursor-pointer transition-all duration-300 ${selectedImageIdx === idx ? "ring-4 ring-primary inset-0 z-30" : "opacity-80 hover:opacity-100"}`}
+                        onClick={() => handleImageSwap(idx)}
+                      >
+                        <img 
+                          src={images[idx] || images[0]} 
+                          alt={`Gallery ${idx}`} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                        />
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                        {selectedImageIdx === idx && (
+                          <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                              <Check className="text-primary w-8 h-8 drop-shadow-lg" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+               </div>
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <div className="flex items-start justify-between gap-4 mb-4">
