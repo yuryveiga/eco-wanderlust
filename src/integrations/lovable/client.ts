@@ -9,7 +9,10 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
       .from('site-images')
       .upload(fileName, file);
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      alert(`ERRO DE BUCKET (Storage): Não foi possível salvar a imagem no servidor.\nDetalhe: ${uploadError.message}`);
+      throw uploadError;
+    }
 
     const { data: { publicUrl } } = supabase.storage
       .from('site-images')
@@ -18,7 +21,8 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
     return publicUrl;
   } catch (error) {
     console.error("Upload error:", error);
-    return await fileToBase64(file);
+    // Retorna nulo para barrar inserção se o upload falhar
+    return null;
   }
 }
 
