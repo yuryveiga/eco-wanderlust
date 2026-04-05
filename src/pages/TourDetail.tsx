@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
@@ -107,6 +108,15 @@ export function TourDetail() {
 
   return (
     <main className="min-h-screen bg-background">
+      <Helmet>
+        <title>{tour.title} | Eco-Wanderlust</title>
+        <meta name="description" content={tour.short_description || "Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."} />
+        <meta property="og:title" content={`${tour.title} | Eco-Wanderlust`} />
+        <meta property="og:description" content={tour.short_description} />
+        {tour.image_url && <meta property="og:image" content={tour.image_url} />}
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={window.location.href} />
+      </Helmet>
       <Header />
 
       <div className="pt-20">

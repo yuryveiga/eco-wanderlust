@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { HelmetProvider } from "react-helmet-async";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -32,7 +33,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <LocaleProvider>
-        <TooltipProvider>
+        <HelmetProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <ThemeApplier />
@@ -59,7 +61,8 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </LocaleProvider>
+      </HelmetProvider>
+    </LocaleProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
