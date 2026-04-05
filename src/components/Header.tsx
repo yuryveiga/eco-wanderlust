@@ -57,7 +57,7 @@ export function Header() {
   ];
 
   const cmsLinks = pages
-    .filter(p => p.is_visible)
+    .filter(p => p.is_visible && p.href && p.href.trim() !== "" && p.href.trim() !== "/")
     .map((p) => ({ 
       label: p.title, 
       href: p.href.startsWith("/") || p.href.startsWith("http") ? p.href : `/p/${p.href}` 

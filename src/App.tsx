@@ -5,22 +5,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import AdminLogin from "./pages/AdminLogin.tsx";
-import AdminLayout from "./pages/AdminLayout.tsx";
-import AdminDashboard from "./pages/AdminDashboard.tsx";
-import AdminTours from "./pages/AdminTours.tsx";
-import AdminPages from "./pages/AdminPages.tsx";
-import AdminImages from "./pages/AdminImages.tsx";
-import AdminSocial from "./pages/AdminSocial.tsx";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
+import AdminLayout from "./pages/AdminLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminTours from "./pages/AdminTours";
+import AdminPages from "./pages/AdminPages";
+import AdminImages from "./pages/AdminImages";
+import AdminSocial from "./pages/AdminSocial";
 import AdminGallery from "./pages/AdminGallery";
 import AdminBlog from "./pages/AdminBlog";
 import AdminHero from "./pages/AdminHero";
+import AdminTheme from "./pages/AdminTheme";
 import { TourDetail } from "./pages/TourDetail";
-import Blog from "./pages/Blog.tsx";
-import BlogPost from "./pages/BlogPost.tsx";
-import GenericPage from "./pages/GenericPage.tsx";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import GenericPage from "./pages/GenericPage";
+import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ThemeApplier />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -43,6 +46,7 @@ const App = () => (
                 <Route path="blog" element={<AdminBlog />} />
                 <Route path="pages" element={<AdminPages />} />
                 <Route path="hero" element={<AdminHero />} />
+                <Route path="theme" element={<AdminTheme />} />
                 <Route path="tours" element={<AdminTours />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="social" element={<AdminSocial />} />
