@@ -1,25 +1,24 @@
-const LOVABLE_API = "https://nature-gateway-global.lovable.app/api";
+import { supabase } from "@/integrations/supabase/client";
 
 export async function uploadLovableFile(file: File): Promise<string | null> {
   try {
-    const formData = new FormData();
-    formData.append("file", file);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('site-images')
+      .upload(fileName, file);
 
-    const response = await fetch(`${LOVABLE_API}/upload`, {
-      method: "POST",
-      body: formData,
-    });
+    if (uploadError) throw uploadError;
 
-    if (response.ok) {
-      const data = await response.json();
-      return data.url || data.path || data.fileUrl;
-    }
+    const { data: { publicUrl } } = supabase.storage
+      .from('site-images')
+      .getPublicUrl(fileName);
 
-    const base64 = await fileToBase64(file);
-    return base64;
-  } catch {
-    const base64 = await fileToBase64(file);
-    return base64;
+    return publicUrl;
+  } catch (error) {
+    console.error("Upload error:", error);
+    return await fileToBase64(file);
   }
 }
 
@@ -34,24 +33,27 @@ export function fileToBase64(file: File): Promise<string> {
 
 export async function fetchLovable<T>(table: string): Promise<T[]> {
   try {
-    const response = await fetch(`${LOVABLE_API}/database/${table}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+    const { data, error } = await supabase.from(table as any).select('*');
+    if (error) throw error;
+    return (data || []) as T[];
   } catch (error) {
     console.error(`Error fetching ${table}:`, error);
     return [];
   }
 }
 
-export async function insertLovable<T>(table: string, data: T): Promise<T | null> {
+export async function insertLovable<T extends { id?: string }>(table: string, data: T): Promise<T | null> {
   try {
-    const response = await fetch(`${LOVABLE_API}/database/${table}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+    const { id, ...insertData } = data; // Prevent forcing empty/invalid ID
+    
+    const { data: result, error } = await supabase
+      .from(table as any)
+      .insert(insertData)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return result as T;
   } catch (error) {
     console.error(`Error inserting ${table}:`, error);
     return null;
@@ -60,12 +62,13 @@ export async function insertLovable<T>(table: string, data: T): Promise<T | null
 
 export async function updateLovable<T>(table: string, id: string, data: Partial<T>): Promise<boolean> {
   try {
-    const response = await fetch(`${LOVABLE_API}/database/${table}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.ok;
+    const { error } = await supabase
+      .from(table as any)
+      .update(data)
+      .eq('id', id);
+      
+    if (error) throw error;
+    return true;
   } catch (error) {
     console.error(`Error updating ${table}:`, error);
     return false;
@@ -74,10 +77,13 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
 
 export async function deleteLovable(table: string, id: string): Promise<boolean> {
   try {
-    const response = await fetch(`${LOVABLE_API}/database/${table}/${id}`, {
-      method: "DELETE",
-    });
-    return response.ok;
+    const { error } = await supabase
+      .from(table as any)
+      .delete()
+      .eq('id', id);
+      
+    if (error) throw error;
+    return true;
   } catch (error) {
     console.error(`Error deleting ${table}:`, error);
     return false;
