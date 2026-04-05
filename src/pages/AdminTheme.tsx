@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, updateLovable, LovableSiteSetting } from "@/integrations/lovable/client";
-import { Save, RotateCcw, Palette } from "lucide-react";
+import { Save, RotateCcw, Palette, CreditCard, ExternalLink } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Helper to convert HEX to HSL numbers string (e.g. "145 45% 28%")
 function hexToHslNumbers(hex: string): string {
   let r = 0, g = 0, b = 0;
-  // 3 digits
   if (hex.length === 4) {
     r = parseInt(hex[1] + hex[1], 16);
     g = parseInt(hex[2] + hex[2], 16);
     b = parseInt(hex[3] + hex[3], 16);
   }
-  // 6 digits
   else if (hex.length === 7) {
     r = parseInt(hex.substring(1, 3), 16);
     g = parseInt(hex.substring(3, 5), 16);
@@ -39,7 +39,7 @@ function hexToHslNumbers(hex: string): string {
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
-// Helper to convert HSL numbers string back to HEX (rough approximation for input value)
+// Helper to convert HSL numbers string back to HEX
 function hslNumbersToHex(hslStr: string): string {
   const parts = hslStr.split(" ");
   if (parts.length < 3) return "#000000";
@@ -85,9 +85,9 @@ const AdminTheme = () => {
     const settingsMap: Record<string, string> = {};
     data.forEach(s => settingsMap[s.key] = s.value);
     
-    // Set defaults if not present
     if (!settingsMap['theme_primary']) settingsMap['theme_primary'] = "145 45% 28%"; 
     if (!settingsMap['theme_accent']) settingsMap['theme_accent'] = "42 80% 55%";
+    if (!settingsMap['stripe_payment_link']) settingsMap['stripe_payment_link'] = "";
     
     setSettings(settingsMap);
     setIsLoading(false);
@@ -96,13 +96,15 @@ const AdminTheme = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const keys = ['theme_primary', 'theme_accent'];
+      const keys = Object.keys(settings);
       for (const key of keys) {
         await updateLovable("site_settings", key, { value: settings[key] });
       }
-      toast({ title: "Cores atualizadas!", description: "As novas cores foram aplicadas ao site." });
-      // Force reload to apply styles immediately (or we can use the applier)
-      window.location.reload();
+      toast({ title: "Configurações atualizadas!", description: "As mudanças foram salvas com sucesso." });
+      // Reload on color change or wait
+      if (settings['theme_primary'] !== settings['theme_primary_old']) {
+         // window.location.reload();
+      }
     } catch {
       toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
@@ -115,76 +117,156 @@ const AdminTheme = () => {
     setSettings(prev => ({ ...prev, [key]: hsl }));
   };
 
-  if (isLoading) return <div className="p-8 text-center">Carregando configurações...</div>;
+  if (isLoading) return <div className="p-8 text-center animate-pulse">Carregando configurações...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8 font-sans">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-bold text-foreground flex items-center gap-2">
-            <Palette className="w-8 h-8 text-primary" />
-            Cores do Site
+            Configurações do Site
           </h1>
-          <p className="text-muted-foreground font-sans mt-1">Personalize a identidade visual do seu site em tempo real.</p>
+          <p className="text-muted-foreground mt-1">Gerencie a aparência e integrações do seu site.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.location.reload()}>
             <RotateCcw className="w-4 h-4 mr-2" />Descartar
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
+          <Button onClick={handleSave} disabled={isSaving} className="font-bold">
             <Save className="w-4 h-4 mr-2" />
-            {isSaving ? "Salvando..." : "Salvar Alterações"}
+            {isSaving ? "Salvando..." : "Salvar Tudo"}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Primary Color */}
-        <div className="bg-card rounded-2xl border p-6 space-y-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <Label className="text-lg font-bold">Cor Principal (Verde/Marca)</Label>
-            <div 
-              className="w-12 h-12 rounded-full border-4 border-white shadow-lg" 
-              style={{ backgroundColor: `hsl(${settings['theme_primary']})` }}
-            />
-          </div>
-          <p className="text-sm text-muted-foreground">Usada em botões principais, ícones de destaque e elementos da marca.</p>
-          <input 
-            type="color" 
-            value={hslNumbersToHex(settings['theme_primary'] || "145 45% 28%")} 
-            onChange={(e) => updateColor('theme_primary', e.target.value)}
-            className="w-full h-12 rounded-lg cursor-pointer"
-          />
-        </div>
+      <Tabs defaultValue="visual" className="w-full">
+        <TabsList className="grid w-96 grid-cols-2 mb-8">
+          <TabsTrigger value="visual" className="font-bold flex gap-2">
+            <Palette className="w-4 h-4" /> Visual
+          </TabsTrigger>
+          <TabsTrigger value="payments" className="font-bold flex gap-2">
+            <CreditCard className="w-4 h-4" /> Pagamentos
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Accent Color */}
-        <div className="bg-card rounded-2xl border p-6 space-y-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <Label className="text-lg font-bold">Cor de Destaque (Laranja/Coral)</Label>
-            <div 
-              className="w-12 h-12 rounded-full border-4 border-white shadow-lg" 
-              style={{ backgroundColor: `hsl(${settings['theme_accent']})` }}
-            />
-          </div>
-          <p className="text-sm text-muted-foreground">Usada para chamar atenção, como no banner do blog e botões de ação secundários.</p>
-          <input 
-            type="color" 
-            value={hslNumbersToHex(settings['theme_accent'] || "42 80% 55%")} 
-            onChange={(e) => updateColor('theme_accent', e.target.value)}
-            className="w-full h-12 rounded-lg cursor-pointer"
-          />
-        </div>
-      </div>
+        <TabsContent value="visual" className="space-y-8 mt-0 border-none p-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Primary Color */}
+            <div className="bg-card rounded-2xl border p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <Label className="text-lg font-bold">Cor Principal</Label>
+                <div 
+                  className="w-12 h-12 rounded-full border-4 border-white shadow-lg" 
+                  style={{ backgroundColor: `hsl(${settings['theme_primary']})` }}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">Botões de ação principal, ícones de destaque e identidade da marca.</p>
+              <input 
+                type="color" 
+                value={hslNumbersToHex(settings['theme_primary'] || "145 45% 28%")} 
+                onChange={(e) => updateColor('theme_primary', e.target.value)}
+                className="w-full h-14 rounded-xl cursor-pointer border-none p-1 bg-muted/20"
+              />
+            </div>
 
-      <div className="bg-primary/5 rounded-2xl p-6 border border-primary/20">
-        <h3 className="font-bold text-primary mb-2">Dica de Design</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Tente manter um contraste harmônico. Cores muito claras podem dificultar a leitura de textos brancos sobrepostos. 
-          O verde escuro e o laranja coral são a base da identidade do Eco-Wanderlust.
-        </p>
-      </div>
+            {/* Accent Color */}
+            <div className="bg-card rounded-2xl border p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <Label className="text-lg font-bold">Cor de Destaque</Label>
+                <div 
+                  className="w-12 h-12 rounded-full border-4 border-white shadow-lg" 
+                  style={{ backgroundColor: `hsl(${settings['theme_accent']})` }}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">Elementos que chamam atenção, alertas e botões secundários.</p>
+              <input 
+                type="color" 
+                value={hslNumbersToHex(settings['theme_accent'] || "42 80% 55%")} 
+                onChange={(e) => updateColor('theme_accent', e.target.value)}
+                className="w-full h-14 rounded-xl cursor-pointer border-none p-1 bg-muted/20"
+              />
+            </div>
+          </div>
+          
+          <div className="bg-primary/5 rounded-3xl p-8 border border-primary/20 flex gap-6 items-center">
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+               <Palette className="w-8 h-8 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-bold text-primary text-lg mb-1">Harmonia Visual</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                As mudanças de cor são aplicadas globalmente. O verde escuro (#2A9D8F) e o coral (#E76F51) são sugeridos para manter o tema ecológico e vibrante do Rio.
+              </p>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="payments" className="space-y-8 mt-0 border-none p-0">
+           <div className="bg-card rounded-3xl border p-10 shadow-sm max-w-3xl">
+              <div className="flex items-center gap-4 mb-8">
+                 <div className="w-14 h-14 rounded-2xl bg-blue-600/10 flex items-center justify-center">
+                    <CreditCard className="w-8 h-8 text-blue-600" />
+                 </div>
+                 <div>
+                    <h3 className="text-2xl font-bold font-serif">Integração Stripe</h3>
+                    <p className="text-muted-foreground text-sm font-sans">Configure como o cliente realiza o pagamento no carrinho.</p>
+                 </div>
+              </div>
+
+              <div className="space-y-6">
+                 <div className="space-y-3">
+                    <Label className="text-base font-bold flex items-center gap-2">
+                       Link de Pagamento Stripe (Stripe Payment Link)
+                       <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1 text-[10px] font-black uppercase">
+                          Gerar no Stripe <ExternalLink className="w-3 h-3" />
+                       </a>
+                    </Label>
+                    <Input 
+                      value={settings['stripe_payment_link'] || ""} 
+                      onChange={(e) => setSettings(prev => ({ ...prev, stripe_payment_link: e.target.value }))}
+                      placeholder="https://buy.stripe.com/..." 
+                      className="h-14 px-6 rounded-2xl font-mono text-xs border-2 focus:border-blue-600"
+                    />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Ao clicar em "Pagar" no carrinho, o cliente será redirecionado para este link. Recomendamos criar um link com "preço variável" ou um checkout geral no seu painel do Stripe.
+                    </p>
+                 </div>
+              </div>
+
+              <div className="mt-10 pt-10 border-t flex gap-4 items-start bg-muted/20 -mx-10 px-10 pb-10 rounded-b-3xl">
+                 <ShieldCheck className="w-12 h-12 text-green-600 shrink-0" />
+                 <div>
+                    <h4 className="font-bold text-sm mb-1">Pagamentos Seguros</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                       O Eco-Wanderlust utiliza o Stripe Checkout para garantir que todas as transações sejam criptografadas e seguras. Seu link de pagamento lida com impostos, moedas e recibos automaticamente.
+                    </p>
+                 </div>
+              </div>
+           </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
 
 export default AdminTheme;
+
+function ShieldCheck(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  )
+}

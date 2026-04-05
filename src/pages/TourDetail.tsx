@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useCart } from "@/contexts/CartContext";
 import { 
   Carousel, 
   CarouselContent, 
@@ -17,13 +18,16 @@ import {
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { tours, isLoading } = useSiteData();
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const { t, language } = useLocale();
+  const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
+  const [selectedDate, setSelectedDate] = useState("");
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
@@ -62,8 +66,29 @@ export function TourDetail() {
         setSelectedPeriod(availablePeriods[0].id);
       }
     }
-  }, [tour, availablePeriods.length]); // Added length for stability
+  }, [tour, availablePeriods.length]);
   
+  const handleBooking = () => {
+    if (!tour) return;
+    if (!selectedDate) {
+      alert(language === 'pt' ? "Por favor, selecione uma data." : "Please select a date.");
+      return;
+    }
+
+    addToCart({
+      id: tour.id,
+      title: translatedTitle,
+      price: tour.price,
+      image_url: tour.image_url || "",
+      date: selectedDate,
+      period: selectedPeriod,
+      isPrivate: isPrivate,
+      quantity: 1
+    });
+
+    navigate("/carrinho");
+  };
+
   if (isLoading) {
     return (
       <main className="min-h-screen bg-background flex flex-col items-center justify-center">
@@ -93,8 +118,8 @@ export function TourDetail() {
   const images = tour.images_json && tour.images_json.length > 0
     ? tour.images_json 
     : tour.image_url 
-      ? [tour.image_url, tour.image_url, tour.image_url] 
-      : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
+      ? [tour.image_url, tour.image_url, tour.image_url, tour.image_url] 
+      : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200", "https://images.unsplash.com/photo-1512753360413-a496f8824f1c?q=80&w=1200", "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200"];
 
   const highlights = (translatedIncluded as any[]) || [
     { icon: "MapPin", text: t("transporte_trans") },
@@ -123,6 +148,12 @@ export function TourDetail() {
     }
   };
 
+  const handleImageSwap = (idx: number) => {
+    // If user clicks the same smaller image twice, it swaps back to main or stays.
+    // Intuitive behavior: swap main with the clicked sub-image.
+    setSelectedImageIdx(idx);
+  };
+
   return (
     <main className="min-h-screen bg-background">
       <Helmet>
@@ -146,44 +177,42 @@ export function TourDetail() {
             <span className="text-foreground">{translatedTitle}</span>
           </nav>
 
-          {/* Premium Image Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 h-[400px] lg:h-[500px] gap-2 lg:gap-4 mb-8">
-            <div className="md:col-span-3 relative h-full rounded-2xl overflow-hidden group shadow-lg cursor-pointer">
+          {/* Premium Image Gallery Grid: 1 Large + 3 Small */}
+          <div className="grid grid-cols-1 md:grid-cols-4 h-[500px] lg:h-[600px] gap-2 lg:gap-4 mb-8">
+            <div className="md:col-span-3 relative h-full rounded-3xl overflow-hidden group shadow-2xl cursor-zoom-in">
                <img 
                  src={images[selectedImageIdx]} 
                  alt={tour.title} 
-                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                 className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" 
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             </div>
 
-            <div className="hidden md:grid grid-rows-2 gap-4 h-full">
-              <div 
-                className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all ${selectedImageIdx === 1 ? "ring-2 ring-primary ring-offset-2" : "border-border/10"}`}
-                onClick={() => setSelectedImageIdx(selectedImageIdx === 1 ? 0 : 1)}
-              >
-                 <img 
-                   src={images[1] || images[0]} 
-                   alt="Gallery 1" 
-                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                 />
-                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-              </div>
-              <div 
-                className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all ${selectedImageIdx === 2 ? "ring-2 ring-primary ring-offset-2" : "border-border/10"}`}
-                onClick={() => setSelectedImageIdx(selectedImageIdx === 2 ? 0 : 2)}
-              >
-                 <img 
-                   src={images[2] || images[0]} 
-                   alt="Gallery 2" 
-                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                 />
-                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-              </div>
+            <div className="hidden md:grid grid-rows-3 gap-2 lg:gap-4 h-full">
+              {[1, 2, 3].map((idx) => (
+                <div 
+                  key={idx}
+                  className={`relative rounded-2xl overflow-hidden group shadow-md border cursor-pointer transition-all duration-300 ${selectedImageIdx === idx ? "ring-4 ring-primary ring-offset-2 scale-95" : "border-border/10 hover:border-primary/50"}`}
+                  onClick={() => handleImageSwap(idx)}
+                >
+                   <img 
+                     src={images[idx] || images[0]} 
+                     alt={`Gallery ${idx}`} 
+                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                   />
+                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                   {selectedImageIdx === idx && (
+                     <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                        <Check className="text-primary w-8 h-8 drop-shadow-lg" />
+                     </div>
+                   )}
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Same content as before ... */}
             <div className="lg:col-span-2 space-y-6">
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
@@ -388,12 +417,14 @@ export function TourDetail() {
                        </div>
                        <input 
                          type="date" 
+                         value={selectedDate}
+                         onChange={(e) => setSelectedDate(e.target.value)}
                          className="w-full px-5 py-4 rounded-2xl border-2 border-border bg-muted/10 text-foreground font-sans font-bold text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                        />
                     </div>
                   </div>
 
-                  <Button className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                  <Button onClick={handleBooking} className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
                     {t("reservar_agora")}
                   </Button>
 
@@ -418,77 +449,6 @@ export function TourDetail() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="bg-muted/30 py-20 mt-12 bg-[#2A9D8F]/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
-             <div>
-               <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground tracking-tight mb-2">
-                 {t("voce_tambem_pode_gostar")}
-               </h2>
-               <div className="w-20 h-1.5 bg-[#F4A261] rounded-full" />
-             </div>
-             <Link to="/#tours">
-               <Button variant="ghost" className="font-sans font-bold text-[#E76F51] hover:text-[#E76F51] hover:bg-[#E76F51]/10">
-                 {t("explorar_outros")} →
-               </Button>
-             </Link>
-          </div>
-          
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4">
-              {tours
-                .filter((t_item) => t_item.id !== tour.id && t_item.slug !== tour.slug)
-                .slice(0, 8)
-                .map((relatedTour) => (
-                  <CarouselItem key={relatedTour.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                    <Link to={`/passeio/${relatedTour.slug}`} className="group">
-                      <div className="bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col group/card">
-                        <div className="aspect-[4/5] overflow-hidden relative">
-                          <img 
-                            src={relatedTour.image_url || "https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"} 
-                            alt={relatedTour.title}
-                            className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
-                          />
-                          <div className="absolute top-4 right-4 bg-background/95 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black font-sans text-primary shadow-sm uppercase tracking-widest">
-                            {relatedTour.category}
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                            <span className="text-white/70 text-[10px] font-bold font-sans uppercase tracking-[0.2em]">{relatedTour.duration}</span>
-                            <h3 className="text-white font-serif text-xl font-bold mt-1 leading-tight group-hover/card:text-primary transition-colors">
-                              {relatedTour.title}
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="p-6 bg-card border-t border-border/10">
-                           <div className="flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <span className="text-[10px] uppercase font-bold text-muted-foreground font-sans tracking-wide">{t("a_partir_de")}</span>
-                                <span className="text-primary font-black font-sans text-lg">R$ {relatedTour.price}</span>
-                              </div>
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/card:bg-primary group-hover/card:text-white transition-all duration-300">
-                                <ArrowLeft className="w-5 h-5 rotate-[135deg]" />
-                              </div>
-                           </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </CarouselItem>
-                ))}
-            </CarouselContent>
-            <div className="flex items-center justify-center gap-4 mt-12">
-               <CarouselPrevious className="static translate-y-0 w-12 h-12 border-2 text-primary hover:bg-primary hover:text-white transition-all shadow-md" />
-               <CarouselNext className="static translate-y-0 w-12 h-12 border-2 text-primary hover:bg-primary hover:text-white transition-all shadow-md" />
-            </div>
-          </Carousel>
         </div>
       </div>
 

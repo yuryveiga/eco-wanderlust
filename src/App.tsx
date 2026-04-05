@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import Index from "./pages/Index";
@@ -24,7 +25,7 @@ import AdminUsers from "./pages/AdminUsers";
 import { TourDetail } from "./pages/TourDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import GenericPage from "./pages/GenericPage";
+import Cart from "./pages/Cart";
 import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
@@ -33,36 +34,39 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <LocaleProvider>
-        <HelmetProvider>
-          <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <ThemeApplier />
-          <WhatsAppButton />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/passeio/:id" element={<TourDetail />} />
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="blog" element={<AdminBlog />} />
-                <Route path="hero" element={<AdminHero />} />
-                <Route path="theme" element={<AdminTheme />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="tours" element={<AdminTours />} />
-                <Route path="images" element={<AdminImages />} />
-                <Route path="social" element={<AdminSocial />} />
-                <Route path="gallery" element={<AdminGallery />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </HelmetProvider>
-    </LocaleProvider>
+        <CartProvider>
+          <HelmetProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <ThemeApplier />
+              <WhatsAppButton />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/carrinho" element={<Cart />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route path="/passeio/:id" element={<TourDetail />} />
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="blog" element={<AdminBlog />} />
+                    <Route path="hero" element={<AdminHero />} />
+                    <Route path="theme" element={<AdminTheme />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="tours" element={<AdminTours />} />
+                    <Route path="images" element={<AdminImages />} />
+                    <Route path="social" element={<AdminSocial />} />
+                    <Route path="gallery" element={<AdminGallery />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </HelmetProvider>
+        </CartProvider>
+      </LocaleProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
