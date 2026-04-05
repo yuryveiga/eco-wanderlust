@@ -3,13 +3,12 @@ import { ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
-import { fetchLovable } from "@/integrations/lovable/client";
 
 export function HeroSection() {
-  const { images } = useSiteData();
+  const { images, siteSettings } = useSiteData();
   const { t } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
-  const [heroStyle, setHeroStyle] = useState("style1");
+  const heroStyle = siteSettings['hero_style'] || "style1";
   
   const availableBgs = [
     images["hero_bg"],
@@ -19,12 +18,7 @@ export function HeroSection() {
 
   const heroBgs = availableBgs.length > 0 ? availableBgs : ["https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070"];
 
-  useEffect(() => {
-    fetchLovable<any>("site_settings").then(data => {
-      const s = data.find((x: any) => x.key === "hero_style");
-      if (s) setHeroStyle(s.value);
-    }).catch(console.error);
-  }, []);
+
 
   useEffect(() => {
     if (heroBgs.length <= 1) return;
