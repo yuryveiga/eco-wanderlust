@@ -3,12 +3,6 @@ import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 
-const fallbackTours = [
-  { id: "1", title: "City Tour Rio Completo", short_description: "Conheça os pontos turísticos mais icônicos do Rio de Janeiro.", price: 250, duration: "8 horas", max_group_size: 15, image_url: "https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600", is_featured: true, category: "City Tour" },
-  { id: "2", title: "Arraial do Cabo", short_description: "Descubra o Caribe Brasileiro com águas cristalinas.", price: 180, duration: "12 horas", max_group_size: 20, image_url: "https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=600", is_featured: true, category: "Praia" },
-  { id: "3", title: "Angra dos Reis", short_description: "Navegue pelas ilhas paradisíacas de Angra dos Reis.", price: 200, duration: "10 horas", max_group_size: 25, image_url: "https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=600", is_featured: true, category: "Barco" },
-];
-
 type TourCardProps = {
   id: string;
   title: string;
@@ -54,7 +48,6 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 
 export function ToursSection() {
   const { tours, isLoading } = useSiteData();
-  const displayTours = tours.length > 0 ? tours : fallbackTours;
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
@@ -72,7 +65,7 @@ export function ToursSection() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayTours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
+            {tours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
           </div>
         )}
       </div>

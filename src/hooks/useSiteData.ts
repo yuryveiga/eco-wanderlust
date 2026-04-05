@@ -1,58 +1,55 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { fetchLovable, LovableTour, LovablePage, LovableSiteImage, LovableSocialMedia } from "@/integrations/lovable/client";
+
+const fallbackTours = [
+  { id: "1", title: "City Tour Rio Completo", short_description: "Conheça os pontos turísticos mais icônicos do Rio de Janeiro.", price: 250, duration: "8 horas", max_group_size: 15, image_url: "https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200", is_featured: true, category: "City Tour", is_active: true, sort_order: 1 },
+  { id: "2", title: "Arraial do Cabo", short_description: "Descubra o Caribe Brasileiro com águas cristalinas.", price: 180, duration: "12 horas", max_group_size: 20, image_url: "https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=1200", is_featured: true, category: "Praia", is_active: true, sort_order: 2 },
+  { id: "3", title: "Angra dos Reis", short_description: "Navegue pelas ilhas paradisíacas de Angra dos Reis.", price: 200, duration: "10 horas", max_group_size: 25, image_url: "https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=1200", is_featured: true, category: "Barco", is_active: true, sort_order: 3 },
+];
 
 export function useSiteData() {
-  const tours = useQuery({
-    queryKey: ["site-tours"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("tours")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order");
-      return data ?? [];
-    },
-  });
+  const [tours, setTours] = useState<LovableTour[]>([]);
+  const [pages, setPages] = useState<LovablePage[]>([]);
+  const [images, setImages] = useState<Record<string, string>>({});
+  const [socialMedia, setSocialMedia] = useState<LovableSocialMedia[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const pages = useQuery({
-    queryKey: ["site-pages"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("pages")
-        .select("*")
-        .eq("is_visible", true)
-        .order("sort_order");
-      return data ?? [];
-    },
-  });
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const [toursData, pagesData, imagesData, socialData] = await Promise.all([
+          fetchLovable<LovableTour>("tours"),
+          fetchLovable<LovablePage>("pages"),
+          fetchLovable<LovableSiteImage>("site_images"),
+          fetchLovable<LovableSocialMedia>("social_media"),
+        ]);
 
-  const images = useQuery({
-    queryKey: ["site-images"],
-    queryFn: async () => {
-      const { data } = await supabase.from("site_images").select("*");
-      const map: Record<string, string> = {};
-      data?.forEach((img) => { map[img.key] = img.image_url; });
-      return map;
-    },
-  });
+        const activeTours = toursData.filter((t) => t.is_active).sort((a, b) => a.sort_order - b.sort_order);
+        setTours(activeTours.length > 0 ? activeTours : fallbackTours);
+        setPages(pagesData.filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order));
+        
+        const imagesMap: Record<string, string> = {};
+        imagesData.forEach((img) => { imagesMap[img.key] = img.image_url; });
+        setImages(imagesMap);
+        
+        setSocialMedia(socialData.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order));
+      } catch (error) {
+        console.error("Error loading site data:", error);
+        setTours(fallbackTours);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const socialMedia = useQuery({
-    queryKey: ["site-social"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("social_media")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order");
-      return data ?? [];
-    },
-  });
+    loadData();
+  }, []);
 
   return {
-    tours: tours.data ?? [],
-    pages: pages.data ?? [],
-    images: images.data ?? {},
-    socialMedia: socialMedia.data ?? [],
-    isLoading: tours.isLoading || pages.isLoading || images.isLoading || socialMedia.isLoading,
+    tours,
+    pages,
+    images,
+    socialMedia,
+    isLoading,
   };
 }
