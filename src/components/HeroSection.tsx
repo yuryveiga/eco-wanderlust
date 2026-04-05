@@ -91,10 +91,18 @@ export function HeroSection() {
   }
 
   if (heroStyle === "style2") {
-    // Style 2: Modern Split Screen
+    // Style 2: Modern Split Screen with Smooth Gradient
     return (
-      <section className="relative min-h-[90vh] flex flex-col lg:flex-row overflow-hidden bg-background">
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-16 lg:p-24 z-10 bg-card mt-16 lg:mt-0">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background">
+        <div className="absolute inset-0 w-full lg:w-[70%] lg:left-[30%] z-0 h-[50vh] lg:h-full top-0 lg:top-0 mt-16 lg:mt-0">
+          {renderSlideshowBackgrounds()}
+          {/* Horizontal gradient for desktop */}
+          <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-background via-background/90 to-transparent w-full lg:w-64 z-10 hidden lg:block"></div>
+          {/* Vertical gradient for mobile */}
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/90 to-transparent h-32 z-10 block lg:hidden"></div>
+        </div>
+
+        <div className="w-full lg:w-[55%] relative z-10 flex items-center justify-center p-8 sm:p-16 lg:p-24 bg-background lg:bg-transparent lg:bg-gradient-to-r lg:from-background lg:via-background lg:to-transparent mt-[50vh] lg:mt-0">
           <div className="max-w-xl animate-fade-in-up">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-2 mb-6 border border-primary/20">
               <Star className="w-4 h-4 fill-primary" />
@@ -119,10 +127,6 @@ export function HeroSection() {
               </Button>
             </div>
           </div>
-        </div>
-        <div className="w-full lg:w-1/2 min-h-[50vh] relative">
-          {renderSlideshowBackgrounds()}
-          <div className="absolute inset-0 bg-gradient-to-r from-card to-transparent lg:w-32 z-10 hidden lg:block"></div>
         </div>
       </section>
     );
