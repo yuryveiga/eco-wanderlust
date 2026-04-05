@@ -1,36 +1,41 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableSiteImage } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Upload, Images } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trash2, Images, ImagePlus } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const PRESET_KEYS = [
-  { key: "gallery_1", label: "Foto 1" },
-  { key: "gallery_2", label: "Foto 2" },
-  { key: "gallery_3", label: "Foto 3" },
-  { key: "gallery_4", label: "Foto 4" },
-  { key: "gallery_5", label: "Foto 5" },
-  { key: "gallery_6", label: "Foto 6" },
-  { key: "gallery_7", label: "Foto 7" },
-  { key: "gallery_8", label: "Foto 8" },
-  { key: "gallery_9", label: "Foto 9" },
-  { key: "gallery_10", label: "Foto 10" },
-  { key: "gallery_11", label: "Foto 11" },
-  { key: "gallery_12", label: "Foto 12" },
+const CATEGORIES = [
+  { value: "todas", label: "Todas as categorias" },
+  { value: "praia", label: "Praia" },
+  { value: "trilha", label: "Trilha" },
+  { value: "city_tour", label: "City Tour" },
+  { value: "barco", label: "Barco" },
 ];
 
+export type SiteImage = {
+  id: string;
+  key: string;
+  image_url: string;
+  label: string;
+};
+
 const AdminGallery = () => {
-  const [images, setImages] = useState<LovableSiteImage[]>([]);
+  const [images, setImages] = useState<SiteImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editing, setEditing] = useState<Partial<LovableSiteImage> | null>(null);
-  const [isNew, setIsNew] = useState(false);
+  
+  // Form Upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadCategory, setUploadCategory] = useState("todas");
+  const [uploadLabel, setUploadLabel] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Filter state
+  const [filterCategory, setFilterCategory] = useState("todas");
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -38,9 +43,16 @@ const AdminGallery = () => {
   }, []);
 
   const loadImages = async () => {
-    const data = await fetchLovable<LovableSiteImage>("site_images");
-    const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
-    setImages(galleryImages);
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('site_images')
+      .select('*')
+      .like('key', 'gallery%')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setImages(data);
+    }
     setIsLoading(false);
   };
 
@@ -56,162 +68,232 @@ const AdminGallery = () => {
     }
   };
 
-  const handleSave = async () => {
-    if (!editing?.key) {
-      toast({ title: "Erro", description: "Chave é obrigatória", variant: "destructive" });
+  const clearForm = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setUploadLabel("");
+    setUploadCategory("todas");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast({ title: "Aviso", description: "Selecione uma imagem primeiro.", variant: "destructive" });
       return;
     }
 
     setIsUploading(true);
 
     try {
-      let imageUrl = editing.image_url || "";
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
 
-      if (selectedFile) {
-        const uploadedUrl = await uploadLovableFile(selectedFile);
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl;
-        }
-      }
+      const { error: uploadError } = await supabase.storage
+        .from('site-images')
+        .upload(filePath, selectedFile);
 
-      const dataToSave = { ...editing, image_url: imageUrl };
+      if (uploadError) throw uploadError;
 
-      if (isNew) {
-        await insertLovable("site_images", dataToSave);
-        toast({ title: "Foto salva!" });
-      } else if (editing.id) {
-        await updateLovable("site_images", editing.id, dataToSave);
-        toast({ title: "Foto atualizada!" });
-      }
+      const { data: { publicUrl } } = supabase.storage
+        .from('site-images')
+        .getPublicUrl(filePath);
 
+      const key = `gallery__${uploadCategory}__${Date.now()}`;
+      
+      const { error: insertError } = await supabase
+        .from('site_images')
+        .insert({
+          key,
+          image_url: publicUrl,
+          label: uploadLabel
+        });
+
+      if (insertError) throw insertError;
+
+      toast({ title: "Foto salva com sucesso!" });
+      clearForm();
       await loadImages();
-      setEditing(null);
-      setSelectedFile(null);
-      setPreviewUrl(null);
-    } catch {
-      toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Erro", description: "Ocorreu um erro no upload da imagem.", variant: "destructive" });
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (img: SiteImage) => {
     if (!confirm("Deseja excluir esta foto?")) return;
-    await deleteLovable("site_images", id);
-    await loadImages();
-    toast({ title: "Foto removida" });
+    
+    try {
+      if (img.image_url.includes('site-images')) {
+        const fileName = img.image_url.substring(img.image_url.lastIndexOf('/') + 1);
+        await supabase.storage.from('site-images').remove([fileName]);
+      }
+    } catch(e) {}
+
+    const { error } = await supabase.from('site_images').delete().eq('id', img.id);
+    if (!error) {
+      toast({ title: "Foto removida" });
+      await loadImages();
+    }
   };
 
-  const openNew = (key?: string, label?: string) => {
-    setEditing({ key: key || "", label: label || "", image_url: "" });
-    setIsNew(true);
-    setSelectedFile(null);
-    setPreviewUrl(null);
+  const handleChangeCategory = async (img: SiteImage, newCategory: string) => {
+    const parts = img.key.split('__');
+    let newKey = img.key;
+    if (parts.length >= 3 && parts[0] === 'gallery') {
+      newKey = `gallery__${newCategory}__${parts[2]}`;
+    } else {
+      newKey = `gallery__${newCategory}__${Date.now()}`;
+    }
+
+    const { error } = await supabase
+      .from('site_images')
+      .update({ key: newKey })
+      .eq('id', img.id);
+
+    if (!error) {
+      toast({ title: "Categoria atualizada!" });
+      await loadImages();
+    } else {
+      toast({ title: "Erro", description: "Não foi possível atualizar a categoria.", variant: "destructive" });
+    }
   };
 
-  const openEdit = (img: LovableSiteImage) => {
-    setEditing({ ...img });
-    setIsNew(false);
-    setSelectedFile(null);
-    setPreviewUrl(null);
+  const getCategoryFromKey = (key: string) => {
+    const parts = key.split('__');
+    if (parts.length >= 3 && parts[0] === 'gallery') {
+      return parts[1];
+    }
+    return "todas";
   };
 
-  const missingPresets = PRESET_KEYS.filter((p) => !images.find((i) => i.key === p.key));
+  const filteredImages = images.filter((img) => 
+    filterCategory === "todas" ? true : getCategoryFromKey(img.key) === filterCategory
+  );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Galeria de Fotos</h1>
-          <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie as fotos da galeria do site</p>
-        </div>
-        <Button onClick={() => openNew()} className="font-sans">
-          <Plus className="w-4 h-4 mr-2" />Nova Foto
-        </Button>
-      </div>
+    <div className="space-y-6">
+      <h1 className="font-serif text-3xl font-bold text-foreground">Galeria de Fotos</h1>
 
-      {missingPresets.length > 0 && (
-        <div className="mb-6 p-4 bg-accent/10 rounded-xl border border-accent/20">
-          <p className="text-sm font-sans text-foreground mb-2 font-medium">Slots disponíveis para adicionar:</p>
-          <div className="flex flex-wrap gap-2">
-            {missingPresets.map((p) => (
-              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => openNew(p.key, p.label)}>
-                <Upload className="w-3 h-3 mr-1" />{p.label}
-              </Button>
-            ))}
+      <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 mb-4 text-foreground font-semibold">
+          <ImagePlus className="w-5 h-5 text-primary" />
+          <h2>Adicionar Fotos</h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <Input 
+            value={uploadLabel} 
+            onChange={(e) => setUploadLabel(e.target.value)} 
+            placeholder="Legenda (opcional)" 
+            className="flex-1 bg-background"
+          />
+          <div className="w-full md:w-64">
+            <Select value={uploadCategory} onValueChange={setUploadCategory}>
+              <SelectTrigger className="bg-background">
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map(cat => (
+                  <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      )}
+
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex-1 w-full flex items-center gap-2 border bg-background rounded-lg overflow-hidden relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+             <input 
+              ref={fileInputRef} 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+              className="absolute inset-0 opacity-0 cursor-pointer hidden" 
+            />
+             <div className="bg-muted px-4 py-2 border-r text-sm whitespace-nowrap cursor-pointer hover:bg-muted/80">Escolher arquivos</div>
+             <div className="text-sm text-muted-foreground truncate ml-2">
+                 {selectedFile ? selectedFile.name : "Nenhum arquivo escolhido"}
+             </div>
+          </div>
+          {previewUrl && (
+            <img src={previewUrl} alt="Preview" className="h-10 w-16 object-cover rounded" />
+          )}
+          <Button onClick={handleUpload} disabled={isUploading || !selectedFile} className="w-full md:w-auto">
+            {isUploading ? "Enviando..." : "Adicionar Foto"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-sm font-medium">Filtrar por categoria:</span>
+        <div className="w-48">
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="bg-card">
+              <SelectValue placeholder="Todas as categorias" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map(cat => (
+                <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground font-sans">Carregando...</div>
+        <div className="text-center py-12 text-muted-foreground">Carregando fotos...</div>
       ) : images.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground font-sans">Nenhuma foto na galeria.</div>
+        <div className="text-center py-12 text-muted-foreground">Nenhuma foto encontrada na galeria.</div>
+      ) : filteredImages.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">Nenhuma foto para esta categoria.</div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {images.map((img) => (
-            <div key={img.id} className="bg-card rounded-xl border border-border/50 overflow-hidden group">
-              <div className="relative aspect-square overflow-hidden">
-                {img.image_url ? (
-                  <img src={img.image_url} alt={img.label} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
-                    <Images className="w-12 h-12 text-muted-foreground/30" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredImages.map((img) => {
+            const cat = getCategoryFromKey(img.key);
+            
+            return (
+              <div key={img.id} className="bg-card rounded-xl border overflow-hidden flex flex-col group">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  {img.image_url ? (
+                    <img src={img.image_url} alt={img.label} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                      <Images className="w-12 h-12 text-muted-foreground/30" />
+                    </div>
+                  )}
+                  {img.label && (
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent p-2 text-white text-xs truncate">
+                      {img.label}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button variant="destructive" size="icon" onClick={() => handleDelete(img)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                  <Button variant="secondary" size="icon" onClick={() => openEdit(img)}>
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                  <Button variant="destructive" size="icon" onClick={() => handleDelete(img.id)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                </div>
+                <div className="p-2 border-t bg-muted/30">
+                  <Select value={cat} onValueChange={(val) => handleChangeCategory(img, val)}>
+                    <SelectTrigger className="h-8 text-xs border-0 bg-transparent shadow-none focus:ring-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map(c => (
+                        <SelectItem key={c.value} value={c.value} className="text-xs">{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-              <div className="p-3">
-                <p className="font-medium text-foreground font-sans text-sm truncate">{img.label || img.key}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
-
-      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="font-serif">{isNew ? "Nova Foto" : "Editar Foto"}</DialogTitle>
-          </DialogHeader>
-          {editing && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="font-sans">Chave (identificador)</Label>
-                <Input value={editing.key ?? ""} onChange={(e) => setEditing({ ...editing, key: e.target.value })} required disabled={!isNew} placeholder="gallery_1" />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-sans">Descrição</Label>
-                <Input value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Descrição da foto" />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-sans">Foto</Label>
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full font-sans" disabled={isUploading}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  {selectedFile ? selectedFile.name : "Selecionar arquivo"}
-                </Button>
-                {(previewUrl || editing.image_url) && (
-                  <img src={previewUrl || editing.image_url} alt="Preview" className="w-full h-40 object-cover rounded-lg mt-2" />
-                )}
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans" disabled={isUploading}>
-                  {isUploading ? "Enviando..." : "Salvar"}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
