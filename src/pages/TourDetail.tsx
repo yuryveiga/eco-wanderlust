@@ -1,25 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const highlights = [
-  { icon: MapPin, text: "Transporte ida e volta" },
-  { icon: Utensils, text: "Almoço incluso" },
-  { icon: Shield, text: "Equipamento de segurança" },
-  { icon: Activity, text: "Instrutor especializado" },
-];
-
-const faqItems = [
-  { q: "O que está incluído?", a: "Transporte, almoço, equipamento de segurança e instrutor especializado." },
-  { q: "O que devo levar?", a: "Roupas confortáveis, tênis (que possam molhar), protetor solar e repelente." },
-  { q: "É seguro para iniciantes?", a: "Sim! O rafting é suitable para todos os níveis, com orientações completas antes da atividade." },
-  { q: "Cancelamento", a: "Cancelamento gratuito até 48 horas antes. Após esse prazo, 50% do valor é retido." },
-];
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
@@ -29,11 +15,18 @@ export function TourDetail() {
   const [isPrivate, setIsPrivate] = useState(false);
 
   const tour = tours.find((t) => t.id === id);
-  
-  const images = tour?.image_url 
-    ? [tour.image_url, tour.image_url, tour.image_url] 
-    : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
 
+  useEffect(() => {
+    if (tour) {
+      // If only private is allowed, default to it
+      if (tour.allows_private && !tour.allows_open) {
+        setIsPrivate(true);
+      } else {
+        setIsPrivate(false);
+      }
+    }
+  }, [tour]);
+  
   if (!tour) {
     return (
       <main>
@@ -51,8 +44,47 @@ export function TourDetail() {
     );
   }
 
+  const images = tour.image_url 
+    ? [tour.image_url, tour.image_url, tour.image_url] 
+    : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
+
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+  const highlights = tour.included_json || [
+    { icon: "MapPin", text: "Transporte ida e volta" },
+    { icon: "Utensils", text: "Almoço incluso" },
+    { icon: "Shield", text: "Equipamento de segurança" },
+    { icon: "Activity", text: "Instrutor especializado" },
+  ];
+
+  const faqItems = tour.faq_json || [
+    { q: "O que está incluído?", a: "Transporte, almoço, equipamento de segurança e instrutor especializado." },
+    { q: "O que devo levar?", a: "Roupas confortáveis, tênis (que possam molhar), protetor solar e repelente." },
+  ];
+
+  const getIcon = (name: string) => {
+    switch(name) {
+      case "MapPin": return MapPin;
+      case "Utensils": return Utensils;
+      case "Shield": return Shield;
+      case "Activity": return Activity;
+      case "Clock": return Clock;
+      case "Calendar": return Calendar;
+      case "Sunrise": return Sunrise;
+      case "Sun": return Sun;
+      case "Moon": return Moon;
+      default: return Check;
+    }
+  };
+
+  const availablePeriods = [
+    { id: 'morning', label: 'Manhã', active: tour.has_morning !== false, Icon: Sunrise },
+    { id: 'afternoon', label: 'Tarde', active: tour.has_afternoon === true, Icon: Sun },
+    { id: 'night', label: 'Noite', active: tour.has_night === true, Icon: Moon },
+  ].filter(p => p.active);
+
+  const [selectedPeriod, setSelectedPeriod] = useState(availablePeriods[0]?.id || 'morning');
 
   return (
     <main className="min-h-screen bg-background">
@@ -70,7 +102,7 @@ export function TourDetail() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="relative rounded-2xl overflow-hidden bg-muted">
+              <div className="relative rounded-2xl overflow-hidden bg-muted shadow-lg">
                 <img 
                   src={images[currentImage]} 
                   alt={tour.title}
@@ -103,48 +135,48 @@ export function TourDetail() {
                 )}
               </div>
 
-              <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
+              <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     {tour.category && (
-                      <span className="text-sm font-medium text-primary font-sans">{tour.category}</span>
+                      <span className="text-sm font-bold text-primary font-sans uppercase tracking-wider">{tour.category}</span>
                     )}
-                    <h1 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mt-1">
+                    <h1 className="font-serif text-2xl lg:text-4xl font-bold text-foreground mt-1">
                       {tour.title}
                     </h1>
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-amber-500">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="font-sans">4.9</span>
-                    <span className="text-muted-foreground font-sans">(128)</span>
+                  <div className="flex items-center gap-1 text-sm text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+                    < Star className="w-4 h-4 fill-current" />
+                    <span className="font-bold font-sans">4.9</span>
+                    <span className="text-muted-foreground font-sans text-xs">(128)</span>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground font-sans mb-6 pb-6 border-b border-border">
+                <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-sans mb-8 pb-6 border-b border-border">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{tour.duration}</span>
+                    <Clock className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">{tour.duration}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>Até {tour.max_group_size} pessoas</span>
+                    <Users className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">Até {tour.max_group_size} pessoas</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>Todos os dias</span>
+                    <Calendar className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">Todos os dias</span>
                   </div>
                 </div>
 
                 <div className="prose prose-sm max-w-none text-muted-foreground font-sans">
-                  <p className="text-base leading-relaxed whitespace-pre-wrap">
+                  <p className="text-lg leading-relaxed whitespace-pre-wrap text-foreground/80">
                     {tour.short_description}
                   </p>
                 </div>
               </div>
 
               {tour.itinerary_json && tour.itinerary_json.length > 0 && (
-                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
-                  <h2 className="font-serif text-2xl font-bold text-[#2A9D8F] mb-2">
+                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
+                  <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#2A9D8F] mb-2">
                     Itinerário e Detalhes
                   </h2>
                   <p className="text-muted-foreground font-sans text-sm mb-8">
@@ -155,12 +187,12 @@ export function TourDetail() {
                     {tour.itinerary_json.map((step, i) => (
                       <div key={i} className="relative pl-10 pb-8 last:pb-0">
                         {i !== tour.itinerary_json!.length - 1 && (
-                          <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[3px] border-dashed border-[#F4A261]/60 z-0"></div>
+                          <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[2px] border-dashed border-[#F4A261]/40 z-0"></div>
                         )}
                         <div className="absolute top-0 left-0 z-10 bg-background pt-1 pb-1">
                            <MapPin className="w-6 h-6 text-[#E76F51] fill-[#E76F51]/10" />
                         </div>
-                        <h3 className="font-bold text-[#2A9D8F] font-sans mb-2 pt-1">{step.time}</h3>
+                        <h3 className="font-bold text-[#2A9D8F] font-sans text-lg mb-2 pt-1">{step.time}</h3>
                         <p className="text-muted-foreground font-sans text-sm leading-relaxed">{step.description}</p>
                       </div>
                     ))}
@@ -168,174 +200,168 @@ export function TourDetail() {
                 </div>
               )}
 
-              <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
-                <h2 className="font-serif text-xl font-bold text-foreground mb-6">
+              <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
+                <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
                   O que está incluído
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {highlights.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <item.icon className="w-5 h-5 text-primary" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {highlights.map((item, i) => {
+                    const Icon = getIcon(item.icon);
+                    return (
+                      <div key={i} className="flex items-center gap-4 group">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                          <Icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <span className="text-foreground font-sans font-medium">{item.text}</span>
                       </div>
-                      <span className="text-foreground font-sans text-sm">{item.text}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
-                <h2 className="font-serif text-xl font-bold text-foreground mb-6">
-                  Para seu conhecimento
-                </h2>
-                <div className="space-y-4">
-                  {faqItems.map((item, i) => (
-                    <div key={i} className="border-b border-border/50 last:border-0 pb-4 last:pb-0">
-                      <button
-                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                        className="w-full flex items-center justify-between gap-4 text-left"
-                      >
-                        <span className="font-medium text-foreground font-sans">{item.q}</span>
-                        {openFaq === i ? (
-                          <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              {faqItems.length > 0 && (
+                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
+                  <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
+                    Para seu conhecimento
+                  </h2>
+                  <div className="space-y-4">
+                    {faqItems.map((item, i) => (
+                      <div key={i} className="border border-border/50 rounded-xl overflow-hidden">
+                        <button
+                          onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                          className={`w-full flex items-center justify-between gap-4 text-left p-4 transition-colors ${openFaq === i ? "bg-muted/50" : "hover:bg-muted/30"}`}
+                        >
+                          <span className="font-bold text-foreground font-sans">{item.q}</span>
+                          {openFaq === i ? (
+                            <ChevronUp className="w-5 h-5 text-primary flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                          )}
+                        </button>
+                        {openFaq === i && (
+                          <div className="p-4 pt-0 bg-muted/20">
+                            <p className="border-t border-border/30 pt-4 text-muted-foreground font-sans text-sm leading-relaxed">
+                              {item.a}
+                            </p>
+                          </div>
                         )}
-                      </button>
-                      {openFaq === i && (
-                        <p className="mt-3 text-muted-foreground font-sans text-sm leading-relaxed">
-                          {item.a}
-                        </p>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
+            {/* Sticky Booking Widget */}
             <div className="lg:col-span-1">
               <div className="sticky top-24">
-                <div className="bg-card rounded-2xl border border-border/50 p-6 shadow-lg">
-                  <div className="mb-6 border-b pb-4">
-                    <span className="text-3xl font-bold text-primary font-sans">
+                <div className="bg-card rounded-3xl border border-border/50 p-6 shadow-2xl overflow-hidden">
+                  <div className="mb-6 pb-6 border-b text-center">
+                    <span className="text-sm text-muted-foreground font-sans uppercase tracking-widest block mb-1">A partir de</span>
+                    <span className="text-5xl font-bold text-primary font-sans">
                       R$ {tour.price}
                     </span>
-                    <span className="text-muted-foreground font-sans text-sm"> /pessoa</span>
+                    <span className="text-muted-foreground font-sans text-sm block mt-1"> por pessoa</span>
                   </div>
                   
-                  <div className="flex gap-2 mb-4 bg-muted/50 p-1 rounded-full">
-                    <button 
-                      onClick={() => setIsPrivate(false)}
-                      className={`flex-1 font-sans text-sm py-2 px-4 rounded-full font-medium transition-all ${
-                        !isPrivate 
-                          ? "bg-primary text-primary-foreground shadow-sm" 
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      Open grupo
-                    </button>
-                    <button 
-                      onClick={() => setIsPrivate(true)}
-                      className={`flex-1 font-sans text-sm py-2 px-4 rounded-full font-medium transition-all ${
-                        isPrivate 
-                          ? "bg-[#008967] text-white shadow-sm" 
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      Grupo Privado
-                    </button>
-                  </div>
-                  
-                  <div className="min-h-[40px] flex items-center justify-center mb-6 px-4">
-                    <p className="text-center text-[13px] text-muted-foreground font-sans animate-fade-in">
-                      {isPrivate 
-                        ? "Passeios privados oferecem uma experiência exclusiva apenas para o seu grupo."
-                        : "Os grupos abertos são formados automaticamente de acordo com as disponibilidades."
-                      }
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-6 mb-6">
-                    <div className="border-t pt-4">
-                      <h4 className="font-serif font-bold text-foreground mb-3 text-lg">Período</h4>
-                      <button className="w-full bg-primary text-primary-foreground font-sans text-sm py-3 px-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
-                        Manhã <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                      </button>
-                    </div>
-
-                    <div className="border-t pt-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-sans font-bold text-base text-foreground">Adulto</h4>
-                          <p className="text-xs text-muted-foreground font-sans">Idade 14 e até</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
-                            <span className="text-xl leading-none mt-[-2px]">-</span>
+                  {(tour.allows_open || tour.allows_private) && (
+                    <div className="mb-8">
+                       <div className="flex gap-2 mb-4 bg-muted/50 p-1.5 rounded-full border border-border/50">
+                        {tour.allows_open !== false && (
+                          <button 
+                            onClick={() => setIsPrivate(false)}
+                            className={`flex-1 font-sans text-sm py-2.5 px-4 rounded-full font-bold transition-all ${
+                              !isPrivate 
+                                ? "bg-primary text-primary-foreground shadow-lg" 
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            Open grupo
                           </button>
-                          <span className="font-bold text-lg font-sans w-4 text-center">1</span>
-                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
-                            <span className="text-xl leading-none mt-[-2px]">+</span>
+                        )}
+                        {tour.allows_private && (
+                          <button 
+                            onClick={() => setIsPrivate(true)}
+                            className={`flex-1 font-sans text-sm py-2.5 px-4 rounded-full font-bold transition-all ${
+                              isPrivate 
+                                ? "bg-[#008967] text-white shadow-lg" 
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            Grupo Privado
                           </button>
-                        </div>
+                        )}
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-sans font-bold text-base text-foreground">Crianças</h4>
-                          <p className="text-xs text-muted-foreground font-sans">Idades 7 a 13</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
-                            <span className="text-xl leading-none mt-[-2px]">-</span>
-                          </button>
-                          <span className="font-bold text-lg font-sans w-4 text-center">0</span>
-                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
-                            <span className="text-xl leading-none mt-[-2px]">+</span>
-                          </button>
-                        </div>
+                      
+                      <div className="min-h-[44px] flex items-center justify-center px-4 bg-muted/20 rounded-2xl border border-dashed border-border py-2">
+                        <p className="text-center text-[12px] text-muted-foreground font-sans leading-snug">
+                          {isPrivate 
+                            ? "Passeios privados oferecem uma experiência exclusiva apenas para o seu grupo."
+                            : "Os grupos abertos são formados automaticamente de acordo com as disponibilidades."
+                          }
+                        </p>
                       </div>
                     </div>
+                  )}
+                  
+                  <div className="space-y-8 mb-8">
+                    {availablePeriods.length > 0 && (
+                      <div className="border-t pt-6">
+                        <h4 className="font-serif font-bold text-foreground mb-4 text-center">Qual período você prefere?</h4>
+                        <div className="grid grid-cols-1 gap-2">
+                          {availablePeriods.map((p) => (
+                            <button 
+                              key={p.id}
+                              onClick={() => setSelectedPeriod(p.id)}
+                              className={`flex items-center justify-between gap-4 py-4 px-6 rounded-2xl font-bold font-sans text-sm transition-all border-2 ${
+                                selectedPeriod === p.id 
+                                  ? "bg-primary/5 border-primary text-primary shadow-inner" 
+                                  : "bg-background border-border hover:border-primary/30 text-muted-foreground"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <p.Icon className={`w-5 h-5 ${selectedPeriod === p.id ? "text-primary" : "text-muted-foreground"}`} />
+                                {p.label}
+                              </div>
+                              {selectedPeriod === p.id && <Check className="w-5 h-5" />}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-                    <div className="border-t border-b py-4 flex flex-col gap-2">
-                       <div className="flex items-center justify-between gap-3 text-sm font-sans cursor-pointer group">
-                         <span className="text-foreground font-bold font-sans text-base">Data</span>
-                         <div className="flex items-center text-muted-foreground group-hover:text-primary transition-colors">
-                           <span className="mr-2">Selecione uma data</span>
-                           <Calendar className="w-4 h-4" />
-                         </div>
+                    <div className="border-t pt-6 border-b pb-6 flex flex-col gap-4">
+                       <div className="flex items-center justify-between text-sm font-sans px-2">
+                         <span className="text-foreground font-bold font-sans text-base">Data da Viagem</span>
+                         <Calendar className="w-5 h-5 text-primary" />
                        </div>
                        <input 
                          type="date" 
-                         className="w-full mt-2 px-4 py-3 rounded-lg border border-input bg-background/50 text-foreground font-sans text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                         className="w-full px-5 py-4 rounded-2xl border-2 border-border bg-muted/10 text-foreground font-sans font-bold text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                        />
                     </div>
                   </div>
 
-                  <Button className="w-full h-14 text-base font-sans font-bold rounded-full mt-2">
-                    Reservar agora
+                  <Button className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    RESERVAR AGORA
                   </Button>
 
-                  <p className="text-center text-xs text-muted-foreground font-sans mt-4">
-                    Reserve agora, pague depois
-                  </p>
-
-                  <div className="mt-6 pt-6 border-t border-border">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground font-sans">
-                      <Shield className="w-4 h-4" />
-                      <span>Pagamento seguro</span>
+                  <div className="mt-8 pt-6 border-t border-border space-y-3">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground font-sans">
+                      <Shield className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold text-foreground/80">Pagamento 100% Seguro</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground font-sans mt-2">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span>Cancelamento gratuito</span>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground font-sans">
+                      <Check className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold text-foreground/80">Cancelamento Grátis até 24h</span>
                     </div>
                   </div>
                 </div>
 
-                <Link to="/" className="mt-4">
-                  <Button variant="outline" className="w-full font-sans">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Ver outros passeios
+                <Link to="/" className="block mt-6">
+                  <Button variant="ghost" className="w-full font-sans group text-muted-foreground hover:text-primary">
+                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                    Explorar outros destinos
                   </Button>
                 </Link>
               </div>

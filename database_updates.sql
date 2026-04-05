@@ -48,3 +48,12 @@ DROP POLICY IF EXISTS "Admins can modify blog" ON public.blog_posts;
 
 CREATE POLICY "Public can view published posts" ON public.blog_posts FOR SELECT USING (is_published = true);
 CREATE POLICY "Admins can modify blog" ON public.blog_posts USING (public.has_role(auth.uid(), 'admin'::public.app_role));
+
+-- 5. Novas Opções de Período e Grupos nos Passeios
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS has_morning BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS has_afternoon BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS has_night BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS allows_private BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS allows_open BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS included_json JSONB;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS faq_json JSONB;

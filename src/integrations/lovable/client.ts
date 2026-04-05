@@ -120,6 +120,13 @@ export type LovableTour = {
   is_active: boolean;
   sort_order: number;
   itinerary_json?: { time: string; description: string }[];
+  has_morning?: boolean;
+  has_afternoon?: boolean;
+  has_night?: boolean;
+  allows_private?: boolean;
+  allows_open?: boolean;
+  included_json?: { icon: string; text: string }[];
+  faq_json?: { q: string; a: string }[];
 };
 
 export type LovablePage = {
