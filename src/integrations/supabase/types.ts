@@ -14,7 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pages: {
+        Row: {
+          created_at: string
+          href: string
+          id: string
+          is_visible: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          href: string
+          id?: string
+          is_visible?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          href?: string
+          id?: string
+          is_visible?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_images: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          key: string
+          label: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          key: string
+          label?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          key?: string
+          label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_media: {
+        Row: {
+          created_at: string
+          icon_name: string
+          id: string
+          is_active: boolean
+          platform: string
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          icon_name?: string
+          id?: string
+          is_active?: boolean
+          platform: string
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          icon_name?: string
+          id?: string
+          is_active?: boolean
+          platform?: string
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      tours: {
+        Row: {
+          category: string
+          created_at: string
+          duration: string
+          id: string
+          image_url: string
+          is_active: boolean
+          is_featured: boolean
+          max_group_size: number
+          price: number
+          short_description: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          duration?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          is_featured?: boolean
+          max_group_size?: number
+          price?: number
+          short_description?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          duration?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          is_featured?: boolean
+          max_group_size?: number
+          price?: number
+          short_description?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
