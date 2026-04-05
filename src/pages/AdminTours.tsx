@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
@@ -135,11 +135,32 @@ const AdminTours = () => {
     }
   };
 
+  // Helper for JSON fields
+  const updateJsonField = (field: keyof LovableTour, index: number, subField: string, value: any) => {
+    if (!editing) return;
+    const arr = [...((editing[field] as any[]) || [])];
+    arr[index] = { ...arr[index], [subField]: value };
+    setEditing({ ...editing, [field]: arr });
+  };
+
+  const addJsonItem = (field: keyof LovableTour, newItem: any) => {
+    if (!editing) return;
+    const arr = [...((editing[field] as any[]) || []), newItem];
+    setEditing({ ...editing, [field]: arr });
+  };
+
+  const removeJsonItem = (field: keyof LovableTour, index: number) => {
+    if (!editing) return;
+    const arr = [...((editing[field] as any[]) || [])];
+    arr.splice(index, 1);
+    setEditing({ ...editing, [field]: arr });
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [] }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
       </div>
@@ -188,192 +209,257 @@ const AdminTours = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="max-w-6xl h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
           {editing && (
             <Tabs defaultValue="content" className="flex-1 flex flex-col h-full overflow-hidden">
               <DialogHeader className="p-6 pb-0 border-b bg-muted/20 shrink-0">
                 <DialogTitle className="font-serif text-2xl mb-4">{isNew ? "Criar Experiência Premium" : "Ajustar Detalhes do Passeio"}</DialogTitle>
-                <TabsList className="w-full justify-start gap-4 bg-transparent border-none p-0 mb-[-1px]">
-                  <TabsTrigger value="content" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Conteúdo e Tradução</TabsTrigger>
-                  <TabsTrigger value="gallery" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Imagens e Grid 📸</TabsTrigger>
-                  <TabsTrigger value="settings" className="data-[state=active]:bg-background data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold font-sans">Preços e Config</TabsTrigger>
+                <TabsList className="w-full justify-start gap-4 bg-transparent border-none p-0 mb-[-1px] overflow-x-auto">
+                  <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Conteúdo</TabsTrigger>
+                  <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Itinerário e Inclui</TabsTrigger>
+                  <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Imagens</TabsTrigger>
+                  <TabsTrigger value="settings" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Preços e Config</TabsTrigger>
                 </TabsList>
               </DialogHeader>
 
               <div className="flex-1 overflow-hidden flex flex-col">
-                <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
+                <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                  
+                  {/* TAB CONTENT: BASIC INFO & TRANSLATION */}
                   <TabsContent value="content" className="m-0 space-y-6">
-                    <Tabs defaultValue="pt" className="w-full">
-                      <TabsList className="mb-4 bg-muted/40 p-1 rounded-xl">
-                        <TabsTrigger value="pt" className="rounded-lg px-4 py-2 font-bold font-sans">PORTUGUÊS (Base)</TabsTrigger>
-                        <TabsTrigger value="en" className="rounded-lg px-4 py-2 font-bold font-sans text-blue-600">INGLÊS (EN)</TabsTrigger>
-                        <TabsTrigger value="es" className="rounded-lg px-4 py-2 font-bold font-sans text-red-600">ESPANHOL (ES)</TabsTrigger>
-                      </TabsList>
-
-                      <TabsContent value="pt" className="space-y-4 m-0">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="font-sans font-bold text-xs uppercase tracking-widest text-muted-foreground">Título do Passeio</Label>
-                            <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required className="font-serif text-lg h-12" />
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                       <div className="lg:col-span-2 space-y-4">
+                          <Label className="font-black text-xs uppercase tracking-widest text-primary">Informações Base (Português)</Label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-xs uppercase font-bold text-muted-foreground">Título</Label>
+                              <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-12 font-serif text-lg" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria</Label>
+                              <Input value={editing.category ?? ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder="ex: AVENTURA" className="h-12 uppercase" />
+                            </div>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-sans font-bold text-xs uppercase tracking-widest text-muted-foreground">Categoria</Label>
-                            <Input value={editing.category ?? ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder="ex: AVENTURA" className="h-12 font-sans font-bold uppercase tracking-wider" />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="font-sans font-bold text-xs uppercase tracking-widest text-muted-foreground">Resumo / Descrição Curta</Label>
-                          <textarea 
-                            className="w-full min-h-[120px] rounded-xl border border-input bg-background px-4 py-3 text-sm font-sans shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-                            value={editing.short_description ?? ""} 
-                            onChange={(e) => setEditing({ ...editing, short_description: e.target.value })}
-                          />
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="en" className="space-y-4 m-0">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Tradução para Inglês</p>
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => autoTranslate('en')}
-                            disabled={isTranslating}
-                            className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-black h-8 gap-1 rounded-full border border-blue-200"
-                          >
-                            {isTranslating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                            TRADUZIR COM IA 🪄
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="font-sans text-xs font-bold text-muted-foreground">Title (EN)</Label>
-                            <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="font-serif text-lg h-12 border-blue-100" />
+                            <Label className="text-xs uppercase font-bold text-muted-foreground">URL Amigável (Slug)</Label>
+                            <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} placeholder="auto-gerado" className="h-10 font-mono text-xs" />
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-sans text-xs font-bold text-muted-foreground">Category (EN)</Label>
-                            <Input value={editing.category_en ?? ""} onChange={(e) => setEditing({ ...editing, category_en: e.target.value })} className="h-12 border-blue-100" />
+                            <Label className="text-xs uppercase font-bold text-muted-foreground">Resumo</Label>
+                            <textarea className="w-full min-h-[150px] rounded-xl border p-4 text-sm font-sans" value={editing.short_description ?? ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} />
                           </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="font-sans text-xs font-bold text-muted-foreground">Short Description (EN)</Label>
-                          <textarea 
-                            className="w-full min-h-[120px] rounded-xl border border-blue-100 bg-background px-4 py-3 text-sm font-sans"
-                            value={editing.short_description_en ?? ""} 
-                            onChange={(e) => setEditing({ ...editing, short_description_en: e.target.value })}
-                          />
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="es" className="space-y-4 m-0">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-bold text-red-600 uppercase tracking-widest">Traducción al Español</p>
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => autoTranslate('es')}
-                            disabled={isTranslating}
-                            className="bg-red-50 text-red-600 hover:bg-red-100 font-black h-8 gap-1 rounded-full border border-red-200"
-                          >
-                            {isTranslating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                            TRADUCIR CON IA 🪄
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="font-sans text-xs font-bold text-muted-foreground">Título (ES)</Label>
-                            <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="font-serif text-lg h-12 border-red-100" />
+                       </div>
+                       
+                       <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-6">
+                          <Label className="font-black text-xs uppercase tracking-widest text-blue-600 block mb-4">Traduções Instantâneas</Label>
+                          <div className="space-y-4">
+                             <Button onClick={() => autoTranslate('en')} disabled={isTranslating} variant="outline" className="w-full h-12 justify-between px-6 rounded-2xl border-blue-200 text-blue-600 font-bold">
+                                <span>Traduzir para Inglês (EN)</span>
+                                {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                             </Button>
+                             <Button onClick={() => autoTranslate('es')} disabled={isTranslating} variant="outline" className="w-full h-12 justify-between px-6 rounded-2xl border-red-200 text-red-600 font-bold">
+                                <span>Traduzir para Espanhol (ES)</span>
+                                {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                             </Button>
                           </div>
-                          <div className="space-y-2">
-                            <Label className="font-sans text-xs font-bold text-muted-foreground">Categoría (ES)</Label>
-                            <Input value={editing.category_es ?? ""} onChange={(e) => setEditing({ ...editing, category_es: e.target.value })} className="h-12 border-red-100" />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="font-sans text-xs font-bold text-muted-foreground">Descripción Corta (ES)</Label>
-                          <textarea 
-                            className="w-full min-h-[120px] rounded-xl border border-red-100 bg-background px-4 py-3 text-sm font-sans"
-                            value={editing.short_description_es ?? ""} 
-                            onChange={(e) => setEditing({ ...editing, short_description_es: e.target.value })}
-                          />
-                        </div>
-                      </TabsContent>
-                    </Tabs>
+                       </div>
+                    </div>
                   </TabsContent>
 
+                  {/* TAB DETAILS: ITINERARY, INCLUDED, FAQ */}
+                  <TabsContent value="details" className="m-0 space-y-10 pb-10">
+                     {/* Itinerary Section */}
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b pb-2">
+                           <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+                              <List className="w-4 h-4" /> Itinerário do Passeio
+                           </Label>
+                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('itinerary_json', { time: '08:00', description: '' })} className="font-bold text-xs h-8">
+                              + Adicionar Parada
+                           </Button>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4">
+                           {(editing.itinerary_json as any[])?.map((step, i) => (
+                             <div key={i} className="flex gap-4 items-start bg-muted/20 p-4 rounded-2xl border border-border/50 group">
+                                <div className="w-24 shrink-0">
+                                   <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">Hora</Label>
+                                   <Input value={step.time} onChange={(e) => updateJsonField('itinerary_json', i, 'time', e.target.value)} className="font-mono h-10 px-2" />
+                                </div>
+                                <div className="flex-1">
+                                   <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">O que acontece?</Label>
+                                   <Input value={step.description} onChange={(e) => updateJsonField('itinerary_json', i, 'description', e.target.value)} className="h-10" />
+                                </div>
+                                <Button size="icon" variant="ghost" className="mt-6 text-red-400 group-hover:text-red-500" onClick={() => removeJsonItem('itinerary_json', i)}><Trash2 className="w-4 h-4" /></Button>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+
+                     {/* Included Section */}
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b pb-2">
+                           <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+                              <Info className="w-4 h-4" /> O que está incluído?
+                           </Label>
+                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('included_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">
+                              + Adicionar Item
+                           </Button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           {(editing.included_json as any[])?.map((item, i) => (
+                             <div key={i} className="flex gap-4 items-center bg-muted/20 p-3 rounded-2xl border border-border/50">
+                                <Input value={item.text} onChange={(e) => updateJsonField('included_json', i, 'text', e.target.value)} placeholder="Ex: Almoço" className="h-10" />
+                                <Button size="icon" variant="ghost" onClick={() => removeJsonItem('included_json', i)}><Trash className="w-4 h-4" /></Button>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+
+                     {/* FAQ Section */}
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b pb-2">
+                           <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+                              <HelpCircle className="w-4 h-4" /> Perguntas Frequentes
+                           </Label>
+                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('faq_json', { q: '', a: '' })} className="font-bold text-xs h-8">
+                              + Adicionar Pergunta
+                           </Button>
+                        </div>
+                        <div className="grid grid-cols-1 gap-6">
+                           {(editing.faq_json as any[])?.map((item, i) => (
+                             <div key={i} className="bg-muted/10 p-5 rounded-3xl border space-y-4">
+                                <Input value={item.q} onChange={(e) => updateJsonField('faq_json', i, 'q', e.target.value)} placeholder="Pergunta..." className="font-bold border-none bg-transparent h-10 px-0 focus:ring-0 text-foreground" />
+                                <textarea className="w-full text-xs text-muted-foreground bg-transparent border-none focus:ring-0 p-0 min-h-[60px]" value={item.a} onChange={(e) => updateJsonField('faq_json', i, 'a', e.target.value)} placeholder="Resposta..." />
+                                <div className="flex justify-end">
+                                   <Button variant="ghost" size="sm" className="text-red-500" onClick={() => removeJsonItem('faq_json', i)}>Excluir Pergunta</Button>
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+                  </TabsContent>
+
+                  {/* TAB GALLERY: REMAINING SAME BUT VERIFYING CONTENT */}
                   <TabsContent value="gallery" className="m-0 space-y-6">
-                    <div className="p-6 border-2 border-dashed rounded-3xl bg-muted/10 flex flex-col items-center justify-center gap-4 transition-colors hover:bg-muted/20 text-center relative">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <Upload className="w-6 h-6" />
+                    <div className="p-12 border-4 border-dashed rounded-[40px] bg-muted/20 flex flex-col items-center justify-center gap-4 transition-all hover:bg-muted/30 text-center relative group">
+                      <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                        <Upload className="w-10 h-10" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-foreground">Carregar fotos para o Passeio</h4>
-                        <p className="text-xs text-muted-foreground mt-1 underline cursor-pointer">Arraste ou clique para selecionar arquivos</p>
+                        <h4 className="font-black text-xl text-foreground">Biblioteca de Mídia</h4>
+                        <p className="text-sm text-muted-foreground mt-2">Arraste fotos ou clique para carregar múltiplas imagens para o grid do passeio.</p>
                         <Input type="file" multiple accept="image/*" onChange={handleFileUpload} className="hidden" id="tour-files-upload" disabled={isUploading} />
                         <Label htmlFor="tour-files-upload" className="absolute inset-0 cursor-pointer opacity-0" />
                       </div>
                     </div>
-                    {isUploading && <p className="text-center text-sm animate-pulse text-primary font-bold">Enviando imagens...</p>}
+                    {isUploading && <div className="text-center py-4 text-primary font-black animate-pulse flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> ENVIANDO IMAGENS...</div>}
                     
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
                       {editing.images_json?.map((url, index) => (
-                        <div key={index} className={`relative aspect-square rounded-2xl overflow-hidden shadow-sm group border-2 ${editing.image_url === url ? "border-primary" : "border-transparent"}`}>
+                        <div key={index} className={`relative aspect-square rounded-3xl overflow-hidden shadow-sm group border-4 transition-all ${editing.image_url === url ? "border-primary ring-4 ring-primary/20" : "border-transparent"}`}>
                           <img src={url} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <Button size="icon" variant="ghost" className="text-white hover:bg-white/20" onClick={() => setMainImage(url)}>
-                              <Star className={`w-5 h-5 ${editing.image_url === url ? "fill-primary text-primary" : ""}`} />
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                            <Button size="icon" variant="ghost" className="text-white hover:bg-primary/80 h-12 w-12 rounded-2xl" onClick={() => setMainImage(url)}>
+                              <Star className={`w-6 h-6 ${editing.image_url === url ? "fill-white" : ""}`} />
                             </Button>
-                            <Button size="icon" variant="ghost" className="text-white hover:bg-red-500" onClick={() => removeImage(index)}>
-                              <Trash className="w-5 h-5" />
+                            <Button size="icon" variant="ghost" className="text-white hover:bg-red-500 h-12 w-12 rounded-2xl" onClick={() => removeImage(index)}>
+                              <Trash2 className="w-6 h-6" />
                             </Button>
                           </div>
                           {editing.image_url === url && (
-                            <div className="absolute top-2 left-2 bg-primary text-white px-2 py-0.5 rounded-full text-[8px] font-black uppercase shadow-lg">CAPA</div>
+                            <div className="absolute top-3 left-3 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">FOTO DE CAPA</div>
                           )}
                         </div>
                       ))}
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="settings" className="m-0 space-y-6">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                      <div className="space-y-2">
-                        <Label className="font-sans font-bold">Preço Unitário (R$)</Label>
-                        <Input type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="h-12 font-sans font-black text-lg" />
+                  {/* TAB SETTINGS: PRICE, DUR, FLAGS, OPEN/PRIVATE */}
+                  <TabsContent value="settings" className="m-0 space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-3">
+                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Valor por Pessoa (R$)</Label>
+                        <Input type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="h-14 font-black text-2xl px-6 rounded-2xl" />
                       </div>
-                      <div className="space-y-2">
-                        <Label className="font-sans font-bold">Duração (Texto)</Label>
-                        <Input value={editing.duration ?? ""} onChange={(e) => setEditing({ ...editing, duration: e.target.value })} placeholder="ex: 4 horas" className="h-12" />
+                      <div className="space-y-3">
+                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Tempo Estimado</Label>
+                        <Input value={editing.duration ?? ""} onChange={(e) => setEditing({ ...editing, duration: e.target.value })} placeholder="ex: 8 horas" className="h-14 rounded-2xl" />
                       </div>
-                      <div className="space-y-2">
-                        <Label className="font-sans font-bold">Grupo Máximo</Label>
-                        <Input type="number" value={editing.max_group_size ?? 1} onChange={(e) => setEditing({ ...editing, max_group_size: Number(e.target.value) })} className="h-12" />
+                      <div className="space-y-3">
+                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Vagas do Grupo</Label>
+                        <Input type="number" value={editing.max_group_size ?? 1} onChange={(e) => setEditing({ ...editing, max_group_size: Number(e.target.value) })} className="h-14 rounded-2xl" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                      <div className="flex items-center gap-3 bg-muted/20 p-4 rounded-2xl border">
-                        <Switch checked={editing.is_active ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_active: v })} />
-                        <div>
-                          <Label className="font-bold block">Ativo</Label>
-                          <p className="text-[10px] text-muted-foreground">Visível para clientes</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 bg-muted/20 p-4 rounded-2xl border">
-                        <Switch checked={editing.allows_private ?? false} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
-                        <div>
-                          <Label className="font-bold block">Permite Privado</Label>
-                          <p className="text-[10px] text-muted-foreground">Habilitar opção VIP</p>
-                        </div>
-                      </div>
+
+                    <div className="space-y-6 pt-10 border-t">
+                       <Label className="font-black text-xs uppercase tracking-widest text-primary block mb-6 px-2">Disponibilidade e Visibilidade</Label>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                          <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-4 hover:border-primary/30 transition-colors">
+                             <div className="flex items-center justify-between">
+                                <Label className="font-bold">Ativo no Site</Label>
+                                <Switch checked={editing.is_active ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_active: v })} />
+                             </div>
+                             <p className="text-[10px] text-muted-foreground leading-relaxed">Se desmarcado, o passeio some das buscas e da home imediatamente.</p>
+                          </div>
+                          
+                          <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-4 hover:border-primary/30 transition-colors">
+                             <div className="flex items-center justify-between">
+                                <Label className="font-bold">Permitir Privado</Label>
+                                <Switch checked={editing.allows_private ?? false} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
+                             </div>
+                             <p className="text-[10px] text-muted-foreground leading-relaxed">Habilita a opção de "Grupo Privado" com valor diferenciado ou exclusivo.</p>
+                          </div>
+
+                          <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-4 hover:border-primary/30 transition-colors">
+                             <div className="flex items-center justify-between">
+                                <Label className="font-bold">Grupo Aberto</Label>
+                                <Switch checked={editing.allows_open ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_open: v })} />
+                             </div>
+                             <p className="text-[10px] text-muted-foreground leading-relaxed">Permite que o passeio seja compartilhado entre diferentes grupos.</p>
+                          </div>
+
+                          <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-4 hover:border-primary/30 transition-colors">
+                             <div className="flex items-center justify-between">
+                                <Label className="font-bold">Destaque (Home)</Label>
+                                <Switch checked={editing.is_featured ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_featured: v })} />
+                             </div>
+                             <p className="text-[10px] text-muted-foreground leading-relaxed">Exibe este passeio nas seções de "Passeios Populares".</p>
+                          </div>
+                       </div>
+                    </div>
+
+                    <div className="space-y-6 pt-10 border-t pb-10">
+                       <Label className="font-black text-xs uppercase tracking-widest text-primary block mb-6 px-2">Turnos Disponíveis</Label>
+                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
+                             <div className="flex items-center gap-3">
+                                <Sunrise className="w-5 h-5 text-amber-500" />
+                                <Label className="font-bold text-sm">Manhã</Label>
+                             </div>
+                             <Switch checked={editing.has_morning ?? true} onCheckedChange={(v) => setEditing({ ...editing, has_morning: v })} />
+                          </div>
+                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
+                             <div className="flex items-center gap-3">
+                                <Sun className="w-5 h-5 text-orange-500" />
+                                <Label className="font-bold text-sm">Tarde</Label>
+                             </div>
+                             <Switch checked={editing.has_afternoon ?? false} onCheckedChange={(v) => setEditing({ ...editing, has_afternoon: v })} />
+                          </div>
+                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
+                             <div className="flex items-center gap-3">
+                                <Moon className="w-5 h-5 text-indigo-500" />
+                                <Label className="font-bold text-sm">Noite</Label>
+                             </div>
+                             <Switch checked={editing.has_night ?? false} onCheckedChange={(v) => setEditing({ ...editing, has_night: v })} />
+                          </div>
+                       </div>
                     </div>
                   </TabsContent>
                 </div>
                 
-                <div className="p-6 border-t bg-muted/10 shrink-0 flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans px-8 h-12 rounded-xl">Cancelar</Button>
-                  <Button onClick={handleSave} className="font-sans px-12 h-12 bg-primary hover:bg-primary/90 text-white shadow-xl rounded-xl font-black" disabled={isUploading}>
+                <div className="p-6 border-t bg-muted/10 shrink-0 flex justify-end gap-4 shadow-inner">
+                  <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans px-10 h-14 rounded-2xl text-base">Descartar</Button>
+                  <Button onClick={handleSave} className="font-sans px-16 h-14 bg-primary hover:bg-primary/90 text-white shadow-2xl shadow-primary/20 rounded-2xl font-black text-base" disabled={isUploading}>
                     {isNew ? "Publicar Experiência" : "Salvar Alterações"}
                   </Button>
                 </div>

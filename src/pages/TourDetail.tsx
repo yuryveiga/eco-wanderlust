@@ -20,11 +20,10 @@ export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tours, isLoading } = useSiteData();
-  const [currentImage, setCurrentImage] = useState(0);
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
-  const { t, language } = useLocale();
+  const { t, language, formatPrice } = useLocale();
   const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
@@ -149,8 +148,6 @@ export function TourDetail() {
   };
 
   const handleImageSwap = (idx: number) => {
-    // If user clicks the same smaller image twice, it swaps back to main or stays.
-    // Intuitive behavior: swap main with the clicked sub-image.
     setSelectedImageIdx(idx);
   };
 
@@ -179,13 +176,17 @@ export function TourDetail() {
 
           {/* Premium Image Gallery Grid: 1 Large + 3 Small */}
           <div className="grid grid-cols-1 md:grid-cols-4 h-[500px] lg:h-[600px] gap-2 lg:gap-4 mb-8">
-            <div className="md:col-span-3 relative h-full rounded-3xl overflow-hidden group shadow-2xl cursor-zoom-in">
+            <div className="md:col-span-3 relative h-full rounded-3xl overflow-hidden group shadow-2xl cursor-zoom-in bg-muted/20">
+               {/* Background Blur for resize fit effect */}
+               <div className="absolute inset-0 z-0">
+                  <img src={images[selectedImageIdx]} alt="" className="w-full h-full object-cover blur-3xl opacity-20" />
+               </div>
                <img 
                  src={images[selectedImageIdx]} 
                  alt={tour.title} 
-                 className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" 
+                 className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-all duration-1000" 
                />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-20" />
             </div>
 
             <div className="hidden md:grid grid-rows-3 gap-2 lg:gap-4 h-full">
@@ -212,7 +213,6 @@ export function TourDetail() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Same content as before ... */}
             <div className="lg:col-span-2 space-y-6">
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
@@ -449,6 +449,45 @@ export function TourDetail() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-muted/30 py-20 mt-12 bg-[#2A9D8F]/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-serif text-3xl font-bold text-foreground mb-8 text-center uppercase tracking-widest">{t("voce_tambem_pode_gostar")}</h2>
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-4">
+              {tours
+                .filter((t_item) => t_item.id !== tour.id && t_item.slug !== tour.slug)
+                .slice(0, 6)
+                .map((item) => (
+                  <CarouselItem key={item.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <Link to={`/passeio/${item.slug || item.id}`} className="block h-full">
+                      <div className="bg-card rounded-3xl border border-border/50 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group flex flex-col h-full">
+                        <div className="relative h-64 overflow-hidden">
+                          <img src={item.image_url || ""} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black font-sans text-primary">
+                            {getTranslated(item, 'category')}
+                          </div>
+                        </div>
+                        <div className="p-6 flex-1 flex flex-col">
+                          <h3 className="font-serif font-bold text-xl mb-2 text-foreground group-hover:text-primary transition-colors line-clamp-1">{getTranslated(item, 'title')}</h3>
+                          <p className="text-muted-foreground font-sans text-sm mb-6 line-clamp-2">{getTranslated(item, 'short_description')}</p>
+                          <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/40">
+                             <span className="text-primary font-black font-sans">{formatPrice(item.price)}</span>
+                             <span className="text-xs font-bold text-muted-foreground font-sans uppercase tracking-widest">{item.duration}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="-left-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white" />
+              <CarouselNext className="-right-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white" />
+            </div>
+          </Carousel>
         </div>
       </div>
 

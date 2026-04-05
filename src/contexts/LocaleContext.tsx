@@ -149,6 +149,18 @@ const translations = {
     cancelamento_gratis: 'Cancelamento Grátis até 24h',
     explorar_outros: 'Explorar outros destinos',
     voce_tambem_pode_gostar: 'VOCÊ TAMBÉM PODE GOSTAR',
+
+    // Carrinho
+    meu_carrinho: 'Meu Carrinho',
+    carrinho_vazio: 'Seu carrinho está vazio.',
+    explorar_passeios: 'Explorar Passeios',
+    limpar_carrinho: 'Limpar Carrinho',
+    resumo_reserva: 'Resumo da Reserva',
+    subtotal: 'Subtotal',
+    taxas: 'Taxas e Impostos',
+    total: 'Total',
+    pagar_agora: 'Pagar com Stripe',
+    seguranca_stripe: 'Pagamento processado com segurança via Stripe. Seus dados estão protegidos.',
   },
   en: {
     inicio: 'Home',
@@ -286,6 +298,18 @@ const translations = {
     cancelamento_gratis: 'Free Cancellation up to 24h',
     explorar_outros: 'Explore other destinations',
     voce_tambem_pode_gostar: 'YOU MAY ALSO LIKE',
+
+    // Cart
+    meu_carrinho: 'My Cart',
+    carrinho_vazio: 'Your cart is empty.',
+    explorar_passeios: 'Explore Tours',
+    limpar_carrinho: 'Clear Cart',
+    resumo_reserva: 'Booking Summary',
+    subtotal: 'Subtotal',
+    taxas: 'Taxes and Fees',
+    total: 'Total',
+    pagar_agora: 'Pay with Stripe',
+    seguranca_stripe: 'Payment processed securely via Stripe. Your data is protected.',
   },
   es: {
     inicio: 'Inicio',
@@ -353,7 +377,7 @@ const translations = {
     footer_desc: 'Descubre las maravillas naturales de Río de Janeiro a través de experiencias de ecoturismo sostenible.',
     links_rapidos: 'Enlaces Rápidos',
     siga_nos: 'Síguenos',
-    direitos: 'Todos los derechos reservados.',
+    direitos: 'Todos los direitos reservados.',
     turismo_sustentavel: 'Turismo Sostenible en Río de Janeiro',
 
     // Weather
@@ -423,6 +447,18 @@ const translations = {
     cancelamento_gratis: 'Cancelación Gratis hasta 24h',
     explorar_outros: 'Explorar outros destinos',
     voce_tambem_pode_gostar: 'VOCÊ TAMBÉM PODE GOSTAR',
+
+    // Cart
+    meu_carrinho: 'Mi Carrito',
+    carrinho_vazio: 'Tu carrito está vacío.',
+    explorar_passeios: 'Explorar Paseos',
+    limpar_carrinho: 'Limpiar Carrito',
+    resumo_reserva: 'Resumen de la Reserva',
+    subtotal: 'Subtotal',
+    taxas: 'Impuestos y Tasas',
+    total: 'Total',
+    pagar_agora: 'Pagar con Stripe',
+    seguranca_stripe: 'Pago procesado de forma segura a través de Stripe. Tus datos estão protegidos.',
   }
 };
 
