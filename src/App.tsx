@@ -45,7 +45,6 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="blog" element={<AdminBlog />} />
-                <Route path="pages" element={<AdminPages />} />
                 <Route path="hero" element={<AdminHero />} />
                 <Route path="theme" element={<AdminTheme />} />
                 <Route path="users" element={<AdminUsers />} />
@@ -54,7 +53,6 @@ const App = () => (
                 <Route path="social" element={<AdminSocial />} />
                 <Route path="gallery" element={<AdminGallery />} />
               </Route>
-              <Route path="/:slug" element={<GenericPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

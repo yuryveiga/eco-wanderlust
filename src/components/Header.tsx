@@ -53,33 +53,12 @@ export function Header() {
   const baseLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
+    { label: "Sobre Nós", href: "#about" },
+    { label: t("contato"), href: "#contact" },
     { label: "Blog", href: "/blog" },
   ];
 
-  const systemPageLabels = ["inicio", "início", "home", "passeios", "tours", "blog", "contato", "contact"];
-  
-  const cmsLinks = pages
-    .filter(p => p.is_visible && p.href && p.href.trim() !== "" && p.href.trim() !== "/")
-    .filter(p => !systemPageLabels.includes(p.title.toLowerCase()))
-    .map((p) => ({ 
-      label: p.title, 
-      href: p.href.startsWith("/") || p.href.startsWith("http") ? p.href : `/${p.href}` 
-    }));
-
-  // Deduplicate and merge: base links + CMS links that don't match base labels or hrefs
-  const navLinks = [
-    ...baseLinks,
-    ...cmsLinks.filter(cms => {
-      const isDuplicateLabel = baseLinks.some(base => base.label.toLowerCase() === cms.label.toLowerCase());
-      const isDuplicateHref = baseLinks.some(base => {
-        const normBase = base.href.replace(/\/$/, "");
-        const normCms = cms.href.replace(/\/$/, "");
-        return normBase === normCms;
-      });
-      return !isDuplicateLabel && !isDuplicateHref;
-    }),
-    { label: t("contato"), href: "#contact" },
-  ];
+  const navLinks = baseLinks;
 
   const activeSocials = socialMedia.length > 0
     ? socialMedia.map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))

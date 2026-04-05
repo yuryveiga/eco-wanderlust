@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 const items = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Blog", url: "/admin/blog", icon: PenTool },
-  { title: "Páginas CMS", url: "/admin/pages", icon: FileText },
   { title: "Estilo do Hero", url: "/admin/hero", icon: LayoutTemplate },
   { title: "Cores do Site", url: "/admin/theme", icon: Palette },
   { title: "Passeios", url: "/admin/tours", icon: Map },
