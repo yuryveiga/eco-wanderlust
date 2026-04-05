@@ -106,6 +106,11 @@ export function Header() {
                 <option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option>
               </select>
             </div>
+            <div className="flex items-center space-x-2 border-r pr-4">
+              <select className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer hover:text-primary transition-colors" value={currency} onChange={e => setCurrency(e.target.value as any)}>
+                <option value="BRL">R$</option><option value="USD">$</option><option value="EUR">€</option>
+              </select>
+            </div>
 
             <Link to="/carrinho" className="relative group">
               <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
@@ -140,6 +145,10 @@ export function Header() {
             <div className="flex items-center border border-border rounded-full px-2 py-1 bg-muted/30">
               <select className="bg-transparent border-none text-[10px] font-bold px-1 py-0 outline-none w-8 appearance-none" value={language} onChange={e => setLanguage(e.target.value as any)}>
                 <option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option>
+              </select>
+              <span className="text-[10px] text-muted-foreground mx-1">|</span>
+              <select className="bg-transparent border-none text-[10px] font-bold px-1 py-0 outline-none w-8 appearance-none" value={currency} onChange={e => setCurrency(e.target.value as any)}>
+                <option value="BRL">R$</option><option value="USD">$</option><option value="EUR">€</option>
               </select>
             </div>
             <button className="p-2 transition-transform active:scale-95" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
