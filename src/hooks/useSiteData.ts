@@ -12,7 +12,13 @@ export function useSiteData() {
   const [pages, setPages] = useState<LovablePage[]>([]);
   const [images, setImages] = useState<Record<string, string>>({});
   const [socialMedia, setSocialMedia] = useState<LovableSocialMedia[]>([]);
-  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('site_settings') || '{}');
+    } catch {
+      return {};
+    }
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +44,7 @@ export function useSiteData() {
         const settingsMap: Record<string, string> = {};
         settingsData.forEach((s) => { settingsMap[s.key] = s.value; });
         setSiteSettings(settingsMap);
+        localStorage.setItem('site_settings', JSON.stringify(settingsMap));
         
         setSocialMedia(socialData.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order));
       } catch (error) {

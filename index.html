@@ -20,6 +20,31 @@
   <meta property="og:description" content="Descubra o Rio de Janeiro com tours guiados, passeios de barco em Arraial do Cabo e Angra dos Reis. Experiências inesquecíveis com guias especializados.">
   <meta name="twitter:description" content="Descubra o Rio de Janeiro com tours guiados, passeios de barco em Arraial do Cabo e Angra dos Reis. Experiências inesquecíveis com guias especializados.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script>
+      (function() {
+        try {
+          const settings = JSON.parse(localStorage.getItem('site_settings') || '{}');
+          const primary = settings.theme_primary;
+          const accent = settings.theme_accent;
+          if (primary || accent) {
+            const css = `
+              :root {
+                ${primary ? `--primary: ${primary}; --ring: ${primary}; --sidebar-primary: ${primary};` : ''}
+                ${accent ? `--accent: ${accent};` : ''}
+              }
+              .dark {
+                ${primary ? `--primary: ${primary}; --ring: ${primary}; --sidebar-primary: ${primary};` : ''}
+                ${accent ? `--accent: ${accent};` : ''}
+              }
+            `;
+            const style = document.createElement('style');
+            style.id = 'early-theme-style';
+            style.innerHTML = css;
+            document.head.appendChild(style);
+          }
+        } catch (e) {}
+      })();
+    </script>
 </head>
 
   <body>

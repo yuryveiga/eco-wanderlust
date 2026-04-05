@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0 });
+  const [settingsList, setSettingsList] = useState<LovableSiteSetting[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
         social: s.length,
       });
 
+      setSettingsList(settingsData);
       const settingsMap: Record<string, string> = {};
       settingsData.forEach((item) => { settingsMap[item.key] = item.value; });
       setSettings(settingsMap);
@@ -42,13 +44,15 @@ const AdminDashboard = () => {
       const keys = ['home_tours_columns', 'home_tours_count'];
       for (const key of keys) {
         if (settings[key]) {
-          await updateLovable("site_settings", key, { value: settings[key] });
+          const settingRecord = settingsList.find(s => s.key === key);
+          if (settingRecord?.id) {
+            await updateLovable("site_settings", settingRecord.id, { value: settings[key] });
+          }
         }
       }
       toast({ title: "Configurações da Home salvas!" });
-      window.location.reload();
-    } catch {
-      toast({ title: "Erro ao salvar", variant: "destructive" });
+    } catch (err) {
+      toast({ title: "Erro ao salvar", description: "Verifique o console para mais detalhes", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }

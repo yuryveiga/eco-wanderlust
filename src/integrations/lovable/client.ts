@@ -167,6 +167,7 @@ export type LovableBlogPost = {
 };
 
 export type LovableSiteSetting = {
+  id: string;
   key: string;
   value: string;
 };
