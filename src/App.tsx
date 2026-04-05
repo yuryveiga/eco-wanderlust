@@ -13,6 +13,7 @@ import AdminTours from "./pages/AdminTours.tsx";
 import AdminPages from "./pages/AdminPages.tsx";
 import AdminImages from "./pages/AdminImages.tsx";
 import AdminSocial from "./pages/AdminSocial.tsx";
+import AdminGallery from "./pages/AdminGallery";
 import { TourDetail } from "./pages/TourDetail";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="pages" element={<AdminPages />} />
               <Route path="images" element={<AdminImages />} />
               <Route path="social" element={<AdminSocial />} />
+              <Route path="gallery" element={<AdminGallery />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

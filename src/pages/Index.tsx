@@ -4,7 +4,7 @@ import { ToursSection } from "@/components/ToursSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { AboutSection } from "@/components/AboutSection";
 import { ContactSection } from "@/components/ContactSection";
-import { InstagramCarousel } from "@/components/InstagramCarousel";
+import { GallerySection } from "@/components/GallerySection";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -16,7 +16,7 @@ const Index = () => {
       <ReviewsSection />
       <AboutSection />
       <ContactSection />
-      <InstagramCarousel />
+      <GallerySection />
       <Footer />
     </main>
   );
