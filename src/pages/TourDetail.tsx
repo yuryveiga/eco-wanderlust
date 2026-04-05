@@ -26,6 +26,7 @@ export function TourDetail() {
   const { tours } = useSiteData();
   const [currentImage, setCurrentImage] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const tour = tours.find((t) => t.id === id);
   
@@ -223,17 +224,36 @@ export function TourDetail() {
                   </div>
                   
                   <div className="flex gap-2 mb-4 bg-muted/50 p-1 rounded-full">
-                    <button className="flex-1 bg-primary text-primary-foreground font-sans text-sm py-2 px-4 rounded-full font-medium transition-all">
+                    <button 
+                      onClick={() => setIsPrivate(false)}
+                      className={`flex-1 font-sans text-sm py-2 px-4 rounded-full font-medium transition-all ${
+                        !isPrivate 
+                          ? "bg-primary text-primary-foreground shadow-sm" 
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
                       Open grupo
                     </button>
-                    <button className="flex-1 text-muted-foreground hover:text-foreground font-sans text-sm py-2 px-4 rounded-full font-medium transition-all">
+                    <button 
+                      onClick={() => setIsPrivate(true)}
+                      className={`flex-1 font-sans text-sm py-2 px-4 rounded-full font-medium transition-all ${
+                        isPrivate 
+                          ? "bg-[#008967] text-white shadow-sm" 
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
                       Grupo Privado
                     </button>
                   </div>
                   
-                  <p className="text-center text-xs text-muted-foreground font-sans mb-6 px-4">
-                    Os grupos abertos são formados automaticamente de acordo com as disponibilidades.
-                  </p>
+                  <div className="min-h-[40px] flex items-center justify-center mb-6 px-4">
+                    <p className="text-center text-[13px] text-muted-foreground font-sans animate-fade-in">
+                      {isPrivate 
+                        ? "Passeios privados oferecem uma experiência exclusiva apenas para o seu grupo."
+                        : "Os grupos abertos são formados automaticamente de acordo com as disponibilidades."
+                      }
+                    </p>
+                  </div>
                   
                   <div className="space-y-6 mb-6">
                     <div className="border-t pt-4">
