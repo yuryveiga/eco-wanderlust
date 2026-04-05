@@ -176,14 +176,14 @@ const AdminBlog = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <style>{`
         .editor-container {
-          flex: 1;
           display: flex;
           flex-direction: column;
-          min-height: 0;
+          height: 100%;
+          min-height: 500px;
         }
         .editor-container .ql-container {
           flex: 1;
-          min-height: 0;
+          min-height: 400px;
           font-family: inherit;
           font-size: 16px;
           border-bottom-left-radius: 12px;
@@ -191,7 +191,6 @@ const AdminBlog = () => {
           background: white;
         }
         .editor-container .ql-editor {
-          height: 100%;
           min-height: 400px;
           line-height: 1.6;
         }
