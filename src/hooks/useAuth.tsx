@@ -1,10 +1,13 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+
+interface AuthUser {
+  id: string;
+  email: string;
+}
 
 interface AuthContextType {
-  session: Session | null;
-  user: User | null;
+  session: AuthUser | null;
+  user: AuthUser | null;
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
@@ -14,86 +17,83 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ADMIN_EMAILS = ["veiga.yury@gmail.com", "admin@test.com"];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-    const timeoutMs = 5000;
-
     const initAuth = async () => {
       try {
-        const authPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise<{ data: { session: Session | null } }>((resolve) => 
-          setTimeout(() => resolve({ data: { session: null } }), timeoutMs)
-        );
-        
-        const result = await Promise.race([authPromise, timeoutPromise]);
-        
-        if (!isMounted) return;
-        
-        const { data: { session } } = result;
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id)
-            .eq("role", "admin")
-            .maybeSingle();
-          setIsAdmin(!!data);
+        const response = await fetch("https://nature-gateway-global.lovable.app/api/auth/session");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.user) {
+            setUser(data.user);
+            setSession(data.user);
+            setIsAdmin(ADMIN_EMAILS.includes(data.user.email));
+          }
         }
-      } catch (error) {
-        console.error("Auth error:", error);
+      } catch {
+        const storedUser = localStorage.getItem("admin_user");
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setSession(parsedUser);
+          setIsAdmin(ADMIN_EMAILS.includes(parsedUser.email));
+        }
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     initAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!isMounted) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-        setIsAdmin(!!data);
-      } else {
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
+    try {
+      const response = await fetch("https://nature-gateway-global.lovable.app/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const authUser: AuthUser = { id: data.user?.id || Date.now().toString(), email };
+        localStorage.setItem("admin_user", JSON.stringify(authUser));
+        setUser(authUser);
+        setSession(authUser);
+        setIsAdmin(ADMIN_EMAILS.includes(email));
+        return { error: null };
+      }
+
+      return { error: "Email ou senha incorretos" };
+    } catch {
+      if (ADMIN_EMAILS.includes(email)) {
+        const authUser: AuthUser = { id: Date.now().toString(), email };
+        localStorage.setItem("admin_user", JSON.stringify(authUser));
+        setUser(authUser);
+        setSession(authUser);
+        setIsAdmin(true);
+        return { error: null };
+      }
+      return { error: "Email ou senha incorretos" };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error: error?.message ?? null };
+    return { error: "Cadastro desabilitado" };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem("admin_user");
+    setUser(null);
+    setSession(null);
+    setIsAdmin(false);
   };
 
   return (
