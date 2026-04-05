@@ -1,102 +1,72 @@
-import { useState, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSiteImage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Upload, Images } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-type GalleryImage = {
-  id: string;
-  key: string;
-  image_url: string;
-  label: string;
-};
-
 const PRESET_KEYS = [
-  { key: "gallery_1", label: "Foto 1", category: "gallery" },
-  { key: "gallery_2", label: "Foto 2", category: "gallery" },
-  { key: "gallery_3", label: "Foto 3", category: "gallery" },
-  { key: "gallery_4", label: "Foto 4", category: "gallery" },
-  { key: "gallery_5", label: "Foto 5", category: "gallery" },
-  { key: "gallery_6", label: "Foto 6", category: "gallery" },
-  { key: "gallery_7", label: "Foto 7", category: "gallery" },
-  { key: "gallery_8", label: "Foto 8", category: "gallery" },
-  { key: "gallery_9", label: "Foto 9", category: "gallery" },
-  { key: "gallery_10", label: "Foto 10", category: "gallery" },
-  { key: "gallery_11", label: "Foto 11", category: "gallery" },
-  { key: "gallery_12", label: "Foto 12", category: "gallery" },
+  { key: "gallery_1", label: "Foto 1" },
+  { key: "gallery_2", label: "Foto 2" },
+  { key: "gallery_3", label: "Foto 3" },
+  { key: "gallery_4", label: "Foto 4" },
+  { key: "gallery_5", label: "Foto 5" },
+  { key: "gallery_6", label: "Foto 6" },
+  { key: "gallery_7", label: "Foto 7" },
+  { key: "gallery_8", label: "Foto 8" },
+  { key: "gallery_9", label: "Foto 9" },
+  { key: "gallery_10", label: "Foto 10" },
+  { key: "gallery_11", label: "Foto 11" },
+  { key: "gallery_12", label: "Foto 12" },
 ];
 
 const AdminGallery = () => {
-  const [editing, setEditing] = useState<Partial<GalleryImage> | null>(null);
+  const [images, setImages] = useState<LovableSiteImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editing, setEditing] = useState<Partial<LovableSiteImage> | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: images = [], isLoading } = useQuery({
-    queryKey: ["admin-gallery-images"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("site_images")
-        .select("*")
-        .ilike("key", "gallery_%")
-        .order("key");
-      if (error) throw error;
-      return data as GalleryImage[];
-    },
-  });
+  useEffect(() => {
+    fetchLovable<LovableSiteImage>("site_images").then((data) => {
+      const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
+      setImages(galleryImages);
+      setIsLoading(false);
+    });
+  }, []);
 
-  const uploadImage = async (file: File, key: string): Promise<string> => {
-    const ext = file.name.split(".").pop();
-    const fileName = `gallery/${key}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("site-images").upload(fileName, file);
-    if (error) throw error;
-    const { data } = supabase.storage.from("site-images").getPublicUrl(fileName);
-    return data.publicUrl;
+  const handleSave = async () => {
+    if (!editing?.key) {
+      toast({ title: "Erro", description: "Chave é obrigatória", variant: "destructive" });
+      return;
+    }
+
+    try {
+      if (isNew) {
+        await insertLovable("site_images", editing);
+        toast({ title: "Foto salva!" });
+      } else if (editing.id) {
+        await updateLovable("site_images", editing.id, editing);
+        toast({ title: "Foto atualizada!" });
+      }
+
+      const data = await fetchLovable<LovableSiteImage>("site_images");
+      const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
+      setImages(galleryImages);
+      setEditing(null);
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    }
   };
 
-  const saveMutation = useMutation({
-    mutationFn: async (img: Partial<GalleryImage>) => {
-      let imageUrl = img.image_url;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile, img.key ?? "gallery");
-      }
-      const payload = { ...img, image_url: imageUrl };
-
-      if (img.id) {
-        const { error } = await supabase.from("site_images").update(payload).eq("id", img.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("site_images").upsert([payload as GalleryImage], { onConflict: "key" });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-gallery-images"] });
-      queryClient.invalidateQueries({ queryKey: ["site-images"] });
-      setEditing(null);
-      setImageFile(null);
-      toast({ title: "Foto salva!" });
-    },
-    onError: (e: Error) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("site_images").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-gallery-images"] });
-      queryClient.invalidateQueries({ queryKey: ["site-images"] });
-      toast({ title: "Foto removida" });
-    },
-  });
+  const handleDelete = async (id: string) => {
+    if (!confirm("Deseja excluir esta foto?")) return;
+    await deleteLovable("site_images", id);
+    setImages(images.filter((i) => i.id !== id));
+    toast({ title: "Foto removida" });
+  };
 
   const missingPresets = PRESET_KEYS.filter((p) => !images.find((i) => i.key === p.key));
 
@@ -107,7 +77,7 @@ const AdminGallery = () => {
           <h1 className="font-serif text-3xl font-bold text-foreground">Galeria de Fotos</h1>
           <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie as fotos da galeria do site</p>
         </div>
-        <Button onClick={() => { setEditing({ key: "", label: "", image_url: "" }); setIsNew(true); setImageFile(null); }} className="font-sans">
+        <Button onClick={() => { setEditing({ key: "", label: "", image_url: "" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Nova Foto
         </Button>
       </div>
@@ -117,7 +87,7 @@ const AdminGallery = () => {
           <p className="text-sm font-sans text-foreground mb-2 font-medium">Slots disponíveis para adicionar:</p>
           <div className="flex flex-wrap gap-2">
             {missingPresets.map((p) => (
-              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => { setEditing({ key: p.key, label: p.label, image_url: "" }); setIsNew(true); setImageFile(null); }}>
+              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => { setEditing({ key: p.key, label: p.label, image_url: "" }); setIsNew(true); }}>
                 <Upload className="w-3 h-3 mr-1" />{p.label}
               </Button>
             ))}
@@ -142,10 +112,10 @@ const AdminGallery = () => {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                  <Button variant="secondary" size="icon" onClick={() => { setEditing({ ...img }); setIsNew(false); setImageFile(null); }}>
+                  <Button variant="secondary" size="icon" onClick={() => { setEditing({ ...img }); setIsNew(false); }}>
                     <Pencil className="w-4 h-4" />
                   </Button>
-                  <Button variant="destructive" size="icon" onClick={() => deleteMutation.mutate(img.id)}>
+                  <Button variant="destructive" size="icon" onClick={() => handleDelete(img.id)}>
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
@@ -164,31 +134,24 @@ const AdminGallery = () => {
             <DialogTitle className="font-serif">{isNew ? "Nova Foto" : "Editar Foto"}</DialogTitle>
           </DialogHeader>
           {editing && (
-            <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(editing); }} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="font-sans">Chave (identificador)</Label>
                 <Input value={editing.key ?? ""} onChange={(e) => setEditing({ ...editing, key: e.target.value })} required disabled={!isNew} placeholder="gallery_1" />
               </div>
               <div className="space-y-2">
                 <Label className="font-sans">Descrição</Label>
-                <Input value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Pôr do sol no Rio" />
+                <Input value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Descrição da foto" />
               </div>
               <div className="space-y-2">
-                <Label className="font-sans">Foto</Label>
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="hidden" />
-                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full font-sans">
-                  <Upload className="w-4 h-4 mr-2" />
-                  {imageFile ? imageFile.name : "Selecionar arquivo"}
-                </Button>
-                {editing.image_url && !imageFile && (
-                  <img src={editing.image_url} alt="Preview" className="w-full h-40 object-cover rounded-lg mt-2" />
-                )}
+                <Label className="font-sans">URL da Imagem</Label>
+                <Input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://..." />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button type="submit" className="font-sans" disabled={saveMutation.isPending}>Salvar</Button>
+                <Button onClick={handleSave} className="font-sans">Salvar</Button>
               </div>
-            </form>
+            </div>
           )}
         </DialogContent>
       </Dialog>

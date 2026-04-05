@@ -1,28 +1,13 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableTour } from "@/integrations/lovable/client";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-type Tour = {
-  id: string;
-  title: string;
-  short_description: string;
-  price: number;
-  duration: string;
-  max_group_size: number;
-  image_url: string;
-  is_featured: boolean;
-  category: string;
-  is_active: boolean;
-  sort_order: number;
-};
 
 const emptyTour = {
   title: "",
@@ -38,83 +23,57 @@ const emptyTour = {
 };
 
 const AdminTours = () => {
-  const [editingTour, setEditingTour] = useState<Partial<Tour> | null>(null);
+  const [tours, setTours] = useState<LovableTour[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editingTour, setEditingTour] = useState<Partial<LovableTour> | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: tours = [], isLoading } = useQuery({
-    queryKey: ["admin-tours"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("tours").select("*").order("sort_order");
-      if (error) throw error;
-      return data as Tour[];
-    },
+  useState(() => {
+    fetchLovable<LovableTour>("tours").then((data) => {
+      setTours(data.sort((a, b) => a.sort_order - b.sort_order));
+      setIsLoading(false);
+    });
   });
 
-  const uploadImage = async (file: File): Promise<string> => {
-    const ext = file.name.split(".").pop();
-    const fileName = `tours/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("site-images").upload(fileName, file);
-    if (error) throw error;
-    const { data } = supabase.storage.from("site-images").getPublicUrl(fileName);
-    return data.publicUrl;
-  };
+  const handleSave = async () => {
+    if (!editingTour?.title) {
+      toast({ title: "Erro", description: "Título é obrigatório", variant: "destructive" });
+      return;
+    }
 
-  const saveMutation = useMutation({
-    mutationFn: async (tour: Partial<Tour>) => {
-      let imageUrl = tour.image_url;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+    try {
+      if (isNew) {
+        const newTour = { ...editingTour, sort_order: tours.length + 1 };
+        await insertLovable("tours", newTour);
+        toast({ title: "Passeio criado!" });
+      } else if (editingTour.id) {
+        await updateLovable("tours", editingTour.id, editingTour);
+        toast({ title: "Passeio atualizado!" });
       }
-      const payload = { ...tour, image_url: imageUrl };
-      
-      if (tour.id) {
-        const { error } = await supabase.from("tours").update(payload).eq("id", tour.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("tours").insert([payload as Tour]);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tours"] });
+
+      const data = await fetchLovable<LovableTour>("tours");
+      setTours(data.sort((a, b) => a.sort_order - b.sort_order));
       setEditingTour(null);
-      setImageFile(null);
-      toast({ title: "Passeio salvo!" });
-    },
-    onError: (e: Error) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("tours").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tours"] });
-      toast({ title: "Passeio removido" });
-    },
-  });
-
-  const openNew = () => {
-    setEditingTour({ ...emptyTour });
-    setIsNew(true);
-    setImageFile(null);
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    }
   };
 
-  const openEdit = (tour: Tour) => {
-    setEditingTour({ ...tour });
-    setIsNew(false);
-    setImageFile(null);
+  const handleDelete = async (id: string) => {
+    if (!confirm("Deseja excluir este passeio?")) return;
+    await deleteLovable("tours", id);
+    setTours(tours.filter((t) => t.id !== id));
+    toast({ title: "Passeio removido" });
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-3xl font-bold text-foreground">Passeios</h1>
-        <Button onClick={openNew} className="font-sans"><Plus className="w-4 h-4 mr-2" />Novo Passeio</Button>
+        <Button onClick={() => { setEditingTour({ ...emptyTour }); setIsNew(true); }} className="font-sans">
+          <Plus className="w-4 h-4 mr-2" />Novo Passeio
+        </Button>
       </div>
 
       {isLoading ? (
@@ -137,8 +96,12 @@ const AdminTours = () => {
                 <p className="text-sm text-muted-foreground font-sans">{tour.category} · R$ {tour.price} · {tour.duration}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={() => openEdit(tour)}><Pencil className="w-4 h-4" /></Button>
-                <Button variant="outline" size="icon" onClick={() => deleteMutation.mutate(tour.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <Button variant="outline" size="icon" onClick={() => { setEditingTour({ ...tour }); setIsNew(false); }}>
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button variant="outline" size="icon" onClick={() => handleDelete(tour.id)}>
+                  <Trash2 className="w-4 h-4 text-destructive" />
+                </Button>
               </div>
             </div>
           ))}
@@ -151,7 +114,7 @@ const AdminTours = () => {
             <DialogTitle className="font-serif">{isNew ? "Novo Passeio" : "Editar Passeio"}</DialogTitle>
           </DialogHeader>
           {editingTour && (
-            <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(editingTour); }} className="space-y-4">
+            <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-sans">Título</Label>
@@ -176,16 +139,13 @@ const AdminTours = () => {
                   <Input value={editingTour.duration ?? ""} onChange={(e) => setEditingTour({ ...editingTour, duration: e.target.value })} placeholder="8 horas" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="font-sans">Tamanho máximo do grupo</Label>
+                  <Label className="font-sans">Grupo máx.</Label>
                   <Input type="number" value={editingTour.max_group_size ?? 10} onChange={(e) => setEditingTour({ ...editingTour, max_group_size: Number(e.target.value) })} />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="font-sans">Imagem</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
-                {editingTour.image_url && !imageFile && (
-                  <img src={editingTour.image_url} alt="Preview" className="w-32 h-20 object-cover rounded-lg mt-2" />
-                )}
+                <Label className="font-sans">URL da Imagem</Label>
+                <Input value={editingTour.image_url ?? ""} onChange={(e) => setEditingTour({ ...editingTour, image_url: e.target.value })} placeholder="https://..." />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -203,11 +163,9 @@ const AdminTours = () => {
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditingTour(null)} className="font-sans">Cancelar</Button>
-                <Button type="submit" className="font-sans" disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? "Salvando..." : "Salvar"}
-                </Button>
+                <Button onClick={handleSave} className="font-sans">Salvar</Button>
               </div>
-            </form>
+            </div>
           )}
         </DialogContent>
       </Dialog>

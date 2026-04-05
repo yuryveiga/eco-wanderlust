@@ -11,6 +11,47 @@ export async function fetchLovable<T>(table: string): Promise<T[]> {
   }
 }
 
+export async function insertLovable<T>(table: string, data: T): Promise<T | null> {
+  try {
+    const response = await fetch(`${LOVABLE_API}/${table}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error(`Error inserting ${table}:`, error);
+    return null;
+  }
+}
+
+export async function updateLovable<T>(table: string, id: string, data: Partial<T>): Promise<boolean> {
+  try {
+    const response = await fetch(`${LOVABLE_API}/${table}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error(`Error updating ${table}:`, error);
+    return false;
+  }
+}
+
+export async function deleteLovable(table: string, id: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${LOVABLE_API}/${table}/${id}`, {
+      method: "DELETE",
+    });
+    return response.ok;
+  } catch (error) {
+    console.error(`Error deleting ${table}:`, error);
+    return false;
+  }
+}
+
 export type LovableTour = {
   id: string;
   title: string;

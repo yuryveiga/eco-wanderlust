@@ -1,19 +1,11 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSiteImage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-type SiteImage = {
-  id: string;
-  key: string;
-  image_url: string;
-  label: string;
-};
 
 const PRESET_KEYS = [
   { key: "logo", label: "Logo do Site" },
@@ -25,65 +17,48 @@ const PRESET_KEYS = [
 ];
 
 const AdminImages = () => {
-  const [editing, setEditing] = useState<Partial<SiteImage> | null>(null);
+  const [images, setImages] = useState<LovableSiteImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editing, setEditing] = useState<Partial<LovableSiteImage> | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: images = [], isLoading } = useQuery({
-    queryKey: ["admin-site-images"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("site_images").select("*").order("key");
-      if (error) throw error;
-      return data as SiteImage[];
-    },
-  });
+  useEffect(() => {
+    fetchLovable<LovableSiteImage>("site_images").then((data) => {
+      setImages(data);
+      setIsLoading(false);
+    });
+  }, []);
 
-  const uploadImage = async (file: File, key: string): Promise<string> => {
-    const ext = file.name.split(".").pop();
-    const fileName = `site/${key}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("site-images").upload(fileName, file);
-    if (error) throw error;
-    const { data } = supabase.storage.from("site-images").getPublicUrl(fileName);
-    return data.publicUrl;
+  const handleSave = async () => {
+    if (!editing?.key) {
+      toast({ title: "Erro", description: "Chave é obrigatória", variant: "destructive" });
+      return;
+    }
+
+    try {
+      if (isNew) {
+        await insertLovable("site_images", editing);
+        toast({ title: "Imagem salva!" });
+      } else if (editing.id) {
+        await updateLovable("site_images", editing.id, editing);
+        toast({ title: "Imagem atualizada!" });
+      }
+
+      const data = await fetchLovable<LovableSiteImage>("site_images");
+      setImages(data);
+      setEditing(null);
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    }
   };
 
-  const saveMutation = useMutation({
-    mutationFn: async (img: Partial<SiteImage>) => {
-      let imageUrl = img.image_url;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile, img.key ?? "img");
-      }
-      const payload = { ...img, image_url: imageUrl };
-
-      if (img.id) {
-        const { error } = await supabase.from("site_images").update(payload).eq("id", img.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("site_images").insert([payload as SiteImage]);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-site-images"] });
-      setEditing(null);
-      setImageFile(null);
-      toast({ title: "Imagem salva!" });
-    },
-    onError: (e: Error) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("site_images").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-site-images"] });
-      toast({ title: "Imagem removida" });
-    },
-  });
+  const handleDelete = async (id: string) => {
+    if (!confirm("Deseja excluir esta imagem?")) return;
+    await deleteLovable("site_images", id);
+    setImages(images.filter((i) => i.id !== id));
+    toast({ title: "Imagem removida" });
+  };
 
   const missingPresets = PRESET_KEYS.filter((p) => !images.find((i) => i.key === p.key));
 
@@ -94,7 +69,7 @@ const AdminImages = () => {
           <h1 className="font-serif text-3xl font-bold text-foreground">Imagens do Site</h1>
           <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie logo, hero, e imagens de seções</p>
         </div>
-        <Button onClick={() => { setEditing({ key: "", label: "", image_url: "" }); setIsNew(true); setImageFile(null); }} className="font-sans">
+        <Button onClick={() => { setEditing({ key: "", label: "", image_url: "" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Nova Imagem
         </Button>
       </div>
@@ -104,7 +79,7 @@ const AdminImages = () => {
           <p className="text-sm font-sans text-foreground mb-2 font-medium">Imagens sugeridas para configurar:</p>
           <div className="flex flex-wrap gap-2">
             {missingPresets.map((p) => (
-              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => { setEditing({ key: p.key, label: p.label, image_url: "" }); setIsNew(true); setImageFile(null); }}>
+              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => { setEditing({ key: p.key, label: p.label, image_url: "" }); setIsNew(true); }}>
                 <Upload className="w-3 h-3 mr-1" />{p.label}
               </Button>
             ))}
@@ -125,8 +100,12 @@ const AdminImages = () => {
                 <p className="font-semibold text-foreground font-sans">{img.label}</p>
                 <p className="text-xs text-muted-foreground font-sans">Chave: {img.key}</p>
                 <div className="flex gap-2 mt-3">
-                  <Button variant="outline" size="sm" onClick={() => { setEditing({ ...img }); setIsNew(false); setImageFile(null); }}><Pencil className="w-3 h-3 mr-1" />Editar</Button>
-                  <Button variant="outline" size="sm" onClick={() => deleteMutation.mutate(img.id)}><Trash2 className="w-3 h-3 mr-1 text-destructive" />Remover</Button>
+                  <Button variant="outline" size="sm" onClick={() => { setEditing({ ...img }); setIsNew(false); }}>
+                    <Pencil className="w-3 h-3 mr-1" />Editar
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleDelete(img.id)}>
+                    <Trash2 className="w-3 h-3 mr-1 text-destructive" />Remover
+                  </Button>
                 </div>
               </div>
             </div>
@@ -140,7 +119,7 @@ const AdminImages = () => {
             <DialogTitle className="font-serif">{isNew ? "Nova Imagem" : "Editar Imagem"}</DialogTitle>
           </DialogHeader>
           {editing && (
-            <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(editing); }} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="font-sans">Chave (identificador único)</Label>
                 <Input value={editing.key ?? ""} onChange={(e) => setEditing({ ...editing, key: e.target.value })} required disabled={!isNew} placeholder="hero_bg" />
@@ -150,17 +129,14 @@ const AdminImages = () => {
                 <Input value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Fundo do Hero" />
               </div>
               <div className="space-y-2">
-                <Label className="font-sans">Imagem</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
-                {editing.image_url && !imageFile && (
-                  <img src={editing.image_url} alt="Preview" className="w-full h-32 object-cover rounded-lg mt-2" />
-                )}
+                <Label className="font-sans">URL da Imagem</Label>
+                <Input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://..." />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button type="submit" className="font-sans" disabled={saveMutation.isPending}>Salvar</Button>
+                <Button onClick={handleSave} className="font-sans">Salvar</Button>
               </div>
-            </form>
+            </div>
           )}
         </DialogContent>
       </Dialog>
