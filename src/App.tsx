@@ -18,6 +18,7 @@ import AdminGallery from "./pages/AdminGallery";
 import AdminBlog from "./pages/AdminBlog";
 import AdminHero from "./pages/AdminHero";
 import AdminTheme from "./pages/AdminTheme";
+import AdminUsers from "./pages/AdminUsers";
 import { TourDetail } from "./pages/TourDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -47,12 +48,13 @@ const App = () => (
                 <Route path="pages" element={<AdminPages />} />
                 <Route path="hero" element={<AdminHero />} />
                 <Route path="theme" element={<AdminTheme />} />
+                <Route path="users" element={<AdminUsers />} />
                 <Route path="tours" element={<AdminTours />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="social" element={<AdminSocial />} />
                 <Route path="gallery" element={<AdminGallery />} />
               </Route>
-              <Route path="/p/:slug" element={<GenericPage />} />
+              <Route path="/:slug" element={<GenericPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

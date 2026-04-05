@@ -10,8 +10,20 @@ import { Plus, Pencil, Trash2, Upload, MapPin, Utensils, Shield, Activity, Clock
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+const slugify = (text: string) => {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+};
+
 const emptyTour: Partial<LovableTour> = {
   title: "",
+  slug: "",
   short_description: "",
   price: 0,
   duration: "",
@@ -94,7 +106,8 @@ const AdminTours = () => {
         }
       }
 
-      const dataToSave = { ...editingTour, image_url: imageUrl };
+      const slug = editingTour.slug || slugify(editingTour.title);
+      const dataToSave = { ...editingTour, image_url: imageUrl, slug };
 
       if (isNew) {
         await insertLovable("tours", dataToSave);
@@ -184,12 +197,27 @@ const AdminTours = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Título do Passeio</Label>
-                      <Input value={editingTour.title ?? ""} onChange={(e) => setEditingTour({ ...editingTour, title: e.target.value })} placeholder="Ex: Cristo Redentor & City Tour" />
+                      <Input 
+                        value={editingTour.title ?? ""} 
+                        onChange={(e) => {
+                          const title = e.target.value;
+                          setEditingTour({ ...editingTour, title, slug: editingTour.slug || slugify(title) });
+                        }} 
+                        placeholder="Ex: Cristo Redentor & City Tour" 
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label>Categoria</Label>
-                      <Input value={editingTour.category ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category: e.target.value })} placeholder="Ex: Histórico, Aventura" />
+                      <Label>Slug (URL)</Label>
+                      <Input 
+                        value={editingTour.slug ?? ""} 
+                        onChange={(e) => setEditingTour({ ...editingTour, slug: slugify(e.target.value) })} 
+                        placeholder="ex-cristo-redentor" 
+                      />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Categoria</Label>
+                    <Input value={editingTour.category ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category: e.target.value })} placeholder="Ex: Histórico, Aventura" />
                   </div>
                   <div className="space-y-2">
                     <Label>Descrição Curta</Label>
@@ -299,21 +327,21 @@ const AdminTours = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="flex items-center justify-between p-4 border rounded-xl bg-card">
                         <div className="flex items-center gap-3">
-                          <Sunrise className="w-5 h-5 text-amber-500" />
+                           <Sunrise className="w-5 h-5 text-amber-500" />
                           <Label>Manhã</Label>
                         </div>
                         <Switch checked={editingTour.has_morning ?? true} onCheckedChange={(v) => setEditingTour({ ...editingTour, has_morning: v })} />
                       </div>
                       <div className="flex items-center justify-between p-4 border rounded-xl bg-card">
                         <div className="flex items-center gap-3">
-                          <Sun className="w-5 h-5 text-orange-500" />
+                           <Sun className="w-5 h-5 text-orange-500" />
                           <Label>Tarde</Label>
                         </div>
                         <Switch checked={editingTour.has_afternoon ?? false} onCheckedChange={(v) => setEditingTour({ ...editingTour, has_afternoon: v })} />
                       </div>
                       <div className="flex items-center justify-between p-4 border rounded-xl bg-card">
                         <div className="flex items-center gap-3">
-                          <Moon className="w-5 h-5 text-blue-500" />
+                           <Moon className="w-5 h-5 text-blue-500" />
                           <Label>Noite</Label>
                         </div>
                         <Switch checked={editingTour.has_night ?? false} onCheckedChange={(v) => setEditingTour({ ...editingTour, has_night: v })} />

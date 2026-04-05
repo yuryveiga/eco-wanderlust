@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
-import { Map, FileText, Image, Share2 } from "lucide-react";
+import { Map, FileText, Image, Share2, Save, LayoutGrid } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
-import { fetchLovable } from "@/integrations/lovable/client";
+import { fetchLovable, updateLovable, LovableSiteSetting } from "@/integrations/lovable/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0 });
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const fetchCounts = async () => {
-      const [t, p, i, s] = await Promise.all([
+    const fetchData = async () => {
+      const [t, p, i, s, settingsData] = await Promise.all([
         fetchLovable<{ id: string }>("tours"),
         fetchLovable<{ id: string }>("pages"),
         fetchLovable<{ id: string }>("site_images"),
         fetchLovable<{ id: string }>("social_media"),
+        fetchLovable<LovableSiteSetting>("site_settings"),
       ]);
       setCounts({
         tours: t.length,
@@ -20,9 +28,31 @@ const AdminDashboard = () => {
         images: i.length,
         social: s.length,
       });
+
+      const settingsMap: Record<string, string> = {};
+      settingsData.forEach((item) => { settingsMap[item.key] = item.value; });
+      setSettings(settingsMap);
     };
-    fetchCounts();
+    fetchData();
   }, []);
+
+  const handleSaveSettings = async () => {
+    setIsSaving(true);
+    try {
+      const keys = ['home_tours_columns', 'home_tours_count'];
+      for (const key of keys) {
+        if (settings[key]) {
+          await updateLovable("site_settings", key, { value: settings[key] });
+        }
+      }
+      toast({ title: "Configurações da Home salvas!" });
+      window.location.reload();
+    } catch {
+      toast({ title: "Erro ao salvar", variant: "destructive" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const cards = [
     { label: "Passeios", count: counts.tours, icon: Map, color: "bg-primary/10 text-primary" },
@@ -32,9 +62,10 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div>
-      <h1 className="font-serif text-3xl font-bold text-foreground mb-6">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="space-y-8 pb-12">
+      <h1 className="font-serif text-3xl font-bold text-foreground">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {cards.map((card) => (
           <div key={card.label} className="bg-card rounded-xl border border-border/50 p-6 shadow-sm">
             <div className="flex items-center gap-4">
@@ -50,7 +81,39 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <ChangePassword />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Grid settings for Home */}
+        <div className="bg-card border rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="flex items-center gap-3 mb-2">
+            <LayoutGrid className="w-6 h-6 text-primary" />
+            <h2 className="text-xl font-bold font-serif">Configuração da Grade (Home)</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Número de Colunas (Desktop)</Label>
+              <Input 
+                type="number" min={1} max={4} 
+                value={settings['home_tours_columns'] || "3"} 
+                onChange={(e) => setSettings({ ...settings, home_tours_columns: e.target.value })} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Máximo de Passeios na Home</Label>
+              <Input 
+                type="number" min={1} 
+                value={settings['home_tours_count'] || "6"} 
+                onChange={(e) => setSettings({ ...settings, home_tours_count: e.target.value })} 
+              />
+              <p className="text-[10px] text-muted-foreground">O número de colunas se ajustará automaticamente em celulares.</p>
+            </div>
+            <Button onClick={handleSaveSettings} disabled={isSaving} className="w-full">
+              {isSaving ? "Salvando..." : <><Save className="w-4 h-4 mr-2" /> Salvar Grade</>}
+            </Button>
+          </div>
+        </div>
+
+        <ChangePassword />
+      </div>
     </div>
   );
 };

@@ -14,7 +14,7 @@ export function TourDetail() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
 
-  const tour = tours.find((t) => t.id === id);
+  const tour = tours.find((t) => t.id === id || t.slug === id);
 
   useEffect(() => {
     if (tour) {

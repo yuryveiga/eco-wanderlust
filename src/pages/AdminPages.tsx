@@ -12,6 +12,17 @@ import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = lazy(() => import('react-quill'));
 
+const slugify = (text: string) => {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+};
+
 const AdminPages = () => {
   const [pages, setPages] = useState<LovablePage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,30 +31,35 @@ const AdminPages = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchLovable<LovablePage>("pages").then((data) => {
-      setPages(data.sort((a, b) => a.sort_order - b.sort_order));
-      setIsLoading(false);
-    });
+    loadPages();
   }, []);
 
+  const loadPages = async () => {
+    const data = await fetchLovable<LovablePage>("pages");
+    setPages(data.sort((a, b) => a.sort_order - b.sort_order));
+    setIsLoading(false);
+  };
+
   const handleSave = async () => {
-    if (!editing?.title || !editing?.href) {
-      toast({ title: "Erro", description: "Título e link são obrigatórios", variant: "destructive" });
+    if (!editing?.title) {
+      toast({ title: "Erro", description: "Título é obrigatório", variant: "destructive" });
       return;
     }
 
+    const href = editing.href || slugify(editing.title);
+    const dataToSave = { ...editing, href };
+
     try {
       if (isNew) {
-        const newPage = { ...editing, sort_order: pages.length + 1 };
+        const newPage = { ...dataToSave, sort_order: pages.length + 1 };
         await insertLovable("pages", newPage);
         toast({ title: "Página criada!" });
       } else if (editing.id) {
-        await updateLovable("pages", editing.id, editing);
+        await updateLovable("pages", editing.id, dataToSave);
         toast({ title: "Página atualizada!" });
       }
 
-      const data = await fetchLovable<LovablePage>("pages");
-      setPages(data.sort((a, b) => a.sort_order - b.sort_order));
+      await loadPages();
       setEditing(null);
     } catch {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
@@ -158,11 +174,24 @@ const AdminPages = () => {
               <div className="grid grid-cols-2 gap-4 shrink-0">
                 <div className="space-y-2">
                   <Label className="font-sans">Título da Página (Aparece no Menu)</Label>
-                  <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+                  <Input 
+                    value={editing.title ?? ""} 
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      setEditing({ ...editing, title, href: editing.href === "/" || !editing.href ? slugify(title) : editing.href });
+                    }} 
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label className="font-sans">Slug / Rota (ex: /sobre-nos, ou #contato para âncoras)</Label>
-                  <Input value={editing.href ?? ""} onChange={(e) => setEditing({ ...editing, href: e.target.value })} placeholder="/sua-pagina" required />
+                  <Label className="font-sans">Slug / Rota (URL)</Label>
+                  <Input 
+                   value={editing.href ?? ""} 
+                   onChange={(e) => setEditing({ ...editing, href: slugify(e.target.value) })} 
+                   placeholder="ex: sobre-nos" 
+                   required 
+                  />
+                  <p className="text-[10px] text-muted-foreground">Endereço: seudominio.com/{editing.href || "..."}</p>
                 </div>
               </div>
               

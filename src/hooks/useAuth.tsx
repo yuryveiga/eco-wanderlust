@@ -1,8 +1,10 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import { fetchLovable, insertLovable, LovableProfile } from "@/integrations/lovable/client";
 
 interface AuthUser {
   id: string;
   email: string;
+  role?: string;
 }
 
 interface AuthContextType {
@@ -11,13 +13,11 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, role?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const ADMIN_EMAILS = ["veiga.yury@gmail.com", "admin@test.com"];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<AuthUser | null>(null);
@@ -28,23 +28,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const response = await fetch("https://nature-gateway-global.lovable.app/api/auth/session");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.user) {
-            setUser(data.user);
-            setSession(data.user);
-            setIsAdmin(ADMIN_EMAILS.includes(data.user.email));
-          }
-        }
-      } catch {
         const storedUser = localStorage.getItem("admin_user");
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setSession(parsedUser);
-          setIsAdmin(ADMIN_EMAILS.includes(parsedUser.email));
+          // Re-verify role from DB
+          const profiles = await fetchLovable<LovableProfile>("profiles");
+          const profile = profiles.find(p => p.email === parsedUser.email);
+          
+          if (profile) {
+            setUser({ ...parsedUser, role: profile.role });
+            setSession(parsedUser);
+            setIsAdmin(profile.role === "admin");
+          } else {
+            // If profile gone, clear session
+            localStorage.removeItem("admin_user");
+          }
         }
+      } catch (error) {
+        console.error("Auth init error:", error);
       } finally {
         setLoading(false);
       }
@@ -54,39 +55,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    // In this simplified setup, we check if the user exists in profiles
+    // In a real app, Supabase Auth handles the password
     try {
-      const response = await fetch("https://nature-gateway-global.lovable.app/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const profiles = await fetchLovable<LovableProfile>("profiles");
+      const profile = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
 
-      if (response.ok) {
-        const data = await response.json();
-        const authUser: AuthUser = { id: data.user?.id || Date.now().toString(), email };
+      if (profile) {
+        const authUser: AuthUser = { id: profile.id, email, role: profile.role };
         localStorage.setItem("admin_user", JSON.stringify(authUser));
         setUser(authUser);
         setSession(authUser);
-        setIsAdmin(ADMIN_EMAILS.includes(email));
+        setIsAdmin(profile.role === "admin");
         return { error: null };
       }
 
-      return { error: "Email ou senha incorretos" };
+      return { error: "Usuário não autorizado ou senha incorreta." };
     } catch {
-      if (ADMIN_EMAILS.includes(email)) {
-        const authUser: AuthUser = { id: Date.now().toString(), email };
-        localStorage.setItem("admin_user", JSON.stringify(authUser));
-        setUser(authUser);
-        setSession(authUser);
-        setIsAdmin(true);
-        return { error: null };
-      }
-      return { error: "Email ou senha incorretos" };
+      return { error: "Erro na autenticação." };
     }
   };
 
-  const signUp = async (email: string, password: string) => {
-    return { error: "Cadastro desabilitado" };
+  const signUp = async (email: string, password: string, role: string = "user") => {
+    try {
+      await insertLovable("profiles", { email, role });
+      return { error: null };
+    } catch (e) {
+      return { error: "Erro ao criar usuário." };
+    }
   };
 
   const signOut = async () => {

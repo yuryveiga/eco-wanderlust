@@ -60,7 +60,7 @@ export function Header() {
     .filter(p => p.is_visible && p.href && p.href.trim() !== "" && p.href.trim() !== "/")
     .map((p) => ({ 
       label: p.title, 
-      href: p.href.startsWith("/") || p.href.startsWith("http") ? p.href : `/p/${p.href}` 
+      href: p.href.startsWith("/") || p.href.startsWith("http") ? p.href : `/${p.href}` 
     }));
 
   // Deduplicate and merge: hardcoded base links + CMS links that don't match base labels

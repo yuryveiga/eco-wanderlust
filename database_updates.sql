@@ -57,3 +57,18 @@ ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS allows_private BOOLEAN NOT NUL
 ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS allows_open BOOLEAN NOT NULL DEFAULT true;
 ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS included_json JSONB;
 ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS faq_json JSONB;
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+
+-- Configurações de Grade na Home
+INSERT INTO public.site_settings (key, value) VALUES ('home_tours_columns', '3') ON CONFLICT (key) DO NOTHING;
+INSERT INTO public.site_settings (key, value) VALUES ('home_tours_count', '6') ON CONFLICT (key) DO NOTHING;
+
+-- Tabela de Perfis (Usuários Admins)
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT UNIQUE NOT NULL,
+  role TEXT NOT NULL DEFAULT 'user', -- 'admin' ou 'user'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+INSERT INTO public.profiles (email, role) VALUES ('veiga.yury@gmail.com', 'admin') ON CONFLICT (email) DO NOTHING;

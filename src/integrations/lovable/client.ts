@@ -47,7 +47,7 @@ export async function fetchLovable<T>(table: string): Promise<T[]> {
   }
 }
 
-export async function insertLovable<T extends { id?: string }>(table: string, data: T): Promise<T | null> {
+export async function insertLovable<T>(table: string, data: any): Promise<T | null> {
   try {
     // Strip id, created_at, updated_at out of the data to avoid Postgres primary key or timestamp errors
     const sanitizedData = { ...data } as any;
@@ -127,6 +127,7 @@ export type LovableTour = {
   allows_open?: boolean;
   included_json?: { icon: string; text: string }[];
   faq_json?: { q: string; a: string }[];
+  slug?: string;
 };
 
 export type LovablePage = {
@@ -168,4 +169,11 @@ export type LovableBlogPost = {
 export type LovableSiteSetting = {
   key: string;
   value: string;
+};
+
+export type LovableProfile = {
+  id: string;
+  email: string;
+  role: string;
+  created_at: string;
 };

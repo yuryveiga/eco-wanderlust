@@ -14,13 +14,14 @@ type TourCardProps = {
   image_url: string;
   is_featured: boolean;
   category: string;
+  slug?: string;
 };
 
 function TourCard({ tour }: { tour: TourCardProps }) {
   const { t, formatPrice } = useLocale();
 
   return (
-    <Link to={`/passeio/${tour.id}`} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+    <Link to={`/passeio/${tour.slug || tour.id}`} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-56 overflow-hidden">
         <img src={tour.image_url} alt={tour.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
@@ -50,8 +51,17 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 }
 
 export function ToursSection() {
-  const { tours, isLoading } = useSiteData();
+  const { tours, siteSettings, isLoading } = useSiteData();
   const { t } = useLocale();
+
+  const columns = Number(siteSettings['home_tours_columns']) || 3;
+  const count = Number(siteSettings['home_tours_count']) || 6;
+  const displayTours = tours.slice(0, count);
+
+  // Dynamic grid class based on columns
+  const gridColsClass = columns === 1 ? "lg:grid-cols-1 max-w-2xl mx-auto" : 
+                        columns === 2 ? "lg:grid-cols-2" : 
+                        columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
@@ -66,12 +76,12 @@ export function ToursSection() {
           </p>
         </div>
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
             {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {tours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+            {displayTours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
           </div>
         )}
       </div>
