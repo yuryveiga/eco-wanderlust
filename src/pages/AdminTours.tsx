@@ -163,6 +163,63 @@ const AdminTours = () => {
                 <Label className="font-sans">Descrição curta</Label>
                 <Textarea value={editingTour.short_description ?? ""} onChange={(e) => setEditingTour({ ...editingTour, short_description: e.target.value })} rows={3} />
               </div>
+              <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="font-sans text-base">Itinerário e Detalhes</Label>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      const current = editingTour.itinerary_json || [];
+                      setEditingTour({ ...editingTour, itinerary_json: [...current, { time: "", description: "" }] });
+                    }}
+                  >
+                    Adicionar Passo
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(editingTour.itinerary_json || []).map((item, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row gap-2">
+                      <Input 
+                        placeholder="Ex: 7h00 - 7h30" 
+                        value={item.time} 
+                        onChange={(e) => {
+                          const arr = [...(editingTour.itinerary_json || [])];
+                          arr[index].time = e.target.value;
+                          setEditingTour({ ...editingTour, itinerary_json: arr });
+                        }} 
+                        className="sm:w-1/3"
+                      />
+                      <Input 
+                        placeholder="Descrição da atividade..." 
+                        value={item.description} 
+                        onChange={(e) => {
+                          const arr = [...(editingTour.itinerary_json || [])];
+                          arr[index].description = e.target.value;
+                          setEditingTour({ ...editingTour, itinerary_json: arr });
+                        }} 
+                        className="sm:flex-1"
+                      />
+                      <Button 
+                        type="button" 
+                        variant="destructive" 
+                        size="icon" 
+                        onClick={() => {
+                          const arr = [...(editingTour.itinerary_json || [])];
+                          arr.splice(index, 1);
+                          setEditingTour({ ...editingTour, itinerary_json: arr });
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  {(editingTour.itinerary_json || []).length === 0 && (
+                     <p className="text-sm text-muted-foreground font-sans">Nenhum item adicionado no itinerário.</p>
+                  )}
+                </div>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label className="font-sans">Preço (R$)</Label>

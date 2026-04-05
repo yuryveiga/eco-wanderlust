@@ -119,12 +119,14 @@ export type LovableTour = {
   category: string;
   is_active: boolean;
   sort_order: number;
+  itinerary_json?: { time: string; description: string }[];
 };
 
 export type LovablePage = {
   id: string;
   title: string;
   href: string;
+  content?: string;
   is_visible: boolean;
   sort_order: number;
 };
@@ -143,4 +145,20 @@ export type LovableSocialMedia = {
   icon_name: string;
   is_active: boolean;
   sort_order: number;
+};
+
+export type LovableBlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  image_url?: string;
+  is_published: boolean;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type LovableSiteSetting = {
+  key: string;
+  value: string;
 };

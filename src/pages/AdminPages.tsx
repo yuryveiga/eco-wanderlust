@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovablePage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const AdminPages = () => {
   const [pages, setPages] = useState<LovablePage[]>([]);
@@ -53,75 +55,104 @@ const AdminPages = () => {
     toast({ title: "Página removida" });
   };
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'image', 'video'],
+      ['clean'],
+    ],
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Páginas / Menu</h1>
-          <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie os itens do menu do site</p>
+          <h1 className="font-serif text-3xl font-bold text-foreground">Páginas CMS</h1>
+          <p className="text-muted-foreground font-sans text-sm mt-1">Crie conteúdo rico ou links para ancorar no menu do site.</p>
         </div>
-        <Button onClick={() => { setEditing({ title: "", href: "#", is_visible: true, sort_order: pages.length }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", href: "/", content: "", is_visible: true, sort_order: pages.length }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Nova Página
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground font-sans">Carregando...</div>
-      ) : pages.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground font-sans">Nenhuma página cadastrada.</div>
-      ) : (
-        <div className="bg-card rounded-xl border border-border/50 divide-y divide-border/50">
-          {pages.map((page) => (
-            <div key={page.id} className="flex items-center gap-4 p-4">
-              <GripVertical className="w-4 h-4 text-muted-foreground" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground font-sans">{page.title}</h3>
-                <p className="text-sm text-muted-foreground font-sans">{page.href}</p>
+      <div className="flex-1 overflow-auto pr-2 pb-8">
+        {isLoading ? (
+          <div className="text-center py-12 text-muted-foreground font-sans">Carregando...</div>
+        ) : pages.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground font-sans">Nenhuma página cadastrada.</div>
+        ) : (
+          <div className="bg-card rounded-xl border border-border/50 divide-y divide-border/50">
+            {pages.map((page) => (
+              <div key={page.id} className="flex items-center gap-4 p-4">
+                <GripVertical className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground font-sans">{page.title}</h3>
+                  <p className="text-sm text-muted-foreground font-sans">{page.href} {page.content && page.content.length > 5 && <span className="ml-2 text-xs bg-primary/10 text-primary px-2 rounded-full">Tem Conteúdo</span>}</p>
+                </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-sans ${page.is_visible ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  {page.is_visible ? "Visível" : "Oculto"}
+                </span>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="icon" onClick={() => { setEditing({ ...page }); setIsNew(false); }}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={() => handleDelete(page.id)}>
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-sans ${page.is_visible ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                {page.is_visible ? "Visível" : "Oculto"}
-              </span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={() => { setEditing({ ...page }); setIsNew(false); }}>
-                  <Pencil className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={() => handleDelete(page.id)}>
-                  <Trash2 className="w-4 h-4 text-destructive" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="font-serif">{isNew ? "Nova Página" : "Editar Página"}</DialogTitle>
+        <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-6">
+          <DialogHeader className="shrink-0 mb-4">
+            <DialogTitle className="font-serif">{isNew ? "Criar Nova Página" : "Editar Página"}</DialogTitle>
           </DialogHeader>
           {editing && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="font-sans">Título</Label>
-                <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-sans">Link (href)</Label>
-                <Input value={editing.href ?? ""} onChange={(e) => setEditing({ ...editing, href: e.target.value })} placeholder="#tours" required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 pb-4">
+              <div className="grid grid-cols-2 gap-4 shrink-0">
                 <div className="space-y-2">
-                  <Label className="font-sans">Ordem</Label>
+                  <Label className="font-sans">Título da Página (Aparece no Menu)</Label>
+                  <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-sans">Slug / Rota (ex: /sobre-nos, ou #contato para âncoras)</Label>
+                  <Input value={editing.href ?? ""} onChange={(e) => setEditing({ ...editing, href: e.target.value })} placeholder="/sua-pagina" required />
+                </div>
+              </div>
+              
+              <div className="flex-1 flex flex-col min-h-[350px]">
+                <Label className="font-sans mb-2 shrink-0">Conteúdo da Página (Editor Avançado)</Label>
+                <div className="flex-1 rounded-md border overflow-hidden flex flex-col">
+                  <ReactQuill 
+                    theme="snow" 
+                    value={editing.content || ""} 
+                    onChange={(content) => setEditing({ ...editing, content })} 
+                    className="flex-1 w-full bg-background flex flex-col h-full editor-container"
+                    modules={modules}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 shrink-0 pt-4 border-t">
+                <div className="space-y-2">
+                  <Label className="font-sans">Ordem de Exibição no Menu</Label>
                   <Input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} />
                 </div>
                 <div className="flex items-center gap-2 pt-6">
                   <Switch checked={editing.is_visible ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_visible: v })} />
-                  <Label className="font-sans">Visível no menu</Label>
+                  <Label className="font-sans">Tornar página visível no menu principal</Label>
                 </div>
               </div>
-              <div className="flex justify-end gap-2 pt-4">
+              
+              <div className="flex justify-end gap-2 pt-4 bg-background shrink-0 pb-2">
                 <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans">Salvar</Button>
+                <Button onClick={handleSave} className="font-sans px-8">{isNew ? "Criar" : "Salvar Alterações"}</Button>
               </div>
             </div>
           )}

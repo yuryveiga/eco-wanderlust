@@ -135,22 +135,37 @@ export function TourDetail() {
                 </div>
 
                 <div className="prose prose-sm max-w-none text-muted-foreground font-sans">
-                  <p className="text-base leading-relaxed">
+                  <p className="text-base leading-relaxed whitespace-pre-wrap">
                     {tour.short_description}
-                  </p>
-                  <p className="mt-4 text-base leading-relaxed">
-                    Prepare-se para uma aventura inesquecível! Este passeio foi cuidadosamente planejado 
-                    para proporcionar momentos únicos de contato com a natureza,大海 aventuras emocionantes 
-                    e memórias que vão durar para sempre. Nossa equipe especializada garante sua segurança 
-                    e conforto durante toda a experiência.
-                  </p>
-                  <p className="mt-4 text-base leading-relaxed">
-                    Durante o percurso, você terá a oportunidade de explorar paisagens deslumbrantes, 
-                    conhecer lugares escondidos e viver experiências autênticas que só quem participa 
-                    dos nossos passeios consegue acessar.
                   </p>
                 </div>
               </div>
+
+              {tour.itinerary_json && tour.itinerary_json.length > 0 && (
+                <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
+                  <h2 className="font-serif text-2xl font-bold text-[#2A9D8F] mb-2">
+                    Itinerário e Detalhes
+                  </h2>
+                  <p className="text-muted-foreground font-sans text-sm mb-8">
+                    Apenas para referência. Os itinerários estão sujeitos a alterações.
+                  </p>
+                  
+                  <div className="space-y-0 relative">
+                    {tour.itinerary_json.map((step, i) => (
+                      <div key={i} className="relative pl-10 pb-8 last:pb-0">
+                        {i !== tour.itinerary_json!.length - 1 && (
+                          <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[3px] border-dashed border-[#F4A261]/60 z-0"></div>
+                        )}
+                        <div className="absolute top-0 left-0 z-10 bg-background pt-1 pb-1">
+                           <MapPin className="w-6 h-6 text-[#E76F51] fill-[#E76F51]/10" />
+                        </div>
+                        <h3 className="font-bold text-[#2A9D8F] font-sans mb-2 pt-1">{step.time}</h3>
+                        <p className="text-muted-foreground font-sans text-sm leading-relaxed">{step.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8">
                 <h2 className="font-serif text-xl font-bold text-foreground mb-6">
@@ -200,35 +215,84 @@ export function TourDetail() {
             <div className="lg:col-span-1">
               <div className="sticky top-24">
                 <div className="bg-card rounded-2xl border border-border/50 p-6 shadow-lg">
-                  <div className="mb-4">
+                  <div className="mb-6 border-b pb-4">
                     <span className="text-3xl font-bold text-primary font-sans">
                       R$ {tour.price}
                     </span>
                     <span className="text-muted-foreground font-sans text-sm"> /pessoa</span>
                   </div>
                   
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-3 text-sm font-sans">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-foreground">Escolha a data</span>
+                  <div className="flex gap-2 mb-4 bg-muted/50 p-1 rounded-full">
+                    <button className="flex-1 bg-primary text-primary-foreground font-sans text-sm py-2 px-4 rounded-full font-medium transition-all">
+                      Open grupo
+                    </button>
+                    <button className="flex-1 text-muted-foreground hover:text-foreground font-sans text-sm py-2 px-4 rounded-full font-medium transition-all">
+                      Grupo Privado
+                    </button>
+                  </div>
+                  
+                  <p className="text-center text-xs text-muted-foreground font-sans mb-6 px-4">
+                    Os grupos abertos são formados automaticamente de acordo com as disponibilidades.
+                  </p>
+                  
+                  <div className="space-y-6 mb-6">
+                    <div className="border-t pt-4">
+                      <h4 className="font-serif font-bold text-foreground mb-3 text-lg">Período</h4>
+                      <button className="w-full bg-primary text-primary-foreground font-sans text-sm py-3 px-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
+                        Manhã <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                      </button>
                     </div>
-                    <input 
-                      type="date" 
-                      className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground font-sans text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                    />
-                    
-                    <div className="flex items-center gap-3 text-sm font-sans">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-foreground">Participantes</span>
+
+                    <div className="border-t pt-4 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-sans font-bold text-base text-foreground">Adulto</h4>
+                          <p className="text-xs text-muted-foreground font-sans">Idade 14 e até</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
+                            <span className="text-xl leading-none mt-[-2px]">-</span>
+                          </button>
+                          <span className="font-bold text-lg font-sans w-4 text-center">1</span>
+                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
+                            <span className="text-xl leading-none mt-[-2px]">+</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-sans font-bold text-base text-foreground">Crianças</h4>
+                          <p className="text-xs text-muted-foreground font-sans">Idades 7 a 13</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
+                            <span className="text-xl leading-none mt-[-2px]">-</span>
+                          </button>
+                          <span className="font-bold text-lg font-sans w-4 text-center">0</span>
+                          <button className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90">
+                            <span className="text-xl leading-none mt-[-2px]">+</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <select className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground font-sans text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                      {Array.from({ length: tour.max_group_size }, (_, i) => i + 1).map((n) => (
-                        <option key={n} value={n}>{n} {n === 1 ? "pessoa" : "pessoas"}</option>
-                      ))}
-                    </select>
+
+                    <div className="border-t border-b py-4 flex flex-col gap-2">
+                       <div className="flex items-center justify-between gap-3 text-sm font-sans cursor-pointer group">
+                         <span className="text-foreground font-bold font-sans text-base">Data</span>
+                         <div className="flex items-center text-muted-foreground group-hover:text-primary transition-colors">
+                           <span className="mr-2">Selecione uma data</span>
+                           <Calendar className="w-4 h-4" />
+                         </div>
+                       </div>
+                       <input 
+                         type="date" 
+                         className="w-full mt-2 px-4 py-3 rounded-lg border border-input bg-background/50 text-foreground font-sans text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                       />
+                    </div>
                   </div>
 
-                  <Button className="w-full h-12 text-base font-sans">
+                  <Button className="w-full h-14 text-base font-sans font-bold rounded-full mt-2">
                     Reservar agora
                   </Button>
 

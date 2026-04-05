@@ -15,7 +15,12 @@ import AdminPages from "./pages/AdminPages.tsx";
 import AdminImages from "./pages/AdminImages.tsx";
 import AdminSocial from "./pages/AdminSocial.tsx";
 import AdminGallery from "./pages/AdminGallery";
+import AdminBlog from "./pages/AdminBlog";
+import AdminHero from "./pages/AdminHero";
 import { TourDetail } from "./pages/TourDetail";
+import Blog from "./pages/Blog.tsx";
+import BlogPost from "./pages/BlogPost.tsx";
+import GenericPage from "./pages/GenericPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -29,16 +34,21 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/passeio/:id" element={<TourDetail />} />
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
-                <Route path="tours" element={<AdminTours />} />
+                <Route path="blog" element={<AdminBlog />} />
                 <Route path="pages" element={<AdminPages />} />
+                <Route path="hero" element={<AdminHero />} />
+                <Route path="tours" element={<AdminTours />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="social" element={<AdminSocial />} />
                 <Route path="gallery" element={<AdminGallery />} />
               </Route>
+              <Route path="/p/:slug" element={<GenericPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
