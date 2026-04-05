@@ -38,16 +38,29 @@ const GenericPage = () => {
     <div className="min-h-screen flex flex-col pt-20">
       <Header />
       
-      <main className="flex-1 bg-background py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-8 text-center">
-            {page.title}
-          </h1>
-          
-          <div 
-            className="prose prose-lg dark:prose-invert max-w-none font-sans"
-            dangerouslySetInnerHTML={{ __html: page.content || "<p>Nenhum conteúdo adicionado.</p>" }}
+      <main className="flex-1 bg-background pb-16">
+        {/* Cover Section (Matches Blog Style) */}
+        <div className="w-full h-[35vh] md:h-[50vh] relative bg-primary/10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-10" />
+          <img 
+            src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070" 
+            alt="Fundo" 
+            className="w-full h-full object-cover"
           />
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center pb-24 z-20">
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center drop-shadow-lg px-4">
+              {page.title}
+            </h1>
+          </div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-30">
+          <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-12 border border-border/50">
+            <div 
+              className="prose prose-lg dark:prose-invert max-w-none font-sans leading-relaxed ql-viewer"
+              dangerouslySetInnerHTML={{ __html: page.content || "<p className='text-center text-muted-foreground'>Página em construção.</p>" }}
+            />
+          </div>
         </div>
       </main>
 
