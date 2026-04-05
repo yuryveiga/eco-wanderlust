@@ -256,7 +256,8 @@ const AdminBlog = () => {
                  <div className="px-6 py-4 flex items-center justify-between bg-muted/5 shrink-0 border-b">
                     <TabsList className="bg-muted p-1 rounded-xl">
                        <TabsTrigger value="pt" className="rounded-lg font-bold px-6">PORTUGUÊS</TabsTrigger>
-                       <TabsTrigger value="translations" className="rounded-lg font-bold px-6">TRADUÇÕES</TabsTrigger>
+                       <TabsTrigger value="en" className="rounded-lg font-bold px-6 text-blue-600">ENGLISH</TabsTrigger>
+                       <TabsTrigger value="es" className="rounded-lg font-bold px-6 text-red-600">ESPAÑOL</TabsTrigger>
                     </TabsList>
                    
                    <div className="flex items-center gap-4">
@@ -327,53 +328,44 @@ const AdminBlog = () => {
                          </div>
                       </TabsContent>
 
-                       <TabsContent value="translations" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                          <Tabs defaultValue="en" className="flex-1 flex flex-col h-full overflow-hidden">
-                             <TabsList className="bg-muted p-1 rounded-xl mb-4 shrink-0">
-                                <TabsTrigger value="en" className="rounded-lg font-bold px-6 text-blue-600">ENGLISH</TabsTrigger>
-                                <TabsTrigger value="es" className="rounded-lg font-bold px-6 text-red-600">ESPAÑOL</TabsTrigger>
-                             </TabsList>
+                       <TabsContent value="en" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
+                          <div className="space-y-2 shrink-0">
+                             <Label className="text-[10px] font-black uppercase tracking-widest text-blue-500">English Title</Label>
+                             <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="English title..." />
+                          </div>
+                          <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                             <Suspense fallback={<div className="p-24 text-center font-sans">Loading Editor...</div>}>
+                                <ReactQuill 
+                                   theme="snow" 
+                                   value={editing.content_en || ""} 
+                                   onChange={(val) => setEditing({ ...editing, content_en: val })} 
+                                   className="editor-container"
+                                   modules={modules}
+                                   formats={formats}
+                                   placeholder="Switch language for editing..."
+                                />
+                             </Suspense>
+                          </div>
+                       </TabsContent>
 
-                             <TabsContent value="en" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                                <div className="space-y-2 shrink-0">
-                                   <Label className="text-[10px] font-black uppercase tracking-widest text-blue-500">English Title</Label>
-                                   <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="English title..." />
-                                </div>
-                                <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                                   <Suspense fallback={<div className="p-24 text-center font-sans">Loading Editor...</div>}>
-                                      <ReactQuill 
-                                         theme="snow" 
-                                         value={editing.content_en || ""} 
-                                         onChange={(val) => setEditing({ ...editing, content_en: val })} 
-                                         className="editor-container"
-                                         modules={modules}
-                                         formats={formats}
-                                         placeholder="Switch language for editing..."
-                                      />
-                                   </Suspense>
-                                </div>
-                             </TabsContent>
-
-                             <TabsContent value="es" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                                <div className="space-y-2 shrink-0">
-                                   <Label className="text-[10px] font-black uppercase tracking-widest text-red-500">Título en Español</Label>
-                                   <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título en Español..." />
-                                </div>
-                                <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                                   <Suspense fallback={<div className="p-24 text-center font-sans">Cargando Editor...</div>}>
-                                      <ReactQuill 
-                                         theme="snow" 
-                                         value={editing.content_es || ""} 
-                                         onChange={(val) => setEditing({ ...editing, content_es: val })} 
-                                         className="editor-container"
-                                         modules={modules}
-                                         formats={formats}
-                                         placeholder="Cambiar el idioma para editar..."
-                                      />
-                                   </Suspense>
-                                </div>
-                             </TabsContent>
-                          </Tabs>
+                       <TabsContent value="es" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
+                          <div className="space-y-2 shrink-0">
+                             <Label className="text-[10px] font-black uppercase tracking-widest text-red-500">Título en Español</Label>
+                             <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título en Español..." />
+                          </div>
+                          <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                             <Suspense fallback={<div className="p-24 text-center font-sans">Cargando Editor...</div>}>
+                                <ReactQuill 
+                                   theme="snow" 
+                                   value={editing.content_es || ""} 
+                                   onChange={(val) => setEditing({ ...editing, content_es: val })} 
+                                   className="editor-container"
+                                   modules={modules}
+                                   formats={formats}
+                                   placeholder="Cambiar el idioma para editar..."
+                                />
+                             </Suspense>
+                          </div>
                        </TabsContent>
                    </div>
                 </div>
