@@ -3,14 +3,6 @@ import { Button } from "@/components/ui/button";
 
 const INSTAGRAM_USERNAME = "tocorimerio";
 
-const embeddedPosts = [
-  `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DGs123456789/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5); padding:0; margin:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DGs123456789/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-left:8px; margin-right:8px; margin-top:8px; overflow:hidden; padding:2px 0 0; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><span style=" color:#000; font-size:14px; font-weight:600;">Ver esta publicação no Instagram</span></p></a></div></blockquote>`,
-  `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DGs987654321/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5); padding:0; margin:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DGs987654321/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-left:8px; margin-right:8px; margin-top:8px; overflow:hidden; padding:2px 0 0; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><span style=" color:#000; font-size:14px; font-weight:600;">Ver esta publicação no Instagram</span></p></a></div></blockquote>`,
-  `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DGs555555555/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5); padding:0; margin:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DGs555555555/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-left:8px; margin-right:8px; margin-top:8px; overflow:hidden; padding:2px 0 0; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><span style=" color:#000; font-size:14px; font-weight:600;">Ver esta publicação no Instagram</span></p></a></div></blockquote>`,
-  `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DGs333333333/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5); padding:0; margin:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DGs333333333/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-left:8px; margin-right:8px; margin-top:8px; overflow:hidden; padding:2px 0 0; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><span style=" color:#000; font-size:14px; font-weight:600;">Ver esta publicação no Instagram</span></p></a></div></blockquote>`,
-  `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DGs111111111/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5); padding:0; margin:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DGs111111111/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-left:8px; margin-right:8px; margin-top:8px; overflow:hidden; padding:2px 0 0; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><span style=" color:#000; font-size:14px; font-weight:600;">Ver esta publicação no Instagram</span></p></a></div></blockquote>`,
-];
-
 export function InstagramCarousel() {
   return (
     <section className="py-20 lg:py-28 bg-background">
@@ -28,14 +20,16 @@ export function InstagramCarousel() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {embeddedPosts.map((embed, index) => (
-            <div
-              key={index}
-              className="bg-card rounded-2xl overflow-hidden border border-border/50 p-0"
-              dangerouslySetInnerHTML={{ __html: embed }}
-            />
-          ))}
+        <div 
+          className="w-full rounded-2xl overflow-hidden border border-border/50"
+          style={{ height: "500px" }}
+        >
+          <iframe
+            src={`https://www.juicer.io/api/boards/${INSTAGRAM_USERNAME}/iframe`}
+            style={{ width: "100%", height: "100%", border: "none" }}
+            title="Instagram Feed"
+            loading="lazy"
+          />
         </div>
 
         <div className="text-center mt-10">
