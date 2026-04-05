@@ -7,8 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovablePage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import ReactQuill from 'react-quill';
+import { lazy, Suspense } from 'react';
 import 'react-quill/dist/quill.snow.css';
+
+const ReactQuill = lazy(() => import('react-quill'));
 
 const AdminPages = () => {
   const [pages, setPages] = useState<LovablePage[]>([]);
@@ -128,14 +130,16 @@ const AdminPages = () => {
               
               <div className="flex-1 flex flex-col min-h-[350px]">
                 <Label className="font-sans mb-2 shrink-0">Conteúdo da Página (Editor Avançado)</Label>
-                <div className="flex-1 rounded-md border overflow-hidden flex flex-col">
-                  <ReactQuill 
-                    theme="snow" 
-                    value={editing.content || ""} 
-                    onChange={(content) => setEditing({ ...editing, content })} 
-                    className="flex-1 w-full bg-background flex flex-col h-full editor-container"
-                    modules={modules}
-                  />
+                <div className="flex-1 rounded-md border flex flex-col" style={{ minHeight: "300px" }}>
+                  <Suspense fallback={<div className="p-4 text-sm text-muted-foreground">Carregando editor de texto...</div>}>
+                    <ReactQuill 
+                      theme="snow" 
+                      value={editing.content || ""} 
+                      onChange={(content) => setEditing({ ...editing, content })} 
+                      className="flex-1 w-full bg-background flex flex-col h-full editor-container"
+                      modules={modules}
+                    />
+                  </Suspense>
                 </div>
               </div>
 
