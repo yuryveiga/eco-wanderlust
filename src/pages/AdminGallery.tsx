@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSiteImage } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableSiteImage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Upload, Images } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -27,15 +27,34 @@ const AdminGallery = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableSiteImage> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchLovable<LovableSiteImage>("site_images").then((data) => {
-      const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
-      setImages(galleryImages);
-      setIsLoading(false);
-    });
+    loadImages();
   }, []);
+
+  const loadImages = async () => {
+    const data = await fetchLovable<LovableSiteImage>("site_images");
+    const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
+    setImages(galleryImages);
+    setIsLoading(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
     if (!editing?.key) {
@@ -43,29 +62,58 @@ const AdminGallery = () => {
       return;
     }
 
+    setIsUploading(true);
+
     try {
+      let imageUrl = editing.image_url || "";
+
+      if (selectedFile) {
+        const uploadedUrl = await uploadLovableFile(selectedFile);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        }
+      }
+
+      const dataToSave = { ...editing, image_url: imageUrl };
+
       if (isNew) {
-        await insertLovable("site_images", editing);
+        await insertLovable("site_images", dataToSave);
         toast({ title: "Foto salva!" });
       } else if (editing.id) {
-        await updateLovable("site_images", editing.id, editing);
+        await updateLovable("site_images", editing.id, dataToSave);
         toast({ title: "Foto atualizada!" });
       }
 
-      const data = await fetchLovable<LovableSiteImage>("site_images");
-      const galleryImages = data.filter((img) => img.key?.startsWith("gallery_"));
-      setImages(galleryImages);
+      await loadImages();
       setEditing(null);
+      setSelectedFile(null);
+      setPreviewUrl(null);
     } catch {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Deseja excluir esta foto?")) return;
     await deleteLovable("site_images", id);
-    setImages(images.filter((i) => i.id !== id));
+    await loadImages();
     toast({ title: "Foto removida" });
+  };
+
+  const openNew = (key?: string, label?: string) => {
+    setEditing({ key: key || "", label: label || "", image_url: "" });
+    setIsNew(true);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
+
+  const openEdit = (img: LovableSiteImage) => {
+    setEditing({ ...img });
+    setIsNew(false);
+    setSelectedFile(null);
+    setPreviewUrl(null);
   };
 
   const missingPresets = PRESET_KEYS.filter((p) => !images.find((i) => i.key === p.key));
@@ -77,7 +125,7 @@ const AdminGallery = () => {
           <h1 className="font-serif text-3xl font-bold text-foreground">Galeria de Fotos</h1>
           <p className="text-muted-foreground font-sans text-sm mt-1">Gerencie as fotos da galeria do site</p>
         </div>
-        <Button onClick={() => { setEditing({ key: "", label: "", image_url: "" }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => openNew()} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Nova Foto
         </Button>
       </div>
@@ -87,7 +135,7 @@ const AdminGallery = () => {
           <p className="text-sm font-sans text-foreground mb-2 font-medium">Slots disponíveis para adicionar:</p>
           <div className="flex flex-wrap gap-2">
             {missingPresets.map((p) => (
-              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => { setEditing({ key: p.key, label: p.label, image_url: "" }); setIsNew(true); }}>
+              <Button key={p.key} size="sm" variant="outline" className="font-sans" onClick={() => openNew(p.key, p.label)}>
                 <Upload className="w-3 h-3 mr-1" />{p.label}
               </Button>
             ))}
@@ -112,7 +160,7 @@ const AdminGallery = () => {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                  <Button variant="secondary" size="icon" onClick={() => { setEditing({ ...img }); setIsNew(false); }}>
+                  <Button variant="secondary" size="icon" onClick={() => openEdit(img)}>
                     <Pencil className="w-4 h-4" />
                   </Button>
                   <Button variant="destructive" size="icon" onClick={() => handleDelete(img.id)}>
@@ -121,7 +169,7 @@ const AdminGallery = () => {
                 </div>
               </div>
               <div className="p-3">
-                <p className="font-medium text-foreground font-sans text-sm truncate">{img.label}</p>
+                <p className="font-medium text-foreground font-sans text-sm truncate">{img.label || img.key}</p>
               </div>
             </div>
           ))}
@@ -144,12 +192,21 @@ const AdminGallery = () => {
                 <Input value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Descrição da foto" />
               </div>
               <div className="space-y-2">
-                <Label className="font-sans">URL da Imagem</Label>
-                <Input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://..." />
+                <Label className="font-sans">Foto</Label>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full font-sans" disabled={isUploading}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  {selectedFile ? selectedFile.name : "Selecionar arquivo"}
+                </Button>
+                {(previewUrl || editing.image_url) && (
+                  <img src={previewUrl || editing.image_url} alt="Preview" className="w-full h-40 object-cover rounded-lg mt-2" />
+                )}
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans">Salvar</Button>
+                <Button onClick={handleSave} className="font-sans" disabled={isUploading}>
+                  {isUploading ? "Enviando..." : "Salvar"}
+                </Button>
               </div>
             </div>
           )}

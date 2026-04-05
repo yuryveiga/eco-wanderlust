@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
+import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const emptyTour = {
@@ -27,14 +27,33 @@ const AdminTours = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingTour, setEditingTour] = useState<Partial<LovableTour> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  useState(() => {
-    fetchLovable<LovableTour>("tours").then((data) => {
-      setTours(data.sort((a, b) => a.sort_order - b.sort_order));
-      setIsLoading(false);
-    });
-  });
+  useEffect(() => {
+    loadTours();
+  }, []);
+
+  const loadTours = async () => {
+    const data = await fetchLovable<LovableTour>("tours");
+    setTours(data.sort((a, b) => a.sort_order - b.sort_order));
+    setIsLoading(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
     if (!editingTour?.title) {
@@ -42,28 +61,43 @@ const AdminTours = () => {
       return;
     }
 
+    setIsUploading(true);
+
     try {
+      let imageUrl = editingTour.image_url || "";
+
+      if (selectedFile) {
+        const uploadedUrl = await uploadLovableFile(selectedFile);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        }
+      }
+
+      const dataToSave = { ...editingTour, image_url: imageUrl };
+
       if (isNew) {
-        const newTour = { ...editingTour, sort_order: tours.length + 1 };
-        await insertLovable("tours", newTour);
+        await insertLovable("tours", dataToSave);
         toast({ title: "Passeio criado!" });
       } else if (editingTour.id) {
-        await updateLovable("tours", editingTour.id, editingTour);
+        await updateLovable("tours", editingTour.id, dataToSave);
         toast({ title: "Passeio atualizado!" });
       }
 
-      const data = await fetchLovable<LovableTour>("tours");
-      setTours(data.sort((a, b) => a.sort_order - b.sort_order));
+      await loadTours();
       setEditingTour(null);
+      setSelectedFile(null);
+      setPreviewUrl(null);
     } catch {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Deseja excluir este passeio?")) return;
     await deleteLovable("tours", id);
-    setTours(tours.filter((t) => t.id !== id));
+    await loadTours();
     toast({ title: "Passeio removido" });
   };
 
@@ -71,7 +105,7 @@ const AdminTours = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-3xl font-bold text-foreground">Passeios</h1>
-        <Button onClick={() => { setEditingTour({ ...emptyTour }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditingTour({ ...emptyTour }); setIsNew(true); setSelectedFile(null); setPreviewUrl(null); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
       </div>
@@ -96,7 +130,7 @@ const AdminTours = () => {
                 <p className="text-sm text-muted-foreground font-sans">{tour.category} · R$ {tour.price} · {tour.duration}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={() => { setEditingTour({ ...tour }); setIsNew(false); }}>
+                <Button variant="outline" size="icon" onClick={() => { setEditingTour({ ...tour }); setIsNew(false); setSelectedFile(null); setPreviewUrl(null); }}>
                   <Pencil className="w-4 h-4" />
                 </Button>
                 <Button variant="outline" size="icon" onClick={() => handleDelete(tour.id)}>
@@ -144,8 +178,15 @@ const AdminTours = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="font-sans">URL da Imagem</Label>
-                <Input value={editingTour.image_url ?? ""} onChange={(e) => setEditingTour({ ...editingTour, image_url: e.target.value })} placeholder="https://..." />
+                <Label className="font-sans">Imagem</Label>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full font-sans" disabled={isUploading}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  {selectedFile ? selectedFile.name : "Selecionar imagem"}
+                </Button>
+                {(previewUrl || editingTour.image_url) && (
+                  <img src={previewUrl || editingTour.image_url} alt="Preview" className="w-full h-40 object-cover rounded-lg mt-2" />
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -163,7 +204,9 @@ const AdminTours = () => {
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditingTour(null)} className="font-sans">Cancelar</Button>
-                <Button onClick={handleSave} className="font-sans">Salvar</Button>
+                <Button onClick={handleSave} className="font-sans" disabled={isUploading}>
+                  {isUploading ? "Enviando..." : "Salvar"}
+                </Button>
               </div>
             </div>
           )}
