@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Upload, MapPin, Utensils, Shield, Activity, Clock, Calendar, Sunrise, Sun, Moon } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, MapPin, Utensils, Shield, Activity, Clock, Calendar, Sunrise, Sun, Moon, ImageIcon, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -36,6 +36,7 @@ const emptyTour: Partial<LovableTour> = {
   itinerary_json: [],
   included_json: [],
   faq_json: [],
+  images_json: [],
   has_morning: true,
   has_afternoon: false,
   has_night: false,
@@ -64,6 +65,7 @@ const AdminTours = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -88,6 +90,27 @@ const AdminTours = () => {
     }
   };
 
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setIsUploading(true);
+    const newImages = [...(editingTour?.images_json || [])];
+    
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const url = await uploadLovableFile(files[i]);
+        if (url) newImages.push(url);
+      }
+      setEditingTour({ ...editingTour, images_json: newImages });
+      toast({ title: "Imagens adicionadas à galeria!" });
+    } catch {
+      toast({ title: "Erro", description: "Falha ao enviar galeria", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!editingTour?.title) {
       toast({ title: "Erro", description: "Título é obrigatório", variant: "destructive" });
@@ -106,8 +129,13 @@ const AdminTours = () => {
         }
       }
 
+      // Ensure at least 3 images for the grid to look good if none provided
+      const finalImages = editingTour.images_json && editingTour.images_json.length > 0
+        ? editingTour.images_json 
+        : [imageUrl];
+
       const slug = editingTour.slug || slugify(editingTour.title);
-      const dataToSave = { ...editingTour, image_url: imageUrl, slug };
+      const dataToSave = { ...editingTour, image_url: imageUrl, images_json: finalImages, slug };
 
       if (isNew) {
         await insertLovable("tours", dataToSave);
@@ -133,6 +161,17 @@ const AdminTours = () => {
     await deleteLovable("tours", id);
     await loadTours();
     toast({ title: "Passeio removido" });
+  };
+
+  const setMainImage = (url: string) => {
+    setEditingTour({ ...editingTour, image_url: url });
+    toast({ title: "Imagem principal definida!" });
+  };
+
+  const removeFromGallery = (index: number) => {
+    const list = [...(editingTour?.images_json || [])];
+    list.splice(index, 1);
+    setEditingTour({ ...editingTour, images_json: list });
   };
 
   return (
@@ -178,7 +217,7 @@ const AdminTours = () => {
       </div>
 
       <Dialog open={!!editingTour} onOpenChange={(open) => !open && setEditingTour(null)}>
-        <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
+        <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 font-sans">
           <DialogHeader className="p-6 pb-2 border-b shrink-0">
             <DialogTitle className="font-serif text-2xl">{isNew ? "Criar Novo Passeio" : "Editar Passeio"}</DialogTitle>
           </DialogHeader>
@@ -186,8 +225,9 @@ const AdminTours = () => {
           {editingTour && (
             <div className="flex-1 overflow-y-auto p-6 pt-2">
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 mb-6">
+                <TabsList className="grid w-full grid-cols-5 mb-6">
                   <TabsTrigger value="basic">Dados Básicos</TabsTrigger>
+                  <TabsTrigger value="gallery">Galeria (Grid)</TabsTrigger>
                   <TabsTrigger value="itinerary">Itinerário</TabsTrigger>
                   <TabsTrigger value="included">Incluso / FAQ</TabsTrigger>
                   <TabsTrigger value="settings">Opções & Tipos</TabsTrigger>
@@ -196,7 +236,7 @@ const AdminTours = () => {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Título do Passeio</Label>
+                      <Label>Título (PT)</Label>
                       <Input 
                         value={editingTour.title ?? ""} 
                         onChange={(e) => {
@@ -215,15 +255,49 @@ const AdminTours = () => {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Categoria</Label>
-                    <Input value={editingTour.category ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category: e.target.value })} placeholder="Ex: Histórico, Aventura" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Título (EN)</Label>
+                      <Input value={editingTour.title_en ?? ""} onChange={(e) => setEditingTour({ ...editingTour, title_en: e.target.value })} placeholder="Christ the Redeemer" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Título (ES)</Label>
+                      <Input value={editingTour.title_es ?? ""} onChange={(e) => setEditingTour({ ...editingTour, title_es: e.target.value })} placeholder="Cristo Redentor" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Descrição Curta</Label>
-                    <Textarea value={editingTour.short_description ?? ""} onChange={(e) => setEditingTour({ ...editingTour, short_description: e.target.value })} rows={4} />
-                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Categoria (PT)</Label>
+                      <Input value={editingTour.category ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Categoria (EN)</Label>
+                      <Input value={editingTour.category_en ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category_en: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Categoria (ES)</Label>
+                      <Input value={editingTour.category_es ?? ""} onChange={(e) => setEditingTour({ ...editingTour, category_es: e.target.value })} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Descrição Curta (PT)</Label>
+                    <Textarea value={editingTour.short_description ?? ""} onChange={(e) => setEditingTour({ ...editingTour, short_description: e.target.value })} rows={3} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Descrição Curta (EN)</Label>
+                      <Textarea value={editingTour.short_description_en ?? ""} onChange={(e) => setEditingTour({ ...editingTour, short_description_en: e.target.value })} rows={2} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Descrição Curta (ES)</Label>
+                      <Textarea value={editingTour.short_description_es ?? ""} onChange={(e) => setEditingTour({ ...editingTour, short_description_es: e.target.value })} rows={2} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t pt-4">
                     <div className="space-y-2">
                       <Label>Preço Base (R$)</Label>
                       <Input type="number" value={editingTour.price ?? 0} onChange={(e) => setEditingTour({ ...editingTour, price: Number(e.target.value) })} />
@@ -237,19 +311,56 @@ const AdminTours = () => {
                       <Input type="number" value={editingTour.max_group_size ?? 10} onChange={(e) => setEditingTour({ ...editingTour, max_group_size: Number(e.target.value) })} />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Imagem de Capa</Label>
-                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                    <div className="flex gap-4 items-start">
-                      <div className="flex-1">
-                        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full h-24 border-dashed" disabled={isUploading}>
-                          <Upload className="w-6 h-6 mr-2" />
-                          {selectedFile ? selectedFile.name : "Clique para subir a foto"}
-                        </Button>
+                </TabsContent>
+
+                <TabsContent value="gallery" className="space-y-6">
+                  <div className="space-y-4">
+                    <Label className="text-lg font-bold">Imagens do Grid (Sugerido: 3 imagens)</Label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {/* Slot para adicionar nova */}
+                      <div 
+                        onClick={() => galleryInputRef.current?.click()}
+                        className="aspect-square border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors gap-2"
+                      >
+                         <Upload className="w-6 h-6 text-muted-foreground" />
+                         <span className="text-[10px] text-muted-foreground uppercase font-bold">Upload</span>
+                         <input ref={galleryInputRef} type="file" multiple accept="image/*" onChange={handleGalleryUpload} className="hidden" />
                       </div>
-                      {(previewUrl || editingTour.image_url) && (
-                        <img src={previewUrl || editingTour.image_url} alt="Preview" className="w-24 h-24 object-cover rounded-lg border shadow-sm" />
-                      )}
+
+                      {/* Imagens existentes */}
+                      {(editingTour.images_json || []).map((url, idx) => (
+                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border shadow-sm">
+                          <img src={url} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <Button size="icon" variant="secondary" className="h-8 w-8" onClick={() => setMainImage(url)}>
+                               <Star className={`w-4 h-4 ${editingTour.image_url === url ? "fill-amber-500 text-amber-500" : ""}`} />
+                            </Button>
+                            <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => removeFromGallery(idx)}>
+                               <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          {editingTour.image_url === url && (
+                            <div className="absolute top-2 left-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                              Principal
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">O grid premium utiliza as 3 primeiras fotos da galeria. A marcada com a estrela é usada nos cards e como a principal do grid.</p>
+                  </div>
+                  
+                  <div className="border-t pt-4">
+                    <Label className="font-bold block mb-4">Imagem Principal Legada (Obrigatória)</Label>
+                    <div className="flex gap-4 items-center">
+                       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                       <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="h-20 w-40 border-dashed" disabled={isUploading}>
+                         <Upload className="w-4 h-4 mr-2" />
+                         Alterar
+                       </Button>
+                       {(previewUrl || editingTour.image_url) && (
+                         <img src={previewUrl || editingTour.image_url} alt="Preview" className="w-20 h-20 object-cover rounded-lg border shadow-sm" />
+                       )}
                     </div>
                   </div>
                 </TabsContent>
@@ -372,16 +483,16 @@ const AdminTours = () => {
 
                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t">
                     <div className="space-y-2">
-                      <Label>Ordem no Site</Label>
-                      <Input type="number" value={editingTour.sort_order ?? 0} onChange={(e) => setEditingTour({ ...editingTour, sort_order: Number(e.target.value) })} />
+                       <Label>Ordem no Site</Label>
+                       <Input type="number" value={editingTour.sort_order ?? 0} onChange={(e) => setEditingTour({ ...editingTour, sort_order: Number(e.target.value) })} />
                     </div>
                     <div className="flex items-center gap-2 pt-8">
-                      <Switch checked={editingTour.is_featured ?? false} onCheckedChange={(v) => setEditingTour({ ...editingTour, is_featured: v })} />
-                      <Label>Destaque na Home</Label>
+                       <Switch checked={editingTour.is_featured ?? false} onCheckedChange={(v) => setEditingTour({ ...editingTour, is_featured: v })} />
+                       <Label>Destaque na Home</Label>
                     </div>
                     <div className="flex items-center gap-2 pt-8">
-                      <Switch checked={editingTour.is_active ?? true} onCheckedChange={(v) => setEditingTour({ ...editingTour, is_active: v })} />
-                      <Label>Publicado / Ativo</Label>
+                       <Switch checked={editingTour.is_active ?? true} onCheckedChange={(v) => setEditingTour({ ...editingTour, is_active: v })} />
+                       <Label>Publicado / Ativo</Label>
                     </div>
                   </div>
                 </TabsContent>

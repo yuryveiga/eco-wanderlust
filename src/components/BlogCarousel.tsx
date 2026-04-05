@@ -15,7 +15,7 @@ import {
 export function BlogCarousel() {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { t } = useLocale();
+  const { t, language } = useLocale();
 
   useEffect(() => {
     fetchLovable<LovableBlogPost>("blog_posts").then((data) => {
@@ -23,6 +23,11 @@ export function BlogCarousel() {
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, []);
+
+  const getTranslated = (post: LovableBlogPost, field: string) => {
+    if (language === 'pt') return (post as any)[field];
+    return (post as any)[`${field}_${language}`] || (post as any)[field];
+  };
 
   if (isLoading || posts.length === 0) return null;
 
@@ -51,36 +56,41 @@ export function BlogCarousel() {
               className="w-full"
             >
               <CarouselContent className="-ml-6">
-                {posts.map((post) => (
-                  <CarouselItem key={post.id} className="pl-6 basis-full md:basis-1/2">
-                    <div className="bg-card rounded-2xl overflow-hidden shadow-2xl h-[480px] flex flex-col group border-none">
-                      <div className="h-2/5 overflow-hidden">
-                        <img 
-                          src={post.image_url || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200"} 
-                          alt={post.title} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
-                      </div>
-                      <div className="h-3/5 bg-[#008967] p-8 flex flex-col justify-between items-start">
-                        <div className="w-full">
-                          <h3 className="font-serif text-xl font-bold text-white mb-4 line-clamp-2 leading-snug">
-                            {post.title}
-                          </h3>
-                          <p className="text-white/80 font-sans text-sm line-clamp-4 leading-relaxed">
-                            {post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : post.title}
-                          </p>
+                {posts.map((post) => {
+                  const title = getTranslated(post, 'title');
+                  const content = getTranslated(post, 'content');
+                  
+                  return (
+                    <CarouselItem key={post.id} className="pl-6 basis-full md:basis-1/2">
+                      <div className="bg-card rounded-2xl overflow-hidden shadow-2xl h-[480px] flex flex-col group border-none">
+                        <div className="h-2/5 overflow-hidden">
+                          <img 
+                            src={post.image_url || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200"} 
+                            alt={title} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
                         </div>
-                        
-                        <Link to={`/blog/${post.slug}`} className="mt-4">
-                          <Button className="bg-[#FF8A5B] hover:bg-[#ff7a45] text-white rounded-full px-8 h-12 font-sans font-black flex items-center gap-2 group/btn border-none shadow-lg">
-                            {t("explore_conosco")}
-                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                          </Button>
-                        </Link>
+                        <div className="h-3/5 bg-[#008967] p-8 flex flex-col justify-between items-start">
+                          <div className="w-full">
+                            <h3 className="font-serif text-xl font-bold text-white mb-4 line-clamp-2 leading-snug">
+                              {title}
+                            </h3>
+                            <p className="text-white/80 font-sans text-sm line-clamp-4 leading-relaxed">
+                              {content ? content.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : title}
+                            </p>
+                          </div>
+                          
+                          <Link to={`/blog/${post.slug}`} className="mt-4">
+                            <Button className="bg-[#FF8A5B] hover:bg-[#ff7a45] text-white rounded-full px-8 h-12 font-sans font-black flex items-center gap-2 group/btn border-none shadow-lg">
+                              {t("explore_conosco")}
+                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  </CarouselItem>
-                ))}
+                    </CarouselItem>
+                  );
+                })}
               </CarouselContent>
               <div className="flex items-center gap-4 mt-8 lg:absolute lg:-left-[50%] lg:bottom-0">
                 <CarouselPrevious className="static translate-y-0 w-12 h-12 border-none bg-white text-[#FF8A5B] hover:bg-white/90 hover:text-[#FF8A5B] shadow-xl" />

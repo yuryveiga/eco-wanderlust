@@ -30,6 +30,12 @@ const BlogPost = () => {
     setIsLoading(false);
   };
 
+  const getTranslated = (field: string) => {
+    if (!post) return "";
+    if (language === 'pt') return (post as any)[field];
+    return (post as any)[`${field}_${language}`] || (post as any)[field];
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -42,27 +48,29 @@ const BlogPost = () => {
     return <Navigate to="/404" replace />;
   }
 
+  const title = getTranslated('title');
+  const content = getTranslated('content');
+
   return (
     <div className="min-h-screen flex flex-col pt-20">
       <Header />
       
       <main className="flex-1 bg-background pb-16">
-        {post.image_url && (
-          <div className="w-full h-[40vh] md:h-[60vh] relative">
-            <img 
-              src={post.image_url} 
-              alt={post.title} 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-          </div>
-        )}
-        
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">
           <div className="bg-card rounded-2xl shadow-xl p-8 sm:p-12 border border-border/50">
             <Link to="/blog" className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
               <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
             </Link>
+
+            {post.image_url && (
+              <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
+                <img 
+                  src={post.image_url} 
+                  alt={title} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-sans">
               <Calendar className="w-4 h-4" />
@@ -70,12 +78,12 @@ const BlogPost = () => {
             </div>
             
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-10 leading-tight">
-              {post.title}
+              {title}
             </h1>
             
             <div 
               className="prose prose-lg dark:prose-invert max-w-none font-sans"
-              dangerouslySetInnerHTML={{ __html: post.content || "" }}
+              dangerouslySetInnerHTML={{ __html: (content || "").replace(/\n/g, '<br/>') }}
             />
           </div>
         </div>

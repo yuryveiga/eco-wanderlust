@@ -26,6 +26,19 @@ export function TourDetail() {
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
 
+  const getTranslated = (obj: any, field: string) => {
+    if (!obj) return "";
+    if (language === 'pt') return obj[field];
+    return obj[`${field}_${language}`] || obj[field];
+  };
+
+  const translatedTitle = getTranslated(tour, 'title');
+  const translatedShortDesc = getTranslated(tour, 'short_description');
+  const translatedCategory = getTranslated(tour, 'category');
+  const translatedItinerary = getTranslated(tour, `itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json;
+  const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
+  const translatedFaq = getTranslated(tour, `faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json;
+
   const availablePeriods = tour ? [
     { id: 'morning', label: t('amanha'), active: tour.has_morning !== false, Icon: Sunrise },
     { id: 'afternoon', label: t('tarde'), active: tour.has_afternoon === true, Icon: Sun },
@@ -78,21 +91,20 @@ export function TourDetail() {
     );
   }
 
-  const images = tour.image_url 
-    ? [tour.image_url, tour.image_url, tour.image_url] 
-    : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
+  const images = tour.images_json && tour.images_json.length > 0
+    ? tour.images_json 
+    : tour.image_url 
+      ? [tour.image_url, tour.image_url, tour.image_url] 
+      : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200"];
 
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-
-  const highlights = tour.included_json || [
+  const highlights = translatedIncluded || [
     { icon: "MapPin", text: t("transporte_trans") },
     { icon: "Utensils", text: t("almoco_inc") },
     { icon: "Shield", text: t("equip_seg") },
     { icon: "Activity", text: t("instrutor_esp") },
   ];
 
-  const faqItems = tour.faq_json || [
+  const faqItems = translatedFaq || [
     { q: t("o_que_inclui"), a: t("o_que_inclui_desc") },
     { q: t("o_que_levar"), a: t("o_que_levar_desc") },
   ];
@@ -115,10 +127,10 @@ export function TourDetail() {
   return (
     <main className="min-h-screen bg-background">
       <Helmet>
-        <title>{tour.title} | Eco-Wanderlust</title>
-        <meta name="description" content={tour.short_description || "Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."} />
-        <meta property="og:title" content={`${tour.title} | Eco-Wanderlust`} />
-        <meta property="og:description" content={tour.short_description} />
+        <title>{translatedTitle} | Eco-Wanderlust</title>
+        <meta name="description" content={translatedShortDesc || "Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."} />
+        <meta property="og:title" content={`${translatedTitle} | Eco-Wanderlust`} />
+        <meta property="og:description" content={translatedShortDesc} />
         {tour.image_url && <meta property="og:image" content={tour.image_url} />}
         <meta property="og:type" content="website" />
         <link rel="canonical" href={window.location.href} />
@@ -132,7 +144,7 @@ export function TourDetail() {
             <span>/</span>
             <Link to="/#tours" className="hover:text-foreground transition-colors">{t("passeios")}</Link>
             <span>/</span>
-            <span className="text-foreground">{tour.title}</span>
+            <span className="text-foreground">{translatedTitle}</span>
           </nav>
 
           {/* Premium Image Gallery Grid */}
@@ -172,15 +184,15 @@ export function TourDetail() {
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    {tour.category && (
-                      <span className="text-sm font-bold text-primary font-sans uppercase tracking-wider">{tour.category}</span>
+                    {translatedCategory && (
+                      <span className="text-sm font-bold text-primary font-sans uppercase tracking-wider">{translatedCategory}</span>
                     )}
                     <h1 className="font-serif text-2xl lg:text-4xl font-bold text-foreground mt-1">
-                      {tour.title}
+                      {translatedTitle}
                     </h1>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
-                    < Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
                     <span className="font-bold font-sans">4.9</span>
                     <span className="text-muted-foreground font-sans text-xs">(128)</span>
                   </div>
@@ -203,12 +215,12 @@ export function TourDetail() {
 
                 <div className="prose prose-sm max-w-none text-muted-foreground font-sans">
                   <p className="text-lg leading-relaxed whitespace-pre-wrap text-foreground/80">
-                    {tour.short_description}
+                    {translatedShortDesc}
                   </p>
                 </div>
               </div>
 
-              {tour.itinerary_json && tour.itinerary_json.length > 0 && (
+              {translatedItinerary && translatedItinerary.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#2A9D8F] mb-2">
                     {t("itinerario_detalhes")}
@@ -218,9 +230,9 @@ export function TourDetail() {
                   </p>
                   
                   <div className="space-y-0 relative">
-                    {tour.itinerary_json.map((step, i) => (
+                    {translatedItinerary.map((step, i) => (
                       <div key={i} className="relative pl-10 pb-8 last:pb-0">
-                        {i !== tour.itinerary_json!.length - 1 && (
+                        {translatedItinerary && i !== translatedItinerary.length - 1 && (
                           <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[2px] border-dashed border-[#F4A261]/40 z-0"></div>
                         )}
                         <div className="absolute top-0 left-0 z-10 bg-background pt-1 pb-1">

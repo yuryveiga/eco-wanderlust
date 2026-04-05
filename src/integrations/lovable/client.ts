@@ -128,6 +128,19 @@ export type LovableTour = {
   included_json?: { icon: string; text: string }[];
   faq_json?: { q: string; a: string }[];
   slug?: string;
+  title_en?: string;
+  title_es?: string;
+  short_description_en?: string;
+  short_description_es?: string;
+  category_en?: string;
+  category_es?: string;
+  itinerary_json_en?: { time: string; description: string }[];
+  itinerary_json_es?: { time: string; description: string }[];
+  included_json_en?: { icon: string; text: string }[];
+  included_json_es?: { icon: string; text: string }[];
+  faq_json_en?: { q: string; a: string }[];
+  faq_json_es?: { q: string; a: string }[];
+  images_json?: string[];
 };
 
 export type LovablePage = {
@@ -165,6 +178,12 @@ export type LovableBlogPost = {
   is_published: boolean;
   created_at?: string;
   updated_at?: string;
+  title_en?: string;
+  title_es?: string;
+  content_en?: string;
+  content_es?: string;
+  excerpt_en?: string;
+  excerpt_es?: string;
 };
 
 export type LovableSiteSetting = {
