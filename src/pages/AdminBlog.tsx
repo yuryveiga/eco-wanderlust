@@ -250,128 +250,71 @@ const AdminBlog = () => {
             </DialogTitle>
           </DialogHeader>
           
-          {editing && (
-            <div className="flex-1 flex flex-col overflow-hidden">
-               <Tabs defaultValue="pt" className="flex-1 flex flex-col h-full overflow-hidden">
-                 <div className="px-6 py-4 flex items-center justify-between bg-muted/5 shrink-0 border-b">
-                    <TabsList className="bg-muted p-1 rounded-xl">
-                       <TabsTrigger value="pt" className="rounded-lg font-bold px-6">PORTUGUÊS</TabsTrigger>
-                       <TabsTrigger value="en" className="rounded-lg font-bold px-6 text-blue-600">ENGLISH</TabsTrigger>
-                       <TabsTrigger value="es" className="rounded-lg font-bold px-6 text-red-600">ESPAÑOL</TabsTrigger>
-                    </TabsList>
-                   
-                   <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                         <Switch checked={editing.is_published ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
-                         <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Publicado</span>
-                      </div>
-                      <div className="h-6 w-px bg-border mx-2" />
-                      <Button variant="ghost" onClick={() => setEditing(null)} className="font-bold">Cancelar</Button>
-                      <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 text-white font-black px-10 rounded-xl h-12 shadow-xl shadow-primary/20">Salvar Mudanças</Button>
-                   </div>
-                </div>
+           {editing && (
+             <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="px-6 py-4 flex items-center justify-between bg-muted/5 shrink-0 border-b">
+                    <span className="text-sm font-bold text-muted-foreground">Editor de Blog</span>
+                    
+                    <div className="flex items-center gap-4">
+                       <div className="flex items-center gap-2">
+                          <Switch checked={editing.is_published ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
+                          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Publicado</span>
+                       </div>
+                       <div className="h-6 w-px bg-border mx-2" />
+                       <Button variant="ghost" onClick={() => setEditing(null)} className="font-bold">Cancelar</Button>
+                       <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 text-white font-black px-10 rounded-xl h-12 shadow-xl shadow-primary/20">Salvar Mudanças</Button>
+                    </div>
+                 </div>
 
-                <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
-                   {/* Left Sidebar for Metadata */}
-                   <div className="w-80 flex flex-col gap-6 shrink-0 overflow-y-auto pr-4 scrollbar-thin">
-                      <div className="space-y-3">
-                         <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Imagem de Destaque</Label>
-                         <div className="aspect-video rounded-2xl bg-muted border-2 border-dashed border-border/50 overflow-hidden relative group">
-                            {editing.image_url ? (
-                               <img src={editing.image_url} alt="Destaque" className="w-full h-full object-cover" />
-                            ) : (
-                               <div className="flex flex-col items-center justify-center h-full gap-2 p-6 text-center text-muted-foreground">
-                                  <Upload className="w-6 h-6 opacity-30" />
-                                  <span className="text-[9px] font-bold">Faça upload da imagem de capa</span>
-                               </div>
-                            )}
-                            <Input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="blog-capa-upload" />
-                            <Label htmlFor="blog-capa-upload" className="absolute inset-0 cursor-pointer bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity">Trocar Imagem</Label>
-                         </div>
-                      </div>
-
-                      <div className="space-y-3">
-                         <Label className="text-[10px] font-black uppercase tracking-widest text-primary">URL amigável (SLUG)</Label>
-                         <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
-                      </div>
-
-                      <div className="mt-8 p-6 rounded-3xl bg-primary/5 border border-primary/10 space-y-4">
-                         <h4 className="font-serif font-bold text-primary">Tradução Mágica</h4>
-                         <p className="text-[10px] text-muted-foreground leading-relaxed">Clique para preencher as abas de Inglês e Espanhol automaticamente.</p>
-                         <div className="flex flex-col gap-2">
-                           <Button onClick={() => autoTranslate('en')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-10 border-blue-200 text-blue-600 font-bold bg-white">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Inglês'}</Button>
-                           <Button onClick={() => autoTranslate('es')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-10 border-red-200 text-red-600 font-bold bg-white">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Espanhol'}</Button>
-                         </div>
-                      </div>
-                   </div>
-
-                   {/* Editor Primary Area */}
-                   <div className="flex-1 flex flex-col gap-6 overflow-hidden min-h-0">
-                      <TabsContent value="pt" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                         <div className="space-y-2 shrink-0">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título em Português</Label>
-                            <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
-                         </div>
-                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                            <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
-                               <ReactQuill 
-                                  ref={quillRef}
-                                  theme="snow" 
-                                  value={editing.content || ""} 
-                                  onChange={(val) => setEditing({ ...editing, content: val })} 
-                                  className="editor-container"
-                                  modules={modules}
-                                  formats={formats}
-                                  placeholder="Comece a contar sua história..."
-                               />
-                            </Suspense>
-                         </div>
-                      </TabsContent>
-
-                       <TabsContent value="en" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                          <div className="space-y-2 shrink-0">
-                             <Label className="text-[10px] font-black uppercase tracking-widest text-blue-500">English Title</Label>
-                             <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="English title..." />
+                 <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
+                    {/* Left Sidebar for Metadata */}
+                    <div className="w-80 flex flex-col gap-6 shrink-0 overflow-y-auto pr-4 scrollbar-thin">
+                       <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Imagem de Destaque</Label>
+                          <div className="aspect-video rounded-2xl bg-muted border-2 border-dashed border-border/50 overflow-hidden relative group">
+                             {editing.image_url ? (
+                                <img src={editing.image_url} alt="Destaque" className="w-full h-full object-cover" />
+                             ) : (
+                                <div className="flex flex-col items-center justify-center h-full gap-2 p-6 text-center text-muted-foreground">
+                                   <Upload className="w-6 h-6 opacity-30" />
+                                   <span className="text-[9px] font-bold">Faça upload da imagem de capa</span>
+                                </div>
+                             )}
+                             <Input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="blog-capa-upload" />
+                             <Label htmlFor="blog-capa-upload" className="absolute inset-0 cursor-pointer bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity">Trocar Imagem</Label>
                           </div>
-                          <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                             <Suspense fallback={<div className="p-24 text-center font-sans">Loading Editor...</div>}>
-                                <ReactQuill 
-                                   theme="snow" 
-                                   value={editing.content_en || ""} 
-                                   onChange={(val) => setEditing({ ...editing, content_en: val })} 
-                                   className="editor-container"
-                                   modules={modules}
-                                   formats={formats}
-                                   placeholder="Switch language for editing..."
-                                />
-                             </Suspense>
-                          </div>
-                       </TabsContent>
+                       </div>
 
-                       <TabsContent value="es" className="flex-1 flex flex-col gap-6 m-0 overflow-hidden min-h-0">
-                          <div className="space-y-2 shrink-0">
-                             <Label className="text-[10px] font-black uppercase tracking-widest text-red-500">Título en Español</Label>
-                             <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título en Español..." />
-                          </div>
-                          <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                             <Suspense fallback={<div className="p-24 text-center font-sans">Cargando Editor...</div>}>
-                                <ReactQuill 
-                                   theme="snow" 
-                                   value={editing.content_es || ""} 
-                                   onChange={(val) => setEditing({ ...editing, content_es: val })} 
-                                   className="editor-container"
-                                   modules={modules}
-                                   formats={formats}
-                                   placeholder="Cambiar el idioma para editar..."
-                                />
-                             </Suspense>
-                          </div>
-                       </TabsContent>
-                   </div>
-                </div>
-              </Tabs>
-            </div>
-          )}
+                       <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">URL amigável (SLUG)</Label>
+                          <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
+                       </div>
+                    </div>
+
+                    {/* Editor Area */}
+                    <div className="flex-1 flex flex-col gap-6 overflow-hidden min-h-0">
+                       <div className="space-y-2 shrink-0">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título</Label>
+                          <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
+                       </div>
+                       <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                          <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
+                             <ReactQuill 
+                                ref={quillRef}
+                                theme="snow" 
+                                value={editing.content || ""} 
+                                onChange={(val) => setEditing({ ...editing, content: val })} 
+                                className="editor-container"
+                                modules={modules}
+                                formats={formats}
+                                placeholder="Comece a contar sua história..."
+                             />
+                          </Suspense>
+                       </div>
+                    </div>
+                  </div>
+             </div>
+           )}
         </DialogContent>
       </Dialog>
     </div>
