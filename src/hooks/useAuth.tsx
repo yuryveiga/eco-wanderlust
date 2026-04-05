@@ -22,12 +22,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isMounted = true;
+    const timeoutMs = 5000;
 
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const authPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise<{ data: { session: Session | null } }>((resolve) => 
+          setTimeout(() => resolve({ data: { session: null } }), timeoutMs)
+        );
+        
+        const result = await Promise.race([authPromise, timeoutPromise]);
+        
         if (!isMounted) return;
         
+        const { data: { session } } = result;
         setSession(session);
         setUser(session?.user ?? null);
         
