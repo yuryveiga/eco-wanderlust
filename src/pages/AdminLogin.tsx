@@ -45,7 +45,7 @@ const AdminLogin = () => {
             <LogIn className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="font-serif text-2xl font-bold text-foreground">Painel Admin</h1>
-          <p className="text-muted-foreground font-sans text-sm mt-1">Passeio Rio</p>
+          <p className="text-muted-foreground font-sans text-sm mt-1">Eco Wanderlust Admin</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
