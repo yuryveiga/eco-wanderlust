@@ -1,7 +1,12 @@
 import { ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSiteData } from "@/hooks/useSiteData";
 
 export function HeroSection() {
+  const { images } = useSiteData();
+  
+  const heroBg = images["hero_bg"] || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070";
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -10,7 +15,7 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070')` }}
+        style={{ backgroundImage: `url('${heroBg}')` }}
       />
       <div className="absolute inset-0 hero-overlay" />
 
