@@ -289,6 +289,14 @@ const AdminBlog = () => {
                           <Label className="text-[10px] font-black uppercase tracking-widest text-primary">URL amigável (SLUG)</Label>
                           <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
                        </div>
+
+                       <div className="mt-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
+                          <h4 className="font-serif font-bold text-primary text-sm">Tradução Automática</h4>
+                          <div className="flex flex-col gap-2">
+                            <Button onClick={() => autoTranslate('en')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 border-blue-200 text-blue-600 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Inglês'}</Button>
+                            <Button onClick={() => autoTranslate('es')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 border-red-200 text-red-600 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Espanhol'}</Button>
+                          </div>
+                       </div>
                     </div>
 
                     {/* Editor Area */}
