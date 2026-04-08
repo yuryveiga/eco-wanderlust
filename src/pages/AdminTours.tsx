@@ -31,6 +31,7 @@ const AdminTours = () => {
   };
 
   const handleSave = async () => {
+    console.log("Saving tour, category:", editing?.category);
     if (!editing?.title) {
       toast({ title: "Erro", description: "Título é obrigatório", variant: "destructive" });
       return;
@@ -38,6 +39,7 @@ const AdminTours = () => {
 
     const slug = editing.slug || editing.title.toLowerCase().replace(/\s+/g, '-');
     const dataToSave = { ...editing, slug };
+    console.log("Data to save:", dataToSave);
 
     try {
       if (isNew) {
@@ -50,7 +52,8 @@ const AdminTours = () => {
 
       await loadTours();
       setEditing(null);
-    } catch {
+    } catch (err) {
+      console.error("Save error:", err);
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
     }
   };
