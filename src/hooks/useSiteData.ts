@@ -12,18 +12,11 @@ export function useSiteData() {
   const [pages, setPages] = useState<LovablePage[]>([]);
   const [images, setImages] = useState<Record<string, string>>({});
   const [socialMedia, setSocialMedia] = useState<LovableSocialMedia[]>([]);
-  const [siteSettings, setSiteSettings] = useState<Record<string, string>>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('site_settings') || '{}');
-    } catch {
-      return {};
-    }
-  });
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
       try {
         const [toursData, pagesData, imagesData, socialData, settingsData] = await Promise.all([
           fetchLovable<LovableTour>("tours"),
@@ -43,13 +36,32 @@ export function useSiteData() {
         
         const settingsMap: Record<string, string> = {};
         settingsData.forEach((s) => { settingsMap[s.key] = s.value; });
-        setSiteSettings(settingsMap);
-        localStorage.setItem('site_settings', JSON.stringify(settingsMap));
+        
+        // Only update localStorage if we got actual data from the database
+        if (settingsData.length > 0) {
+          setSiteSettings(settingsMap);
+          localStorage.setItem('site_settings', JSON.stringify(settingsMap));
+        } else {
+          // Try to load from localStorage as fallback
+          try {
+            const cached = JSON.parse(localStorage.getItem('site_settings') || '{}');
+            setSiteSettings(cached);
+          } catch {
+            setSiteSettings({});
+          }
+        }
         
         setSocialMedia(socialData.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order));
       } catch (error) {
         console.error("Error loading site data:", error);
-        setTours(fallbackTours);
+        // Load from localStorage as fallback
+        try {
+          const cached = JSON.parse(localStorage.getItem('site_settings') || '{}');
+          setSiteSettings(cached);
+          setTours(fallbackTours);
+        } catch {
+          setSiteSettings({});
+        }
       } finally {
         setIsLoading(false);
       }
