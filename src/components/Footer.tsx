@@ -34,7 +34,7 @@ export function Footer() {
         { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
       ];
 
-  const logoUrl = images["logo"];
+  const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
 
   return (
     <footer className="bg-[hsl(145,30%,12%)] text-[hsl(140,10%,96%)]">
