@@ -19,7 +19,7 @@ import {
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tours, isLoading, siteSettings } = useSiteData();
+  const { tours, isLoading, siteSettings, socialMedia } = useSiteData();
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -31,6 +31,12 @@ export function TourDetail() {
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
+
+  // Get TripAdvisor URL from social media
+  const tripAdvisorSocial = socialMedia.find(s => 
+    s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
+  );
+  const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
   const getTranslated = (obj: any, field: string) => {
     if (!obj) return "";
@@ -212,11 +218,16 @@ export function TourDetail() {
                     {translatedCategory && <span className="text-sm font-bold text-primary font-sans uppercase tracking-wider">{translatedCategory}</span>}
                     <h1 className="font-serif text-2xl lg:text-4xl font-bold text-foreground mt-1">{translatedTitle}</h1>
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+                  <a 
+                    href={tripAdvisorUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100 hover:bg-amber-100 transition-colors"
+                  >
                     <Star className="w-4 h-4 fill-current" />
                     <span className="font-bold font-sans">4.9</span>
                     <span className="text-muted-foreground font-sans text-xs">(128)</span>
-                  </div>
+                  </a>
                 </div>
 
                 <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-sans mb-8 pb-6 border-b border-border">
