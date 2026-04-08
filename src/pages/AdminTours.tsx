@@ -18,6 +18,7 @@ const AdminTours = () => {
   const [isNew, setIsNew] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -166,8 +167,35 @@ const AdminTours = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [], difficulty: "Leve", meeting_point_address: "", youtube_video_url: "" }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [], difficulty: "Leve", meeting_point_address: "", youtube_video_url: "", category: "CITY TOUR" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
+        </Button>
+      </div>
+
+      <div className="flex gap-2 mb-6 shrink-0">
+        <Button
+          variant={categoryFilter === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setCategoryFilter('all')}
+          className="rounded-full font-sans"
+        >
+          Todos
+        </Button>
+        <Button
+          variant={categoryFilter === 'CITY TOUR' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setCategoryFilter('CITY TOUR')}
+          className="rounded-full font-sans"
+        >
+          City Tour
+        </Button>
+        <Button
+          variant={categoryFilter === 'TRILHA' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setCategoryFilter('TRILHA')}
+          className="rounded-full font-sans"
+        >
+          Trilha
         </Button>
       </div>
 
@@ -176,7 +204,9 @@ const AdminTours = () => {
           <div className="text-center py-12 text-muted-foreground font-sans uppercase tracking-[0.2em] animate-pulse">Carregando...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tours.map((tour) => (
+            {tours
+              .filter(tour => categoryFilter === 'all' || tour.category === categoryFilter)
+              .map((tour) => (
               <div key={tour.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
                 <div className="relative h-48 bg-muted">
                   {tour.image_url ? (
@@ -187,7 +217,14 @@ const AdminTours = () => {
                     </div>
                   )}
                   <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button size="icon" variant="secondary" className="h-9 w-9 shadow-lg backdrop-blur-sm bg-white/90" onClick={() => { setEditing({ ...tour }); setIsNew(false); }}>
+                    <Button size="icon" variant="secondary" className="h-9 w-9 shadow-lg backdrop-blur-sm bg-white/90" onClick={() => { 
+                      const tourWithCategory = {
+                        ...tour, 
+                        category: tour.category?.toUpperCase() || 'CITY TOUR'
+                      };
+                      setEditing(tourWithCategory); 
+                      setIsNew(false); 
+                    }}>
                       <Pencil className="w-4 h-4" />
                     </Button>
                     <Button size="icon" variant="destructive" className="h-9 w-9 shadow-lg" onClick={() => handleDelete(tour.id)}>
