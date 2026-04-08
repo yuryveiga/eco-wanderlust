@@ -166,6 +166,9 @@ export type LovableTour = {
   difficulty?: string;
   difficulty_en?: string;
   difficulty_es?: string;
+  highlights_json?: { icon: string; text: string }[];
+  highlights_json_en?: { icon: string; text: string }[];
+  highlights_json_es?: { icon: string; text: string }[];
   meeting_point_address?: string;
   meeting_point_address_en?: string;
   meeting_point_address_es?: string;

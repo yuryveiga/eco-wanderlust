@@ -48,10 +48,10 @@ export function TourDetail() {
   const translatedShortDesc = getTranslated(tour, 'short_description');
   const translatedCategory = getTranslated(tour, 'category');
   const translatedDifficulty = getTranslated(tour, 'difficulty');
-  const translatedMeetingPoint = getTranslated(tour, 'meeting_point_address');
   const translatedItinerary = getTranslated(tour, `itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json;
   const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
   const translatedFaq = getTranslated(tour, `faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json;
+  const translatedHighlights = getTranslated(tour, `highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json;
 
   const getYoutubeId = (url: string) => {
     if (!url) return null;
@@ -139,7 +139,7 @@ export function TourDetail() {
       ? [tour.image_url, tour.image_url, tour.image_url, tour.image_url] 
       : ["https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200", "https://images.unsplash.com/photo-1512753360413-a496f8824f1c?q=80&w=1200", "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200"];
 
-  const highlights = (translatedIncluded as any[]) || [
+  const highlights = (translatedHighlights as any[]) || [
     { icon: "MapPin", text: t("transporte_trans") },
     { icon: "Utensils", text: t("almoco_inc") },
     { icon: "Shield", text: t("equip_seg") },
@@ -245,22 +245,30 @@ export function TourDetail() {
                 <div className="prose prose-sm max-w-none text-muted-foreground font-sans"><p className="text-lg leading-relaxed whitespace-pre-wrap text-foreground/80">{translatedShortDesc}</p></div>
               </div>
 
-              {translatedMeetingPoint && (
+              {/* Highlights Section */}
+              {highlights && highlights.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
-                   <h2 className="font-serif text-2xl font-bold text-foreground mb-4 flex items-center gap-2"><MapPin className="text-primary w-6 h-6" /> {language === 'pt' ? 'Ponto de Encontro' : 'Meeting Point'}</h2>
-                   <p className="text-muted-foreground font-sans text-sm mb-6">{translatedMeetingPoint}</p>
-                    <div className="w-full h-[300px] rounded-2xl overflow-hidden shadow-inner border bg-muted/20">
-                       <iframe 
-                         width="100%" 
-                         height="100%" 
-                         frameBorder="0" 
-                         scrolling="no"
-                         style={{ border: 0 }} 
-                         src={`https://www.openstreetmap.org/export/embed.html?bbox=-43.3,-22.9,-43.1,-22.8&layer=mapnik&marker=-22.9,-43.2`}
-                         allowFullScreen
-                       />
-                    </div>
-                   <p className="text-[10px] text-muted-foreground mt-2 italic">* O local exato será confirmado após a reserva.</p>
+                  <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                    <Star className="text-primary w-6 h-6" />
+                    {language === 'pt' ? 'Highlights' : 'Highlights'}
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {highlights.map((item, idx) => {
+                      const Icon = getIcon(item.icon);
+                      return (
+                        <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Icon className="w-5 h-5 text-primary" />
+                          </div>
+                          <span className="text-foreground font-sans text-sm">{item.text}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Itinerary */}
                 </div>
               )}
 

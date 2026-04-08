@@ -167,7 +167,7 @@ const AdminTours = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], faq_json: [], difficulty: "Leve", meeting_point_address: "", youtube_video_url: "", category: "CITY TOUR" }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], highlights_json: [], faq_json: [], difficulty: "Leve", youtube_video_url: "", category: "CITY TOUR" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
       </div>
@@ -388,13 +388,30 @@ const AdminTours = () => {
                                 <Button size="icon" variant="ghost" onClick={() => removeJsonItem('included_json', i)}><Trash className="w-4 h-4" /></Button>
                              </div>
                            ))}
-                        </div>
-                     </div>
+                         </div>
+                      </div>
 
-                     <div className="space-y-4">
-                        <div className="flex items-center justify-between border-b pb-2">
-                           <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-                              <HelpCircle className="w-4 h-4" /> Para seu conhecimento (FAQ)
+                      <div className="space-y-4">
+                         <div className="flex items-center justify-between border-b pb-2">
+                            <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+                               <Star className="w-4 h-4" /> Highlights (Destaques)
+                            </Label>
+                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('highlights_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar</Button>
+                         </div>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {(editing.highlights_json as any[])?.map((item, i) => (
+                              <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
+                                 <Input value={item.text} onChange={(e) => updateJsonField('highlights_json', i, 'text', e.target.value)} placeholder="Destaque..." className="h-10" />
+                                 <Button size="icon" variant="ghost" onClick={() => removeJsonItem('highlights_json', i)}><Trash className="w-4 h-4" /></Button>
+                              </div>
+                            ))}
+                         </div>
+                      </div>
+
+                      <div className="space-y-4">
+                         <div className="flex items-center justify-between border-b pb-2">
+                            <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+                               <HelpCircle className="w-4 h-4" /> Para seu conhecimento (FAQ)
                            </Label>
                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('faq_json', { q: '', a: '' })} className="font-bold text-xs h-8">+ Nova Pergunta</Button>
                         </div>
