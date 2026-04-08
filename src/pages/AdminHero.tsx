@@ -37,8 +37,10 @@ const AdminHero = () => {
   const [cityToursSubtitle, setCityToursSubtitle] = useState<string>("Explore a cidade com nossos guias especializados");
   const [hikingToursTitle, setHikingToursTitle] = useState<string>("Trilhas e Adventures");
   const [hikingToursSubtitle, setHikingToursSubtitle] = useState<string>("Descubra trilhas incríveis e aventuras na natureza");
+  const [aboutLabel, setAboutLabel] = useState<string>("");
   const [aboutTitle, setAboutTitle] = useState<string>("");
   const [aboutDesc, setAboutDesc] = useState<string>("");
+  const [aboutDesc2, setAboutDesc2] = useState<string>("");
   const [dbSettingId, setDbSettingId] = useState<string | null>(null);
   const [dbTitleId, setDbTitleId] = useState<string | null>(null);
   const [dbSubtitleId, setDbSubtitleId] = useState<string | null>(null);
@@ -48,8 +50,10 @@ const AdminHero = () => {
   const [dbCitySubtitleId, setDbCitySubtitleId] = useState<string | null>(null);
   const [dbHikingTitleId, setDbHikingTitleId] = useState<string | null>(null);
   const [dbHikingSubtitleId, setDbHikingSubtitleId] = useState<string | null>(null);
+  const [dbAboutLabelId, setDbAboutLabelId] = useState<string | null>(null);
   const [dbAboutTitleId, setDbAboutTitleId] = useState<string | null>(null);
   const [dbAboutDescId, setDbAboutDescId] = useState<string | null>(null);
+  const [dbAboutDesc2Id, setDbAboutDesc2Id] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -130,7 +134,7 @@ const AdminHero = () => {
         setAboutTitle(aboutTitleSetting.value);
         setDbAboutTitleId((aboutTitleSetting as any).id);
       } else {
-        setAboutTitle("Sobre a Passeio Rio");
+        setAboutTitle("Sua Porta de Entrada para a Cidade Maravilhosa");
       }
       
       const aboutDescSetting = settings.find(s => s.key === "about_desc");
@@ -138,7 +142,23 @@ const AdminHero = () => {
         setAboutDesc(aboutDescSetting.value);
         setDbAboutDescId((aboutDescSetting as any).id);
       } else {
-        setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnífica.");
+        setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
+      }
+
+      const aboutLabelSetting = settings.find(s => s.key === "about_label");
+      if (aboutLabelSetting) {
+        setAboutLabel(aboutLabelSetting.value);
+        setDbAboutLabelId((aboutLabelSetting as any).id);
+      } else {
+        setAboutLabel("Sobre a Passeio Rio");
+      }
+
+      const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
+      if (aboutDesc2Setting) {
+        setAboutDesc2(aboutDesc2Setting.value);
+        setDbAboutDesc2Id((aboutDesc2Setting as any).id);
+      } else {
+        setAboutDesc2("Com guias locais especializados e saídas diárias confirmadas, garantimos uma experiência segura, confortável e inesquecível.");
       }
     } catch (e) {
       console.error("Erro ao carregar site_settings:", e);
@@ -224,6 +244,20 @@ const AdminHero = () => {
         const res = await insertLovable("site_settings", { key: "about_desc", value: aboutDesc });
         console.log("Insert about_desc result:", res);
         if (res) setDbAboutDescId((res as any).id);
+      }
+
+      if (dbAboutLabelId) {
+        await updateLovable("site_settings", dbAboutLabelId, { value: aboutLabel });
+      } else {
+        const res = await insertLovable("site_settings", { key: "about_label", value: aboutLabel });
+        if (res) setDbAboutLabelId((res as any).id);
+      }
+
+      if (dbAboutDesc2Id) {
+        await updateLovable("site_settings", dbAboutDesc2Id, { value: aboutDesc2 });
+      } else {
+        const res = await insertLovable("site_settings", { key: "about_desc2", value: aboutDesc2 });
+        if (res) setDbAboutDesc2Id((res as any).id);
       }
       
       localStorage.removeItem('site_settings');
@@ -390,28 +424,49 @@ const AdminHero = () => {
       <div className="bg-card rounded-xl border p-6 mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Type className="w-5 h-5 text-primary" />
-          <h2 className="font-sans font-bold text-lg">Seção "Sobre" (Footer)</h2>
+          <h2 className="font-sans font-bold text-lg">Seção "Sobre" (Página)</h2>
         </div>
         
         <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="aboutLabel">Label (Sobre a Passeio Rio)</Label>
+            <Input
+              id="aboutLabel"
+              value={aboutLabel}
+              onChange={(e) => setAboutLabel(e.target.value)}
+              placeholder="Ex: Sobre a Passeio Rio"
+            />
+          </div>
+          
           <div className="grid gap-2">
             <Label htmlFor="aboutTitle">Título</Label>
             <Input
               id="aboutTitle"
               value={aboutTitle}
               onChange={(e) => setAboutTitle(e.target.value)}
-              placeholder="Ex: Sobre a Passeio Rio"
+              placeholder="Ex: Sua Porta de Entrada para a Cidade Maravilhosa"
             />
           </div>
           
           <div className="grid gap-2">
-            <Label htmlFor="aboutDesc">Descrição</Label>
+            <Label htmlFor="aboutDesc">Descrição 1</Label>
             <textarea
               id="aboutDesc"
               value={aboutDesc}
               onChange={(e) => setAboutDesc(e.target.value)}
-              placeholder="Digite a descrição..."
-              className="w-full min-h-[120px] rounded-xl border p-4 text-sm font-sans"
+              placeholder="Digite a primeira descrição..."
+              className="w-full min-h-[100px] rounded-xl border p-4 text-sm font-sans"
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="aboutDesc2">Descrição 2</Label>
+            <textarea
+              id="aboutDesc2"
+              value={aboutDesc2}
+              onChange={(e) => setAboutDesc2(e.target.value)}
+              placeholder="Com guias locais especializados..."
+              className="w-full min-h-[100px] rounded-xl border p-4 text-sm font-sans"
             />
           </div>
           
