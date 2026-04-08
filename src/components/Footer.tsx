@@ -55,7 +55,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-[hsl(140,10%,96%)]/80 text-sm leading-relaxed font-sans">
-              {t("footer_desc")}
+              {siteSettings?.about_desc || t("footer_desc")}
             </p>
           </div>
 

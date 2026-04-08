@@ -37,6 +37,8 @@ const AdminHero = () => {
   const [cityToursSubtitle, setCityToursSubtitle] = useState<string>("Explore a cidade com nossos guias especializados");
   const [hikingToursTitle, setHikingToursTitle] = useState<string>("Trilhas e Adventures");
   const [hikingToursSubtitle, setHikingToursSubtitle] = useState<string>("Descubra trilhas incríveis e aventuras na natureza");
+  const [aboutTitle, setAboutTitle] = useState<string>("");
+  const [aboutDesc, setAboutDesc] = useState<string>("");
   const [dbSettingId, setDbSettingId] = useState<string | null>(null);
   const [dbTitleId, setDbTitleId] = useState<string | null>(null);
   const [dbSubtitleId, setDbSubtitleId] = useState<string | null>(null);
@@ -46,6 +48,8 @@ const AdminHero = () => {
   const [dbCitySubtitleId, setDbCitySubtitleId] = useState<string | null>(null);
   const [dbHikingTitleId, setDbHikingTitleId] = useState<string | null>(null);
   const [dbHikingSubtitleId, setDbHikingSubtitleId] = useState<string | null>(null);
+  const [dbAboutTitleId, setDbAboutTitleId] = useState<string | null>(null);
+  const [dbAboutDescId, setDbAboutDescId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -120,6 +124,22 @@ const AdminHero = () => {
         setHikingToursSubtitle(hikingSubtitleSetting.value);
         setDbHikingSubtitleId((hikingSubtitleSetting as any).id);
       }
+      
+      const aboutTitleSetting = settings.find(s => s.key === "about_title");
+      if (aboutTitleSetting) {
+        setAboutTitle(aboutTitleSetting.value);
+        setDbAboutTitleId((aboutTitleSetting as any).id);
+      } else {
+        setAboutTitle("Sobre a Passeio Rio");
+      }
+      
+      const aboutDescSetting = settings.find(s => s.key === "about_desc");
+      if (aboutDescSetting) {
+        setAboutDesc(aboutDescSetting.value);
+        setDbAboutDescId((aboutDescSetting as any).id);
+      } else {
+        setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnífica.");
+      }
     } catch (e) {
       console.error("Erro ao carregar site_settings:", e);
     }
@@ -182,6 +202,20 @@ const AdminHero = () => {
       } else {
         const res = await insertLovable("site_settings", { key: "hiking_tours_subtitle", value: hikingToursSubtitle });
         if (res) setDbHikingSubtitleId((res as any).id);
+      }
+      
+      if (dbAboutTitleId) {
+        await updateLovable("site_settings", dbAboutTitleId, { value: aboutTitle });
+      } else {
+        const res = await insertLovable("site_settings", { key: "about_title", value: aboutTitle });
+        if (res) setDbAboutTitleId((res as any).id);
+      }
+      
+      if (dbAboutDescId) {
+        await updateLovable("site_settings", dbAboutDescId, { value: aboutDesc });
+      } else {
+        const res = await insertLovable("site_settings", { key: "about_desc", value: aboutDesc });
+        if (res) setDbAboutDescId((res as any).id);
       }
       
       localStorage.removeItem('site_settings');
@@ -341,6 +375,41 @@ const AdminHero = () => {
           <Button onClick={handleSaveTitleSubtitle} className="w-fit font-sans">
             <Save className="w-4 h-4 mr-2" />
             Salvar Textos
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-card rounded-xl border p-6 mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Type className="w-5 h-5 text-primary" />
+          <h2 className="font-sans font-bold text-lg">Seção "Sobre" (Footer)</h2>
+        </div>
+        
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="aboutTitle">Título</Label>
+            <Input
+              id="aboutTitle"
+              value={aboutTitle}
+              onChange={(e) => setAboutTitle(e.target.value)}
+              placeholder="Ex: Sobre a Passeio Rio"
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="aboutDesc">Descrição</Label>
+            <textarea
+              id="aboutDesc"
+              value={aboutDesc}
+              onChange={(e) => setAboutDesc(e.target.value)}
+              placeholder="Digite a descrição..."
+              className="w-full min-h-[120px] rounded-xl border p-4 text-sm font-sans"
+            />
+          </div>
+          
+          <Button onClick={handleSaveTitleSubtitle} className="w-fit font-sans">
+            <Save className="w-4 h-4 mr-2" />
+            Salvar
           </Button>
         </div>
       </div>

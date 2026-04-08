@@ -1,8 +1,10 @@
 import { Bus, Shield, Heart, Users } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 
 export function AboutSection() {
   const { t } = useLocale();
+  const { siteSettings } = useSiteData();
 
   const features = [
     { icon: Bus, title: t("feat_transporte"), description: t("feat_transporte_desc") },
@@ -29,12 +31,10 @@ export function AboutSection() {
           <div>
             <p className="text-primary font-medium mb-3 font-sans">{t("sobre_passeiorio")}</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-              {t("porta_entrada")}
-              <br />
-              <span className="text-primary">{t("cidade_maravilhosa")}</span>
+              {siteSettings?.about_title || t("porta_entrada")}
             </h2>
             <p className="text-muted-foreground text-lg mb-6 leading-relaxed font-sans">
-              {t("sobre_desc1")}
+              {siteSettings?.about_desc || t("sobre_desc1")}
             </p>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
               {t("sobre_desc2")}
