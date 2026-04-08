@@ -83,11 +83,11 @@ export function ToursSection() {
 
   const displayTours = activeTab === 'city' ? cityTours : hikingTours;
   const activeTitle = activeTab === 'city' 
-    ? (siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'))
-    : (siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'));
+    ? (siteSettings['tours_section_title'] || siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'))
+    : (siteSettings['tours_section_title'] || siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'));
   const activeSubtitle = activeTab === 'city'
-    ? (siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'))
-    : (siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas Incríveis e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'));
+    ? (siteSettings['tours_section_subtitle'] || siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'))
+    : (siteSettings['tours_section_subtitle'] || siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas Incríveis e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'));
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">

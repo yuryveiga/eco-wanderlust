@@ -31,6 +31,8 @@ const AdminHero = () => {
   const [activeStyle, setActiveStyle] = useState<string>("style1");
   const [heroTitle, setHeroTitle] = useState<string>("");
   const [heroSubtitle, setHeroSubtitle] = useState<string>("");
+  const [toursSectionTitle, setToursSectionTitle] = useState<string>("");
+  const [toursSectionSubtitle, setToursSectionSubtitle] = useState<string>("");
   const [cityToursTitle, setCityToursTitle] = useState<string>("City Tours");
   const [cityToursSubtitle, setCityToursSubtitle] = useState<string>("Explore a cidade com nossos guias especializados");
   const [hikingToursTitle, setHikingToursTitle] = useState<string>("Trilhas e Adventures");
@@ -38,6 +40,8 @@ const AdminHero = () => {
   const [dbSettingId, setDbSettingId] = useState<string | null>(null);
   const [dbTitleId, setDbTitleId] = useState<string | null>(null);
   const [dbSubtitleId, setDbSubtitleId] = useState<string | null>(null);
+  const [dbToursTitleId, setDbToursTitleId] = useState<string | null>(null);
+  const [dbToursSubtitleId, setDbToursSubtitleId] = useState<string | null>(null);
   const [dbCityTitleId, setDbCityTitleId] = useState<string | null>(null);
   const [dbCitySubtitleId, setDbCitySubtitleId] = useState<string | null>(null);
   const [dbHikingTitleId, setDbHikingTitleId] = useState<string | null>(null);
@@ -77,6 +81,22 @@ const AdminHero = () => {
         setHeroSubtitle("Descubra a magia do Rio de Janeiro com nossos passeios exclusivos e guias especializados.");
       }
       
+      const toursTitleSetting = settings.find(s => s.key === "tours_section_title");
+      if (toursTitleSetting) {
+        setToursSectionTitle(toursTitleSetting.value);
+        setDbToursTitleId((toursTitleSetting as any).id);
+      } else {
+        setToursSectionTitle("Conheça o Melhor do Rio de Janeiro");
+      }
+      
+      const toursSubtitleSetting = settings.find(s => s.key === "tours_section_subtitle");
+      if (toursSubtitleSetting) {
+        setToursSectionSubtitle(toursSubtitleSetting.value);
+        setDbToursSubtitleId((toursSubtitleSetting as any).id);
+      } else {
+        setToursSectionSubtitle("City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.");
+      }
+      
       const cityTitleSetting = settings.find(s => s.key === "city_tours_title");
       if (cityTitleSetting) {
         setCityToursTitle(cityTitleSetting.value);
@@ -108,8 +128,6 @@ const AdminHero = () => {
 
   const handleSaveTitleSubtitle = async () => {
     try {
-      let success = true;
-      
       if (dbTitleId) {
         await updateLovable("site_settings", dbTitleId, { value: heroTitle });
       } else {
@@ -122,6 +140,20 @@ const AdminHero = () => {
       } else {
         const res = await insertLovable("site_settings", { key: "hero_subtitle", value: heroSubtitle });
         if (res) setDbSubtitleId((res as any).id);
+      }
+      
+      if (dbToursTitleId) {
+        await updateLovable("site_settings", dbToursTitleId, { value: toursSectionTitle });
+      } else {
+        const res = await insertLovable("site_settings", { key: "tours_section_title", value: toursSectionTitle });
+        if (res) setDbToursTitleId((res as any).id);
+      }
+      
+      if (dbToursSubtitleId) {
+        await updateLovable("site_settings", dbToursSubtitleId, { value: toursSectionSubtitle });
+      } else {
+        const res = await insertLovable("site_settings", { key: "tours_section_subtitle", value: toursSectionSubtitle });
+        if (res) setDbToursSubtitleId((res as any).id);
       }
       
       if (dbCityTitleId) {
@@ -225,6 +257,35 @@ const AdminHero = () => {
               value={heroSubtitle}
               onChange={(e) => setHeroSubtitle(e.target.value)}
               placeholder="Digite o subtítulo..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card rounded-xl border p-6 mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Type className="w-5 h-5 text-primary" />
+          <h2 className="font-sans font-bold text-lg">Seção de Passeios (abaixo do Hero)</h2>
+        </div>
+        
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="toursSectionTitle">Título</Label>
+            <Input
+              id="toursSectionTitle"
+              value={toursSectionTitle}
+              onChange={(e) => setToursSectionTitle(e.target.value)}
+              placeholder="Ex: Conheça o Melhor do Rio de Janeiro"
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="toursSectionSubtitle">Subtítulo</Label>
+            <Input
+              id="toursSectionSubtitle"
+              value={toursSectionSubtitle}
+              onChange={(e) => setToursSectionSubtitle(e.target.value)}
+              placeholder="Ex: City tours completos..."
             />
           </div>
         </div>
