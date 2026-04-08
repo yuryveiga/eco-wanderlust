@@ -81,10 +81,6 @@ export function Header() {
                 <span className="text-primary-foreground font-bold text-xl font-sans">P</span>
               </div>
             )}
-            <div className="flex flex-col -gap-1">
-              <span className="font-serif text-lg md:text-xl font-bold text-foreground leading-tight">{siteSettings?.site_title?.split('|')[0].trim() || "Passeio"}</span>
-              <span className="text-primary font-bold text-xs md:text-sm font-sans tracking-widest uppercase">{siteSettings?.site_subtitle || "Rio"}</span>
-            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6">

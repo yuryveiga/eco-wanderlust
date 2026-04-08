@@ -54,10 +54,6 @@ export function Footer() {
                   <span className="font-bold text-lg font-sans">P</span>
                 </div>
               )}
-              <div>
-                <span className="font-serif text-xl font-semibold">{siteSettings?.site_title?.split('|')[0].trim() || "Passeio"}</span>
-                <span className="text-[hsl(145,40%,40%)] font-medium ml-1 font-sans">{siteSettings?.site_subtitle || "Rio"}</span>
-              </div>
             </div>
             <p className="text-[hsl(140,10%,96%)]/80 text-sm leading-relaxed font-sans">
               {siteSettings?.about_desc || t("footer_desc")}
