@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Passeio Rio - City Tours e Ecoturismo no Rio de Janeiro</title>
+    <script>
+      (function() {
+        try {
+          const settings = JSON.parse(localStorage.getItem('site_settings') || '{}');
+          if (settings.site_title) {
+            document.title = settings.site_title;
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="Descubra o Rio de Janeiro com tours guiados, passeios de barco em Arraial do Cabo e Angra dos Reis. Experiências inesquecíveis com guias especializados.">
     <meta name="author" content="Passeio Rio" />
 
