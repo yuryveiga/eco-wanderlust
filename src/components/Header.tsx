@@ -60,9 +60,9 @@ export function Header() {
     { label: "Blog", href: "/blog" },
   ];
 
-  const activeSocials = socialMedia.filter(s => s.is_active !== false).length > 0
+  const activeSocials = socialMedia.filter(s => s.is_active !== false && s.platform.toLowerCase() !== 'email').length > 0
     ? socialMedia
-        .filter(s => s.is_active !== false)
+        .filter(s => s.is_active !== false && s.platform.toLowerCase() !== 'email')
         .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
         .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
     : [
