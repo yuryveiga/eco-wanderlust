@@ -289,7 +289,7 @@ export function TourDetail() {
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <h3 className="font-serif text-2xl font-bold text-foreground mb-6">{t("o_que_inclui")}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {highlights.map((item, i) => { const Icon = getIcon(item.icon); return (<div key={i} className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors"><Icon className="w-6 h-6 text-primary" /></div><span className="text-foreground font-sans font-medium">{item.text}</span></div>)})}
+                  {(translatedIncluded as any[])?.map((item, i) => { const Icon = getIcon(item.icon); return (<div key={i} className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors"><Icon className="w-6 h-6 text-primary" /></div><span className="text-foreground font-sans font-medium">{item.text}</span></div>)})}
                 </div>
               </div>
 
