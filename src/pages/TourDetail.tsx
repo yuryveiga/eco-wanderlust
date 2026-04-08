@@ -177,7 +177,7 @@ export function TourDetail() {
     <main className="min-h-screen bg-background font-sans">
       <Helmet>
         <title>{translatedTitle} | {siteTitle}</title>
-        <meta name="description" content={translatedShortDesc || `Descubra os melhores passeios no Rio de Janeiro com a ${siteTitle}.`} />
+        <meta name="description" content={translatedShortDesc || siteSettings?.site_description || `Descubra os melhores passeios no Rio de Janeiro com a ${siteTitle}.`} />
         <meta property="og:title" content={`${translatedTitle} | ${siteTitle}`} />
         <meta property="og:description" content={translatedShortDesc} />
         {tour.image_url && <meta property="og:image" content={tour.image_url} />}

@@ -5,6 +5,7 @@ import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
             <Globe className="w-7 h-7 text-primary" />
             <h2 className="text-2xl font-bold font-serif">Configurações Gerais</h2>
           </div>
-          <div className="space-y-6">
+            <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Título do Site (Aba do Navegador)</Label>
               <Input 
@@ -134,8 +135,18 @@ const AdminDashboard = () => {
               />
               <p className="text-[10px] text-muted-foreground italic">Este texto aparecerá no topo do navegador quando os clientes acessarem a home.</p>
             </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Descrição do Site (SEO)</Label>
+              <Textarea 
+                value={settings['site_description'] || ""} 
+                onChange={(e) => setSettings({ ...settings, site_description: e.target.value })} 
+                placeholder="Ex: Descubra os melhores passeios no Rio de Janeiro com a Eco-Wanderlust."
+                className="h-24 rounded-xl resize-none"
+              />
+              <p className="text-[10px] text-muted-foreground italic">Esta descrição aparece nos resultados de busca do Google.</p>
+            </div>
             <Button onClick={handleSaveGeneral} disabled={isSavingGeneral} className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20">
-              {isSavingGeneral ? "Salvando..." : <><Save className="w-4 h-4 mr-2" /> Salvar Título</>}
+              {isSavingGeneral ? "Salvando..." : <><Save className="w-4 h-4 mr-2" /> Salvar Configurações</>}
             </Button>
           </div>
         </div>
