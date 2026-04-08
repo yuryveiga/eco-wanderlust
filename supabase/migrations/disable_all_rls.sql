@@ -1,6 +1,4 @@
--- Remove all RLS policies and disable RLS on all tables
-
--- Disable RLS on all tables
+-- Disable RLS on all public tables
 ALTER TABLE public.tours DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pages DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_images DISABLE ROW LEVEL SECURITY;
@@ -9,47 +7,30 @@ ALTER TABLE public.site_settings DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blog_posts DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_roles DISABLE ROW LEVEL SECURITY;
 
--- Drop all policies (cleanup)
+-- Drop all existing policies
 DROP POLICY IF EXISTS "Public read tours" ON public.tours;
 DROP POLICY IF EXISTS "Public read pages" ON public.pages;
 DROP POLICY IF EXISTS "Public read images" ON public.site_images;
 DROP POLICY IF EXISTS "Public read social" ON public.social_media;
 DROP POLICY IF EXISTS "Public read settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Users can view own roles" ON public.user_roles;
+DROP POLICY IF EXISTS "Admins can insert tours" ON public.tours;
+DROP POLICY IF EXISTS "Admins can update tours" ON public.tours;
+DROP POLICY IF EXISTS "Admins can delete tours" ON public.tours;
+DROP POLICY IF EXISTS "Admins can insert pages" ON public.pages;
+DROP POLICY IF EXISTS "Admins can update pages" ON public.pages;
+DROP POLICY IF EXISTS "Admins can delete pages" ON public.pages;
+DROP POLICY IF EXISTS "Admins can insert site images" ON public.site_images;
+DROP POLICY IF EXISTS "Admins can update site images" ON public.site_images;
+DROP POLICY IF EXISTS "Admins can delete site images" ON public.site_images;
+DROP POLICY IF EXISTS "Admins can insert social media" ON public.social_media;
+DROP POLICY IF EXISTS "Admins can update social media" ON public.social_media;
+DROP POLICY IF EXISTS "Admins can delete social media" ON public.social_media;
 DROP POLICY IF EXISTS "Authenticated can manage settings" ON public.site_settings;
 DROP POLICY IF EXISTS "Public can view settings" ON public.site_settings;
 DROP POLICY IF EXISTS "Admins can modify settings" ON public.site_settings;
 DROP POLICY IF EXISTS "Public can view published posts" ON public.blog_posts;
 DROP POLICY IF EXISTS "Admins can modify blog" ON public.blog_posts;
-DROP POLICY IF EXISTS "Users can view own roles" ON public.user_roles;
-
-DROP POLICY IF EXISTS "Admins can insert tours" ON public.tours;
-DROP POLICY IF EXISTS "Admins can update tours" ON public.tours;
-DROP POLICY IF EXISTS "Admins can delete tours" ON public.tours;
-DROP POLICY IF EXISTS "Authenticated can insert tours" ON public.tours;
-DROP POLICY IF EXISTS "Authenticated can update tours" ON public.tours;
-DROP POLICY IF EXISTS "Authenticated can delete tours" ON public.tours;
-
-DROP POLICY IF EXISTS "Admins can insert pages" ON public.pages;
-DROP POLICY IF EXISTS "Admins can update pages" ON public.pages;
-DROP POLICY IF EXISTS "Admins can delete pages" ON public.pages;
-DROP POLICY IF EXISTS "Authenticated can insert pages" ON public.pages;
-DROP POLICY IF EXISTS "Authenticated can update pages" ON public.pages;
-DROP POLICY IF EXISTS "Authenticated can delete pages" ON public.pages;
-
-DROP POLICY IF EXISTS "Admins can insert site images" ON public.site_images;
-DROP POLICY IF EXISTS "Admins can update site images" ON public.site_images;
-DROP POLICY IF EXISTS "Admins can delete site images" ON public.site_images;
-DROP POLICY IF EXISTS "Authenticated can insert site_images" ON public.site_images;
-DROP POLICY IF EXISTS "Authenticated can update site_images" ON public.site_images;
-DROP POLICY IF EXISTS "Authenticated can delete site_images" ON public.site_images;
-
-DROP POLICY IF EXISTS "Admins can insert social media" ON public.social_media;
-DROP POLICY IF EXISTS "Admins can update social media" ON public.social_media;
-DROP POLICY IF EXISTS "Admins can delete social media" ON public.social_media;
-DROP POLICY IF EXISTS "Authenticated can insert social_media" ON public.social_media;
-DROP POLICY IF EXISTS "Authenticated can update social_media" ON public.social_media;
-DROP POLICY IF EXISTS "Authenticated can delete social_media" ON public.social_media;
-
 DROP POLICY IF EXISTS "Anyone can view active tours" ON public.tours;
 DROP POLICY IF EXISTS "Authenticated users can insert tours" ON public.tours;
 DROP POLICY IF EXISTS "Authenticated users can update tours" ON public.tours;
@@ -66,16 +47,3 @@ DROP POLICY IF EXISTS "Anyone can view social media" ON public.social_media;
 DROP POLICY IF EXISTS "Authenticated users can insert social media" ON public.social_media;
 DROP POLICY IF EXISTS "Authenticated users can update social media" ON public.social_media;
 DROP POLICY IF EXISTS "Authenticated users can delete social media" ON public.social_media;
-
-DROP POLICY IF EXISTS "Anyone can view site images storage" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated users can upload site images" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated users can update site images" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated users can delete site images" ON storage.objects;
-DROP POLICY IF EXISTS "Admins can upload site images" ON storage.objects;
-DROP POLICY IF EXISTS "Admins can update site images storage" ON storage.objects;
-DROP POLICY IF EXISTS "Admins can delete site images storage" ON storage.objects;
-
-DROP POLICY IF EXISTS "Admins or authenticated can update tours" ON public.tours;
-
--- Also disable RLS on storage
-ALTER TABLE storage.objects DISABLE ROW LEVEL SECURITY;
