@@ -38,28 +38,34 @@ const AdminHero = () => {
   const loadSettings = async () => {
     setIsLoading(true);
     try {
-      // Usaremos a tabela site_settings
       const settings = await fetchLovable<LovableSiteSetting>("site_settings");
+      console.log("Settings carregados:", settings);
       const heroSetting = settings.find(s => s.key === "hero_style");
+      console.log("hero_setting encontrado:", heroSetting);
       
       if (heroSetting) {
         setActiveStyle(heroSetting.value);
         setDbSettingId((heroSetting as any).id || heroSetting.key);
       }
     } catch (e) {
-      console.error("Tabela site_settings talvez não exista", e);
+      console.error("Erro ao carregar site_settings:", e);
     }
     setIsLoading(false);
   };
 
   const handleSave = async (styleId: string) => {
     setActiveStyle(styleId);
+    console.log("Salvando hero_style:", styleId, "dbSettingId:", dbSettingId);
     
     try {
       if (dbSettingId) {
-        await updateLovable("site_settings", dbSettingId, { value: styleId });
+        console.log("Atualizando registro:", dbSettingId);
+        const success = await updateLovable("site_settings", dbSettingId, { value: styleId });
+        console.log("Resultado do update:", success);
       } else {
+        console.log("Inserindo novo registro");
         const res = await insertLovable("site_settings", { key: "hero_style", value: styleId });
+        console.log("Resultado do insert:", res);
         if (res) setDbSettingId((res as any).id || "hero_style");
       }
       localStorage.removeItem('site_settings');
