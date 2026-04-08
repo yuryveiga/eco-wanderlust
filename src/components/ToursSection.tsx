@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -67,13 +68,11 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 
 export function ToursSection() {
   const { tours, siteSettings, isLoading } = useSiteData();
-  const { t } = useLocale();
+  const { t, language } = useLocale();
+  const [activeTab, setActiveTab] = useState<'city' | 'hiking'>('city');
 
   const columns = Number(siteSettings['home_tours_columns']) || 3;
   const count = Number(siteSettings['home_tours_count']) || 6;
-  
-  const toursTitle = siteSettings['tours_title'] || t("conhecaPasseios");
-  const toursSubtitle = siteSettings['tours_subtitle'] || t("conheca_sub");
   
   const cityTours = tours.filter(t => t.category?.toLowerCase().includes('city') || t.category?.toLowerCase().includes('city tour'));
   const hikingTours = tours.filter(t => t.category?.toLowerCase().includes('hiking') || t.category?.toLowerCase().includes('trilha') || t.category?.toLowerCase().includes('adventure'));
@@ -82,42 +81,49 @@ export function ToursSection() {
                         columns === 2 ? "lg:grid-cols-2" : 
                         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
-  const renderTourSection = (title: string, subtitle: string, toursToShow: typeof tours, sectionKey: string) => (
-    <div className="mb-16">
-      <div className="text-center mb-10">
-        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">{title}</h2>
-        {subtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{subtitle}</p>}
-      </div>
-      {isLoading ? (
-        <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-          {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
-        </div>
-      ) : toursToShow.length > 0 ? (
-        <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-          {toursToShow.slice(0, count).map((tour) => <TourCard key={`${sectionKey}-${tour.id}`} tour={tour as any} />)}
-        </div>
-      ) : (
-        <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passei disponível' : 'No tours available'}</p>
-      )}
-    </div>
-  );
-
-  const { language } = useLocale();
+  const displayTours = activeTab === 'city' ? cityTours : hikingTours;
+  const activeTitle = activeTab === 'city' 
+    ? (siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'))
+    : (siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'));
+  const activeSubtitle = activeTab === 'city'
+    ? (siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'))
+    : (siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas Incríveis e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'));
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {renderTourSection(
-          siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'),
-          siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'),
-          cityTours,
-          'city'
-        )}
-        {renderTourSection(
-          siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'),
-          siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas breathtaking e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'),
-          hikingTours,
-          'hiking'
+        <div className="text-center mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">{activeTitle}</h2>
+          {activeSubtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{activeSubtitle}</p>}
+        </div>
+        
+        <div className="flex justify-center gap-4 mb-12">
+          <Button
+            variant={activeTab === 'city' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('city')}
+            className="font-sans px-8"
+          >
+            {siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours')}
+          </Button>
+          <Button
+            variant={activeTab === 'hiking' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('hiking')}
+            className="font-sans px-8"
+          >
+            {siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking')}
+          </Button>
+        </div>
+        
+        {isLoading ? (
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+            {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
+          </div>
+        ) : displayTours.length > 0 ? (
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+            {displayTours.slice(0, count).map((tour) => <TourCard key={`${activeTab}-${tour.id}`} tour={tour as any} />)}
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passeio disponível' : 'No tours available'}</p>
         )}
       </div>
     </section>
