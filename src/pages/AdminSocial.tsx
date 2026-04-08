@@ -92,6 +92,17 @@ const AdminSocial = () => {
                 <h3 className="font-semibold text-foreground font-sans capitalize">{social.platform}</h3>
                 <p className="text-sm text-muted-foreground font-sans truncate">{social.url}</p>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground font-sans">Header</span>
+                <Switch 
+                  checked={social.is_active !== false}
+                  onCheckedChange={async (checked) => {
+                    const updated = { ...social, is_active: checked };
+                    await updateLovable("social_media", social.id, { is_active: checked });
+                    setSocials(socials.map(s => s.id === social.id ? updated : s));
+                  }}
+                />
+              </div>
               <span className={`text-xs px-2 py-0.5 rounded-full font-sans ${social.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                 {social.is_active ? "Ativo" : "Inativo"}
               </span>
