@@ -9,6 +9,8 @@ export function HeroSection() {
   const { t } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
   const heroStyle = siteSettings['hero_style'] || "style1";
+  const heroTitle = siteSettings['hero_title'] || `${t("conheca_melhor")} ${t("rio_janeiro")}`;
+  const heroSubtitle = siteSettings['hero_subtitle'] || t("hero_desc");
   
   const availableBgs = [
     images["hero_bg"],
@@ -61,11 +63,11 @@ export function HeroSection() {
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl font-bold mb-6 text-white text-balance drop-shadow-lg">
-              {t("conheca_melhor")} <span className="text-primary">{t("rio_janeiro")}</span>
+              {heroTitle}
             </h1>
 
             <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-10 font-sans font-light">
-              {t("hero_desc")}
+              {heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -105,12 +107,11 @@ export function HeroSection() {
             </div>
 
             <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 text-foreground text-balance leading-[1.1]">
-              {t("conheca_melhor")} <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-600">{t("rio_janeiro")}</span>
+              {heroTitle}
             </h1>
 
             <p className="text-lg text-muted-foreground mb-8 font-sans leading-relaxed">
-              {t("hero_desc")}
+              {heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -140,13 +141,11 @@ export function HeroSection() {
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-balance drop-shadow-xl">
-            {t("conheca_melhor")}
-            <br />
-            <span className="text-primary">{t("rio_janeiro")}</span>
+            {heroTitle}
           </h1>
 
           <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto mb-8 font-sans drop-shadow">
-            {t("hero_desc")}
+            {heroSubtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -71,33 +71,53 @@ export function ToursSection() {
 
   const columns = Number(siteSettings['home_tours_columns']) || 3;
   const count = Number(siteSettings['home_tours_count']) || 6;
-  const displayTours = tours.slice(0, count);
+  
+  const toursTitle = siteSettings['tours_title'] || t("conhecaPasseios");
+  const toursSubtitle = siteSettings['tours_subtitle'] || t("conheca_sub");
+  
+  const cityTours = tours.filter(t => t.category?.toLowerCase().includes('city') || t.category?.toLowerCase().includes('city tour'));
+  const hikingTours = tours.filter(t => t.category?.toLowerCase().includes('hiking') || t.category?.toLowerCase().includes('trilha') || t.category?.toLowerCase().includes('adventure'));
 
-  // Dynamic grid class based on columns
   const gridColsClass = columns === 1 ? "lg:grid-cols-1 max-w-2xl mx-auto" : 
                         columns === 2 ? "lg:grid-cols-2" : 
                         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
+  const renderTourSection = (title: string, subtitle: string, toursToShow: typeof tours, sectionKey: string) => (
+    <div className="mb-16">
+      <div className="text-center mb-10">
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">{title}</h2>
+        {subtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{subtitle}</p>}
+      </div>
+      {isLoading ? (
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+          {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
+        </div>
+      ) : toursToShow.length > 0 ? (
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+          {toursToShow.slice(0, count).map((tour) => <TourCard key={`${sectionKey}-${tour.id}`} tour={tour as any} />)}
+        </div>
+      ) : (
+        <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passei disponível' : 'No tours available'}</p>
+      )}
+    </div>
+  );
+
+  const { language } = useLocale();
+
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16">
-          <p className="text-primary font-medium mb-3 font-sans">{t("passeios")}</p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-            {t("conhecaPasseios")}
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
-            {t("conheca_sub")}
-          </p>
-        </div>
-        {isLoading ? (
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-            {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
-          </div>
-        ) : (
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-            {displayTours.map((tour) => <TourCard key={tour.id} tour={tour as any} />)}
-          </div>
+        {renderTourSection(
+          siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'),
+          siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'),
+          cityTours,
+          'city'
+        )}
+        {renderTourSection(
+          siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'),
+          siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas breathtaking e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'),
+          hikingTours,
+          'hiking'
         )}
       </div>
     </section>
