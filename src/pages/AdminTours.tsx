@@ -31,15 +31,19 @@ const AdminTours = () => {
   };
 
   const handleSave = async () => {
-    console.log("Saving tour, category:", editing?.category);
     if (!editing?.title) {
       toast({ title: "Erro", description: "Título é obrigatório", variant: "destructive" });
       return;
     }
 
     const slug = editing.slug || editing.title.toLowerCase().replace(/\s+/g, '-');
-    const dataToSave = { ...editing, slug };
-    console.log("Data to save:", dataToSave);
+    
+    // Ensure category is included
+    const dataToSave = {
+      ...editing,
+      slug,
+      category: editing.category || 'CITY TOUR'
+    };
 
     try {
       if (isNew) {
@@ -52,8 +56,7 @@ const AdminTours = () => {
 
       await loadTours();
       setEditing(null);
-    } catch (err) {
-      console.error("Save error:", err);
+    } catch {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
     }
   };

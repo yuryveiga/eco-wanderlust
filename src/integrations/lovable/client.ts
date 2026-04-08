@@ -77,12 +77,20 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
     delete sanitizedData.created_at;
     delete sanitizedData.updated_at;
 
-    const { error } = await supabase
+    console.log(`Updating ${table}:`, { id, data: sanitizedData });
+    
+    const { data: result, error } = await supabase
       .from(table as any)
       .update(sanitizedData)
-      .eq('id', id);
+      .eq('id', id)
+      .select();
       
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error:", error);
+      throw error;
+    }
+    
+    console.log("Update result:", result);
     return true;
   } catch (error: any) {
     console.error(`Error updating ${table}:`, error);
