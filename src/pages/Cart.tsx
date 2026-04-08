@@ -13,16 +13,47 @@ const Cart = () => {
   const { items, removeFromCart, total, clearCart } = useCart();
   const { t, language, formatPrice } = useLocale();
   const { siteSettings } = useSiteData();
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
-  const stripeLink = siteSettings['stripe_payment_link'] || "#";
 
-  const handleCheckout = () => {
-    if (stripeLink === "#") {
-      alert(language === 'pt' ? "Link de pagamento não configurado." : "Payment link not configured.");
-      return;
+  const handleCheckout = async () => {
+    if (items.length === 0) return;
+    
+    setIsProcessing(true);
+    try {
+      const response = await fetch(
+        "https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/create-checkout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            items: items.map(item => ({
+              title: item.title,
+              price: item.price,
+              quantity: item.quantity,
+              date: item.date,
+              period: item.period,
+            })),
+            currency: "brl",
+          }),
+        }
+      );
+      
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Erro ao processar pagamento");
+      }
+    } catch (error) {
+      alert(language === 'pt' ? "Erro ao processar pagamento" : "Error processing payment");
+    } finally {
+      setIsProcessing(false);
     }
-    window.location.href = stripeLink;
   };
 
   return (
@@ -131,10 +162,10 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Button onClick={handleCheckout} className="w-full h-18 py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex flex-col items-center justify-center gap-0 bg-primary hover:bg-primary/90 transition-all active:scale-95 group">
+                <Button onClick={handleCheckout} disabled={isProcessing} className="w-full h-18 py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex flex-col items-center justify-center gap-0 bg-primary hover:bg-primary/90 transition-all active:scale-95 group">
                   <div className="flex items-center gap-2">
-                    {t("pagar_agora")}
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    {isProcessing ? (language === 'pt' ? "Processando..." : "Processing...") : t("pagar_agora")}
+                    {!isProcessing && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                   </div>
                   <span className="text-[10px] opacity-80 font-normal uppercase tracking-[0.2em] mt-1">{t("pagamento_seguro")}</span>
                 </Button>

@@ -140,12 +140,9 @@ const AdminTheme = () => {
       </div>
 
       <Tabs defaultValue="visual" className="w-full">
-        <TabsList className="grid w-96 grid-cols-2 mb-8">
+        <TabsList className="grid w-48 grid-cols-1 mb-8">
           <TabsTrigger value="visual" className="font-bold flex gap-2">
-            <Palette className="w-4 h-4" /> Visual
-          </TabsTrigger>
-          <TabsTrigger value="payments" className="font-bold flex gap-2">
-            <CreditCard className="w-4 h-4" /> Pagamentos
+            <Palette className="w-4 h-4" /> Cores do Site
           </TabsTrigger>
         </TabsList>
 
@@ -199,50 +196,6 @@ const AdminTheme = () => {
               </p>
             </div>
           </div>
-        </TabsContent>
-
-        <TabsContent value="payments" className="space-y-8 mt-0 border-none p-0">
-           <div className="bg-card rounded-3xl border p-10 shadow-sm max-w-3xl">
-              <div className="flex items-center gap-4 mb-8">
-                 <div className="w-14 h-14 rounded-2xl bg-blue-600/10 flex items-center justify-center">
-                    <CreditCard className="w-8 h-8 text-blue-600" />
-                 </div>
-                 <div>
-                    <h3 className="text-2xl font-bold font-serif">Integração Stripe</h3>
-                    <p className="text-muted-foreground text-sm font-sans">Configure como o cliente realiza o pagamento no carrinho.</p>
-                 </div>
-              </div>
-
-              <div className="space-y-6">
-                 <div className="space-y-3">
-                    <Label className="text-base font-bold flex items-center gap-2">
-                       Link de Pagamento Stripe (Stripe Payment Link)
-                       <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1 text-[10px] font-black uppercase">
-                          Gerar no Stripe <ExternalLink className="w-3 h-3" />
-                       </a>
-                    </Label>
-                    <Input 
-                      value={settings['stripe_payment_link'] || ""} 
-                      onChange={(e) => setSettings(prev => ({ ...prev, stripe_payment_link: e.target.value }))}
-                      placeholder="https://buy.stripe.com/..." 
-                      className="h-14 px-6 rounded-2xl font-mono text-xs border-2 focus:border-blue-600"
-                    />
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Ao clicar em "Pagar" no carrinho, o cliente será redirecionado para este link. Recomendamos criar um link com "preço variável" ou um checkout geral no seu painel do Stripe.
-                    </p>
-                 </div>
-              </div>
-
-              <div className="mt-10 pt-10 border-t flex gap-4 items-start bg-muted/20 -mx-10 px-10 pb-10 rounded-b-3xl">
-                 <ShieldCheck className="w-12 h-12 text-green-600 shrink-0" />
-                 <div>
-                    <h4 className="font-bold text-sm mb-1">Pagamentos Seguros</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                       O Eco-Wanderlust utiliza o Stripe Checkout para garantir que todas as transações sejam criptografadas e seguras. Seu link de pagamento lida com impostos, moedas e recibos automaticamente.
-                    </p>
-                 </div>
-              </div>
-           </div>
         </TabsContent>
       </Tabs>
     </div>
