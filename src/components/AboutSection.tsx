@@ -33,14 +33,9 @@ export function AboutSection() {
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
               {siteSettings?.about_title || t("porta_entrada")}
             </h2>
-            <p className="text-muted-foreground text-lg mb-6 leading-relaxed font-sans">
+            <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
               {siteSettings?.about_desc || t("sobre_desc1")}
             </p>
-            {siteSettings?.about_desc2 && (
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
-                {siteSettings.about_desc2}
-              </p>
-            )}
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
               {t("sobre_desc2")}
             </p>

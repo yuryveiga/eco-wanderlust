@@ -40,7 +40,6 @@ const AdminHero = () => {
   const [aboutLabel, setAboutLabel] = useState<string>("");
   const [aboutTitle, setAboutTitle] = useState<string>("");
   const [aboutDesc, setAboutDesc] = useState<string>("");
-  const [aboutDesc2, setAboutDesc2] = useState<string>("");
   const [dbSettingId, setDbSettingId] = useState<string | null>(null);
   const [dbTitleId, setDbTitleId] = useState<string | null>(null);
   const [dbSubtitleId, setDbSubtitleId] = useState<string | null>(null);
@@ -53,7 +52,6 @@ const AdminHero = () => {
   const [dbAboutLabelId, setDbAboutLabelId] = useState<string | null>(null);
   const [dbAboutTitleId, setDbAboutTitleId] = useState<string | null>(null);
   const [dbAboutDescId, setDbAboutDescId] = useState<string | null>(null);
-  const [dbAboutDesc2Id, setDbAboutDesc2Id] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -152,14 +150,6 @@ const AdminHero = () => {
       } else {
         setAboutLabel("Sobre a Passeio Rio");
       }
-
-      const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
-      if (aboutDesc2Setting) {
-        setAboutDesc2(aboutDesc2Setting.value);
-        setDbAboutDesc2Id((aboutDesc2Setting as any).id);
-      } else {
-        setAboutDesc2("Com guias locais especializados e saídas diárias confirmadas, garantimos uma experiência segura, confortável e inesquecível.");
-      }
     } catch (e) {
       console.error("Erro ao carregar site_settings:", e);
     }
@@ -251,13 +241,6 @@ const AdminHero = () => {
       } else {
         const res = await insertLovable("site_settings", { key: "about_label", value: aboutLabel });
         if (res) setDbAboutLabelId((res as any).id);
-      }
-
-      if (dbAboutDesc2Id) {
-        await updateLovable("site_settings", dbAboutDesc2Id, { value: aboutDesc2 });
-      } else {
-        const res = await insertLovable("site_settings", { key: "about_desc2", value: aboutDesc2 });
-        if (res) setDbAboutDesc2Id((res as any).id);
       }
       
       localStorage.removeItem('site_settings');
@@ -449,23 +432,12 @@ const AdminHero = () => {
           </div>
           
           <div className="grid gap-2">
-            <Label htmlFor="aboutDesc">Descrição 1</Label>
+            <Label htmlFor="aboutDesc">Descrição</Label>
             <textarea
               id="aboutDesc"
               value={aboutDesc}
               onChange={(e) => setAboutDesc(e.target.value)}
-              placeholder="Digite a primeira descrição..."
-              className="w-full min-h-[100px] rounded-xl border p-4 text-sm font-sans"
-            />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="aboutDesc2">Descrição 2</Label>
-            <textarea
-              id="aboutDesc2"
-              value={aboutDesc2}
-              onChange={(e) => setAboutDesc2(e.target.value)}
-              placeholder="Com guias locais especializados..."
+              placeholder="Digite a descrição..."
               className="w-full min-h-[100px] rounded-xl border p-4 text-sm font-sans"
             />
           </div>
