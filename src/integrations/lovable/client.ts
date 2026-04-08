@@ -5,23 +5,28 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
     
-    const { error: uploadError } = await supabase.storage
+    console.log("Uploading to bucket 'site-images', file:", fileName);
+    
+    const { data, error: uploadError } = await supabase.storage
       .from('site-images')
       .upload(fileName, file);
 
     if (uploadError) {
-      alert(`ERRO DE BUCKET (Storage): Não foi possível salvar a imagem no servidor.\nDetalhe: ${uploadError.message}`);
-      throw uploadError;
+      console.error("Upload error:", uploadError);
+      alert(`ERRO DE BUCKET (Storage): ${uploadError.message}`);
+      return null;
     }
 
+    console.log("Upload success:", data);
+    
     const { data: { publicUrl } } = supabase.storage
       .from('site-images')
       .getPublicUrl(fileName);
 
     return publicUrl;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Upload error:", error);
-    // Retorna nulo para barrar inserção se o upload falhar
+    alert(`ERRO DE BUCKET: ${error?.message || 'Erro desconhecido'}`);
     return null;
   }
 }
