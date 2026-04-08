@@ -8,6 +8,7 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
 import { WhatsAppButton } from "./components/WhatsAppButton";
+import { InstagramFloat } from "./components/InstagramFloat";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -41,6 +42,7 @@ const App = () => (
               <Sonner />
               <ThemeApplier />
               <WhatsAppButton />
+              <InstagramFloat />
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
