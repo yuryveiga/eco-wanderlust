@@ -54,26 +54,32 @@ const AdminHero = () => {
   };
 
   const handleSave = async (styleId: string) => {
-    setActiveStyle(styleId);
     console.log("Salvando hero_style:", styleId, "dbSettingId:", dbSettingId);
     
     try {
+      let success = false;
       if (dbSettingId) {
         console.log("Atualizando registro:", dbSettingId);
-        const success = await updateLovable("site_settings", dbSettingId, { value: styleId });
+        success = await updateLovable("site_settings", dbSettingId, { value: styleId });
         console.log("Resultado do update:", success);
       } else {
         console.log("Inserindo novo registro");
         const res = await insertLovable("site_settings", { key: "hero_style", value: styleId });
         console.log("Resultado do insert:", res);
+        success = !!res;
         if (res) setDbSettingId((res as any).id || "hero_style");
       }
-      localStorage.removeItem('site_settings');
-      toast({ title: "Estilo do Hero atualizado com sucesso!" });
-      setTimeout(() => window.location.reload(), 1500);
+      
+      if (success) {
+        setActiveStyle(styleId);
+        localStorage.removeItem('site_settings');
+        toast({ title: "Estilo do Hero atualizado com sucesso!" });
+      } else {
+        toast({ title: "Erro ao salvar", description: "Não foi possível salvar no banco", variant: "destructive" });
+      }
     } catch (e) {
       console.error("Erro ao salvar hero style:", e);
-      toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi criada no Supabase.", variant: "destructive" });
+      toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi créée no Supabase.", variant: "destructive" });
     }
   };
 
