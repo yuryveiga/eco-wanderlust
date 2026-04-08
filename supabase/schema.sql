@@ -52,6 +52,15 @@ CREATE TABLE IF NOT EXISTS social_media (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Tabela de Configurações do Site
+CREATE TABLE IF NOT EXISTS site_settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  key TEXT UNIQUE NOT NULL,
+  value TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- =============================================
 -- INSERIR DADOS DE EXEMPLO
 -- =============================================
@@ -111,3 +120,10 @@ CREATE POLICY "Public read images" ON site_images FOR SELECT USING (true);
 
 ALTER TABLE social_media ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read social" ON social_media FOR SELECT USING (is_active = true);
+
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read settings" ON site_settings FOR SELECT USING (true);
+CREATE POLICY "Authenticated can manage settings" ON site_settings FOR ALL TO authenticated USING (true);
+
+-- Inserir configuração padrão do hero
+INSERT INTO site_settings (key, value) VALUES ('hero_style', 'style1') ON CONFLICT (key) DO NOTHING;
