@@ -38,7 +38,14 @@ export function fileToBase64(file: File): Promise<string> {
 export async function fetchLovable<T>(table: string): Promise<T[]> {
   try {
     console.log(`Fetching from ${table}`);
-    const { data, error } = await supabase.from(table as any).select('*').order('sort_order');
+    let query = supabase.from(table as any).select('*');
+    
+    // Only add sort_order for tables that have it
+    if (table === 'tours' || table === 'pages' || table === 'social_media') {
+      query = query.order('sort_order');
+    }
+    
+    const { data, error } = await query;
     if (error) {
       console.error(`Fetch error for ${table}:`, error);
       throw error;
@@ -82,8 +89,6 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
     delete sanitizedData.created_at;
     delete sanitizedData.updated_at;
 
-    console.log(`Updating ${table}:`, { id, data: sanitizedData });
-    
     const { data: result, error } = await supabase
       .from(table as any)
       .update(sanitizedData)
@@ -95,7 +100,6 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
       throw error;
     }
     
-    console.log("Update result:", result);
     return true;
   } catch (error: any) {
     console.error(`Error updating ${table}:`, error);

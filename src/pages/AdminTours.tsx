@@ -26,7 +26,6 @@ const AdminTours = () => {
 
   const loadTours = async () => {
     const data = await fetchLovable<LovableTour>("tours");
-    console.log("Loaded tours:", data);
     setTours(data);
     setIsLoading(false);
   };
