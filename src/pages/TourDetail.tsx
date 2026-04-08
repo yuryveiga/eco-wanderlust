@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
@@ -28,6 +28,7 @@ export function TourDetail() {
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [weather, setWeather] = useState<{ temp: number; condition: string; humidity: number; wind: number } | null>(null);
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
@@ -87,6 +88,71 @@ export function TourDetail() {
       }
     }
   }, [tour, availablePeriods.length]);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      if (!selectedDate) {
+        setWeather(null);
+        return;
+      }
+      
+      try {
+        const date = new Date(selectedDate);
+        const today = new Date();
+        const daysAhead = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysAhead < 0 || daysAhead > 16) {
+          setWeather(null);
+          return;
+        }
+        
+        const response = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=-22.9068&longitude=-43.1729&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=16`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          const dayIndex = daysAhead;
+          
+          if (data.daily && data.daily.temperature_2m_max[dayIndex] !== undefined) {
+            const weatherCode = data.daily.weathercode[dayIndex];
+            const conditions: Record<number, string> = {
+              0: 'Ensolarado',
+              1: 'Parcialmente nublado',
+              2: 'Nublado',
+              3: 'Nublado',
+              45: 'Neblina',
+              48: 'Neblina',
+              51: 'Chuva leve',
+              53: 'Chuva moderada',
+              55: 'Chuva forte',
+              61: 'Chuva',
+              63: 'Chuva',
+              65: 'Chuva forte',
+              80: 'Temporal',
+              81: 'Temporal',
+              82: 'Temporal',
+              95: 'Tempestade',
+              96: 'Tempestade',
+              99: 'Tempestade',
+            };
+            
+            setWeather({
+              temp: Math.round((data.daily.temperature_2m_max[dayIndex] + data.daily.temperature_2m_min[dayIndex]) / 2),
+              condition: conditions[weatherCode] || 'Parcialmente nublado',
+              humidity: 70,
+              wind: 12,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Weather fetch error:", error);
+        setWeather(null);
+      }
+    };
+    
+    fetchWeather();
+  }, [selectedDate]);
   
   const handleBooking = () => {
     if (!tour) return;
@@ -354,6 +420,25 @@ export function TourDetail() {
                        </div>
                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full px-5 py-4 rounded-2xl border-2 border-border bg-muted/10 text-foreground font-sans font-bold text-sm" />
                     </div>
+                    {weather && selectedDate && (
+                      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-4 border border-blue-100 mb-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {weather.condition.includes('Ensolarado') ? <Sun className="w-8 h-8 text-amber-500" /> : 
+                             weather.condition.includes('Chuva') || weather.condition.includes('Temporal') ? <Cloud className="w-8 h-8 text-gray-500" /> :
+                             <Cloud className="w-8 h-8 text-blue-400" />}
+                            <div>
+                              <span className="font-bold text-foreground font-sans text-lg">{weather.temp}°C</span>
+                              <span className="text-muted-foreground font-sans text-sm block">{weather.condition}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1"><Droplets className="w-4 h-4 text-blue-400" /><span>{weather.humidity}%</span></div>
+                            <div className="flex items-center gap-1"><Wind className="w-4 h-4 text-gray-400" /><span>{weather.wind} km/h</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <Button onClick={handleBooking} className="w-full h-16 text-lg font-sans font-black rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all">{t("reservar_agora")}</Button>
                 </div>
