@@ -69,14 +69,14 @@ const AdminDashboard = () => {
     setIsSavingGeneral(true);
     try {
       const keys = ['site_title', 'site_description'];
+      console.log("Saving settings:", keys, settings);
       for (const key of keys) {
-        if (settings[key]) {
-          const settingRecord = settingsList.find(s => s.key === key);
-          if (settingRecord?.id) {
-            await updateLovable("site_settings", settingRecord.id, { value: settings[key] });
-          } else {
-            await insertLovable("site_settings", { key, value: settings[key] });
-          }
+        const settingRecord = settingsList.find(s => s.key === key);
+        console.log("Saving:", key, "value:", settings[key], "existing record:", settingRecord);
+        if (settingRecord?.id) {
+          await updateLovable("site_settings", settingRecord.id, { value: settings[key] || "" });
+        } else {
+          await insertLovable("site_settings", { key, value: settings[key] || "" });
         }
       }
       toast({ title: "Configurações Gerais salvas!" });
@@ -84,6 +84,7 @@ const AdminDashboard = () => {
       const settingsData = await fetchLovable<LovableSiteSetting>("site_settings");
       setSettingsList(settingsData);
     } catch (err) {
+      console.error("Error saving settings:", err);
       toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
       setIsSavingGeneral(false);
