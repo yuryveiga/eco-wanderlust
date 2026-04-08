@@ -41,9 +41,6 @@ export function AboutSection() {
                 {siteSettings.about_desc2}
               </p>
             )}
-            <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
-              {t("sobre_desc2")}
-            </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {features.map((feature) => (
