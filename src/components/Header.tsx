@@ -60,8 +60,11 @@ export function Header() {
     { label: "Blog", href: "/blog" },
   ];
 
-  const activeSocials = socialMedia.length > 0
-    ? socialMedia.map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
+  const activeSocials = socialMedia.filter(s => s.is_active !== false).length > 0
+    ? socialMedia
+        .filter(s => s.is_active !== false)
+        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
     : [
         { platform: "instagram", url: "https://www.instagram.com/passeiorio/", icon: Instagram },
         { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
