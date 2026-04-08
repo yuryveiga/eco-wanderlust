@@ -7,11 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 
 export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { t } = useLocale();
+  const { socialMedia } = useSiteData();
+
+  const emailSocial = socialMedia.find(s => s.platform.toLowerCase() === 'email');
+  const whatsappSocial = socialMedia.find(s => s.platform.toLowerCase().includes('whatsapp'));
+  
+  const contactEmail = emailSocial?.url || "";
+  const contactPhone = whatsappSocial?.url || "";
+  const cleanPhone = contactPhone ? contactPhone.replace(/[^\d]/g, "") : "";
+  const waLink = cleanPhone ? (contactPhone.startsWith('http') ? contactPhone : `https://wa.me/${cleanPhone}`) : "";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,24 +49,28 @@ export function ContactSection() {
           <div>
             <h3 className="font-serif text-2xl font-semibold text-foreground mb-6">{t("info_contato")}</h3>
             <div className="space-y-6 mb-8">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-primary" />
+              {contactEmail && (
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-foreground mb-1 font-sans">{t("email")}</h4>
+                    <a href={`mailto:${contactEmail}`} className="text-muted-foreground hover:text-primary transition-colors font-sans">{contactEmail}</a>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-1 font-sans">{t("email")}</h4>
-                  <a href="mailto:contato@passeiorio.com" className="text-muted-foreground hover:text-primary transition-colors font-sans">contato@passeiorio.com</a>
+              )}
+              {contactPhone && (
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-foreground mb-1 font-sans">WhatsApp</h4>
+                    <a href={waLink} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors font-sans">{contactPhone.replace(/https?:\/\//, '')}</a>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-1 font-sans">WhatsApp</h4>
-                  <a href="https://wa.me/5521999999999" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors font-sans">+55 21 99999-9999</a>
-                </div>
-              </div>
+              )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-primary" />
