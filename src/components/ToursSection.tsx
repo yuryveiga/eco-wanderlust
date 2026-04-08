@@ -82,7 +82,7 @@ export function ToursSection() {
     if (tab !== activeTab) {
       setIsAnimating(true);
       setActiveTab(tab);
-      setTimeout(() => setIsAnimating(false), 300);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
@@ -127,7 +127,7 @@ export function ToursSection() {
           </Button>
         </div>
         
-        <div className={`transition-all duration-300 ease-in-out ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <div className={`transition-all duration-500 ease-in-out ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
           {isLoading ? (
             <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
               {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
