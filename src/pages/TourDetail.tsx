@@ -252,7 +252,7 @@ export function TourDetail() {
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                     <Star className="text-primary w-6 h-6" />
-                    {language === 'pt' ? 'Highlights' : 'Highlights'}
+                    {language === 'pt' ? 'Destaques' : 'Highlights'}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {highlights.map((item, idx) => {
