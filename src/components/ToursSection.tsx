@@ -70,12 +70,21 @@ export function ToursSection() {
   const { tours, siteSettings, isLoading } = useSiteData();
   const { t, language } = useLocale();
   const [activeTab, setActiveTab] = useState<'city' | 'hiking'>('city');
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const columns = Number(siteSettings['home_tours_columns']) || 3;
   const count = Number(siteSettings['home_tours_count']) || 6;
   
   const cityTours = tours.filter(t => t.category?.toLowerCase().includes('city') || t.category?.toLowerCase().includes('city tour'));
   const hikingTours = tours.filter(t => t.category?.toLowerCase().includes('hiking') || t.category?.toLowerCase().includes('trilha') || t.category?.toLowerCase().includes('adventure'));
+
+  const handleTabChange = (tab: 'city' | 'hiking') => {
+    if (tab !== activeTab) {
+      setIsAnimating(true);
+      setActiveTab(tab);
+      setTimeout(() => setIsAnimating(false), 300);
+    }
+  };
 
   const gridColsClass = columns === 1 ? "lg:grid-cols-1 max-w-2xl mx-auto" : 
                         columns === 2 ? "lg:grid-cols-2" : 
@@ -100,31 +109,33 @@ export function ToursSection() {
         <div className="flex justify-center gap-4 mb-12">
           <Button
             variant={activeTab === 'city' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('city')}
+            onClick={() => handleTabChange('city')}
             className="font-sans px-8"
           >
             {siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours')}
           </Button>
           <Button
             variant={activeTab === 'hiking' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('hiking')}
+            onClick={() => handleTabChange('hiking')}
             className="font-sans px-8"
           >
             {siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking')}
           </Button>
         </div>
         
-        {isLoading ? (
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-            {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
-          </div>
-        ) : displayTours.length > 0 ? (
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-            {displayTours.slice(0, count).map((tour) => <TourCard key={`${activeTab}-${tour.id}`} tour={tour as any} />)}
-          </div>
-        ) : (
-          <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passeio disponível' : 'No tours available'}</p>
-        )}
+        <div className={`transition-all duration-300 ease-in-out ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+          {isLoading ? (
+            <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+              {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}
+            </div>
+          ) : displayTours.length > 0 ? (
+            <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+              {displayTours.slice(0, count).map((tour) => <TourCard key={`${activeTab}-${tour.id}`} tour={tour as any} />)}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passeio disponível' : 'No tours available'}</p>
+          )}
+        </div>
       </div>
     </section>
   );
