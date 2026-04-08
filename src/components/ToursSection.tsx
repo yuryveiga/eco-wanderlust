@@ -75,8 +75,8 @@ export function ToursSection() {
   const columns = Number(siteSettings['home_tours_columns']) || 3;
   const count = Number(siteSettings['home_tours_count']) || 6;
   
-  const cityTours = tours.filter(t => t.category?.toLowerCase().includes('city') || t.category?.toLowerCase().includes('city tour'));
-  const hikingTours = tours.filter(t => t.category?.toLowerCase().includes('hiking') || t.category?.toLowerCase().includes('trilha') || t.category?.toLowerCase().includes('adventure'));
+  const cityTours = tours.filter(t => t.category?.toUpperCase().includes('CITY') || t.category?.toUpperCase().includes('CITY TOUR'));
+  const hikingTours = tours.filter(t => t.category?.toUpperCase().includes('TRILHA'));
 
   const handleTabChange = (tab: 'city' | 'hiking') => {
     if (tab !== activeTab) {

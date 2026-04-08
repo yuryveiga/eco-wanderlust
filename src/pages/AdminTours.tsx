@@ -236,8 +236,31 @@ const AdminTours = () => {
                               <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-12 font-serif text-lg" />
                             </div>
                             <div className="space-y-2">
-                              <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria (PT)</Label>
-                              <Input value={editing.category ?? ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder="ex: AVENTURA" className="h-12 uppercase" />
+                              <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria</Label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setEditing({ ...editing, category: 'CITY TOUR' })}
+                                  className={`flex-1 py-3 px-4 rounded-xl border-2 font-bold text-sm transition-all ${
+                                    editing?.category === 'CITY TOUR' || (!editing?.category && editing?.category !== 'TRILHA')
+                                      ? 'border-primary bg-primary text-primary-foreground'
+                                      : 'border-border hover:border-primary/50'
+                                  }`}
+                                >
+                                  CITY TOUR
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEditing({ ...editing, category: 'TRILHA' })}
+                                  className={`flex-1 py-3 px-4 rounded-xl border-2 font-bold text-sm transition-all ${
+                                    editing?.category === 'TRILHA'
+                                      ? 'border-primary bg-primary text-primary-foreground'
+                                      : 'border-border hover:border-primary/50'
+                                  }`}
+                                >
+                                  TRILHA
+                                </button>
+                              </div>
                             </div>
                           </div>
                           <div className="space-y-2">
