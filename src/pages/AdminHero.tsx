@@ -70,6 +70,7 @@ const AdminHero = () => {
       }
       localStorage.removeItem('site_settings');
       toast({ title: "Estilo do Hero atualizado com sucesso!" });
+      setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
       console.error("Erro ao salvar hero style:", e);
       toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi criada no Supabase.", variant: "destructive" });
