@@ -62,8 +62,11 @@ const AdminHero = () => {
         const res = await insertLovable("site_settings", { key: "hero_style", value: styleId });
         if (res) setDbSettingId((res as any).id || "hero_style");
       }
+      localStorage.removeItem('site_settings');
       toast({ title: "Estilo do Hero atualizado com sucesso!" });
+      setTimeout(() => window.location.reload(), 500);
     } catch (e) {
+      console.error("Erro ao salvar hero style:", e);
       toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi criada no Supabase.", variant: "destructive" });
     }
   };
