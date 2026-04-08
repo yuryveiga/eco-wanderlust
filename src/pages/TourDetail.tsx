@@ -270,10 +270,6 @@ export function TourDetail() {
                 </div>
               )}
 
-              {/* Itinerary */}
-                </div>
-              )}
-
               {translatedItinerary && (translatedItinerary as any[]).length > 0 && (
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#2A9D8F] mb-6">{t("itinerario_detalhes")}</h2>
