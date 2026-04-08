@@ -106,18 +106,20 @@ export function ToursSection() {
           {activeSubtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{activeSubtitle}</p>}
         </div>
         
-        <div className="flex justify-center gap-4 mb-12">
+        <div className="flex justify-center gap-3 mb-12">
           <Button
+            size="lg"
             variant={activeTab === 'city' ? 'default' : 'outline'}
             onClick={() => handleTabChange('city')}
-            className="font-sans px-8"
+            className={`font-sans px-8 rounded-full ${activeTab !== 'city' ? 'border-2' : ''}`}
           >
             {siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours')}
           </Button>
           <Button
+            size="lg"
             variant={activeTab === 'hiking' ? 'default' : 'outline'}
             onClick={() => handleTabChange('hiking')}
-            className="font-sans px-8"
+            className={`font-sans px-8 rounded-full ${activeTab !== 'hiking' ? 'border-2' : ''}`}
           >
             {siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking')}
           </Button>
