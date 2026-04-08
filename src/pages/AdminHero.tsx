@@ -286,6 +286,7 @@ const AdminHero = () => {
 
       <div className="mb-8">
         <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Estilo do Hero</h2>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {STYLES.map((style) => (
