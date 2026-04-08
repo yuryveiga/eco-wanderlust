@@ -37,8 +37,13 @@ export function fileToBase64(file: File): Promise<string> {
 
 export async function fetchLovable<T>(table: string): Promise<T[]> {
   try {
-    const { data, error } = await supabase.from(table as any).select('*');
-    if (error) throw error;
+    console.log(`Fetching from ${table}`);
+    const { data, error } = await supabase.from(table as any).select('*').order('sort_order');
+    if (error) {
+      console.error(`Fetch error for ${table}:`, error);
+      throw error;
+    }
+    console.log(`Fetched ${table}:`, data);
     return (data || []) as T[];
   } catch (error: any) {
     console.error(`Error fetching ${table}:`, error);
