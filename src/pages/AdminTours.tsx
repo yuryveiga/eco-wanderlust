@@ -243,29 +243,27 @@ const AdminTours = () => {
                             </div>
                             <div className="space-y-2">
                               <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria</Label>
-                              <div className="flex gap-3">
-                                <button
-                                  type="button"
-                                  onClick={() => setEditing({ ...editing, category: 'CITY TOUR' })}
-                                  className={`flex-1 py-3 px-4 rounded-xl border-2 font-bold text-sm transition-all ${
-                                    editing?.category === 'CITY TOUR' || (!editing?.category && editing?.category !== 'TRILHA')
-                                      ? 'border-primary bg-primary text-primary-foreground'
-                                      : 'border-border hover:border-primary/50'
-                                  }`}
-                                >
-                                  CITY TOUR
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditing({ ...editing, category: 'TRILHA' })}
-                                  className={`flex-1 py-3 px-4 rounded-xl border-2 font-bold text-sm transition-all ${
-                                    editing?.category === 'TRILHA'
-                                      ? 'border-primary bg-primary text-primary-foreground'
-                                      : 'border-border hover:border-primary/50'
-                                  }`}
-                                >
-                                  TRILHA
-                                </button>
+                              <div className="flex gap-4">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    name="category"
+                                    checked={editing?.category === 'CITY TOUR'}
+                                    onChange={() => setEditing({ ...editing, category: 'CITY TOUR' })}
+                                    className="w-5 h-5 text-primary"
+                                  />
+                                  <span className="font-bold">CITY TOUR</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    name="category"
+                                    checked={editing?.category === 'TRILHA'}
+                                    onChange={() => setEditing({ ...editing, category: 'TRILHA' })}
+                                    className="w-5 h-5 text-primary"
+                                  />
+                                  <span className="font-bold">TRILHA</span>
+                                </label>
                               </div>
                             </div>
                           </div>
