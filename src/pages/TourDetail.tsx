@@ -36,6 +36,8 @@ export function TourDetail() {
   const tripAdvisorSocial = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
   );
+  console.log("TripAdvisor social:", tripAdvisorSocial);
+  console.log("All socialMedia:", socialMedia);
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
   const getTranslated = (obj: any, field: string) => {
