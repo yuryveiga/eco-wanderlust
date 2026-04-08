@@ -70,6 +70,28 @@ function hslNumbersToHex(hslStr: string): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+// Preset color themes that match the logo
+const PRESET_THEMES = [
+  {
+    name: "Verde Natureza",
+    primary: "160 50% 25%",
+    accent: "25 75% 55%",
+    description: "Verde escuro com coral vibrante"
+  },
+  {
+    name: "VerdeTurquesa",
+    primary: "170 55% 30%",
+    accent: "35 85% 55%",
+    description: "Verde azulado com laranja"
+  },
+  {
+    name: "VerdeEscuro",
+    primary: "150 40% 22%",
+    accent: "30 70% 50%",
+    description: "Verde floresta com laranja suave"
+  }
+];
+
 const AdminTheme = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +167,40 @@ const AdminTheme = () => {
             <Palette className="w-4 h-4" /> Cores do Site
           </TabsTrigger>
         </TabsList>
+
+        {/* Preset Themes */}
+        <div className="bg-card rounded-2xl border p-6 space-y-4 mb-8">
+          <Label className="text-lg font-bold">Temas Prontos</Label>
+          <p className="text-sm text-muted-foreground">Escolha uma combinação de cores que combina com o logo</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {PRESET_THEMES.map((theme, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  updateColor('theme_primary', hslNumbersToHex(theme.primary));
+                  updateColor('theme_accent', hslNumbersToHex(theme.accent));
+                }}
+                className="p-4 rounded-xl border-2 hover:border-primary transition-all text-left space-y-3"
+              >
+                <div className="flex gap-2">
+                  <div 
+                    className="w-8 h-8 rounded-full border-2 border-white shadow" 
+                    style={{ backgroundColor: `hsl(${theme.primary})` }} 
+                  />
+                  <div 
+                    className="w-8 h-8 rounded-full border-2 border-white shadow" 
+                    style={{ backgroundColor: `hsl(${theme.accent})` }} 
+                  />
+                </div>
+                <div>
+                  <span className="font-bold text-sm block">{theme.name}</span>
+                  <span className="text-xs text-muted-foreground">{theme.description}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <TabsContent value="visual" className="space-y-8 mt-0 border-none p-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
