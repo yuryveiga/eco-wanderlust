@@ -63,12 +63,14 @@ export function Header() {
   const activeSocials = socialMedia.filter(s => s.is_active !== false).length > 0
     ? socialMedia
         .filter(s => s.is_active !== false)
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
         .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
     : [
         { platform: "instagram", url: "https://www.instagram.com/passeiorio/", icon: Instagram },
         { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
       ];
+
+  console.log("socialMedia:", socialMedia);
 
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
 

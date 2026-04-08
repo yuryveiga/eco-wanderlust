@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 
 interface Review {
   id: string;
@@ -113,6 +114,13 @@ export function ReviewsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const { t } = useLocale();
+  const { socialMedia } = useSiteData();
+
+  // Get TripAdvisor URL from social media
+  const tripAdvisorSocial = socialMedia.find(s => 
+    s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
+  );
+  const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
   useEffect(() => {
     const update = () => setItemsPerView(window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
@@ -158,6 +166,12 @@ export function ReviewsSection() {
           </p>
         </div>
 
+        {/* Elfsight TripAdvisor Widget */}
+        <div className="mb-12">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div className="elfsight-app-a8e8bba0-e42c-47cd-a67d-a76cbb8bbd82" data-elfsight-app-lazy></div>
+        </div>
+
         <div className="relative">
           <div className="overflow-hidden">
             <div
@@ -199,7 +213,7 @@ export function ReviewsSection() {
 
         <div className="text-center mt-10">
           <a
-            href="https://www.tripadvisor.com.br/"
+            href={tripAdvisorUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors font-sans"
