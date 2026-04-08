@@ -91,19 +91,21 @@ export function ToursSection() {
                         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
   const displayTours = activeTab === 'city' ? cityTours : hikingTours;
-  const activeTitle = activeTab === 'city' 
-    ? (siteSettings['tours_section_title'] || siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours'))
-    : (siteSettings['tours_section_title'] || siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas e Adventures' : language === 'es' ? 'Senderismo y Aventuras' : 'Hiking & Adventures'));
-  const activeSubtitle = activeTab === 'city'
-    ? (siteSettings['tours_section_subtitle'] || siteSettings['city_tours_subtitle'] || (language === 'pt' ? 'Explore a cidade com nossos guias especializados' : language === 'es' ? 'Explora la ciudad con nuestros guías especializados' : 'Explore the city with our specialized guides'))
-    : (siteSettings['tours_section_subtitle'] || siteSettings['hiking_tours_subtitle'] || (language === 'pt' ? 'Descubra trilhas Incríveis e aventuras na natureza' : language === 'es' ? 'Descubre senderos impresionantes y aventuras en la naturaleza' : 'Discover breathtaking trails and nature adventures'));
+  
+  // Title and subtitle above the buttons (common for both tabs)
+  const toursTitle = siteSettings['tours_section_title'] || (language === 'pt' ? 'Conheça o Melhor do Rio de Janeiro' : language === 'es' ? 'Descubre lo mejor de Río' : 'Discover the Best of Rio');
+  const toursSubtitle = siteSettings['tours_section_subtitle'] || (language === 'pt' ? 'City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.' : language === 'es' ? 'Tours completos por la ciudad, paseos en barco en Arraial do Cabo y Angra dos Reis, y experiencias increibles con guías especializados.' : 'Complete city tours, boat trips in Arraial do Cabo and Angra dos Reis, and unforgettable experiences with specialized guides.');
+  
+  // Button labels (different for each category)
+  const cityButtonLabel = siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours');
+  const hikingButtonLabel = siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking');
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">{activeTitle}</h2>
-          {activeSubtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{activeSubtitle}</p>}
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">{toursTitle}</h2>
+          {toursSubtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{toursSubtitle}</p>}
         </div>
         
         <div className="flex justify-center gap-3 mb-12">
@@ -113,7 +115,7 @@ export function ToursSection() {
             onClick={() => handleTabChange('city')}
             className={`font-sans px-8 rounded-full ${activeTab !== 'city' ? 'border-2' : ''}`}
           >
-            {siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours')}
+            {cityButtonLabel}
           </Button>
           <Button
             size="lg"
@@ -121,7 +123,7 @@ export function ToursSection() {
             onClick={() => handleTabChange('hiking')}
             className={`font-sans px-8 rounded-full ${activeTab !== 'hiking' ? 'border-2' : ''}`}
           >
-            {siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking')}
+            {hikingButtonLabel}
           </Button>
         </div>
         
