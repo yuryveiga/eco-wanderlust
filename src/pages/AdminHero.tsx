@@ -148,6 +148,9 @@ const AdminHero = () => {
 
   const handleSaveTitleSubtitle = async () => {
     try {
+      console.log("Saving about_title:", aboutTitle, "dbAboutTitleId:", dbAboutTitleId);
+      console.log("Saving about_desc:", aboutDesc, "dbAboutDescId:", dbAboutDescId);
+      
       if (dbTitleId) {
         await updateLovable("site_settings", dbTitleId, { value: heroTitle });
       } else {
@@ -204,17 +207,22 @@ const AdminHero = () => {
         if (res) setDbHikingSubtitleId((res as any).id);
       }
       
+      // Save about section
       if (dbAboutTitleId) {
-        await updateLovable("site_settings", dbAboutTitleId, { value: aboutTitle });
+        const result = await updateLovable("site_settings", dbAboutTitleId, { value: aboutTitle });
+        console.log("Update about_title result:", result);
       } else {
         const res = await insertLovable("site_settings", { key: "about_title", value: aboutTitle });
+        console.log("Insert about_title result:", res);
         if (res) setDbAboutTitleId((res as any).id);
       }
       
       if (dbAboutDescId) {
-        await updateLovable("site_settings", dbAboutDescId, { value: aboutDesc });
+        const result = await updateLovable("site_settings", dbAboutDescId, { value: aboutDesc });
+        console.log("Update about_desc result:", result);
       } else {
         const res = await insertLovable("site_settings", { key: "about_desc", value: aboutDesc });
+        console.log("Insert about_desc result:", res);
         if (res) setDbAboutDescId((res as any).id);
       }
       
