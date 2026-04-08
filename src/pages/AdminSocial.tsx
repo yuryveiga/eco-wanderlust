@@ -95,10 +95,10 @@ const AdminSocial = () => {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground font-sans">Header</span>
                 <Switch 
-                  checked={social.is_active !== false}
+                  checked={social.show_in_header !== false}
                   onCheckedChange={async (checked) => {
-                    const updated = { ...social, is_active: checked };
-                    await updateLovable("social_media", social.id, { is_active: checked });
+                    const updated = { ...social, show_in_header: checked };
+                    await updateLovable("social_media", social.id, { show_in_header: checked });
                     setSocials(socials.map(s => s.id === social.id ? updated : s));
                   }}
                 />

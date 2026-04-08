@@ -198,6 +198,7 @@ export type LovableSocialMedia = {
   icon_name: string;
   is_active: boolean;
   sort_order: number;
+  show_in_header?: boolean;
 };
 
 export type LovableBlogPost = {
