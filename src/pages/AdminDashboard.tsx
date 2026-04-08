@@ -68,7 +68,7 @@ const AdminDashboard = () => {
   const handleSaveGeneral = async () => {
     setIsSavingGeneral(true);
     try {
-      const keys = ['site_title'];
+      const keys = ['site_title', 'site_description'];
       for (const key of keys) {
         if (settings[key]) {
           const settingRecord = settingsList.find(s => s.key === key);
