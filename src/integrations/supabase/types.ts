@@ -122,6 +122,63 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          author_location: string
+          author_name: string
+          content: string
+          content_en: string | null
+          content_es: string | null
+          created_at: string
+          id: string
+          is_published: boolean
+          rating: number
+          review_date: string
+          sort_order: number
+          title: string
+          title_en: string | null
+          title_es: string | null
+          tour_name: string
+          updated_at: string
+        }
+        Insert: {
+          author_location?: string
+          author_name: string
+          content: string
+          content_en?: string | null
+          content_es?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          rating?: number
+          review_date?: string
+          sort_order?: number
+          title: string
+          title_en?: string | null
+          title_es?: string | null
+          tour_name?: string
+          updated_at?: string
+        }
+        Update: {
+          author_location?: string
+          author_name?: string
+          content?: string
+          content_en?: string | null
+          content_es?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          rating?: number
+          review_date?: string
+          sort_order?: number
+          title?: string
+          title_en?: string | null
+          title_es?: string | null
+          tour_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_images: {
         Row: {
           created_at: string
