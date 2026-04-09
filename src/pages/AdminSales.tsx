@@ -113,10 +113,20 @@ const AdminSales = () => {
     toast({ title: `${selectedIds.size} venda(s) removida(s)` });
   };
 
-  const togglePaid = async (sale: LovableSale) => {
-    await updateLovable("sales", sale.id, { is_paid: !sale.is_paid });
+  const updateStatus = async (sale: LovableSale, status: 'paid' | 'pending' | 'cancelled') => {
+    const updates: any = {};
+    if (status === 'paid') {
+      updates.is_paid = true;
+      updates.is_cancelled = false;
+    } else if (status === 'pending') {
+      updates.is_paid = false;
+      updates.is_cancelled = false;
+    } else if (status === 'cancelled') {
+      updates.is_cancelled = true;
+    }
+    await updateLovable("sales", sale.id, updates);
     await loadData();
-    toast({ title: sale.is_paid ? "Pendente" : "Pago" });
+    toast({ title: status === 'paid' ? 'Pago' : status === 'pending' ? 'Pendente' : 'Cancelado' });
   };
 
   const formatPrice = (price: number) => {
@@ -204,16 +214,41 @@ const AdminSales = () => {
                     <div className="text-muted-foreground text-xs">{sale.customer_phone}</div>
                   </td>
                   <td className="p-4 text-sm">{sale.quantity}</td>
-                  <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price)}</td>
+                  <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price)}                  </td>
                   <td className="p-4 text-sm">
-                    <button
-                      onClick={() => togglePaid(sale)}
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${sale.is_paid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
-                    >
-                      {sale.is_paid ? "Pago" : "Pendente"}
-                    </button>
+                    {(sale as any).is_cancelled ? (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">Cancelado</span>
+                    ) : sale.is_paid ? (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">Pago</span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Pendente</span>
+                    )}
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="p-4 text-right flex gap-1">
+                    <Button 
+                      size="sm" 
+                      variant={sale.is_paid ? "outline" : "default"}
+                      className={sale.is_paid ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-green-500 text-white hover:bg-green-600"}
+                      onClick={() => updateStatus(sale, 'paid')}
+                    >
+                      ✓
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant={!sale.is_paid && !(sale as any).is_cancelled ? "outline" : "default"}
+                      className={!sale.is_paid && !(sale as any).is_cancelled ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200" : "text-muted-foreground"}
+                      onClick={() => updateStatus(sale, 'pending')}
+                    >
+                      ⏳
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant={(sale as any).is_cancelled ? "default" : "outline"}
+                      className={(sale as any).is_cancelled ? "bg-red-100 text-red-700 hover:bg-red-200" : "text-red-500"}
+                      onClick={() => updateStatus(sale, 'cancelled')}
+                    >
+                      ✕
+                    </Button>
                     <Button size="icon" variant="ghost" onClick={() => setEditing(sale)}>
                       <Pencil className="w-4 h-4" />
                     </Button>
