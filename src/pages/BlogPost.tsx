@@ -57,6 +57,8 @@ const BlogPost = () => {
   const content = getTranslated('content');
   const excerpt = getTranslated('excerpt');
 
+  const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background">
       <Helmet>
@@ -69,45 +71,82 @@ const BlogPost = () => {
       <Header />
       
       <main className="flex-1">
-        {/* HERO SECTION FOR BLOG POST */}
-        <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
-          {post.image_url ? (
-            <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
-              style={{ backgroundImage: `url('${post.image_url}')` }}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-primary/20" />
-          )}
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
-          
-          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
-            <Link to="/blog" className="inline-flex items-center text-white/80 hover:text-white font-sans mb-8 transition-colors">
-              <ArrowLeft className="w-5 h-5 mr-2" /> {t("voltar_blog")}
-            </Link>
-            
-            <div className="flex items-center justify-center gap-2 text-sm text-white/80 mb-6 font-sans uppercase tracking-[0.2em]">
-              <Calendar className="w-4 h-4 text-primary" />
-              {post.created_at ? format(new Date(post.created_at), language === 'en' ? "MMMM dd, yyyy" : "dd 'de' MMMM 'de' yyyy", { locale: dateLocale }) : t("publicado_recentemente")}
-            </div>
-            
-            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">
-              {title}
-            </h1>
-          </div>
-        </section>
+        {blogHeroStyle === "hero" ? (
+          <>
+            {/* HERO SECTION FOR BLOG POST - NEW STYLE */}
+            <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
+              {post.image_url ? (
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
+                  style={{ backgroundImage: `url('${post.image_url}')` }}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-primary/20" />
+              )}
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
+              
+              <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
+                <Link to="/blog" className="inline-flex items-center text-white/80 hover:text-white font-sans mb-8 transition-colors">
+                  <ArrowLeft className="w-5 h-5 mr-2" /> {t("voltar_blog")}
+                </Link>
+                
+                <div className="flex items-center justify-center gap-2 text-sm text-white/80 mb-6 font-sans uppercase tracking-[0.2em]">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  {post.created_at ? format(new Date(post.created_at), language === 'en' ? "MMMM dd, yyyy" : "dd 'de' MMMM 'de' yyyy", { locale: dateLocale }) : t("publicado_recentemente")}
+                </div>
+                
+                <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">
+                  {title}
+                </h1>
+              </div>
+            </section>
 
-        {/* CONTENT SECTION */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 mb-20">
-          <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-16 border border-border/50">
-            <div 
-              className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor blog-content-area"
-              style={{ padding: 0 }}
-              dangerouslySetInnerHTML={{ __html: content || "" }}
-            />
+            {/* CONTENT SECTION */}
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 mb-20">
+              <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-16 border border-border/50">
+                <div 
+                  className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor blog-content-area"
+                  style={{ padding: 0 }}
+                  dangerouslySetInnerHTML={{ __html: content || "" }}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 relative z-10 mb-20">
+            <div className="bg-card rounded-2xl shadow-xl p-8 sm:p-12 border border-border/50">
+              <Link to="/blog" className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
+                <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
+              </Link>
+   
+              {post.image_url && (
+                <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
+                  <img 
+                    src={post.image_url} 
+                    alt={title} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-sans">
+                <Calendar className="w-4 h-4" />
+                {post.created_at ? format(new Date(post.created_at), language === 'en' ? "MMMM dd, yyyy" : "dd 'de' MMMM 'de' yyyy", { locale: dateLocale }) : t("publicado_recentemente")}
+              </div>
+              
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-10 leading-tight">
+                {title}
+              </h1>
+              
+              <div 
+                className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor blog-content-area"
+                style={{ padding: 0 }}
+                dangerouslySetInnerHTML={{ __html: content || "" }}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
       <Footer />

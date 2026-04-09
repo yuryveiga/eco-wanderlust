@@ -28,8 +28,24 @@ const STYLES = [
   }
 ];
 
+const BLOG_STYLES = [
+  {
+    id: "hero",
+    name: "Imersivo (Hero)",
+    description: "Imagem em tela cheia com título flutuante. Ideal para posts visuais e modernos.",
+    icon: MonitorPlay,
+  },
+  {
+    id: "boxed",
+    name: "Clássico (Standard)",
+    description: "Imagem dentro de moldura com título abaixo. Visual tradicional e focado em leitura.",
+    icon: LayoutTemplate,
+  }
+];
+
 const AdminHero = () => {
   const [activeStyle, setActiveStyle] = useState<string>("style1");
+  const [activeBlogStyle, setActiveBlogStyle] = useState<string>("hero");
   const [heroTitle, setHeroTitle] = useState<string>("");
   const [heroSubtitle, setHeroSubtitle] = useState<string>("");
   const [toursSectionTitle, setToursSectionTitle] = useState<string>("");
@@ -43,6 +59,7 @@ const AdminHero = () => {
   const [aboutDesc, setAboutDesc] = useState<string>("");
   const [aboutDesc2, setAboutDesc2] = useState<string>("");
   const [dbSettingId, setDbSettingId] = useState<string | null>(null);
+  const [dbBlogStyleId, setDbBlogStyleId] = useState<string | null>(null);
   const [dbTitleId, setDbTitleId] = useState<string | null>(null);
   const [dbSubtitleId, setDbSubtitleId] = useState<string | null>(null);
   const [dbToursTitleId, setDbToursTitleId] = useState<string | null>(null);
@@ -75,6 +92,12 @@ const AdminHero = () => {
       if (heroStyleSetting) {
         setActiveStyle(heroStyleSetting.value);
         setDbSettingId(heroStyleSetting.id);
+      }
+
+      const blogStyleSetting = settings.find(s => s.key === "blog_hero_style");
+      if (blogStyleSetting) {
+        setActiveBlogStyle(blogStyleSetting.value);
+        setDbBlogStyleId(blogStyleSetting.id);
       }
       
       const heroTitleSetting = settings.find(s => s.key === "hero_title");
@@ -289,14 +312,36 @@ const AdminHero = () => {
     }
   };
 
+  const handleSaveBlogStyle = async (styleId: string) => {
+    try {
+      let success = false;
+      if (dbBlogStyleId) {
+        success = await updateLovable("site_settings", dbBlogStyleId, { value: styleId });
+      } else {
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "blog_hero_style", value: styleId });
+        success = !!res;
+        if (res) setDbBlogStyleId(res.id);
+      }
+      
+      if (success) {
+        setActiveBlogStyle(styleId);
+        localStorage.removeItem('site_settings');
+        toast({ title: "Estilo das postagens atualizado!" });
+      }
+    } catch (e) {
+      console.error("Erro ao salvar blog style:", e);
+      toast({ title: "Erro ao salvar visual do blog", variant: "destructive" });
+    }
+  };
+
   if (isLoading) return <div className="p-8 text-muted-foreground font-sans">Carregando...</div>;
 
   return (
     <div className="max-w-5xl">
       <div className="mb-8">
-        <h1 className="font-serif text-3xl font-bold text-foreground">Hero do Site</h1>
+        <h1 className="font-serif text-3xl font-bold text-foreground">Aparência Global</h1>
         <p className="text-muted-foreground font-sans text-sm mt-1">
-          A seção "Hero" é a primeira coisa que o cliente vê ao entrar no site.
+          Gerencie o visual das seções principais das suas páginas.
         </p>
         
         <Button 
@@ -654,64 +699,100 @@ const AdminHero = () => {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Estilo do Hero</h2>
+      <div className="mb-8 border-t pt-8">
+        <h2 className="font-serif text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <LayoutTemplate className="w-6 h-6 text-primary" /> Estilo da Home (Hero)
+        </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         {STYLES.map((style) => (
           <div 
             key={style.id}
             className={`relative bg-card rounded-xl border-2 overflow-hidden transition-all duration-300 cursor-pointer ${
               activeStyle === style.id 
-                ? "border-primary shadow-lg ring-2 ring-primary/20 scale-[1.02]" 
+                ? "border-primary shadow-lg ring-2 ring-primary/20" 
                 : "border-border/50 hover:border-primary/50"
             }`}
             onClick={() => handleSave(style.id)}
           >
-            <div className="bg-muted aspect-[4/3] flex items-center justify-center border-b">
+            <div className="bg-muted aspect-[4/3] flex items-center justify-center border-b scale-[0.9]">
               {style.id === "style1" && (
                 <div className="w-full h-full bg-slate-800 relative flex items-center justify-center p-4">
-                  <span className="text-white/50 font-bold text-2xl tracking-widest border border-white/20 px-8 py-2">SLIDESHOW</span>
+                  <span className="text-white/50 font-bold text-lg tracking-widest border border-white/20 px-8 py-2">SLIDESHOW</span>
                 </div>
               )}
               {style.id === "style2" && (
                 <div className="w-full h-full flex">
                   <div className="w-1/2 bg-slate-900 p-4 flex flex-col justify-center gap-2">
-                    <div className="w-3/4 h-4 bg-white/20 rounded"></div>
-                    <div className="w-full h-8 bg-white/40 rounded"></div>
-                    <div className="w-1/2 h-8 bg-white/40 rounded mb-4"></div>
-                    <div className="w-1/3 h-6 bg-primary rounded-full"></div>
+                    <div className="w-3/4 h-2 bg-white/20 rounded"></div>
+                    <div className="w-full h-4 bg-white/40 rounded"></div>
+                    <div className="w-1/2 h-4 bg-white/40 rounded mb-2"></div>
+                    <div className="w-1/3 h-4 bg-primary rounded-full"></div>
                   </div>
                   <div className="w-1/2 bg-slate-400"></div>
                 </div>
               )}
               {style.id === "style3" && (
                 <div className="w-full h-full bg-slate-800 relative flex items-center justify-center p-4">
-                  <div className="w-3/4 h-3/4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 flex flex-col items-center justify-center gap-3">
-                    <div className="w-2/3 h-6 bg-white/40 rounded"></div>
-                    <div className="w-3/4 h-3/4 bg-white/20 rounded"></div>
-                    <div className="w-3/4 h-3/4 bg-white/20 rounded"></div>
-                    <div className="w-1/2 h-8 bg-primary rounded mt-2"></div>
+                  <div className="w-2/3 h-2/3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-2 flex flex-col items-center justify-center gap-2">
+                    <div className="w-2/3 h-2 bg-white/40 rounded"></div>
+                    <div className="w-3/4 h-8 bg-white/20 rounded"></div>
+                    <div className="w-1/2 h-4 bg-primary rounded"></div>
                   </div>
                 </div>
               )}
             </div>
-            <div className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <style.icon className={`w-5 h-5 ${activeStyle === style.id ? "text-primary" : "text-muted-foreground"}`} />
-                <h3 className="font-sans font-bold text-lg">{style.name}</h3>
-              </div>
-              <p className="text-sm text-muted-foreground font-sans line-clamp-3">
-                {style.description}
-              </p>
-              
-              <Button 
-                variant={activeStyle === style.id ? "default" : "outline"}
-                className={`w-full mt-4 font-sans ${activeStyle === style.id ? "pointer-events-none" : ""}`}
-              >
-                {activeStyle === style.id ? "Ativo" : "Ativar Estilo"}
-              </Button>
+            <div className="p-4">
+              <h3 className="font-sans font-bold text-md mb-1">{style.name}</h3>
+              <p className="text-[11px] text-muted-foreground font-sans line-clamp-2">{style.description}</p>
+              <Button size="sm" variant={activeStyle === style.id ? "default" : "outline"} className="w-full mt-3 h-8 text-xs">{activeStyle === style.id ? "Ativo" : "Ativar"}</Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-8 border-t pt-8">
+        <h2 className="font-serif text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <MonitorSmartphone className="w-6 h-6 text-primary" /> Estilo das Postagens do Blog
+        </h2>
+        <p className="text-muted-foreground font-sans text-sm mb-6">Escolha como a imagem principal e o título serão apresentados nos artigos.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        {BLOG_STYLES.map((style) => (
+          <div 
+            key={style.id}
+            className={`relative bg-card rounded-xl border-2 overflow-hidden transition-all duration-300 cursor-pointer ${
+              activeBlogStyle === style.id 
+                ? "border-primary shadow-xl ring-2 ring-primary/20 scale-[1.02]" 
+                : "border-border/50 hover:border-primary/50"
+            }`}
+            onClick={() => handleSaveBlogStyle(style.id)}
+          >
+            <div className="bg-slate-100 aspect-video flex items-center justify-center p-4">
+                {style.id === "hero" ? (
+                    <div className="w-full h-full bg-slate-800 rounded-lg relative overflow-hidden flex flex-col items-center justify-center p-6 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                        <div className="relative z-10 w-2/3 h-3 bg-white/40 rounded-full mb-2" />
+                        <div className="relative z-10 w-full h-10 bg-white/20 rounded-md mb-2" />
+                        <div className="relative z-10 w-1/2 h-6 bg-primary rounded-full" />
+                    </div>
+                ) : (
+                    <div className="w-full h-full bg-white rounded-lg border shadow-sm p-4 flex flex-col">
+                        <div className="w-full h-2/3 bg-slate-300 rounded-lg mb-4" />
+                        <div className="w-3/4 h-4 bg-slate-200 rounded mb-2" />
+                        <div className="w-1/2 h-8 bg-slate-100 rounded" />
+                    </div>
+                )}
+            </div>
+            <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                    <style.icon className={`w-6 h-6 ${activeBlogStyle === style.id ? "text-primary" : "text-muted-foreground"}`} />
+                    <h3 className="font-serif font-bold text-xl">{style.name}</h3>
+                </div>
+                <p className="text-sm text-muted-foreground font-sans mb-6">{style.description}</p>
+                <Button variant={activeBlogStyle === style.id ? "default" : "outline"} className="w-full h-12 font-bold">{activeBlogStyle === style.id ? "Estilo Ativado" : "Ativar este Estilo"}</Button>
             </div>
           </div>
         ))}
