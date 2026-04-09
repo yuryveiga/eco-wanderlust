@@ -23,6 +23,7 @@ import AdminHero from "./pages/AdminHero";
 import AdminTheme from "./pages/AdminTheme";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
+import AdminSales from "./pages/AdminSales";
 import { TourDetail } from "./pages/TourDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -61,6 +62,7 @@ const App = () => (
                     <Route path="social" element={<AdminSocial />} />
                     <Route path="gallery" element={<AdminGallery />} />
                     <Route path="reviews" element={<AdminReviews />} />
+                    <Route path="sales" element={<AdminSales />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>

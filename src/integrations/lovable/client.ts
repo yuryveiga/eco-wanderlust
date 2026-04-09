@@ -201,6 +201,23 @@ export type LovableSocialMedia = {
   show_in_header?: boolean;
 };
 
+export type LovableSale = {
+  id: string;
+  tour_id: string;
+  tour_title: string;
+  tour_slug: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  quantity: number;
+  total_price: number;
+  selected_date: string;
+  selected_period: string;
+  is_private: boolean;
+  is_paid: boolean;
+  created_at: string;
+};
+
 export type LovableBlogPost = {
   id: string;
   title: string;

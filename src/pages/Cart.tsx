@@ -11,6 +11,7 @@ import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldChe
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
@@ -32,6 +33,51 @@ const Cart = () => {
     
     setIsProcessing(true);
     try {
+      // Save sale to database
+      for (const item of items) {
+        await supabase.from("sales").insert({
+          tour_id: item.id,
+          tour_title: item.title,
+          tour_slug: item.slug,
+          customer_name: customerInfo.name,
+          customer_email: customerInfo.email,
+          customer_phone: customerInfo.whatsapp,
+          quantity: item.quantity,
+          total_price: item.price * item.quantity,
+          selected_date: item.date,
+          selected_period: item.period,
+          is_private: item.isPrivate,
+          is_paid: false,
+        });
+      }
+
+      // Send email notification
+      const { data: socialMedia } = await supabase.from("social_media").select("*").eq("is_active", true);
+      const adminEmail = socialMedia?.find(s => s.platform === "email")?.url || "";
+
+      if (adminEmail) {
+        await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-alert-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            to: adminEmail,
+            customerName: customerInfo.name,
+            customerEmail: customerInfo.email,
+            customerPhone: customerInfo.whatsapp,
+            items: items.map(item => ({
+              tour: item.title,
+              quantity: item.quantity,
+              price: item.price * item.quantity,
+              date: item.date,
+            })),
+            total: total,
+          }),
+        });
+      }
+
       const response = await fetch(
         "https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/create-checkout",
         {
