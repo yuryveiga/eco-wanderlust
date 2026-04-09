@@ -3,6 +3,7 @@ import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Review {
   id: string;
@@ -10,63 +11,14 @@ interface Review {
   author_location: string;
   rating: number;
   title: string;
+  title_en: string | null;
+  title_es: string | null;
   content: string;
+  content_en: string | null;
+  content_es: string | null;
   tour_name: string;
   review_date: string;
 }
-
-const reviews: Review[] = [
-  {
-    id: "1",
-    author_name: "Maria Silva",
-    author_location: "São Paulo, Brasil",
-    rating: 5,
-    title: "Experiência incrível!",
-    content: "O city tour foi maravilhoso! Nosso guia conhecia todos os detalhes da história do Rio. Recomendo demais!",
-    tour_name: "City Tour Rio Completo",
-    review_date: "2026-03-15",
-  },
-  {
-    id: "2",
-    author_name: "John Smith",
-    author_location: "New York, USA",
-    rating: 5,
-    title: "Best tour in Rio!",
-    content: "Amazing experience! The guides were very knowledgeable and friendly. Arraial do Cabo was breathtaking!",
-    tour_name: "Arraial do Cabo",
-    review_date: "2026-03-10",
-  },
-  {
-    id: "3",
-    author_name: "Sophie Dubois",
-    author_location: "Paris, France",
-    rating: 5,
-    title: "Magnifique!",
-    content: "Un tour incroyable avec des vues à couper le souffle. Le guide était passionné et très informatif.",
-    tour_name: "Cristo Redentor & Pão de Açúcar",
-    review_date: "2026-02-28",
-  },
-  {
-    id: "4",
-    author_name: "Carlos Oliveira",
-    author_location: "Belo Horizonte, Brasil",
-    rating: 5,
-    title: "Passeio perfeito!",
-    content: "Angra dos Reis superou todas as expectativas. Praias lindas e organização impecável.",
-    tour_name: "Angra dos Reis",
-    review_date: "2026-02-20",
-  },
-  {
-    id: "5",
-    author_name: "Emma Wilson",
-    author_location: "London, UK",
-    rating: 5,
-    title: "Unforgettable day!",
-    content: "The Pedra Bonita hike was challenging but absolutely worth it. The views from the top were stunning!",
-    tour_name: "Trilha da Pedra Bonita",
-    review_date: "2026-02-15",
-  },
-];
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -83,6 +35,10 @@ function StarRating({ rating }: { rating: number }) {
 
 function ReviewCard({ review }: { review: Review }) {
   const { language } = useLocale();
+
+  const title = language === 'en' ? (review.title_en || review.title) : language === 'es' ? (review.title_es || review.title) : review.title;
+  const content = language === 'en' ? (review.content_en || review.content) : language === 'es' ? (review.content_es || review.content) : review.content;
+
   return (
     <div className="bg-card rounded-2xl p-8 shadow-lg border border-border/50 h-full flex flex-col">
       <div className="flex items-start gap-4 mb-6">
@@ -97,8 +53,8 @@ function ReviewCard({ review }: { review: Review }) {
       </div>
       <div className="relative flex-1">
         <Quote className="absolute -top-2 -left-2 h-8 w-8 text-primary/10" />
-        <h5 className="font-semibold text-lg mb-3 text-foreground font-serif">{review.title}</h5>
-        <p className="text-muted-foreground leading-relaxed line-clamp-4 font-sans">{review.content}</p>
+        <h5 className="font-semibold text-lg mb-3 text-foreground font-serif">{title}</h5>
+        <p className="text-muted-foreground leading-relaxed line-clamp-4 font-sans">{content}</p>
       </div>
       <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between font-sans">
         <span className="text-sm text-primary font-medium">{review.tour_name}</span>
@@ -111,17 +67,28 @@ function ReviewCard({ review }: { review: Review }) {
 }
 
 export function ReviewsSection() {
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const { t } = useLocale();
   const { socialMedia } = useSiteData();
 
-  // Get TripAdvisor URL from social media
-  const tripAdvisorSocial = socialMedia.find(s => 
+  const tripAdvisorSocial = socialMedia.find(s =>
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
   );
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
+  useEffect(() => {
+    const loadReviews = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('is_published', true)
+        .order('sort_order', { ascending: true });
+      if (data && data.length > 0) setReviews(data);
+    };
+    loadReviews();
+  }, []);
 
   useEffect(() => {
     const update = () => setItemsPerView(window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
@@ -145,6 +112,8 @@ export function ReviewsSection() {
     return () => clearInterval(timer);
   }, [nextSlide]);
 
+  if (reviews.length === 0) return null;
+
   return (
     <section className="py-20 bg-muted/30 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,7 +135,6 @@ export function ReviewsSection() {
             {t("reviews_desc")}
           </p>
         </div>
-
 
         <div className="relative">
           <div className="overflow-hidden">

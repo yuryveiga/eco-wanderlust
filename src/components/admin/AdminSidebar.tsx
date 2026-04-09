@@ -1,4 +1,4 @@
-import { Map, FileText, Image, Share2, LayoutDashboard, LogOut, Images, PenTool, LayoutTemplate, Palette, Users } from "lucide-react";
+import { Map, FileText, Image, Share2, LayoutDashboard, LogOut, Images, PenTool, LayoutTemplate, Palette, Users, MessageSquare } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,6 +25,7 @@ const items = [
   { title: "Imagens do Site", url: "/admin/images", icon: Image },
   { title: "Galeria", url: "/admin/gallery", icon: Images },
   { title: "Redes Sociais", url: "/admin/social", icon: Share2 },
+  { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
   { title: "Usuários", url: "/admin/users", icon: Users },
 ];
 
