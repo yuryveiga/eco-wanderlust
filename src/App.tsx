@@ -31,11 +31,32 @@ import Cart from "./pages/Cart";
 import MaracanaCalendar from "./pages/MaracanaCalendar";
 import GenericPage from "./pages/GenericPage";
 import { ThemeApplier } from "./components/ThemeApplier";
+import { BUILD_ID } from "./version";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  useEffect(() => {
+    // Cache busting logic
+    const lastVersion = localStorage.getItem("app_version");
+    if (lastVersion && lastVersion !== BUILD_ID) {
+      console.log("New version detected. Clearing cache and reloading...");
+      localStorage.setItem("app_version", BUILD_ID);
+      // Clear all caches if possible
+      if ('caches' in window) {
+        caches.keys().then((names) => {
+          names.forEach(name => caches.delete(name));
+        });
+      }
+      window.location.reload();
+    } else if (!lastVersion) {
+      localStorage.setItem("app_version", BUILD_ID);
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <LocaleProvider>
         <CartProvider>
@@ -80,6 +101,7 @@ const App = () => (
       </LocaleProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+      );
+};
 
 export default App;
