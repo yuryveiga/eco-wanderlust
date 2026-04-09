@@ -21,8 +21,13 @@ export function Footer() {
     }
   };
 
+  const getPageLabel = (page: any) => {
+    if (language === 'pt') return page.title;
+    return page[`title_${language}`] || page.title;
+  };
+
   const navLinks = pages.length > 0
-    ? pages.map((p) => ({ label: p.title, href: p.href }))
+    ? pages.map((p) => ({ label: getPageLabel(p), href: p.href }))
     : [
         { label: t("inicio"), href: "#top" },
         { label: t("passeios"), href: "#tours" },
