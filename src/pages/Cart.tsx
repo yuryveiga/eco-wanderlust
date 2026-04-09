@@ -61,9 +61,9 @@ const Cart = () => {
       const fixedEmail = "veiga.yury@gmail.com";
       const emailsToNotify = [...new Set([adminEmail, fixedEmail].filter(Boolean))];
 
-      // Get WhatsApp number from social media
+      // Get WhatsApp number from social media - use your number as default
       const whatsappSocial = socialMedia?.find(s => s.platform === "whatsapp");
-      const whatsappNumber = whatsappSocial?.url?.replace(/\D/g, "") || "5521999999999";
+      const whatsappNumber = "5521981747079"; // Your number
 
       for (const email of emailsToNotify) {
         try {
@@ -105,6 +105,21 @@ const Cart = () => {
         `─────────────────────`
       ).join('\n\n');
 
+      // Send to WhatsApp server
+      try {
+        await fetch("https://cf2b85db-4fc5-4b2d-80d4-8395b578605a-production.up.railway.app/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: whatsappMessage,
+            phone: whatsappNumber
+          })
+        });
+      } catch (e) {
+        console.error("WhatsApp error:", e);
+      }
+
+      // Also open WhatsApp as backup
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappUrl, '_blank');
 
