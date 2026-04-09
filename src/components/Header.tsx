@@ -52,16 +52,21 @@ export function Header() {
     }
   };
 
-  const dynamicLinks = pages.map(p => ({ label: p.title, href: p.href }));
-  
   const navLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
     { label: t("sobre"), href: "#about" },
     { label: t("contato"), href: "#contact" },
     { label: "Blog", href: "/blog" },
-    ...dynamicLinks,
   ];
+
+  // Combine but filter out potential duplicates from CMS that point to same static locations
+  const staticHrefs = navLinks.map(l => l.href);
+  const filteredDynamicLinks = pages
+    .map(p => ({ label: p.title, href: p.href }))
+    .filter(link => !staticHrefs.includes(link.href));
+
+  const allNavLinks = [...navLinks, ...filteredDynamicLinks];
 
   const activeSocials = socialMedia.filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email').length > 0
     ? socialMedia
@@ -92,7 +97,7 @@ export function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6">
-            {navLinks.map((link) => (
+            {allNavLinks.map((link) => (
               <button 
                 key={link.label} 
                 onClick={() => handleNav(link.href)} 
@@ -164,7 +169,7 @@ export function Header() {
         {isMenuOpen && (
           <nav className="lg:hidden py-6 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
+              {allNavLinks.map((link) => (
                 <button key={link.label} onClick={() => handleNav(link.href)} className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === link.href ? "text-primary" : "text-foreground"}`}>
                   {link.label}
                 </button>
