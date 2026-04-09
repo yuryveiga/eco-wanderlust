@@ -52,6 +52,8 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/carrinho" element={<Cart />} />
             <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
+            <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
+            <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
             <Route path="/passeio/:id" element={<TourDetail />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
