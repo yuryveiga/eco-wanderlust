@@ -72,31 +72,7 @@
   
   <link rel="icon" type="image/png" href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png">
     <link rel="apple-touch-icon" href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png">
-    <script>
-      (function() {
-        try {
-          const settings = JSON.parse(localStorage.getItem('site_settings') || '{}');
-          const primary = settings.theme_primary;
-          const accent = settings.theme_accent;
-          if (primary || accent) {
-            const css = `
-              :root {
-                ${primary ? `--primary: ${primary}; --ring: ${primary}; --sidebar-primary: ${primary};` : ''}
-                ${accent ? `--accent: ${accent};` : ''}
-              }
-              .dark {
-                ${primary ? `--primary: ${primary}; --ring: ${primary}; --sidebar-primary: ${primary};` : ''}
-                ${accent ? `--accent: ${accent};` : ''}
-              }
-            `;
-            const style = document.createElement('style');
-            style.id = 'early-theme-style';
-            style.innerHTML = css;
-            document.head.appendChild(style);
-          }
-        } catch (e) {}
-      })();
-    </script>
+
   
   
   
