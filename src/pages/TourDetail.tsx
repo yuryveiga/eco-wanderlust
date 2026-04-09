@@ -27,6 +27,7 @@ export function TourDetail() {
   const { t, language, formatPrice } = useLocale();
   const { addToCart } = useCart();
   const { isAdmin } = useAuth();
+  const isAdminLoggedIn = isAdmin || localStorage.getItem("admin_user");
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -255,8 +256,8 @@ export function TourDetail() {
       </Helmet>
       <Header />
 
-      {isAdmin && (
-        <div className="bg-primary text-white py-2 px-4 text-center">
+      {isAdminLoggedIn && tour && (
+        <div className="bg-primary text-white py-2 px-4 text-center fixed top-[60px] left-0 right-0 z-50">
           <button 
             onClick={() => navigate(`/admin/tours?tour=${tour.id}`)}
             className="flex items-center gap-2 mx-auto font-bold hover:underline"

@@ -20,6 +20,7 @@ const BlogPost = () => {
   const { t, language } = useLocale();
   const { siteSettings } = useSiteData();
   const { isAdmin } = useAuth();
+  const isAdminLoggedIn = isAdmin || localStorage.getItem("admin_user");
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
@@ -70,8 +71,8 @@ const BlogPost = () => {
       </Helmet>
       <Header />
       
-      {isAdmin && post && (
-        <div className="bg-primary text-white py-2 px-4 text-center">
+      {isAdminLoggedIn && post && (
+        <div className="bg-primary text-white py-2 px-4 text-center fixed top-[60px] left-0 right-0 z-50">
           <button 
             onClick={() => navigate(`/admin/blog?post=${post.id}`)}
             className="flex items-center gap-2 mx-auto font-bold hover:underline"
