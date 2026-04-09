@@ -149,16 +149,17 @@ export default function AdminReviews() {
   };
 
   return (
-    <div className="space-y-6 overflow-x-auto">
-      <div className="flex items-center justify-between min-w-0">
-        <h1 className="text-2xl font-bold">Reviews do TripAdvisor</h1>
-        <Button onClick={openNew}><Plus className="w-4 h-4 mr-2" />Novo Review</Button>
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
+      <div className="flex items-center justify-between w-full min-w-0">
+        <h1 className="text-2xl font-bold truncate">Reviews do TripAdvisor</h1>
+        <Button onClick={openNew} className="flex-shrink-0"><Plus className="w-4 h-4 mr-2" />Novo Review</Button>
       </div>
 
-      <div className="grid gap-4 min-w-0">
+      <div className="w-full max-w-full overflow-x-hidden">
+        <div className="grid gap-4 w-full">
         {reviews.map((r) => (
-          <Card key={r.id} className={`${!r.is_published ? "opacity-50" : ""} max-w-full`}>
-            <CardContent className="flex items-center gap-4 py-4 min-w-0">
+        <Card key={r.id} className={`${!r.is_published ? "opacity-50" : ""} w-full max-w-full`}>
+            <CardContent className="flex items-center gap-4 py-4 w-full max-w-full overflow-hidden">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-bold">{r.author_name}</span>
@@ -183,6 +184,7 @@ export default function AdminReviews() {
         {reviews.length === 0 && (
           <p className="text-center text-muted-foreground py-12">Nenhum review cadastrado. Clique em "Novo Review" para adicionar.</p>
         )}
+      </div>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
