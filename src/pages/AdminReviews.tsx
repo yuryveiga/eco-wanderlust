@@ -7,8 +7,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Star } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { translateText } from "@/utils/translate";
 
 interface Review {
   id: string;
@@ -48,6 +49,7 @@ export default function AdminReviews() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyReview);
+  const [isTranslating, setIsTranslating] = useState(false);
 
   const loadReviews = async () => {
     const { data } = await supabase.from("reviews").select("*").order("sort_order");
@@ -114,6 +116,34 @@ export default function AdminReviews() {
     await supabase.from("reviews").delete().eq("id", id);
     toast.success("Review removido");
     loadReviews();
+  };
+
+  const handleTranslate = async () => {
+    if (!form.title || !form.content) {
+      toast.error("Preencha o título e conteúdo em português primeiro");
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const [titleEn, titleEs, contentEn, contentEs] = await Promise.all([
+        translateText(form.title, "en"),
+        translateText(form.title, "es"),
+        translateText(form.content, "en"),
+        translateText(form.content, "es"),
+      ]);
+      setForm(f => ({
+        ...f,
+        title_en: titleEn,
+        title_es: titleEs,
+        content_en: contentEn,
+        content_es: contentEs,
+      }));
+      toast.success("Tradução concluída!");
+    } catch (err) {
+      toast.error("Erro ao traduzir");
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   return (
@@ -226,6 +256,10 @@ export default function AdminReviews() {
                 <Label>Ordem</Label>
                 <Input type="number" className="w-20" value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: parseInt(e.target.value) || 0 }))} />
               </div>
+              <Button variant="outline" onClick={handleTranslate} disabled={isTranslating} className="ml-auto">
+                {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Traduzir para EN/ES
+              </Button>
             </div>
             <Button onClick={handleSave} className="w-full">{editingId ? "Salvar" : "Criar Review"}</Button>
           </div>
