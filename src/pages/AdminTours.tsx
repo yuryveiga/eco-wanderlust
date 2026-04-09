@@ -107,7 +107,7 @@ const AdminTours = () => {
     setEditing({ ...editing, images_json: newImages, image_url: newMain });
   };
 
-  const autoTranslate = async (targetLang: 'en' | 'es') => {
+  const autoTranslate = async () => {
     if (!editing) return;
     if (!editing.title && !editing.category && !editing.short_description) {
       toast({ title: "Atenção", description: "Escreva algo em Português primeiro." });
@@ -115,26 +115,29 @@ const AdminTours = () => {
     }
 
     setIsTranslating(true);
-    toast({ title: "Mágica em andamento...", description: "Traduzindo passeio..." });
+    toast({ title: "Mágica em andamento...", description: "Traduzindo para Inglês e Espanhol..." });
 
     try {
-      const suffix = targetLang === 'en' ? '_en' : '_es';
-      
-      const [tTitle, tCat, tDesc, tDif, tAddr] = await Promise.all([
-        translateText(editing.title || "", targetLang),
-        translateText(editing.category || "", targetLang),
-        translateText(editing.short_description || "", targetLang),
-        translateText(editing.difficulty || "", targetLang),
-        translateText(editing.meeting_point_address || "", targetLang)
+      const [tTitleEn, tTitleEs, tCatEn, tCatEs, tDescEn, tDescEs, tDifEn, tDifEs, tAddrEn, tAddrEs] = await Promise.all([
+        translateText(editing.title || "", "en"),
+        translateText(editing.title || "", "es"),
+        translateText(editing.category || "", "en"),
+        translateText(editing.category || "", "es"),
+        translateText(editing.short_description || "", "en"),
+        translateText(editing.short_description || "", "es"),
+        translateText(editing.difficulty || "", "en"),
+        translateText(editing.difficulty || "", "es"),
+        translateText(editing.meeting_point_address || "", "en"),
+        translateText(editing.meeting_point_address || "", "es")
       ]);
 
-      const translateJsonArray = async (arr: any[], fields: string[]): Promise<any[]> => {
+      const translateJsonArray = async (arr: any[], fields: string[], lang: 'en' | 'es'): Promise<any[]> => {
         if (!arr || !Array.isArray(arr)) return arr;
         const translated = await Promise.all(arr.map(async (item) => {
           const newItem: any = { ...item };
           for (const field of fields) {
             if (item[field]) {
-              newItem[field] = await translateText(item[field], targetLang);
+              newItem[field] = await translateText(item[field], lang);
             }
           }
           return newItem;
@@ -142,27 +145,40 @@ const AdminTours = () => {
         return translated;
       };
 
-      const [tItinerary, tIncluded, tHighlights, tFaq] = await Promise.all([
-        translateJsonArray(editing.itinerary_json || [], ['time', 'description']),
-        translateJsonArray(editing.included_json || [], ['text']),
-        translateJsonArray(editing.highlights_json || [], ['text']),
-        translateJsonArray(editing.faq_json || [], ['q', 'a']),
+      const [tItineraryEn, tItineraryEs, tIncludedEn, tIncludedEs, tHighlightsEn, tHighlightsEs, tFaqEn, tFaqEs] = await Promise.all([
+        translateJsonArray(editing.itinerary_json || [], ['time', 'description'], "en"),
+        translateJsonArray(editing.itinerary_json || [], ['time', 'description'], "es"),
+        translateJsonArray(editing.included_json || [], ['text'], "en"),
+        translateJsonArray(editing.included_json || [], ['text'], "es"),
+        translateJsonArray(editing.highlights_json || [], ['text'], "en"),
+        translateJsonArray(editing.highlights_json || [], ['text'], "es"),
+        translateJsonArray(editing.faq_json || [], ['q', 'a'], "en"),
+        translateJsonArray(editing.faq_json || [], ['q', 'a'], "es"),
       ]);
 
       setEditing({
         ...editing,
-        [`title${suffix}`]: tTitle,
-        [`category${suffix}`]: tCat,
-        [`short_description${suffix}`]: tDesc,
-        [`difficulty${suffix}`]: tDif,
-        [`meeting_point_address${suffix}`]: tAddr,
-        [`itinerary_json${suffix}`]: tItinerary,
-        [`included_json${suffix}`]: tIncluded,
-        [`highlights_json${suffix}`]: tHighlights,
-        [`faq_json${suffix}`]: tFaq,
+        title_en: tTitleEn,
+        title_es: tTitleEs,
+        category_en: tCatEn,
+        category_es: tCatEs,
+        short_description_en: tDescEn,
+        short_description_es: tDescEs,
+        difficulty_en: tDifEn,
+        difficulty_es: tDifEs,
+        meeting_point_address_en: tAddrEn,
+        meeting_point_address_es: tAddrEs,
+        itinerary_json_en: tItineraryEn,
+        itinerary_json_es: tItineraryEs,
+        included_json_en: tIncludedEn,
+        included_json_es: tIncludedEs,
+        highlights_json_en: tHighlightsEn,
+        highlights_json_es: tHighlightsEs,
+        faq_json_en: tFaqEn,
+        faq_json_es: tFaqEs,
       });
       
-      toast({ title: "Sucesso!", description: `Tradução para ${targetLang === 'en' ? 'Inglês' : 'Espanhol'} concluída.` });
+      toast({ title: "Sucesso!", description: "Tradução para Inglês e Espanhol concluída." });
     } catch (err) {
       toast({ title: "Erro na tradução", description: "Tente novamente.", variant: "destructive" });
     } finally {
@@ -438,17 +454,13 @@ const AdminTours = () => {
                           </div>
                        </div>
                        
-                       <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-6">
-                          <Label className="font-black text-xs uppercase tracking-widest text-blue-600 block mb-4">Traduções Instantâneas</Label>
-                          <div className="space-y-4">
-                             <Button onClick={() => autoTranslate('en')} disabled={isTranslating} variant="outline" className="w-full h-12 justify-between px-6 rounded-2xl border-blue-200 text-blue-600 font-bold">
-                                <span>Traduzir para Inglês (EN)</span>
-                                {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                             </Button>
-                             <Button onClick={() => autoTranslate('es')} disabled={isTranslating} variant="outline" className="w-full h-12 justify-between px-6 rounded-2xl border-red-200 text-red-600 font-bold">
-                                <span>Traduzir para Espanhol (ES)</span>
-                                {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                             </Button>
+                        <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-6">
+                           <Label className="font-black text-xs uppercase tracking-widest text-blue-600 block mb-4">Tradução Automática</Label>
+                           <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" className="w-full h-12 justify-center px-6 rounded-2xl font-bold">
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              <span>Traduzir para EN e ES</span>
+                              {isTranslating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : null}
+                           </Button>
                           </div>
                        </div>
                     </div>

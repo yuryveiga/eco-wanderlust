@@ -102,7 +102,7 @@ const AdminBlog = () => {
     }
   };
 
-  const autoTranslate = async (targetLang: 'en' | 'es') => {
+  const autoTranslate = async () => {
     if (!editing) return;
     if (!editing.title && !editing.content) {
       toast({ title: "Atenção", description: "Escreva algo em Português primeiro." });
@@ -110,27 +110,28 @@ const AdminBlog = () => {
     }
 
     setIsTranslating(true);
-    toast({ title: "Mágica em andamento...", description: "Traduzindo conteúdo..." });
+    toast({ title: "Mágica em andamento...", description: "Traduzindo para Inglês e Espanhol..." });
 
     try {
-      const titleKey = (targetLang === 'en' ? 'title_en' : 'title_es') as keyof LovableBlogPost;
-      const contentKey = (targetLang === 'en' ? 'content_en' : 'content_es') as keyof LovableBlogPost;
-      
-      const [translatedTitle, translatedContent] = await Promise.all([
-        translateText(editing.title || "", targetLang),
-        translateHtml(editing.content || "", targetLang)
+      const [titleEn, titleEs, contentEn, contentEs] = await Promise.all([
+        translateText(editing.title || "", "en"),
+        translateText(editing.title || "", "es"),
+        translateHtml(editing.content || "", "en"),
+        translateHtml(editing.content || "", "es")
       ]);
 
       setEditing(prev => {
         if (!prev) return prev;
         return {
           ...prev,
-          [titleKey]: translatedTitle,
-          [contentKey]: translatedContent
+          title_en: titleEn,
+          title_es: titleEs,
+          content_en: contentEn,
+          content_es: contentEs
         } as Partial<LovableBlogPost>;
       });
       
-      toast({ title: "Sucesso!", description: `Tradução para ${targetLang === 'en' ? 'Inglês' : 'Espanhol'} concluída.` });
+      toast({ title: "Sucesso!", description: "Tradução para Inglês e Espanhol concluída." });
     } catch (err) {
       toast({ title: "Erro na tradução", description: "Tente novamente daqui a pouco.", variant: "destructive" });
     } finally {
@@ -355,13 +356,10 @@ const AdminBlog = () => {
                           <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
                        </div>
 
-                       <div className="mt-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
-                          <h4 className="font-serif font-bold text-primary text-sm">Tradução Automática</h4>
-                          <div className="flex flex-col gap-2">
-                            <Button onClick={() => autoTranslate('en')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 border-blue-200 text-blue-600 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Inglês'}</Button>
-                            <Button onClick={() => autoTranslate('es')} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 border-red-200 text-red-600 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3" /> : 'Traduzir para Espanhol'}</Button>
-                          </div>
-                       </div>
+                        <div className="mt-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
+                           <h4 className="font-serif font-bold text-primary text-sm">Tradução Automática</h4>
+                           <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3 mr-2" /> : <Sparkles className="w-3 mr-2" />}Traduzir para EN e ES</Button>
+                        </div>
                     </div>
 
                     {/* Editor Area */}
