@@ -14,8 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          content: string
+          content_en: string | null
+          content_es: string | null
+          created_at: string
+          excerpt: string | null
+          excerpt_en: string | null
+          excerpt_es: string | null
+          id: string
+          image_url: string | null
+          is_published: boolean
+          slug: string
+          title: string
+          title_en: string | null
+          title_es: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          content_en?: string | null
+          content_es?: string | null
+          created_at?: string
+          excerpt?: string | null
+          excerpt_en?: string | null
+          excerpt_es?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          slug: string
+          title: string
+          title_en?: string | null
+          title_es?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          content_en?: string | null
+          content_es?: string | null
+          created_at?: string
+          excerpt?: string | null
+          excerpt_en?: string | null
+          excerpt_es?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          slug?: string
+          title?: string
+          title_en?: string | null
+          title_es?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pages: {
         Row: {
+          content: string | null
           created_at: string
           href: string
           id: string
@@ -25,6 +80,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          content?: string | null
           created_at?: string
           href: string
           id?: string
@@ -34,6 +90,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          content?: string | null
           created_at?: string
           href?: string
           id?: string
@@ -41,6 +98,27 @@ export type Database = {
           sort_order?: number
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
         }
         Relationships: []
       }
@@ -71,6 +149,30 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       social_media: {
         Row: {
           created_at: string
@@ -78,6 +180,7 @@ export type Database = {
           id: string
           is_active: boolean
           platform: string
+          show_in_header: boolean | null
           sort_order: number
           updated_at: string
           url: string
@@ -88,6 +191,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           platform: string
+          show_in_header?: boolean | null
           sort_order?: number
           updated_at?: string
           url?: string
@@ -98,6 +202,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           platform?: string
+          show_in_header?: boolean | null
           sort_order?: number
           updated_at?: string
           url?: string
@@ -106,66 +211,159 @@ export type Database = {
       }
       tours: {
         Row: {
+          allows_open: boolean
+          allows_private: boolean
           category: string
+          category_en: string | null
+          category_es: string | null
           created_at: string
+          difficulty: string | null
+          difficulty_en: string | null
+          difficulty_es: string | null
           duration: string
+          faq_json: Json | null
+          faq_json_en: Json | null
+          faq_json_es: Json | null
+          has_afternoon: boolean
+          has_morning: boolean
+          has_night: boolean
+          highlights_json: Json | null
           id: string
           image_url: string
+          images_json: Json | null
+          included_json: Json | null
+          included_json_en: Json | null
+          included_json_es: Json | null
           is_active: boolean
           is_featured: boolean
+          itinerary_json: Json | null
+          itinerary_json_en: Json | null
+          itinerary_json_es: Json | null
           max_group_size: number
+          meeting_point_address: string | null
+          meeting_point_address_en: string | null
+          meeting_point_address_es: string | null
           price: number
           short_description: string
+          short_description_en: string | null
+          short_description_es: string | null
+          slug: string | null
           sort_order: number
           title: string
+          title_en: string | null
+          title_es: string | null
           updated_at: string
+          youtube_video_url: string | null
         }
         Insert: {
+          allows_open?: boolean
+          allows_private?: boolean
           category?: string
+          category_en?: string | null
+          category_es?: string | null
           created_at?: string
+          difficulty?: string | null
+          difficulty_en?: string | null
+          difficulty_es?: string | null
           duration?: string
+          faq_json?: Json | null
+          faq_json_en?: Json | null
+          faq_json_es?: Json | null
+          has_afternoon?: boolean
+          has_morning?: boolean
+          has_night?: boolean
+          highlights_json?: Json | null
           id?: string
           image_url?: string
+          images_json?: Json | null
+          included_json?: Json | null
+          included_json_en?: Json | null
+          included_json_es?: Json | null
           is_active?: boolean
           is_featured?: boolean
+          itinerary_json?: Json | null
+          itinerary_json_en?: Json | null
+          itinerary_json_es?: Json | null
           max_group_size?: number
+          meeting_point_address?: string | null
+          meeting_point_address_en?: string | null
+          meeting_point_address_es?: string | null
           price?: number
           short_description?: string
+          short_description_en?: string | null
+          short_description_es?: string | null
+          slug?: string | null
           sort_order?: number
           title: string
+          title_en?: string | null
+          title_es?: string | null
           updated_at?: string
+          youtube_video_url?: string | null
         }
         Update: {
+          allows_open?: boolean
+          allows_private?: boolean
           category?: string
+          category_en?: string | null
+          category_es?: string | null
           created_at?: string
+          difficulty?: string | null
+          difficulty_en?: string | null
+          difficulty_es?: string | null
           duration?: string
+          faq_json?: Json | null
+          faq_json_en?: Json | null
+          faq_json_es?: Json | null
+          has_afternoon?: boolean
+          has_morning?: boolean
+          has_night?: boolean
+          highlights_json?: Json | null
           id?: string
           image_url?: string
+          images_json?: Json | null
+          included_json?: Json | null
+          included_json_en?: Json | null
+          included_json_es?: Json | null
           is_active?: boolean
           is_featured?: boolean
+          itinerary_json?: Json | null
+          itinerary_json_en?: Json | null
+          itinerary_json_es?: Json | null
           max_group_size?: number
+          meeting_point_address?: string | null
+          meeting_point_address_en?: string | null
+          meeting_point_address_es?: string | null
           price?: number
           short_description?: string
+          short_description_en?: string | null
+          short_description_es?: string | null
+          slug?: string | null
           sort_order?: number
           title?: string
+          title_en?: string | null
+          title_es?: string | null
           updated_at?: string
+          youtube_video_url?: string | null
         }
         Relationships: []
       }
       user_roles: {
         Row: {
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
+          created_at: string | null
+          id: number
+          role: string
           user_id: string
         }
         Insert: {
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          created_at?: string | null
+          id?: number
+          role: string
           user_id: string
         }
         Update: {
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string | null
+          id?: number
+          role?: string
           user_id?: string
         }
         Relationships: []
@@ -175,13 +373,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      has_role:
+        | {
+            Args: {
+              _role: Database["public"]["Enums"]["app_role"]
+              _user_id: string
+            }
+            Returns: boolean
+          }
+        | { Args: { _role: string; _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
