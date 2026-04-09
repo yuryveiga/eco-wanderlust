@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, DollarSign, Check, X } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AdminSales = () => {
@@ -13,6 +13,7 @@ const AdminSales = () => {
   const [tours, setTours] = useState<LovableTour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,6 +67,36 @@ const AdminSales = () => {
     toast({ title: "Venda removida" });
   };
 
+  const toggleSelect = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === sales.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(sales.map(s => s.id)));
+    }
+  };
+
+  const deleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Excluir ${selectedIds.size} venda(s)?`)) return;
+    
+    for (const id of selectedIds) {
+      await deleteLovable("sales", id);
+    }
+    setSales(sales.filter(s => !selectedIds.has(s.id)));
+    setSelectedIds(new Set());
+    toast({ title: `${selectedIds.size} venda(s) removida(s)` });
+  };
+
   const togglePaid = async (sale: LovableSale) => {
     await updateLovable("sales", sale.id, { is_paid: !sale.is_paid });
     await loadData();
@@ -88,20 +119,27 @@ const AdminSales = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-3xl font-bold text-foreground">Vendas</h1>
-        <Button onClick={() => setEditing({
-          tour_id: "",
-          customer_name: "",
-          customer_email: "",
-          customer_phone: "",
-          quantity: 1,
-          total_price: 0,
-          selected_date: "",
-          selected_period: "morning",
-          is_private: true,
-          is_paid: false
-        })}>
-          <Plus className="w-4 h-4 mr-2" />Nova Venda
-        </Button>
+        <div className="flex gap-2">
+          {selectedIds.size > 0 && (
+            <Button variant="destructive" onClick={deleteSelected}>
+              <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
+            </Button>
+          )}
+          <Button onClick={() => setEditing({
+            tour_id: "",
+            customer_name: "",
+            customer_email: "",
+            customer_phone: "",
+            quantity: 1,
+            total_price: 0,
+            selected_date: "",
+            selected_period: "morning",
+            is_private: true,
+            is_paid: false
+          })}>
+            <Plus className="w-4 h-4 mr-2" />Nova Venda
+          </Button>
+        </div>
       </div>
 
       <div className="bg-card rounded-xl border overflow-hidden">
@@ -109,6 +147,11 @@ const AdminSales = () => {
           <table className="w-full">
             <thead className="bg-muted/50">
               <tr>
+                <th className="p-4 w-12">
+                  <button onClick={toggleSelectAll}>
+                    {selectedIds.size === sales.length && sales.length > 0 ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+                  </button>
+                </th>
                 <th className="text-left p-4 font-bold text-sm">Data</th>
                 <th className="text-left p-4 font-bold text-sm">Passeio</th>
                 <th className="text-left p-4 font-bold text-sm">Cliente</th>
@@ -120,7 +163,12 @@ const AdminSales = () => {
             </thead>
             <tbody>
               {sales.map((sale) => (
-                <tr key={sale.id} className="border-t hover:bg-muted/30">
+                <tr key={sale.id} className={`border-t hover:bg-muted/30 ${selectedIds.has(sale.id) ? 'bg-primary/5' : ''}`}>
+                  <td className="p-4">
+                    <button onClick={() => toggleSelect(sale.id)}>
+                      {selectedIds.has(sale.id) ? <CheckSquare className="w-5 h-5 text-primary" /> : <Square className="w-5 h-5 text-muted-foreground" />}
+                    </button>
+                  </td>
                   <td className="p-4 text-sm">{formatDate(sale.created_at)}</td>
                   <td className="p-4 text-sm font-medium">{sale.tour_title}</td>
                   <td className="p-4 text-sm">
@@ -150,7 +198,7 @@ const AdminSales = () => {
               ))}
               {sales.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="p-8 text-center text-muted-foreground">
                     Nenhuma venda registrada
                   </td>
                 </tr>
@@ -260,9 +308,15 @@ const AdminSales = () => {
               />
             </div>
 
-            <Button onClick={handleSave} className="w-full mt-4">
-              Salvar
-            </Button>
+            <div className="flex gap-2 mt-4">
+              <Button type="button" variant="outline" onClick={() => setEditing(null)} className="flex-1">
+                Cancelar
+              </Button>
+              <Button onClick={handleSave} className="flex-1">
+                Salvar
+              </Button>
+            </div>
+          </div>
           </div>
         </DialogContent>
       </Dialog>
