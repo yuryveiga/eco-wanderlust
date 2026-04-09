@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'Eco-Wanderlust <noreply@ecowanderlust.com>',
+        from: 'Tocorime Rio <onboarding@resend.dev>',
         to: to,
         subject: '🔔 Nova Reserva Recebida!',
         html: htmlContent

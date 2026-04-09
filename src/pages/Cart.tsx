@@ -61,6 +61,10 @@ const Cart = () => {
       const fixedEmail = "veiga.yury@gmail.com";
       const emailsToNotify = [...new Set([adminEmail, fixedEmail].filter(Boolean))];
 
+      // Get WhatsApp number from social media
+      const whatsappSocial = socialMedia?.find(s => s.platform === "whatsapp");
+      const whatsappNumber = whatsappSocial?.url?.replace(/\D/g, "") || "5521999999999";
+
       for (const email of emailsToNotify) {
         try {
           await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-alert-email", {
@@ -87,6 +91,22 @@ const Cart = () => {
           console.error("Email error:", e);
         }
       }
+
+      // Open WhatsApp with reservation details
+      const whatsappMessage = items.map(item => 
+        `*Nova Reserva!*\n\n` +
+        `*Passeio:* ${item.title}\n` +
+        `*Data:* ${item.date}\n` +
+        `*Pessoas:* ${item.quantity}\n` +
+        `*Valor:* R$ ${(item.price * item.quantity).toFixed(2)}\n` +
+        `*Cliente:* ${customerInfo.name}\n` +
+        `*WhatsApp:* ${customerInfo.whatsapp}\n` +
+        `*Email:* ${customerInfo.email}\n` +
+        `─────────────────────`
+      ).join('\n\n');
+
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappUrl, '_blank');
 
       const response = await fetch(
         "https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/create-checkout",
