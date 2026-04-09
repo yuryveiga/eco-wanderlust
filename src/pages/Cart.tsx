@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
@@ -18,6 +18,10 @@ const Cart = () => {
   const { t, language, formatPrice } = useLocale();
   const { siteSettings } = useSiteData();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
   const navigate = useNavigate();
   

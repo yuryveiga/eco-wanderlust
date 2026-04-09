@@ -173,7 +173,7 @@ export function TourDetail() {
       quantity: quantity
     });
 
-    window.location.href = "/carrinho";
+    navigate("/carrinho");
   };
 
   if (isLoading) {
