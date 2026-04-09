@@ -310,25 +310,21 @@ const AdminBlog = () => {
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-w-[1400px] w-[95vw] min-h-[85vh] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
-          <DialogHeader className="p-6 pb-0 border-b bg-muted/10 shrink-0">
-            <DialogTitle className="font-serif text-2xl flex items-center gap-3 mb-4">
-              <Type className="w-7 h-7 text-primary" />
-              {isNew ? "Nova Publicação" : "Ajustar Conteúdo"}
-            </DialogTitle>
-            {editing && (
-              <Tabs defaultValue="content" className="w-full mt-2">
+          {editing && (
+            <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden">
+              <DialogHeader className="p-6 pb-0 border-b bg-muted/10 shrink-0">
+                <DialogTitle className="font-serif text-2xl flex items-center gap-3 mb-4">
+                  <Type className="w-7 h-7 text-primary" />
+                  {isNew ? "Nova Publicação" : "Ajustar Conteúdo"}
+                </DialogTitle>
                 <TabsList className="h-12 bg-transparent border-b w-full justify-start gap-4">
                   <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-2 font-bold">Conteúdo</TabsTrigger>
                   <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-2 font-bold">Galeria</TabsTrigger>
                 </TabsList>
-              </Tabs>
-            )}
-          </DialogHeader>
-          
-           {editing && (
-             <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden">
-               <TabsContent value="content" className="m-0 flex-1 overflow-hidden">
-                 <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
+              </DialogHeader>
+              
+              <TabsContent value="content" className="m-0 flex-1 overflow-hidden">
+                <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
                     {/* Left Sidebar for Metadata */}
                     <div className="w-80 flex flex-col gap-6 shrink-0 overflow-y-auto pr-4 scrollbar-thin">
                        <div className="space-y-3">
