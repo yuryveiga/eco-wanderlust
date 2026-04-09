@@ -61,7 +61,7 @@ const AdminTours = () => {
       return;
     }
 
-    const slug = editing.slug || editing.title.toLowerCase().replace(/\s+/g, '-');
+    const slug = editing.slug || editing.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     
     // Ensure category is included
     const dataToSave = {
