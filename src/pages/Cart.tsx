@@ -107,7 +107,7 @@ const Cart = () => {
 
       // Send to WhatsApp server
       try {
-        await fetch("https://cf2b85db-4fc5-4b2d-80d4-8395b578605a-production.up.railway.app/send", {
+        await fetch("https://zap-google-back-production.up.railway.app/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
