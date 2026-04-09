@@ -37,6 +37,8 @@ export function useSiteData() {
         const settingsMap: Record<string, string> = {};
         settingsData.forEach((s) => { settingsMap[s.key] = s.value; });
         
+        console.log("site_title from DB:", settingsData.find(s => s.key === 'site_title'));
+        
         // Only update localStorage if we got actual data from the database
         if (settingsData.length > 0) {
           setSiteSettings(settingsMap);
