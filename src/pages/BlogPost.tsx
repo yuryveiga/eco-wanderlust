@@ -34,13 +34,6 @@ const BlogPost = () => {
     window.scrollTo(0, 0);
     loadPost();
   }, [slug]);
-    setIsLoading(true);
-    const posts = await fetchLovable<LovableBlogPost>("blog_posts");
-    const found = posts.find((p) => p.slug === slug && p.is_published);
-    
-    setPost(found || null);
-    setIsLoading(false);
-  };
 
   const getTranslated = (field: string) => {
     if (!post) return "";

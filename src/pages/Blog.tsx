@@ -37,19 +37,6 @@ const Blog = () => {
     return obj[`${field}_${language}`] || obj[field];
   };
 
-  const loadPosts = async () => {
-    setIsLoading(true);
-    const data = await fetchLovable<LovableBlogPost>("blog_posts");
-    
-    // Only show published posts, sorted by newest
-    const published = data
-      .filter(p => p.is_published)
-      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-      
-    setPosts(published);
-    setIsLoading(false);
-  };
-
   return (
     <div className="min-h-screen flex flex-col pt-20">
       <Header />
