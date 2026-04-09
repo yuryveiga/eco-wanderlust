@@ -26,6 +26,8 @@ const translations = {
     detalhes: 'Detalhes',
     nenhuma_foto: 'Nenhuma foto na galeria ainda.',
     por_pessoa: 'por pessoa',
+    horas: 'horas',
+    hora: 'hora',
     
     // Hero
     avaliados: 'Avaliados com 5.0 no TripAdvisor',
@@ -175,6 +177,8 @@ const translations = {
     detalhes: 'Details',
     nenhuma_foto: 'No photos in the gallery yet.',
     por_pessoa: 'per person',
+    horas: 'hours',
+    hora: 'hour',
     
     // Hero
     avaliados: 'Rated 5.0 on TripAdvisor',
@@ -324,6 +328,8 @@ const translations = {
     detalhes: 'Detalles',
     nenhuma_foto: 'No hay fotos en la galería todavía.',
     por_pessoa: 'por persona',
+    horas: 'horas',
+    hora: 'hora',
     
     // Hero
     avaliados: 'Puntuado 5.0 en TripAdvisor',
