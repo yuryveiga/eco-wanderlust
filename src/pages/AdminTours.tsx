@@ -18,6 +18,7 @@ const AdminTours = () => {
   const [isNew, setIsNew] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const { toast } = useToast();
@@ -170,6 +171,45 @@ const AdminTours = () => {
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
         <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], highlights_json: [], faq_json: [], difficulty: "Leve", youtube_video_url: "", category: "CITY TOUR" }); setIsNew(true); }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={async () => {
+            if (!confirm("Traduzir TODOS os passeios para inglês e espanhol?")) return;
+            setIsTranslatingAll(true);
+            let translated = 0;
+            for (const tour of tours) {
+              try {
+                const [titleEn, titleEs, descEn, descEs, diffEn, diffEs] = await Promise.all([
+                  translateText(tour.title || "", "en"),
+                  translateText(tour.title || "", "es"),
+                  translateText(tour.short_description || "", "en"),
+                  translateText(tour.short_description || "", "es"),
+                  translateText(tour.difficulty || "", "en"),
+                  translateText(tour.difficulty || "", "es"),
+                ]);
+                await updateLovable("tours", tour.id, {
+                  title_en: titleEn,
+                  title_es: titleEs,
+                  short_description_en: descEn,
+                  short_description_es: descEs,
+                  difficulty_en: diffEn,
+                  difficulty_es: diffEs,
+                });
+                translated++;
+              } catch (e) {
+                console.error("Error translating tour:", tour.id, e);
+              }
+            }
+            setIsTranslatingAll(false);
+            toast({ title: `${translated} passeios traduzidos!` });
+            loadTours();
+          }}
+          disabled={isTranslatingAll}
+          className="font-sans"
+        >
+          {isTranslatingAll ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+          Traduzir Todos
         </Button>
       </div>
 

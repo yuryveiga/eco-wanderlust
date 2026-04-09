@@ -26,16 +26,20 @@ const AdminBlog = () => {
   const [isNew, setIsNew] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const { toast } = useToast();
   
   // Ref to avoid constant re-renders causing editor to lose focus
   const quillRef = useRef<any>(null);
 
+  const loadPosts = async () => {
+    const data = await fetchLovable<LovableBlogPost>("blog_posts");
+    setPosts(data.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    fetchLovable<LovableBlogPost>("blog_posts").then((data) => {
-      setPosts(data.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
-      setIsLoading(false);
-    });
+    loadPosts();
   }, []);
 
   const handleSave = async () => {
@@ -211,6 +215,41 @@ const AdminBlog = () => {
         </div>
         <Button onClick={() => { setEditing({ title: "", slug: "", content: "", is_published: true }); setIsNew(true); }} className="font-sans h-12 px-8 rounded-xl shadow-lg">
           <Plus className="w-4 h-4 mr-2" />Novo Post
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={async () => {
+            if (!confirm("Traduzir TODOS os posts para inglês e espanhol?")) return;
+            setIsTranslatingAll(true);
+            let translated = 0;
+            for (const post of posts) {
+              try {
+                const [titleEn, titleEs, excerptEn, excerptEs] = await Promise.all([
+                  translateText(post.title || "", "en"),
+                  translateText(post.title || "", "es"),
+                  translateText(post.excerpt || "", "en"),
+                  translateText(post.excerpt || "", "es"),
+                ]);
+                await updateLovable("blog_posts", post.id, {
+                  title_en: titleEn,
+                  title_es: titleEs,
+                  excerpt_en: excerptEn,
+                  excerpt_es: excerptEs,
+                });
+                translated++;
+              } catch (e) {
+                console.error("Error translating post:", post.id, e);
+              }
+            }
+            setIsTranslatingAll(false);
+            toast({ title: `${translated} posts traduzidos!` });
+            loadPosts();
+          }}
+          disabled={isTranslatingAll}
+          className="font-sans h-12 px-6 rounded-xl"
+        >
+          {isTranslatingAll ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+          Traduzir Todos
         </Button>
       </div>
 
