@@ -135,10 +135,8 @@ export function ToursSection() {
   const toursSubtitle = siteSettings[toursSectionSubtitleKey] || siteSettings['tours_section_subtitle'] || (language === 'pt' ? 'City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.' : language === 'es' ? 'Tours completos por la ciudad, paseos en barco en Arraial do Cabo y Angra dos Reis, y experiencias increibles con guías especializados.' : 'Complete city tours, boat trips in Arraial do Cabo and Angra dos Reis, and unforgettable experiences with specialized guides.');
   
   // Button labels (different for each category)
-  const cityToursTitleKey = language === 'pt' ? 'city_tours_title' : `city_tours_title_${language}`;
-  const hikingToursTitleKey = language === 'pt' ? 'hiking_tours_title' : `hiking_tours_title_${language}`;
-  const cityButtonLabel = siteSettings[cityToursTitleKey] || siteSettings['city_tours_title'] || t("city_tours");
-  const hikingButtonLabel = siteSettings[hikingToursTitleKey] || siteSettings['hiking_tours_title'] || t("trilhas");
+  const cityButtonLabel = siteSettings[language === 'pt' ? 'city_tours_title' : `city_tours_title_${language}`] || t("city_tours");
+  const hikingButtonLabel = siteSettings[language === 'pt' ? 'hiking_tours_title' : `hiking_tours_title_${language}`] || t("trilhas");
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
