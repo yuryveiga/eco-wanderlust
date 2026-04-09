@@ -19,6 +19,12 @@ const Blog = () => {
     loadPosts();
   }, []);
 
+  const getTranslated = (obj: any, field: string) => {
+    if (!obj) return "";
+    if (language === 'pt') return obj[field];
+    return obj[`${field}_${language}`] || obj[field];
+  };
+
   const loadPosts = async () => {
     setIsLoading(true);
     const data = await fetchLovable<LovableBlogPost>("blog_posts");
@@ -85,7 +91,7 @@ const Blog = () => {
                     </div>
                     
                     <h3 className="font-serif text-xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                      {post.title}
+                      {getTranslated(post, 'title')}
                     </h3>
                     
                     <div className="mt-auto pt-4 flex items-center text-primary font-medium text-sm font-sans gap-1 group-hover:gap-2 transition-all">

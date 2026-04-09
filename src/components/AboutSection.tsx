@@ -10,7 +10,7 @@ const DEFAULT_IMAGES = [
 ];
 
 export function AboutSection() {
-  const { t } = useLocale();
+  const { t, language } = useLocale();
   const { images, siteSettings } = useSiteData();
 
   const aboutImages = [
@@ -19,6 +19,16 @@ export function AboutSection() {
     images["about_3"] || DEFAULT_IMAGES[2],
     images["about_4"] || DEFAULT_IMAGES[3],
   ];
+
+  const aboutLabelKey = language === 'pt' ? 'about_label' : `about_label_${language}`;
+  const aboutTitleKey = language === 'pt' ? 'about_title' : `about_title_${language}`;
+  const aboutDescKey = language === 'pt' ? 'about_desc' : `about_desc_${language}`;
+  const aboutDesc2Key = language === 'pt' ? 'about_desc2' : `about_desc2_${language}`;
+
+  const aboutLabel = siteSettings[aboutLabelKey] || siteSettings['about_label'] || t("sobre_passeiorio");
+  const aboutTitle = siteSettings[aboutTitleKey] || siteSettings['about_title'] || t("porta_entrada");
+  const aboutDesc = siteSettings[aboutDescKey] || siteSettings['about_desc'] || t("sobre_desc1");
+  const aboutDesc2 = siteSettings[aboutDesc2Key] || siteSettings['about_desc2'];
 
   const features = [
     { icon: Bus, title: t("feat_transporte"), description: t("feat_transporte_desc") },
@@ -43,16 +53,16 @@ export function AboutSection() {
           </div>
 
           <div>
-            <p className="text-primary font-medium mb-3 font-sans">{siteSettings?.about_label || t("sobre_passeiorio")}</p>
+            <p className="text-primary font-medium mb-3 font-sans">{aboutLabel}</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-              {siteSettings?.about_title || t("porta_entrada")}
+              {aboutTitle}
             </h2>
             <p className="text-muted-foreground text-lg mb-6 leading-relaxed font-sans">
-              {siteSettings?.about_desc || t("sobre_desc1")}
+              {aboutDesc}
             </p>
-            {siteSettings?.about_desc2 && (
+            {aboutDesc2 && (
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
-                {siteSettings.about_desc2}
+                {aboutDesc2}
               </p>
             )}
 

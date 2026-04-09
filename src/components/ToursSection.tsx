@@ -93,12 +93,16 @@ export function ToursSection() {
   const displayTours = activeTab === 'city' ? cityTours : hikingTours;
   
   // Title and subtitle above the buttons (common for both tabs)
-  const toursTitle = siteSettings['tours_section_title'] || (language === 'pt' ? 'Conheça o Melhor do Rio de Janeiro' : language === 'es' ? 'Descubre lo mejor de Río' : 'Discover the Best of Rio');
-  const toursSubtitle = siteSettings['tours_section_subtitle'] || (language === 'pt' ? 'City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.' : language === 'es' ? 'Tours completos por la ciudad, paseos en barco en Arraial do Cabo y Angra dos Reis, y experiencias increibles con guías especializados.' : 'Complete city tours, boat trips in Arraial do Cabo and Angra dos Reis, and unforgettable experiences with specialized guides.');
+  const toursSectionTitleKey = language === 'pt' ? 'tours_section_title' : `tours_section_title_${language}`;
+  const toursSectionSubtitleKey = language === 'pt' ? 'tours_section_subtitle' : `tours_section_subtitle_${language}`;
+  const toursTitle = siteSettings[toursSectionTitleKey] || siteSettings['tours_section_title'] || (language === 'pt' ? 'Conheça o Melhor do Rio de Janeiro' : language === 'es' ? 'Descubre lo mejor de Río' : 'Discover the Best of Rio');
+  const toursSubtitle = siteSettings[toursSectionSubtitleKey] || siteSettings['tours_section_subtitle'] || (language === 'pt' ? 'City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.' : language === 'es' ? 'Tours completos por la ciudad, paseos en barco en Arraial do Cabo y Angra dos Reis, y experiencias increibles con guías especializados.' : 'Complete city tours, boat trips in Arraial do Cabo and Angra dos Reis, and unforgettable experiences with specialized guides.');
   
   // Button labels (different for each category)
-  const cityButtonLabel = siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours');
-  const hikingButtonLabel = siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking');
+  const cityToursTitleKey = language === 'pt' ? 'city_tours_title' : `city_tours_title_${language}`;
+  const hikingToursTitleKey = language === 'pt' ? 'hiking_tours_title' : `hiking_tours_title_${language}`;
+  const cityButtonLabel = siteSettings[cityToursTitleKey] || siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours');
+  const hikingButtonLabel = siteSettings[hikingToursTitleKey] || siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking');
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">

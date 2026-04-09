@@ -8,7 +8,10 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function Footer() {
   const { pages, socialMedia, images, siteSettings } = useSiteData();
-  const { t } = useLocale();
+  const { t, language } = useLocale();
+
+  const aboutDescKey = language === 'pt' ? 'about_desc' : `about_desc_${language}`;
+  const footerDesc = siteSettings[aboutDescKey] || siteSettings['about_desc'] || t("footer_desc");
 
   const scrollTo = (href: string) => {
     if (href.startsWith("#")) {
@@ -56,7 +59,7 @@ export function Footer() {
               )}
             </div>
             <p className="text-[hsl(140,10%,96%)]/80 text-sm leading-relaxed font-sans">
-              {siteSettings?.about_desc || t("footer_desc")}
+              {footerDesc}
             </p>
           </div>
 

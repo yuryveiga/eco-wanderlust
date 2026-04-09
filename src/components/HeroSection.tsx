@@ -6,11 +6,15 @@ import { useLocale } from "@/contexts/LocaleContext";
 
 export function HeroSection() {
   const { images, siteSettings } = useSiteData();
-  const { t } = useLocale();
+  const { t, language } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
   const heroStyle = siteSettings['hero_style'] || "style1";
-  const heroTitle = siteSettings['hero_title'] || `${t("conheca_melhor")} ${t("rio_janeiro")}`;
-  const heroSubtitle = siteSettings['hero_subtitle'] || t("hero_desc");
+  
+  const heroTitleKey = language === 'pt' ? 'hero_title' : `hero_title_${language}`;
+  const heroSubtitleKey = language === 'pt' ? 'hero_subtitle' : `hero_subtitle_${language}`;
+  
+  const heroTitle = siteSettings[heroTitleKey] || siteSettings['hero_title'] || `${t("conheca_melhor")} ${t("rio_janeiro")}`;
+  const heroSubtitle = siteSettings[heroSubtitleKey] || siteSettings['hero_subtitle'] || t("hero_desc");
   
   const availableBgs = [
     images["hero_bg"],
