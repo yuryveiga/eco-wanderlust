@@ -406,7 +406,7 @@ export function TourDetail() {
                           <span className="font-sans font-black text-xl w-10 text-center">{quantity}</span>
                           <button onClick={() => setQuantity(Math.min(tour.max_group_size || 10, quantity + 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center disabled:opacity-30" disabled={quantity >= (tour.max_group_size || 10)}><Plus className="w-5 h-5" /></button>
                        </div>
-                       <p className="text-center text-xs text-muted-foreground font-sans mt-2">{language === 'pt' ? `Máximo ${tour.max_group_size || 10} pessoas` : `Max ${tour.max_group_size || 10} people`}</p>
+                        <p className="text-center text-xs text-muted-foreground font-sans mt-2">{language === 'pt' ? `${t("max_pessoas")} ${tour.max_group_size || 10} ${t("ate_pessoas")}` : `${t("max_pessoas")} ${tour.max_group_size || 10} ${t("ate_pessoas")}`}</p>
                     </div>
                     {availablePeriods.length > 0 && (
                       <div className="border-t pt-6">

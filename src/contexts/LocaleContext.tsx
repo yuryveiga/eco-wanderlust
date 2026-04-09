@@ -28,6 +28,8 @@ const translations = {
     por_pessoa: 'por pessoa',
     horas: 'horas',
     hora: 'hora',
+    max_pessoas: 'Máximo',
+   ate_pessoas: 'até pessoas',
     
     // Hero
     avaliados: 'Avaliados com 5.0 no TripAdvisor',
@@ -179,6 +181,8 @@ const translations = {
     por_pessoa: 'per person',
     horas: 'hours',
     hora: 'hour',
+    max_pessoas: 'Max',
+    ate_pessoas: 'people',
     
     // Hero
     avaliados: 'Rated 5.0 on TripAdvisor',
@@ -330,6 +334,8 @@ const translations = {
     por_pessoa: 'por persona',
     horas: 'horas',
     hora: 'hora',
+    max_pessoas: 'Máximo',
+    ate_pessoas: 'personas',
     
     // Hero
     avaliados: 'Puntuado 5.0 en TripAdvisor',

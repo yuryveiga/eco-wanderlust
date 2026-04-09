@@ -128,13 +128,38 @@ const AdminTours = () => {
         translateText(editing.meeting_point_address || "", targetLang)
       ]);
 
+      const translateJsonArray = async (arr: any[], fields: string[]): Promise<any[]> => {
+        if (!arr || !Array.isArray(arr)) return arr;
+        const translated = await Promise.all(arr.map(async (item) => {
+          const newItem: any = { ...item };
+          for (const field of fields) {
+            if (item[field]) {
+              newItem[field] = await translateText(item[field], targetLang);
+            }
+          }
+          return newItem;
+        }));
+        return translated;
+      };
+
+      const [tItinerary, tIncluded, tHighlights, tFaq] = await Promise.all([
+        translateJsonArray(editing.itinerary_json || [], ['time', 'description']),
+        translateJsonArray(editing.included_json || [], ['text']),
+        translateJsonArray(editing.highlights_json || [], ['text']),
+        translateJsonArray(editing.faq_json || [], ['q', 'a']),
+      ]);
+
       setEditing({
         ...editing,
         [`title${suffix}`]: tTitle,
         [`category${suffix}`]: tCat,
         [`short_description${suffix}`]: tDesc,
         [`difficulty${suffix}`]: tDif,
-        [`meeting_point_address${suffix}`]: tAddr
+        [`meeting_point_address${suffix}`]: tAddr,
+        [`itinerary_json${suffix}`]: tItinerary,
+        [`included_json${suffix}`]: tIncluded,
+        [`highlights_json${suffix}`]: tHighlights,
+        [`faq_json${suffix}`]: tFaq,
       });
       
       toast({ title: "Sucesso!", description: `Tradução para ${targetLang === 'en' ? 'Inglês' : 'Espanhol'} concluída.` });
@@ -188,6 +213,44 @@ const AdminTours = () => {
                   translateText(tour.difficulty || "", "en"),
                   translateText(tour.difficulty || "", "es"),
                 ]);
+
+                const translateJsonField = async (json: any[], lang: 'en' | 'es'): Promise<any[]> => {
+                  if (!json || !Array.isArray(json)) return json;
+                  const translated = await Promise.all(json.map(async (item) => {
+                    if (item.text) {
+                      const translatedText = await translateText(item.text, lang);
+                      return { ...item, text: translatedText };
+                    }
+                    if (item.description) {
+                      const translatedDesc = await translateText(item.description, lang);
+                      return { ...item, description: translatedDesc };
+                    }
+                    if (item.q && item.a) {
+                      const translatedQ = await translateText(item.q, lang);
+                      const translatedA = await translateText(item.a, lang);
+                      return { q: translatedQ, a: translatedA };
+                    }
+                    if (item.time && item.description) {
+                      const translatedTime = await translateText(item.time, lang);
+                      const translatedDesc = await translateText(item.description, lang);
+                      return { time: translatedTime, description: translatedDesc };
+                    }
+                    return item;
+                  }));
+                  return translated;
+                };
+
+                const [itineraryEn, itineraryEs, includedEn, includedEs, highlightsEn, highlightsEs, faqEn, faqEs] = await Promise.all([
+                  translateJsonField(tour.itinerary_json, "en"),
+                  translateJsonField(tour.itinerary_json, "es"),
+                  translateJsonField(tour.included_json, "en"),
+                  translateJsonField(tour.included_json, "es"),
+                  translateJsonField(tour.highlights_json, "en"),
+                  translateJsonField(tour.highlights_json, "es"),
+                  translateJsonField(tour.faq_json, "en"),
+                  translateJsonField(tour.faq_json, "es"),
+                ]);
+
                 await updateLovable("tours", tour.id, {
                   title_en: titleEn,
                   title_es: titleEs,
@@ -195,6 +258,14 @@ const AdminTours = () => {
                   short_description_es: descEs,
                   difficulty_en: diffEn,
                   difficulty_es: diffEs,
+                  itinerary_json_en: itineraryEn,
+                  itinerary_json_es: itineraryEs,
+                  included_json_en: includedEn,
+                  included_json_es: includedEs,
+                  highlights_json_en: highlightsEn,
+                  highlights_json_es: highlightsEs,
+                  faq_json_en: faqEn,
+                  faq_json_es: faqEs,
                 });
                 translated++;
               } catch (e) {
