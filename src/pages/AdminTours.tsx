@@ -502,7 +502,9 @@ const AdminTours = () => {
                             </Button>
                          </div>
                       </div>
-                      {/* TAB INFO: ITINERARY, INCLUDED, FAQ, MAP */}
+                    </TabsContent>
+
+                    {/* TAB INFO: ITINERARY, INCLUDED, FAQ, MAP */}
                   <TabsContent value="info" className="m-0 space-y-10 pb-10">
                      <div className="grid grid-cols-1 gap-6 bg-muted/20 p-6 rounded-3xl border">
                         <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
