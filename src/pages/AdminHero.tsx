@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fetchLovable, insertLovable, updateLovable, LovableSiteSetting } from "@/integrations/lovable/client";
 import { useToast } from "@/hooks/use-toast";
-import { LayoutTemplate, MonitorPlay, MonitorSmartphone, LayoutGrid, Type, Save } from "lucide-react";
+import { LayoutTemplate, MonitorPlay, MonitorSmartphone, LayoutGrid, Type, Save, Sparkles, Loader2 } from "lucide-react";
+import { translateText } from "@/utils/translate";
 
 const STYLES = [
   {

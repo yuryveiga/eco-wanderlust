@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe } from "lucide-react";
+import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2 } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
 import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { translateText } from "@/utils/translate";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0 });
@@ -14,6 +15,7 @@ const AdminDashboard = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingGeneral, setIsSavingGeneral] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,15 +70,15 @@ const AdminDashboard = () => {
   const handleSaveGeneral = async () => {
     setIsSavingGeneral(true);
     try {
-      const keys = ['site_title', 'site_description'];
-      console.log("Saving settings:", keys, settings);
+      const keys = ['site_title', 'site_description', 'site_title_en', 'site_title_es', 'site_description_en', 'site_description_es'];
       for (const key of keys) {
-        const settingRecord = settingsList.find(s => s.key === key);
-        console.log("Saving:", key, "value:", settings[key], "existing record:", settingRecord);
-        if (settingRecord?.id) {
-          await updateLovable("site_settings", settingRecord.id, { value: settings[key] || "" });
-        } else {
-          await insertLovable("site_settings", { key, value: settings[key] || "" });
+        if (settings[key]) {
+          const settingRecord = settingsList.find(s => s.key === key);
+          if (settingRecord?.id) {
+            await updateLovable("site_settings", settingRecord.id, { value: settings[key] || "" });
+          } else {
+            await insertLovable("site_settings", { key, value: settings[key] || "" });
+          }
         }
       }
       toast({ title: "Configurações Gerais salvas!" });
@@ -148,6 +150,42 @@ const AdminDashboard = () => {
             </div>
             <Button onClick={handleSaveGeneral} disabled={isSavingGeneral} className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20">
               {isSavingGeneral ? "Salvando..." : <><Save className="w-4 h-4 mr-2" /> Salvar Configurações</>}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={async () => {
+                const title = settings['site_title'];
+                const desc = settings['site_description'];
+                if (!title && !desc) {
+                  toast({ title: "Preencha o título ou descrição primeiro", variant: "destructive" });
+                  return;
+                }
+                setIsTranslating(true);
+                try {
+                  const results = await Promise.all([
+                    title ? translateText(title, "en") : null,
+                    title ? translateText(title, "es") : null,
+                    desc ? translateText(desc, "en") : null,
+                    desc ? translateText(desc, "es") : null,
+                  ]);
+                  const newSettings = { ...settings };
+                  if (results[0]) newSettings['site_title_en'] = results[0];
+                  if (results[1]) newSettings['site_title_es'] = results[1];
+                  if (results[2]) newSettings['site_description_en'] = results[2];
+                  if (results[3]) newSettings['site_description_es'] = results[3];
+                  setSettings(newSettings);
+                  toast({ title: "Tradução concluída! Salve as alterações." });
+                } catch (e) {
+                  toast({ title: "Erro ao traduzir", variant: "destructive" });
+                } finally {
+                  setIsTranslating(false);
+                }
+              }}
+              disabled={isTranslating}
+              className="w-full h-12 rounded-xl"
+            >
+              {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+              Traduzir Título e Descrição
             </Button>
           </div>
         </div>

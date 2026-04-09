@@ -13,7 +13,7 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { t } = useLocale();
-  const { socialMedia } = useSiteData();
+  const { socialMedia, tours } = useSiteData();
 
   const emailSocial = socialMedia.find(s => s.platform.toLowerCase() === 'email');
   const whatsappSocial = socialMedia.find(s => s.platform.toLowerCase().includes('whatsapp'));
@@ -112,11 +112,9 @@ export function ContactSection() {
                     <SelectValue placeholder={t("selecione_passeio")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="city-tour">City Tour Rio Completo</SelectItem>
-                    <SelectItem value="arraial">Arraial do Cabo</SelectItem>
-                    <SelectItem value="angra">Angra dos Reis</SelectItem>
-                    <SelectItem value="cristo-pao">Cristo & Pão de Açúcar</SelectItem>
-                    <SelectItem value="trilha">Trilha da Pedra Bonita</SelectItem>
+                    {tours.map((tour) => (
+                      <SelectItem key={tour.id} value={tour.slug || tour.id}>{tour.title}</SelectItem>
+                    ))}
                     <SelectItem value="outro">Outro</SelectItem>
                   </SelectContent>
                 </Select>
