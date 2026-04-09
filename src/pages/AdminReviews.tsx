@@ -188,7 +188,6 @@ export default function AdminReviews() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-full">
           <DialogHeader>
-          <DialogHeader>
             <DialogTitle>{editingId ? "Editar Review" : "Novo Review"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4">
