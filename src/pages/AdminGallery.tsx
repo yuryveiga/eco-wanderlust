@@ -25,6 +25,7 @@ export type SiteImage = {
 const AdminGallery = () => {
   const [images, setImages] = useState<SiteImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   
   // Form Upload state
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -121,6 +122,47 @@ const AdminGallery = () => {
       toast({ title: "Erro", description: error.message || "Ocorreu um erro no upload da imagem.", variant: "destructive" });
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    const newSet = new Set(selectedIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedIds(newSet);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredImages.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredImages.map(img => img.id)));
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Excluir ${selectedIds.size} foto(s)?`)) return;
+
+    const idsToDelete = Array.from(selectedIds);
+    
+    for (const img of images.filter(i => selectedIds.has(i.id))) {
+      try {
+        if (img.image_url.includes('site-images')) {
+          const fileName = img.image_url.substring(img.image_url.lastIndexOf('/') + 1);
+          await supabase.storage.from('site-images').remove([fileName]);
+        }
+      } catch(e) {}
+    }
+
+    const { error } = await supabase.from('site_images').delete().in('id', idsToDelete);
+    if (!error) {
+      toast({ title: `${idsToDelete.length} foto(s) removida(s)` });
+      setSelectedIds(new Set());
+      await loadImages();
     }
   };
 
@@ -258,12 +300,30 @@ const AdminGallery = () => {
       ) : filteredImages.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">Nenhuma foto para esta categoria.</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredImages.map((img) => {
-            const cat = getCategoryFromKey(img.key);
-            
-            return (
-              <div key={img.id} className="bg-card rounded-xl border overflow-hidden flex flex-col group">
+        <>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center justify-between bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3">
+              <span className="text-sm font-medium text-destructive">{selectedIds.size} foto(s) selecionada(s)</span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => setSelectedIds(new Set())}>Cancelar</Button>
+                <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
+                  <Trash2 className="w-4 h-4 mr-1" /> Excluir
+                </Button>
+              </div>
+            </div>
+          )}
+          <div className="flex items-center justify-between mb-4">
+            <Button variant="outline" size="sm" onClick={toggleSelectAll}>
+              {selectedIds.size === filteredImages.length ? "Desmarcar Todos" : "Selecionar Todos"}
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredImages.map((img) => {
+              const cat = getCategoryFromKey(img.key);
+              const isSelected = selectedIds.has(img.id);
+              
+              return (
+                <div key={img.id} className={`bg-card rounded-xl border overflow-hidden flex flex-col group cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary' : ''}`} onClick={() => toggleSelect(img.id)}>
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {img.image_url ? (
                     <img src={img.image_url} alt={img.label} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
@@ -296,9 +356,10 @@ const AdminGallery = () => {
                   </Select>
                 </div>
               </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );
