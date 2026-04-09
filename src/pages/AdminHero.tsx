@@ -316,6 +316,8 @@ const AdminHero = () => {
         <Button 
           variant="default" 
           onClick={async () => {
+            console.log("siteSettings state:", siteSettings);
+            console.log("Fields:", heroTitle, heroSubtitle, toursSectionTitle, toursSectionSubtitle, aboutLabel, aboutTitle, aboutDesc, aboutDesc2);
             const allFields = [heroTitle, heroSubtitle, toursSectionTitle, toursSectionSubtitle, aboutLabel, aboutTitle, aboutDesc, aboutDesc2];
             if (allFields.every(f => !f)) {
               toast({ title: "Preencha algum campo primeiro", variant: "destructive" });
@@ -323,6 +325,11 @@ const AdminHero = () => {
             }
             setIsTranslating(true);
             try {
+              // Reload settings before saving
+              const freshSettings = await fetchLovable<LovableSiteSetting>("site_settings");
+              setSiteSettings(freshSettings);
+              console.log("Fresh settings:", freshSettings);
+              
               console.log("Starting translation for fields:", allFields);
               const translations = await Promise.all([
                 heroTitle ? translateText(heroTitle, "en") : null, heroTitle ? translateText(heroTitle, "es") : null,
@@ -344,9 +351,15 @@ const AdminHero = () => {
               
               for (let i = 0; i < keys.length; i++) {
                 if (translations[i]) {
-                  const existing = siteSettings.find(s => s.key === keys[i]);
-                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: translations[i] });
-                  else await insertLovable("site_settings", { key: keys[i], value: translations[i] });
+                  console.log(`Saving ${keys[i]}:`, translations[i]);
+                  const existing = freshSettings.find(s => s.key === keys[i]);
+                  if (existing) {
+                    console.log("Updating existing:", existing.id);
+                    await updateLovable("site_settings", (existing as any).id, { value: translations[i] });
+                  } else {
+                    console.log("Inserting new:", keys[i]);
+                    await insertLovable("site_settings", { key: keys[i], value: translations[i] });
+                  }
                 }
               }
               
