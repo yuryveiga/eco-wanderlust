@@ -58,8 +58,6 @@
     }
     </script>
 
-    
-    
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e4eda8-ca34-4de4-84ef-56a427618514/id-preview-c1af969b--c63d0df1-ee90-451c-af57-a8e7f8701e37.lovable.app-1775349718885.png">
 
@@ -67,33 +65,14 @@
     <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e4eda8-ca34-4de4-84ef-56a427618514/id-preview-c1af969b--c63d0df1-ee90-451c-af57-a8e7f8701e37.lovable.app-1775349718885.png">
     
-  
-  
-  
-  <link rel="icon" type="image/png" href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png">
+    <link rel="icon" type="image/png" href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png">
     <link rel="apple-touch-icon" href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png">
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-   <meta property="og:title" content="Passeios Privativos Rio de Janeiro - Tocorime Rio">
-   <meta name="twitter:title" content="Passeios Privativos Rio de Janeiro - Tocorime Rio">
-   <meta property="og:description" content="Quer assistir um jogo no Maracanã? Nós te levamos!">
-   <meta name="twitter:description" content="Quer assistir um jogo no Maracanã? Nós te levamos!">
-</head>
+    <meta property="og:title" content="Passeios Privativos Rio de Janeiro - Tocorime Rio">
+    <meta name="twitter:title" content="Passeios Privativos Rio de Janeiro - Tocorime Rio">
+    <meta property="og:description" content="Quer assistir um jogo no Maracanã? Nós te levamos!">
+    <meta name="twitter:description" content="Quer assistir um jogo no Maracanã? Nós te levamos!">
+  </head>
 
   <body>
     <div id="root"></div>
@@ -101,7 +80,11 @@
     <script async src="//www.instagram.com/embed.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        // navigator.serviceWorker.register('/service-worker.js');
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
       }
     </script>
   </body>

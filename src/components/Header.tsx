@@ -52,9 +52,12 @@ export function Header() {
     }
   };
 
+  const dynamicLinks = pages.map(p => ({ label: p.title, href: p.href }));
+  
   const navLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
+    ...dynamicLinks,
     { label: t("sobre"), href: "#about" },
     { label: t("contato"), href: "#contact" },
     { label: "Blog", href: "/blog" },
