@@ -66,7 +66,7 @@ const Blog = () => {
               {posts.map((post) => (
                 <Link 
                   key={post.id} 
-                  to={`/blog/${post.slug}`}
+                  to={post.slug}
                   className="bg-card border rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
                 >
                   <div className="aspect-video relative overflow-hidden bg-muted">
