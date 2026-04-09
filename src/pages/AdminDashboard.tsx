@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2 } from "lucide-react";
+import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2, DollarSign } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
 import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { translateText } from "@/utils/translate";
 
 const AdminDashboard = () => {
-  const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0 });
+  const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0, sales: 0, salesPaid: 0 });
   const [settingsList, setSettingsList] = useState<LovableSiteSetting[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -20,18 +20,21 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [t, p, i, s, settingsData] = await Promise.all([
+      const [t, p, i, s, settingsData, salesData] = await Promise.all([
         fetchLovable<{ id: string }>("tours"),
         fetchLovable<{ id: string }>("pages"),
         fetchLovable<{ id: string }>("site_images"),
         fetchLovable<{ id: string }>("social_media"),
         fetchLovable<LovableSiteSetting>("site_settings"),
+        fetchLovable<{ id: string }>("sales"),
       ]);
       setCounts({
         tours: t.length,
         pages: p.length,
         images: i.length,
         social: s.length,
+        sales: salesData.length,
+        salesPaid: salesData.filter((sale: any) => sale.is_paid).length,
       });
 
       setSettingsList(settingsData);
@@ -98,13 +101,15 @@ const AdminDashboard = () => {
     { label: "Páginas", count: counts.pages, icon: FileText, color: "bg-secondary/20 text-secondary" },
     { label: "Imagens", count: counts.images, icon: Image, color: "bg-accent/20 text-accent-foreground" },
     { label: "Redes Sociais", count: counts.social, icon: Share2, color: "bg-destructive/10 text-destructive" },
+    { label: "Vendas", count: counts.sales, icon: DollarSign, color: "bg-green-100 text-green-600" },
+    { label: "Pagas", count: counts.salesPaid, icon: DollarSign, color: "bg-green-500/10 text-green-600" },
   ];
 
   return (
     <div className="space-y-8 pb-12 font-sans">
       <h1 className="font-serif text-3xl font-bold text-foreground">Dashboard</h1>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         {cards.map((card) => (
           <div key={card.label} className="bg-card rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-4">
