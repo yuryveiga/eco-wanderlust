@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour, supabase } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare, RefreshCw } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AdminSales = () => {
@@ -133,27 +133,11 @@ const AdminSales = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-3xl font-bold text-foreground">Vendas</h1>
-        <div className="flex gap-2">
-          {selectedIds.size > 0 && (
-            <Button variant="destructive" onClick={deleteSelected}>
-              <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
-            </Button>
-          )}
-          <Button onClick={() => setEditing({
-            tour_id: "",
-            customer_name: "",
-            customer_email: "",
-            customer_phone: "",
-            quantity: 1,
-            total_price: 0,
-            selected_date: "",
-            selected_period: "morning",
-            is_private: true,
-            is_paid: false
-          })}>
-            <Plus className="w-4 h-4 mr-2" />Nova Venda
+        {selectedIds.size > 0 && (
+          <Button variant="destructive" onClick={deleteSelected}>
+            <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
           </Button>
-        </div>
+        )}
       </div>
 
       <div className="bg-card rounded-xl border overflow-hidden">
