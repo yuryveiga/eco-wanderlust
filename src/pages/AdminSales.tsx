@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour, supabase } from "@/integrations/lovable/client";
+import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AdminSales = () => {
@@ -18,6 +18,20 @@ const AdminSales = () => {
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(loadData, 5 * 60 * 1000);
+    
+    // Real-time subscription
+    const channel = supabase
+      .channel('sales-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+        loadData();
+      })
+      .subscribe();
+    
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadData = async () => {
