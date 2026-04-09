@@ -11,7 +11,7 @@ const DEFAULT_IMAGES = [
 
 export function AboutSection() {
   const { t } = useLocale();
-  const { images } = useSiteData();
+  const { images, siteSettings } = useSiteData();
 
   const aboutImages = [
     images["about_1"] || DEFAULT_IMAGES[0],
