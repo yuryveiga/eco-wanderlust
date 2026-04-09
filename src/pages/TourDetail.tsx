@@ -163,6 +163,7 @@ export function TourDetail() {
 
     addToCart({
       id: tour.id,
+      slug: tour.slug,
       title: translatedTitle,
       price: tour.price,
       image_url: tour.image_url || images[0],

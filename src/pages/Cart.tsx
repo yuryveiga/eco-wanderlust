@@ -5,21 +5,30 @@ import { useCart } from "@/contexts/CartContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Button } from "@/components/ui/button";
-import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldCheck, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldCheck, Users, Plus, Minus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 
 const Cart = () => {
-  const { items, removeFromCart, total, clearCart } = useCart();
+  const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
   const { t, language, formatPrice } = useLocale();
   const { siteSettings } = useSiteData();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
+  const navigate = useNavigate();
   
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
+    
+    if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
+      alert(language === 'pt' ? "Preencha seu nome, WhatsApp e e-mail" : "Fill in your name, WhatsApp and email");
+      return;
+    }
     
     setIsProcessing(true);
     try {
@@ -39,6 +48,7 @@ const Cart = () => {
               date: item.date,
               period: item.period,
             })),
+            customer: customerInfo,
             currency: "brl",
           }),
         }
@@ -92,7 +102,9 @@ const Cart = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <h3 className="font-serif text-xl font-bold mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
+                      <Link to={`/passeio/${item.slug || item.id}`} className="font-serif text-xl font-bold mb-2 group-hover:text-primary transition-colors block">
+                        {item.title}
+                      </Link>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm text-muted-foreground font-sans">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-primary/70" />
@@ -108,7 +120,23 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-primary/70" />
-                          <span className="font-medium">{item.quantity} {item.quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}</span>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => updateQuantity(item.id, item.date, item.period, Math.max(1, item.quantity - 1))}
+                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
+                              disabled={item.quantity <= 1}
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="font-medium w-8 text-center">{item.quantity}</span>
+                            <button 
+                              onClick={() => updateQuantity(item.id, item.date, item.period, item.quantity + 1)}
+                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <span className="text-muted-foreground text-xs">{item.quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}</span>
                         </div>
                       </div>
                       <div className="mt-4 flex items-center gap-2">
@@ -149,6 +177,30 @@ const Cart = () => {
                 </h2>
                 
                 <div className="space-y-6 mb-10">
+                  {/* Customer Info */}
+                  <div className="space-y-4">
+                    <Label className="text-sm font-bold text-foreground">{language === 'pt' ? 'Seus Dados' : 'Your Details'}</Label>
+                    <Input 
+                      placeholder={language === 'pt' ? 'Nome completo' : 'Full name'} 
+                      value={customerInfo.name}
+                      onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                      className="h-11 rounded-xl"
+                    />
+                    <Input 
+                      placeholder={language === 'pt' ? 'WhatsApp (com DDD)' : 'WhatsApp (with area code)'} 
+                      value={customerInfo.whatsapp}
+                      onChange={(e) => setCustomerInfo({...customerInfo, whatsapp: e.target.value})}
+                      className="h-11 rounded-xl"
+                    />
+                    <Input 
+                      type="email"
+                      placeholder={language === 'pt' ? 'E-mail' : 'Email'} 
+                      value={customerInfo.email}
+                      onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                      className="h-11 rounded-xl"
+                    />
+                  </div>
+
                   <div className="flex justify-between font-sans text-muted-foreground">
                     <span className="font-medium">{t("subtotal")}</span>
                     <span className="font-bold">{formatPrice(total)}</span>
