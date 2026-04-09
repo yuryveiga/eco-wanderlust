@@ -378,22 +378,53 @@ const AdminBlog = () => {
 
                     {/* Editor Area */}
                     <div className="flex-1 flex flex-col gap-6 overflow-hidden min-h-0">
-                       <div className="space-y-2 shrink-0">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título</Label>
-                          <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
-                       </div>
-                        <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0 max-h-[500px]">
-                           <ReactQuill 
-                              ref={quillRef}
-                              theme="snow" 
-                              value={editing.content || ""} 
-                              onChange={(val) => setEditing({ ...editing, content: val })} 
-                              className="editor-container h-full"
-                              modules={modules}
-                              formats={formats}
-                              placeholder="Comece a contar sua história..."
-                           />
-                        </div>
+                       <Tabs defaultValue="pt" className="flex-1 flex flex-col overflow-hidden">
+                         <div className="flex items-center justify-between mb-2">
+                           <TabsList className="bg-muted/50 p-1 rounded-xl h-10">
+                              <TabsTrigger value="pt" className="text-xs font-bold rounded-lg px-4">Português</TabsTrigger>
+                              <TabsTrigger value="en" className="text-xs font-bold rounded-lg px-4">English</TabsTrigger>
+                              <TabsTrigger value="es" className="text-xs font-bold rounded-lg px-4">Español</TabsTrigger>
+                           </TabsList>
+                           
+                           <div className="p-1 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-primary px-3 uppercase tracking-wider">Mágica</span>
+                              <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" size="sm" className="h-8 font-bold bg-white text-[10px] rounded-lg border-primary/20 hover:bg-primary/10 transition-all">
+                                {isTranslating ? <Loader2 className="animate-spin w-3 h-3 mr-2" /> : <Sparkles className="w-3 h-3 mr-2 text-primary" />}
+                                Traduzir Conteúdo
+                              </Button>
+                           </div>
+                         </div>
+
+                         <TabsContent value="pt" className="flex-1 flex flex-col gap-6 overflow-hidden mt-0 data-[state=inactive]:hidden">
+                            <div className="space-y-2 shrink-0">
+                               <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título (PT)</Label>
+                               <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante em português..." />
+                            </div>
+                            <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                               <ReactQuill ref={quillRef} theme="snow" value={editing.content || ""} onChange={(val) => setEditing({ ...editing, content: val })} className="editor-container h-full" modules={modules} formats={formats} placeholder="Conte sua história em português..." />
+                            </div>
+                         </TabsContent>
+
+                         <TabsContent value="en" className="flex-1 flex flex-col gap-6 overflow-hidden mt-0 data-[state=inactive]:hidden">
+                            <div className="space-y-2 shrink-0">
+                               <Label className="text-[10px] font-black uppercase tracking-widest text-blue-600">Title (EN)</Label>
+                               <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Impactful title in English..." />
+                            </div>
+                            <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                               <ReactQuill theme="snow" value={editing.content_en || ""} onChange={(val) => setEditing({ ...editing, content_en: val })} className="editor-container h-full" modules={modules} formats={formats} placeholder="Tell your story in English..." />
+                            </div>
+                         </TabsContent>
+
+                         <TabsContent value="es" className="flex-1 flex flex-col gap-6 overflow-hidden mt-0 data-[state=inactive]:hidden">
+                            <div className="space-y-2 shrink-0">
+                               <Label className="text-[10px] font-black uppercase tracking-widest text-red-600">Título (ES)</Label>
+                               <Input value={editing.title_es ?? ""} onChange={(e) => setEditing({ ...editing, title_es: e.target.value })} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante en español..." />
+                            </div>
+                            <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
+                               <ReactQuill theme="snow" value={editing.content_es || ""} onChange={(val) => setEditing({ ...editing, content_es: val })} className="editor-container h-full" modules={modules} formats={formats} placeholder="Cuenta tu historia en español..." />
+                            </div>
+                         </TabsContent>
+                       </Tabs>
                     </div>
                  </div>
                </TabsContent>

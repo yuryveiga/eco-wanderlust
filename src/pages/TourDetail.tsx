@@ -37,8 +37,7 @@ export function TourDetail() {
   const tripAdvisorSocial = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
   );
-  console.log("TripAdvisor social:", tripAdvisorSocial);
-  console.log("All socialMedia:", socialMedia);
+  
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
   const getTranslated = (obj: any, field: string) => {
@@ -55,6 +54,15 @@ export function TourDetail() {
   const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
   const translatedFaq = getTranslated(tour, `faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json;
   const translatedHighlights = getTranslated(tour, `highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json;
+
+  const translateDuration = (duration: string) => {
+    if (language === 'pt' || !duration) return duration;
+    return duration
+      .replace(/horas/gi, t("horas"))
+      .replace(/hora/gi, t("hora"))
+      .replace(/minutos/gi, t("minutos"))
+      .replace(/minuto/gi, t("minuto"));
+  };
 
   const getYoutubeId = (url: string) => {
     if (!url) return null;
@@ -112,7 +120,7 @@ export function TourDetail() {
         
         if (response.ok) {
           const data = await response.json();
-          const dayIndex = daysAhead;
+          const dayIndex = Math.min(daysAhead, 15);
           
           if (data.daily && data.daily.temperature_2m_max[dayIndex] !== undefined) {
             const weatherCode = data.daily.weathercode[dayIndex];
@@ -157,7 +165,7 @@ export function TourDetail() {
   const handleBooking = () => {
     if (!tour) return;
     if (!selectedDate) {
-      alert(language === 'pt' ? "Por favor, selecione uma data." : "Please select a date.");
+      alert(language === 'pt' ? "Por favor, selecione uma data." : language === 'es' ? "¿Por favor, seleccione una fecha." : "Please select a date.");
       return;
     }
 
@@ -300,13 +308,22 @@ export function TourDetail() {
                 </div>
 
                 <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-sans mb-8 pb-6 border-b border-border">
-                  <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-primary/70" /><span className="font-medium">{tour.duration}</span></div>
-                  <div className="flex items-center gap-2"><Users className="w-5 h-5 text-primary/70" /><span className="font-medium">Até {tour.max_group_size} {language === 'pt' ? 'pessoas' : 'people'}</span></div>
-                  <div className="flex items-center gap-2"><Calendar className="w-5 h-5 text-primary/70" /><span className="font-medium">{language === 'pt' ? 'Todos os dias' : 'Every day'}</span></div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">{translateDuration(tour.duration)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">{t("ate")} {tour.max_group_size} {tour.max_group_size > 1 ? t("pessoas") : t("pessoa")}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-primary/70" />
+                    <span className="font-medium">{t("todos_os_dias")}</span>
+                  </div>
                   {translatedDifficulty && (
                     <div className="flex items-center gap-2">
                        <Gauge className="w-5 h-5 text-[#E76F51]" />
-                       <span className="font-bold text-[#E76F51]">{translatedDifficulty}</span>
+                       <span className="font-bold font-semibold uppercase text-[#E76F51]">{translatedDifficulty}</span>
                     </div>
                   )}
                 </div>
@@ -319,7 +336,7 @@ export function TourDetail() {
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                   <h2 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                     <Star className="text-primary w-6 h-6" />
-                    {language === 'pt' ? 'Destaques' : 'Highlights'}
+                    {language === 'pt' ? 'Destaques' : language === 'es' ? 'Destacados' : 'Highlights'}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {highlights.map((item, idx) => {
@@ -345,8 +362,8 @@ export function TourDetail() {
                       <div key={i} className="relative pl-10 pb-8 last:pb-0">
                         {translatedItinerary && i !== (translatedItinerary as any[]).length - 1 && <div className="absolute top-6 left-[11px] bottom-[-8px] w-0 border-l-[2px] border-dashed border-[#F4A261]/40 z-0"></div>}
                         <div className="absolute top-0 left-0 z-10 bg-background pt-1 pb-1"><MapPin className="w-6 h-6 text-[#E76F51] fill-[#E76F51]/10" /></div>
-                        <h3 className="font-bold text-[#2A9D8F] font-sans text-lg mb-2 pt-1">{step.time}</h3>
-                        <p className="text-muted-foreground font-sans text-sm leading-relaxed">{step.description}</p>
+                        <h3 className="font-bold text-[#2A9D8F] font-sans text-lg mb-2 pt-1">{translateDuration(step.time)}</h3>
+                        <p className="text-muted-foreground font-sans text-sm leading-relaxed">{translateDuration(step.description)}</p>
                       </div>
                     ))}
                   </div>
@@ -356,7 +373,7 @@ export function TourDetail() {
               <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                 <h3 className="font-serif text-2xl font-bold text-foreground mb-6">{t("o_que_inclui")}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {(translatedIncluded as any[])?.map((item, i) => { const Icon = getIcon(item.icon); return (<div key={i} className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors"><Icon className="w-6 h-6 text-primary" /></div><span className="text-foreground font-sans font-medium">{item.text}</span></div>)})}
+                  {(translatedIncluded as any[])?.map((item, i) => { const Icon = getIcon(item.icon); return (<div key={i} className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors"><Icon className="w-6 h-6 text-primary" /></div><span className="text-foreground font-sans font-medium">{translateDuration(item.text)}</span></div>)})}
                 </div>
               </div>
 
@@ -381,7 +398,7 @@ export function TourDetail() {
                 <div className="bg-card rounded-2xl border border-border/50 p-6 lg:p-8 shadow-sm">
                    <h3 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                      <Youtube className="w-6 h-6 text-red-600" />
-                     {language === 'pt' ? 'Vídeo da Experiência' : 'Experience Video'}
+                     {language === 'pt' ? 'Vídeo da Experiência' : language === 'es' ? 'Video de la Experiencia' : 'Experience Video'}
                    </h3>
                    <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border bg-black">
                       <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${youtubeId}`} title="Experience Video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
@@ -396,17 +413,17 @@ export function TourDetail() {
                   <div className="mb-6 pb-6 border-b text-center">
                     <span className="text-sm text-muted-foreground font-sans uppercase tracking-widest block mb-1">{t("a_partir_de")}</span>
                     <span className="text-5xl font-bold text-primary font-sans">{formatPrice(tour.price * quantity)}</span>
-                    <span className="text-muted-foreground font-sans text-sm block mt-2">{quantity} {quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}</span>
+                    <span className="text-muted-foreground font-sans text-sm block mt-2">{quantity} {quantity > 1 ? t("pessoas") : t("pessoa")}</span>
                   </div>
                   <div className="space-y-8 mb-8">
                      <div className="border-t pt-6">
-                       <h4 className="font-serif font-bold text-foreground mb-4 text-center">{language === 'pt' ? 'Quantas pessoas?' : 'How many people?'}</h4>
+                       <h4 className="font-serif font-bold text-foreground mb-4 text-center">{t("quantas_pessoas")}</h4>
                        <div className="flex items-center justify-between bg-muted/30 p-2 rounded-2xl border border-border/50 w-48 mx-auto">
                           <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center disabled:opacity-30" disabled={quantity <= 1}><Minus className="w-5 h-5" /></button>
                           <span className="font-sans font-black text-xl w-10 text-center">{quantity}</span>
                           <button onClick={() => setQuantity(Math.min(tour.max_group_size || 10, quantity + 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center disabled:opacity-30" disabled={quantity >= (tour.max_group_size || 10)}><Plus className="w-5 h-5" /></button>
                        </div>
-                        <p className="text-center text-xs text-muted-foreground font-sans mt-2">{language === 'pt' ? `${t("max_pessoas")} ${tour.max_group_size || 10} ${t("ate_pessoas")}` : `${t("max_pessoas")} ${tour.max_group_size || 10} ${t("ate_pessoas")}`}</p>
+                        <p className="text-center text-xs text-muted-foreground font-sans mt-2">{t("max_pessoas")} {tour.max_group_size || 10} {t("ate_pessoas")}</p>
                     </div>
                     {availablePeriods.length > 0 && (
                       <div className="border-t pt-6">
@@ -471,7 +488,7 @@ export function TourDetail() {
                               <p className="text-muted-foreground font-sans text-sm mb-6 line-clamp-2">{getTranslated(item, 'short_description')}</p>
                               <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/40">
                                  <span className="text-primary font-black font-sans">{formatPrice(item.price)}</span>
-                                 <span className="text-xs font-bold text-muted-foreground font-sans uppercase tracking-widest">{item.duration}</span>
+                                 <span className="text-xs font-bold text-muted-foreground font-sans uppercase tracking-widest">{translateDuration(item.duration)}</span>
                               </div>
                             </div>
                           </div>

@@ -21,7 +21,7 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const { items, currency = "brl" } = await req.json();
+    const { items, sale_ids, currency = "brl" } = await req.json();
 
     if (!items || items.length === 0) {
       return new Response(
@@ -49,6 +49,9 @@ serve(async (req) => {
       mode: "payment",
       success_url: `${origin}/?success=true`,
       cancel_url: `${origin}/carrinho?canceled=true`,
+      metadata: {
+        sale_ids: JSON.stringify(sale_ids || []),
+      },
     });
 
     return new Response(

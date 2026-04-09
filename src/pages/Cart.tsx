@@ -37,9 +37,11 @@ const Cart = () => {
     
     setIsProcessing(true);
     try {
-      // Save sale to database
+      const saleIds: string[] = [];
+      
+      // Save sale to database and collect IDs
       for (const item of items) {
-        await supabase.from("sales").insert({
+        const { data, error } = await supabase.from("sales").insert({
           tour_id: item.id,
           tour_title: item.title,
           tour_slug: item.slug,
@@ -52,7 +54,10 @@ const Cart = () => {
           selected_period: item.period,
           is_private: item.isPrivate,
           is_paid: false,
-        });
+        }).select("id").single();
+
+        if (error) throw error;
+        if (data?.id) saleIds.push(data.id);
       }
 
       const response = await fetch(
@@ -71,6 +76,7 @@ const Cart = () => {
               date: item.date,
               period: item.period,
             })),
+            sale_ids: saleIds,
             customer: customerInfo,
             currency: "brl",
           }),

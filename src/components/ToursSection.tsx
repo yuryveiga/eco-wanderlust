@@ -36,7 +36,12 @@ function TourCard({ tour }: { tour: TourCardProps }) {
   const title = getTranslated('title');
   const short_description = getTranslated('short_description');
   const category = getTranslated('category');
-  const duration = language === 'pt' ? tour.duration : tour.duration?.replace(/horas/gi, t("horas")).replace(/hora/gi, t("hora"));
+  const duration = language === 'pt' ? tour.duration : tour.duration
+    ?.replace(/horas/gi, t("horas"))
+    .replace(/hora/gi, t("hora"))
+    .replace(/minutos/gi, t("minutos"))
+    .replace(/minuto/gi, t("minuto"));
+
   const href = tour.external_url || `/passeio/${tour.slug || tour.id}`;
   const isExternal = !!tour.external_url;
 
@@ -57,7 +62,7 @@ function TourCard({ tour }: { tour: TourCardProps }) {
         {!isExternal && (
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 font-sans">
             <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{duration}</span></div>
-            <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>Max {tour.max_group_size}</span></div>
+            <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>{t("ate")} {tour.max_group_size}</span></div>
           </div>
         )}
         <div className="flex items-center justify-between">
@@ -125,8 +130,8 @@ export function ToursSection() {
   // Button labels (different for each category)
   const cityToursTitleKey = language === 'pt' ? 'city_tours_title' : `city_tours_title_${language}`;
   const hikingToursTitleKey = language === 'pt' ? 'hiking_tours_title' : `hiking_tours_title_${language}`;
-  const cityButtonLabel = siteSettings[cityToursTitleKey] || siteSettings['city_tours_title'] || (language === 'pt' ? 'City Tours' : language === 'es' ? 'Tours por la Ciudad' : 'City Tours');
-  const hikingButtonLabel = siteSettings[hikingToursTitleKey] || siteSettings['hiking_tours_title'] || (language === 'pt' ? 'Trilhas' : language === 'es' ? 'Senderismo' : 'Hiking');
+  const cityButtonLabel = siteSettings[cityToursTitleKey] || siteSettings['city_tours_title'] || t("city_tours");
+  const hikingButtonLabel = siteSettings[hikingToursTitleKey] || siteSettings['hiking_tours_title'] || t("trilhas");
 
   return (
     <section id="tours" className="py-20 lg:py-28 bg-muted/30">
