@@ -79,7 +79,7 @@ const Blog = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-primary/5">
-                        <span className="font-serif text-3xl font-bold opacity-20">PasseioRio</span>
+                        <span className="font-serif text-3xl font-bold opacity-20">TocorimeRio</span>
                       </div>
                     )}
                   </div>
