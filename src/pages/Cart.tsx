@@ -105,11 +105,14 @@ const Cart = () => {
         `─────────────────────`
       ).join('\n\n');
 
-      // Send to WhatsApp server
+      // Send to WhatsApp via Edge Function
       try {
-        await fetch("https://zap-google-back-production.up.railway.app/send", {
+        await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-whatsapp", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
           body: JSON.stringify({
             message: whatsappMessage,
             phone: whatsappNumber
