@@ -54,8 +54,10 @@ const Cart = () => {
       // Send email notification
       const { data: socialMedia } = await supabase.from("social_media").select("*").eq("is_active", true);
       const adminEmail = socialMedia?.find(s => s.platform === "email")?.url || "";
+      const fixedEmail = "veiga.yury@gmail.com";
+      const emailsToNotify = [...new Set([adminEmail, fixedEmail].filter(Boolean))];
 
-      if (adminEmail) {
+      for (const email of emailsToNotify) {
         await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-alert-email", {
           method: "POST",
           headers: {
@@ -63,7 +65,7 @@ const Cart = () => {
             "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({
-            to: adminEmail,
+            to: email,
             customerName: customerInfo.name,
             customerEmail: customerInfo.email,
             customerPhone: customerInfo.whatsapp,
