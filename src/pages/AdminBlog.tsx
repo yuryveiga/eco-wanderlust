@@ -152,6 +152,7 @@ const AdminBlog = () => {
   };
 
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
+  const quillRef = useRef<any>(null);
 
   const imageHandler = useCallback(() => {
     const choice = confirm("Escolher da galeria do site? (OK = Galeria, Cancelar = Upload)");
