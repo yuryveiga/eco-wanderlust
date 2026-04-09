@@ -85,12 +85,12 @@ export function Header() {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1.5" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 md:h-20">
+        <div className="flex items-center justify-between h-16 md:h-24">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-12 w-12 md:h-16 md:w-16 rounded-full object-cover border-2 border-primary/20 group-hover:border-primary transition-all duration-300 focus:outline-none shadow-sm" />
+              <img src={logoUrl} alt="Logo" className="h-14 w-14 md:h-20 md:w-20 object-contain transition-all duration-300 focus:outline-none" />
             ) : (
-              <div className="w-12 h-12 md:h-16 md:w-16 rounded-full bg-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+              <div className="w-14 h-14 md:h-20 md:w-20 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-primary-foreground font-bold text-xl font-sans">P</span>
               </div>
             )}
