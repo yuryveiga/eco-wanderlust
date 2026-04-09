@@ -30,6 +30,7 @@ const AdminBlog = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     loadPosts();
