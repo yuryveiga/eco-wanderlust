@@ -7,9 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
-import { WhatsAppButton } from "./components/WhatsAppButton";
-import { InstagramFloat } from "./components/InstagramFloat";
-import { TripAdvisorFloat } from "./components/TripAdvisorFloat";
+import { FloatingButtons } from "./components/FloatingButtons";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -43,9 +41,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <ThemeApplier />
-              <WhatsAppButton />
-              <TripAdvisorFloat />
-              <InstagramFloat />
+              <FloatingButtons />
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
