@@ -467,17 +467,16 @@ const AdminTours = () => {
                           </div>
                        </div>
                        
-                        <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-6">
-                           <Label className="font-black text-xs uppercase tracking-widest text-blue-600 block mb-4">Tradução Automática</Label>
-                           <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" className="w-full h-12 justify-center px-6 rounded-2xl font-bold">
-                              <Sparkles className="w-4 h-4 mr-2" />
-                              <span>Traduzir para EN e ES</span>
-                              {isTranslating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : null}
-                           </Button>
-                          </div>
-                       </div>
-                    </div>
-                  </TabsContent>
+                         <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-6">
+                            <Label className="font-black text-xs uppercase tracking-widest text-blue-600 block mb-4">Tradução Automática</Label>
+                            <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" className="w-full h-12 justify-center px-6 rounded-2xl font-bold">
+                               <Sparkles className="w-4 h-4 mr-2" />
+                               <span>Traduzir para EN e ES</span>
+                               {isTranslating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : null}
+                            </Button>
+                         </div>
+                      </div>
+                   </TabsContent>
 
                   {/* TAB INFO: ITINERARY, INCLUDED, FAQ, MAP */}
                   <TabsContent value="info" className="m-0 space-y-10 pb-10">
