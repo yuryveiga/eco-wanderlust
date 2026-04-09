@@ -1,8 +1,9 @@
 {
-  "name": "TocorimeRio",
-  "short_name": "TocorimeRio",
-  "description": "Passeios Privativos no Rio de Janeiro - Experiências Inesquecíveis",
-  "start_url": "/",
+  "name": "TocorimeRio Admin",
+  "short_name": "Tocorime Admin",
+  "description": "Admin TocorimeRio - Gestão de Vendas",
+  "start_url": "/admin/sales?utm_source=pwa",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2A9D8F",
@@ -22,6 +23,6 @@
     }
   ],
   "screenshots": [],
-  "categories": ["travel", "tourism"],
+  "categories": ["business"],
   "lang": "pt-BR"
 }
