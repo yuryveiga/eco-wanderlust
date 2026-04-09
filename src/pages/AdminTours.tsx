@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, fetchLovable as fetchSiteImages, LovableSiteImage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,6 +19,7 @@ const AdminTours = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
+  const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -224,6 +225,10 @@ const AdminTours = () => {
                       };
                       setEditing(tourWithCategory); 
                       setIsNew(false); 
+                      // Load gallery images
+                      fetchSiteImages<LovableSiteImage>("site_images").then(imgs => {
+                        setGalleryImages(imgs.filter(i => i.key?.startsWith('gallery')));
+                      });
                     }}>
                       <Pencil className="w-4 h-4" />
                     </Button>
@@ -438,6 +443,39 @@ const AdminTours = () => {
                         <Label htmlFor="tour-files-upload" className="absolute inset-0 cursor-pointer opacity-0" />
                       </div>
                     </div>
+                    
+                    {/* Imagens da Galeria do Site */}
+                    {galleryImages.length > 0 && (
+                      <div className="border-t pt-6">
+                        <h4 className="font-black text-lg mb-4">Escolher da Galeria do Site</h4>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                          {galleryImages.map((img) => (
+                            <button
+                              key={img.id}
+                              onClick={() => {
+                                if (!editing) return;
+                                const currentImages = editing.images_json || [];
+                                if (!currentImages.includes(img.image_url)) {
+                                  setEditing({
+                                    ...editing,
+                                    images_json: [...currentImages, img.image_url],
+                                    image_url: editing.image_url || img.image_url,
+                                  });
+                                  toast({ title: "Imagem adicionada!" });
+                                }
+                              }}
+                              className="relative aspect-square rounded-xl overflow-hidden border-2 hover:border-primary transition-all"
+                            >
+                              <img src={img.image_url} alt={img.label} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-primary/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <Plus className="w-6 h-6 text-white" />
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
                       {editing.images_json?.map((url, index) => (
                         <div key={index} className={`relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary" : "border-transparent"}`}>
