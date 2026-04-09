@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableBlogPost } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loader2 } from "lucide-react";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableBlogPost, LovableSiteImage } from "@/integrations/lovable/client";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loader2, Star, FolderOpen } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText, translateHtml } from "@/utils/translate";
@@ -27,6 +27,7 @@ const AdminBlog = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const { toast } = useToast();
   
   // Ref to avoid constant re-renders causing editor to lose focus
@@ -41,6 +42,17 @@ const AdminBlog = () => {
   useEffect(() => {
     loadPosts();
   }, []);
+
+  const loadGalleryImages = async () => {
+    const imgs = await fetchLovable<LovableSiteImage>("site_images");
+    setGalleryImages(imgs.filter(i => i.key?.startsWith('gallery')));
+  };
+
+  useEffect(() => {
+    if (editing) {
+      loadGalleryImages();
+    }
+  }, [editing]);
 
   const handleSave = async () => {
     if (!editing?.title || !editing?.slug) {
@@ -126,32 +138,48 @@ const AdminBlog = () => {
     }
   };
 
+  const [showGalleryPicker, setShowGalleryPicker] = useState(false);
+
   const imageHandler = useCallback(() => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
+    const choice = confirm("Escolher da galeria do site? (OK = Galeria, Cancelar = Upload)");
+    if (choice) {
+      setShowGalleryPicker(true);
+    } else {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.click();
 
-    input.onchange = async () => {
-      const file = input.files ? input.files[0] : null;
-      if (!file) return;
+      input.onchange = async () => {
+        const file = input.files ? input.files[0] : null;
+        if (!file) return;
 
-      toast({ title: "Enviando imagem..." });
-      try {
-        const url = await uploadLovableFile(file);
-        if (url) {
-           // Insert image into current editor focus
-           const quill = quillRef.current?.getEditor();
-           if (quill) {
+        toast({ title: "Enviando imagem..." });
+        try {
+          const url = await uploadLovableFile(file);
+          if (url) {
+            const quill = quillRef.current?.getEditor();
+            if (quill) {
               const range = quill.getSelection(true);
               quill.insertEmbed(range.index, 'image', url);
-           }
+            }
+          }
+        } catch (err) {
+          toast({ title: "Erro", description: "Falha ao enviar." });
         }
-      } catch (err) {
-        toast({ title: "Erro", description: "Falha ao enviar." });
-      }
-    };
+      };
+    }
   }, [toast]);
+
+  const insertImageFromGallery = (url: string) => {
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'image', url);
+    }
+    setShowGalleryPicker(false);
+    toast({ title: "Imagem inserida!" });
+  };
 
   const modules = useMemo(() => ({
     toolbar: {
@@ -287,40 +315,42 @@ const AdminBlog = () => {
               <Type className="w-7 h-7 text-primary" />
               {isNew ? "Nova Publicação" : "Ajustar Conteúdo"}
             </DialogTitle>
+            {editing && (
+              <Tabs defaultValue="content" className="w-full mt-2">
+                <TabsList className="h-12 bg-transparent border-b w-full justify-start gap-4">
+                  <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-2 font-bold">Conteúdo</TabsTrigger>
+                  <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-2 font-bold">Galeria</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
           </DialogHeader>
           
            {editing && (
-             <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="px-6 py-4 flex items-center justify-between bg-muted/5 shrink-0 border-b">
-                    <span className="text-sm font-bold text-muted-foreground">Editor de Blog</span>
-                    
-                    <div className="flex items-center gap-4">
-                       <div className="flex items-center gap-2">
-                          <Switch checked={editing.is_published ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
-                          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Publicado</span>
-                       </div>
-                       <div className="h-6 w-px bg-border mx-2" />
-                       <Button variant="ghost" onClick={() => setEditing(null)} className="font-bold">Cancelar</Button>
-                       <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 text-white font-black px-10 rounded-xl h-12 shadow-xl shadow-primary/20">Salvar Mudanças</Button>
-                    </div>
-                 </div>
-
+             <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden">
+               <TabsContent value="content" className="m-0 flex-1 overflow-hidden">
                  <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
                     {/* Left Sidebar for Metadata */}
                     <div className="w-80 flex flex-col gap-6 shrink-0 overflow-y-auto pr-4 scrollbar-thin">
                        <div className="space-y-3">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Imagem de Destaque</Label>
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Imagem de Capa</Label>
                           <div className="aspect-video rounded-2xl bg-muted border-2 border-dashed border-border/50 overflow-hidden relative group">
                              {editing.image_url ? (
                                 <img src={editing.image_url} alt="Destaque" className="w-full h-full object-cover" />
                              ) : (
                                 <div className="flex flex-col items-center justify-center h-full gap-2 p-6 text-center text-muted-foreground">
                                    <Upload className="w-6 h-6 opacity-30" />
-                                   <span className="text-[9px] font-bold">Faça upload da imagem de capa</span>
+                                   <span className="text-[9px] font-bold">Upload ou escolha da galeria</span>
                                 </div>
                              )}
+                             <div className="absolute inset-0 flex gap-2 justify-center items-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button size="sm" variant="secondary" className="h-8 bg-white">
+                                  <Upload className="w-3 h-3 mr-1" />Upload
+                                </Button>
+                                <Button size="sm" variant="secondary" className="h-8 bg-white" onClick={() => setShowGalleryPicker(true)}>
+                                  <FolderOpen className="w-3 h-3 mr-1" />Galeria
+                                </Button>
+                             </div>
                              <Input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="blog-capa-upload" />
-                             <Label htmlFor="blog-capa-upload" className="absolute inset-0 cursor-pointer bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity">Trocar Imagem</Label>
                           </div>
                        </div>
 
@@ -359,10 +389,65 @@ const AdminBlog = () => {
                           </Suspense>
                        </div>
                     </div>
-                  </div>
-             </div>
-           )}
+                 </div>
+               </TabsContent>
+
+               <TabsContent value="gallery" className="m-0 flex-1 overflow-y-auto p-8">
+                 <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-bold text-lg">Selecionar Imagem de Capa</h3>
+                        <p className="text-sm text-muted-foreground">Escolha uma imagem da galeria do site</p>
+                      </div>
+                    </div>
+                    
+                    {galleryImages.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">Nenhuma imagem na galeria</div>
+                    ) : (
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                        {galleryImages.map((img) => (
+                          <button
+                            key={img.id}
+                            onClick={() => setEditing({ ...editing, image_url: img.image_url })}
+                            className={`relative aspect-square rounded-xl overflow-hidden border-4 transition-all ${editing.image_url === img.image_url ? "border-primary ring-4 ring-primary/20" : "border-transparent hover:border-primary/50"}`}
+                          >
+                            <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
+                            {editing.image_url === img.image_url && (
+                              <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1">
+                                <Star className="w-4 h-4 fill-white" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                 </div>
+               </TabsContent>
+             </Tabs>
+            )}
         </DialogContent>
+
+        {/* Gallery Picker Modal */}
+        <Dialog open={showGalleryPicker} onOpenChange={setShowGalleryPicker}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+            <DialogHeader>
+              <DialogTitle>Escolher da Galeria do Site</DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 overflow-y-auto max-h-[60vh] p-4">
+              {galleryImages.map((img) => (
+                <button
+                  key={img.id}
+                  onClick={() => {
+                    insertImageFromGallery(img.image_url);
+                  }}
+                  className="relative aspect-square rounded-lg overflow-hidden border-2 hover:border-primary transition-all"
+                >
+                  <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       </Dialog>
     </div>
   );

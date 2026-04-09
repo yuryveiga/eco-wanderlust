@@ -116,7 +116,7 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <CreditCard className="w-4 h-4 text-primary/70" />
-                          <span className="font-medium">{item.isPrivate ? t("grupo_privado") : t("open_grupo")}</span>
+                          <span className="font-medium">{t("grupo_privado")}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-primary/70" />

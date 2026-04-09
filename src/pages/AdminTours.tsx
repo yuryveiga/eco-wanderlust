@@ -557,11 +557,11 @@ const AdminTours = () => {
                         </div>
                         <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
                             <Label className="font-bold">Permitir Privado</Label>
-                            <Switch checked={editing.allows_private ?? false} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
+                            <Switch checked={editing.allows_private ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
                         </div>
-                        <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
-                            <Label className="font-bold">Grupo Aberto</Label>
-                            <Switch checked={editing.allows_open ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_open: v })} />
+                        <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between opacity-50">
+                            <Label className="font-bold">Grupo Aberto (inativo)</Label>
+                            <Switch checked={false} disabled />
                         </div>
                         <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
                             <Label className="font-bold">Destaque</Label>
