@@ -83,24 +83,14 @@ export function Header() {
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background shadow-lg py-0 border-b border-primary/10" : "bg-transparent py-2"}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1.5" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 md:h-20">
-          <Link 
-            to="/" 
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} 
-            className="relative z-10 flex items-center gap-2 group"
-          >
+        <div className="flex items-center justify-between h-16 md:h-24">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
-              <img 
-                src={logoUrl} 
-                alt="Logo" 
-                className={`transition-all duration-500 object-contain drop-shadow-xl ${
-                  isScrolled ? "h-14 w-14 md:h-20 md:w-20" : "h-20 w-20 md:h-32 md:w-32"
-                }`}
-              />
+              <img src={logoUrl} alt="Logo" className="h-14 w-14 md:h-20 md:w-20 object-contain transition-all duration-300 focus:outline-none" />
             ) : (
-              <div className="w-14 h-14 md:h-20 md:w-20 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg">
+              <div className="w-14 h-14 md:h-20 md:w-20 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-primary-foreground font-bold text-xl font-sans">P</span>
               </div>
             )}
