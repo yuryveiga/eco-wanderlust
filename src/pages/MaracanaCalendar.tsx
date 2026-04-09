@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useState, useEffect } from "react";
 
-const MaracanãCalendar = () => {
+const MaracanaCalendar = () => {
   const [calendarUrl] = useState("https://maracanamatchday.com/calendar");
 
   useEffect(() => {
@@ -128,4 +128,4 @@ const MaracanãCalendar = () => {
   );
 };
 
-export default MaracanãCalendar;
+export default MaracanaCalendar;
