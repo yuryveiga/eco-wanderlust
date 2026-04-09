@@ -28,7 +28,7 @@ import { TourDetail } from "./pages/TourDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Cart from "./pages/Cart";
-import { MaracanaCalendar } from "./pages/MaracanaCalendar";
+import MaracanaCalendar from "./pages/MaracanaCalendar";
 import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
