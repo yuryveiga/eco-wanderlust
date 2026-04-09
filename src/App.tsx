@@ -28,6 +28,7 @@ import { TourDetail } from "./pages/TourDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Cart from "./pages/Cart";
+import { MaracanãCalendar } from "./pages/MaracanãCalendar";
 import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
@@ -45,26 +46,26 @@ const App = () => (
               <FloatingButtons />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/carrinho" element={<Cart />} />
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route path="/passeio/:id" element={<TourDetail />} />
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="blog" element={<AdminBlog />} />
-                    <Route path="hero" element={<AdminHero />} />
-                    <Route path="theme" element={<AdminTheme />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="tours" element={<AdminTours />} />
-                    <Route path="images" element={<AdminImages />} />
-                    <Route path="social" element={<AdminSocial />} />
-                    <Route path="gallery" element={<AdminGallery />} />
-                    <Route path="reviews" element={<AdminReviews />} />
-                    <Route path="sales" element={<AdminSales />} />
-                  </Route>
-                  <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/carrinho" element={<Cart />} />
+            <Route path="/maracanã-calendário" element={<MaracanãCalendar />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="blog" element={<AdminBlog />} />
+                <Route path="hero" element={<AdminHero />} />
+                <Route path="theme" element={<AdminTheme />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="tours" element={<AdminTours />} />
+                <Route path="images" element={<AdminImages />} />
+                <Route path="social" element={<AdminSocial />} />
+                <Route path="gallery" element={<AdminGallery />} />
+                <Route path="reviews" element={<AdminReviews />} />
+                <Route path="sales" element={<AdminSales />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
