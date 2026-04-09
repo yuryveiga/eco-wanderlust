@@ -32,6 +32,7 @@ const AdminTours = () => {
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
+  const [activeInfoLang, setActiveInfoLang] = useState<'pt' | 'en' | 'es'>('pt');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -501,91 +502,123 @@ const AdminTours = () => {
                             </Button>
                          </div>
                       </div>
-                   </TabsContent>
-
-                  {/* TAB INFO: ITINERARY, INCLUDED, FAQ, MAP */}
+                      {/* TAB INFO: ITINERARY, INCLUDED, FAQ, MAP */}
                   <TabsContent value="info" className="m-0 space-y-10 pb-10">
                      <div className="grid grid-cols-1 gap-6 bg-muted/20 p-6 rounded-3xl border">
                         <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
                            <MapPin className="w-4 h-4" /> Ponto de Encontro (Mapa)
                         </Label>
-                        <div className="space-y-2">
-                           <Label className="text-[10px] uppercase font-bold text-muted-foreground">Endereço Completo / Local</Label>
-                           <Input 
-                              value={editing.meeting_point_address ?? ""} 
-                              onChange={(e) => setEditing({ ...editing, meeting_point_address: e.target.value })} 
-                              placeholder="Rua Visconde de Pirajá, 123, Ipanema" 
-                              className="h-12"
-                           />
-                           <p className="text-[10px] text-muted-foreground italic">Este endereço será usado para gerar o mapa do Google na página do passeio.</p>
+                        <div className="space-y-4">
+                           <div className="flex gap-2">
+                              <Button size="sm" variant={activeInfoLang === 'pt' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('pt')} className="text-[10px] h-7 px-3">PT</Button>
+                              <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-7 px-3">EN</Button>
+                              <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-7 px-3">ES</Button>
+                           </div>
+                           <div className="space-y-2">
+                              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Endereço Completo / Local ({activeInfoLang.toUpperCase()})</Label>
+                              <Input 
+                                 value={(activeInfoLang === 'pt' ? editing.meeting_point_address : editing[`meeting_point_address_${activeInfoLang}` as keyof LovableTour]) ?? ""} 
+                                 onChange={(e) => setEditing({ ...editing, [activeInfoLang === 'pt' ? 'meeting_point_address' : `meeting_point_address_${activeInfoLang}`]: e.target.value })} 
+                                 placeholder="Rua Visconde de Pirajá, 123, Ipanema" 
+                                 className="h-12"
+                              />
+                           </div>
                         </div>
                      </div>
 
-                     <div className="space-y-4">
+                     <div className="space-y-6">
                         <div className="flex items-center justify-between border-b pb-2">
                            <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-                              <List className="w-4 h-4" /> Itinerário
+                              <List className="w-4 h-4" /> Itinerário ({activeInfoLang.toUpperCase()})
                            </Label>
-                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('itinerary_json', { time: '08:00', description: '' })} className="font-bold text-xs h-8">+ Adicionar Etapa</Button>
+                           <div className="flex items-center gap-4">
+                              <div className="flex gap-1">
+                                 <Button size="sm" variant={activeInfoLang === 'pt' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('pt')} className="text-[10px] h-6 px-2">PT</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-6 px-2">EN</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-6 px-2">ES</Button>
+                              </div>
+                              <Button size="sm" variant="ghost" onClick={() => addJsonItem(activeInfoLang === 'pt' ? 'itinerary_json' : `itinerary_json_${activeInfoLang}` as keyof LovableTour, { time: '08:00', description: '' })} className="font-bold text-xs h-8">+ Adicionar Etapa</Button>
+                           </div>
                         </div>
                         <div className="grid grid-cols-1 gap-3">
-                           {((editing.itinerary_json as JsonFieldItem[]) || [])?.map((step, i) => (
+                           {((editing[activeInfoLang === 'pt' ? 'itinerary_json' : `itinerary_json_${activeInfoLang}` as keyof LovableTour] as JsonFieldItem[]) || [])?.map((step, i) => (
                              <div key={i} className="flex gap-4 items-start bg-muted/20 p-4 rounded-2xl border">
-                                <div className="w-24 shrink-0"><Input value={step.time} onChange={(e) => updateJsonField('itinerary_json', i, 'time', e.target.value)} className="h-10" /></div>
-                                <div className="flex-1"><Input value={step.description} onChange={(e) => updateJsonField('itinerary_json', i, 'description', e.target.value)} className="h-10" /></div>
-                                <Button size="icon" variant="ghost" onClick={() => removeJsonItem('itinerary_json', i)}><Trash2 className="w-4 h-4" /></Button>
+                                <div className="w-24 shrink-0"><Input value={step.time} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'itinerary_json' : `itinerary_json_${activeInfoLang}` as keyof LovableTour, i, 'time', e.target.value)} className="h-10" /></div>
+                                <div className="flex-1"><Input value={step.description} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'itinerary_json' : `itinerary_json_${activeInfoLang}` as keyof LovableTour, i, 'description', e.target.value)} className="h-10" /></div>
+                                <Button size="icon" variant="ghost" onClick={() => removeJsonItem(activeInfoLang === 'pt' ? 'itinerary_json' : `itinerary_json_${activeInfoLang}` as keyof LovableTour, i)}><Trash2 className="w-4 h-4" /></Button>
                              </div>
                            ))}
                         </div>
                      </div>
 
-                     <div className="space-y-4">
+                     <div className="space-y-6">
                         <div className="flex items-center justify-between border-b pb-2">
                            <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-                              <Info className="w-4 h-4" /> O que está incluído?
+                              <Info className="w-4 h-4" /> O que está incluído? ({activeInfoLang.toUpperCase()})
                            </Label>
-                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('included_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar Item</Button>
+                           <div className="flex items-center gap-4">
+                              <div className="flex gap-1">
+                                 <Button size="sm" variant={activeInfoLang === 'pt' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('pt')} className="text-[10px] h-6 px-2">PT</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-6 px-2">EN</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-6 px-2">ES</Button>
+                              </div>
+                              <Button size="sm" variant="ghost" onClick={() => addJsonItem(activeInfoLang === 'pt' ? 'included_json' : `included_json_${activeInfoLang}` as keyof LovableTour, { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar Item</Button>
+                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           {((editing.included_json as JsonFieldItem[]) || [])?.map((item, i) => (
+                           {((editing[activeInfoLang === 'pt' ? 'included_json' : `included_json_${activeInfoLang}` as keyof LovableTour] as JsonFieldItem[]) || [])?.map((item, i) => (
                              <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
-                                <Input value={item.text} onChange={(e) => updateJsonField('included_json', i, 'text', e.target.value)} className="h-10" />
-                                <Button size="icon" variant="ghost" onClick={() => removeJsonItem('included_json', i)}><Trash className="w-4 h-4" /></Button>
+                                <Input value={item.text} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'included_json' : `included_json_${activeInfoLang}` as keyof LovableTour, i, 'text', e.target.value)} className="h-10" />
+                                <Button size="icon" variant="ghost" onClick={() => removeJsonItem(activeInfoLang === 'pt' ? 'included_json' : `included_json_${activeInfoLang}` as keyof LovableTour, i)}><Trash className="w-4 h-4" /></Button>
                              </div>
                            ))}
                          </div>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                          <div className="flex items-center justify-between border-b pb-2">
                             <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-                               <Star className="w-4 h-4" /> Highlights (Destaques)
+                               <Star className="w-4 h-4" /> Highlights (Destaques) ({activeInfoLang.toUpperCase()})
                             </Label>
-                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('highlights_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar</Button>
+                            <div className="flex items-center gap-4">
+                              <div className="flex gap-1">
+                                 <Button size="sm" variant={activeInfoLang === 'pt' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('pt')} className="text-[10px] h-6 px-2">PT</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-6 px-2">EN</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-6 px-2">ES</Button>
+                              </div>
+                              <Button size="sm" variant="ghost" onClick={() => addJsonItem(activeInfoLang === 'pt' ? 'highlights_json' : `highlights_json_${activeInfoLang}` as keyof LovableTour, { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar</Button>
+                            </div>
                          </div>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {((editing.highlights_json as JsonFieldItem[]) || [])?.map((item, i) => (
-                              <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
-                                 <Input value={item.text} onChange={(e) => updateJsonField('highlights_json', i, 'text', e.target.value)} placeholder="Destaque..." className="h-10" />
-                                 <Button size="icon" variant="ghost" onClick={() => removeJsonItem('highlights_json', i)}><Trash className="w-4 h-4" /></Button>
-                              </div>
+                            {((editing[activeInfoLang === 'pt' ? 'highlights_json' : `highlights_json_${activeInfoLang}` as keyof LovableTour] as JsonFieldItem[]) || [])?.map((item, i) => (
+                               <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
+                                  <Input value={item.text} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'highlights_json' : `highlights_json_${activeInfoLang}` as keyof LovableTour, i, 'text', e.target.value)} placeholder="Destaque..." className="h-10" />
+                                  <Button size="icon" variant="ghost" onClick={() => removeJsonItem(activeInfoLang === 'pt' ? 'highlights_json' : `highlights_json_${activeInfoLang}` as keyof LovableTour, i)}><Trash className="w-4 h-4" /></Button>
+                               </div>
                             ))}
                          </div>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                          <div className="flex items-center justify-between border-b pb-2">
                             <Label className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-                               <HelpCircle className="w-4 h-4" /> Para seu conhecimento (FAQ)
+                               <HelpCircle className="w-4 h-4" /> Para seu conhecimento (FAQ) ({activeInfoLang.toUpperCase()})
                            </Label>
-                           <Button size="sm" variant="ghost" onClick={() => addJsonItem('faq_json', { q: '', a: '' })} className="font-bold text-xs h-8">+ Nova Pergunta</Button>
+                           <div className="flex items-center gap-4">
+                              <div className="flex gap-1">
+                                 <Button size="sm" variant={activeInfoLang === 'pt' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('pt')} className="text-[10px] h-6 px-2">PT</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-6 px-2">EN</Button>
+                                 <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-6 px-2">ES</Button>
+                              </div>
+                              <Button size="sm" variant="ghost" onClick={() => addJsonItem(activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour, { q: '', a: '' })} className="font-bold text-xs h-8">+ Nova Pergunta</Button>
+                           </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
-                           {((editing.faq_json as JsonFieldItem[]) || [])?.map((item, i) => (
+                           {((editing[activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour] as JsonFieldItem[]) || [])?.map((item, i) => (
                              <div key={i} className="bg-muted/10 p-5 rounded-3xl border space-y-4">
-                                <Input value={item.q} onChange={(e) => updateJsonField('faq_json', i, 'q', e.target.value)} placeholder="Pergunta..." className="font-bold border-none bg-transparent" />
-                                <textarea className="w-full text-sm text-muted-foreground bg-transparent border-none p-0 min-h-[60px]" value={item.a} onChange={(e) => updateJsonField('faq_json', i, 'a', e.target.value)} placeholder="Resposta..." />
-                                <div className="flex justify-end"><Button variant="ghost" size="sm" className="text-red-500" onClick={() => removeJsonItem('faq_json', i)}>Excluir</Button></div>
+                                <Input value={item.q} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour, i, 'q', e.target.value)} placeholder="Pergunta..." className="font-bold border-none bg-transparent" />
+                                <textarea className="w-full text-sm text-muted-foreground bg-transparent border-none p-0 min-h-[60px]" value={item.a} onChange={(e) => updateJsonField(activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour, i, 'a', e.target.value)} placeholder="Resposta..." />
+                                <div className="flex justify-end"><Button variant="ghost" size="sm" className="text-red-500" onClick={() => removeJsonItem(activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour, i)}>Excluir</Button></div>
                              </div>
                            ))}
                         </div>
