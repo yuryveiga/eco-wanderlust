@@ -321,6 +321,7 @@ const AdminHero = () => {
             }
             setIsTranslating(true);
             try {
+              console.log("Starting translation for fields:", allFields);
               const translations = await Promise.all([
                 heroTitle ? translateText(heroTitle, "en") : null, heroTitle ? translateText(heroTitle, "es") : null,
                 heroSubtitle ? translateText(heroSubtitle, "en") : null, heroSubtitle ? translateText(heroSubtitle, "es") : null,
@@ -349,9 +350,9 @@ const AdminHero = () => {
               
               setAllTranslated(true);
               toast({ title: "Tradução concluída! Salve as alterações." });
-            } catch (e) {
+            } catch (e: any) {
               console.error("Translation error:", e);
-              toast({ title: "Erro ao traduzir", variant: "destructive" });
+              toast({ title: "Erro ao traduzir: " + (e?.message || e?.toString() || "Verifique a API key"), variant: "destructive" });
             } finally {
               setIsTranslating(false);
             }
