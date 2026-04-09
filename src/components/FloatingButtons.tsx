@@ -26,7 +26,7 @@ export function FloatingButtons() {
   };
 
   return (
-    <div className="fixed right-6 z-50 flex flex-col gap-3">
+    <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3">
       {tripAdvisor && (
         <a
           href={tripAdvisor.url}
