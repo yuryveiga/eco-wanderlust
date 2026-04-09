@@ -62,26 +62,30 @@ const Cart = () => {
       const emailsToNotify = [...new Set([adminEmail, fixedEmail].filter(Boolean))];
 
       for (const email of emailsToNotify) {
-        await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-alert-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            to: email,
-            customerName: customerInfo.name,
-            customerEmail: customerInfo.email,
-            customerPhone: customerInfo.whatsapp,
-            items: items.map(item => ({
-              tour: item.title,
-              quantity: item.quantity,
-              price: item.price * item.quantity,
-              date: item.date,
-            })),
-            total: total,
-          }),
-        });
+        try {
+          await fetch("https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/send-alert-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({
+              to: email,
+              customerName: customerInfo.name,
+              customerEmail: customerInfo.email,
+              customerPhone: customerInfo.whatsapp,
+              items: items.map(item => ({
+                tour: item.title,
+                quantity: item.quantity,
+                price: item.price * item.quantity,
+                date: item.date,
+              })),
+              total: total,
+            }),
+          });
+        } catch (e) {
+          console.error("Email error:", e);
+        }
       }
 
       const response = await fetch(

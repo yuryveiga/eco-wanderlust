@@ -1,9 +1,19 @@
 Deno.serve(async (req) => {
+  // CORS headers
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  };
+
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
     const { to, customerName, customerEmail, customerPhone, items, total } = await req.json()
 
     if (!to) {
-      return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400 })
+      return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400, headers: corsHeaders })
     }
 
     const itemsHtml = items.map((item: any) => 
@@ -40,12 +50,12 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const error = await response.text()
       console.error('Email error:', error)
-      return new Response(JSON.stringify({ error }), { status: 500 })
+      return new Response(JSON.stringify({ error }), { status: 500, headers: corsHeaders })
     }
 
-    return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ success: true }), { headers: corsHeaders })
   } catch (error) {
     console.error('Function error:', error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders })
   }
 })
