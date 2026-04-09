@@ -122,16 +122,6 @@ export function ReviewsSection() {
   );
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
-  // Load Elfsight script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://elfsightcdn.com/platform.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   useEffect(() => {
     const update = () => setItemsPerView(window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
@@ -177,10 +167,6 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        {/* Elfsight TripAdvisor Widget */}
-        <div className="mb-12">
-          <div className="elfsight-app-a8e8bba0-e42c-47cd-a67d-a76cbb8bbd82" data-elfsight-app-lazy></div>
-        </div>
 
         <div className="relative">
           <div className="overflow-hidden">
