@@ -58,6 +58,7 @@ const AdminHero = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isTranslating, setIsTranslating] = useState(false);
   const [allTranslated, setAllTranslated] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<LovableSiteSetting[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,15 +69,16 @@ const AdminHero = () => {
     setIsLoading(true);
     try {
       const settings = await fetchLovable<LovableSiteSetting>("site_settings");
+      setSiteSettings(settings);
       console.log("Settings carregados:", settings);
       
-      const heroStyleSetting = settings.find(s => s.key === "hero_style");
+      const heroStyleSetting = siteSettings.find(s => s.key === "hero_style");
       if (heroStyleSetting) {
         setActiveStyle(heroStyleSetting.value);
         setDbSettingId((heroStyleSetting as any).id);
       }
       
-      const heroTitleSetting = settings.find(s => s.key === "hero_title");
+      const heroTitleSetting = siteSettings.find(s => s.key === "hero_title");
       if (heroTitleSetting) {
         setHeroTitle(heroTitleSetting.value);
         setDbTitleId((heroTitleSetting as any).id);
@@ -84,7 +86,7 @@ const AdminHero = () => {
         setHeroTitle("Eco-Wanderlust | Passeios Inesquecíveis no Rio de Janeiro");
       }
       
-      const heroSubtitleSetting = settings.find(s => s.key === "hero_subtitle");
+      const heroSubtitleSetting = siteSettings.find(s => s.key === "hero_subtitle");
       if (heroSubtitleSetting) {
         setHeroSubtitle(heroSubtitleSetting.value);
         setDbSubtitleId((heroSubtitleSetting as any).id);
@@ -92,7 +94,7 @@ const AdminHero = () => {
         setHeroSubtitle("Descubra a magia do Rio de Janeiro com nossos passeios exclusivos e guias especializados.");
       }
       
-      const toursTitleSetting = settings.find(s => s.key === "tours_section_title");
+      const toursTitleSetting = siteSettings.find(s => s.key === "tours_section_title");
       if (toursTitleSetting) {
         setToursSectionTitle(toursTitleSetting.value);
         setDbToursTitleId((toursTitleSetting as any).id);
@@ -100,7 +102,7 @@ const AdminHero = () => {
         setToursSectionTitle("Conheça o Melhor do Rio de Janeiro");
       }
       
-      const toursSubtitleSetting = settings.find(s => s.key === "tours_section_subtitle");
+      const toursSubtitleSetting = siteSettings.find(s => s.key === "tours_section_subtitle");
       if (toursSubtitleSetting) {
         setToursSectionSubtitle(toursSubtitleSetting.value);
         setDbToursSubtitleId((toursSubtitleSetting as any).id);
@@ -108,31 +110,31 @@ const AdminHero = () => {
         setToursSectionSubtitle("City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.");
       }
       
-      const cityTitleSetting = settings.find(s => s.key === "city_tours_title");
+      const cityTitleSetting = siteSettings.find(s => s.key === "city_tours_title");
       if (cityTitleSetting) {
         setCityToursTitle(cityTitleSetting.value);
         setDbCityTitleId((cityTitleSetting as any).id);
       }
       
-      const citySubtitleSetting = settings.find(s => s.key === "city_tours_subtitle");
+      const citySubtitleSetting = siteSettings.find(s => s.key === "city_tours_subtitle");
       if (citySubtitleSetting) {
         setCityToursSubtitle(citySubtitleSetting.value);
         setDbCitySubtitleId((citySubtitleSetting as any).id);
       }
       
-      const hikingTitleSetting = settings.find(s => s.key === "hiking_tours_title");
+      const hikingTitleSetting = siteSettings.find(s => s.key === "hiking_tours_title");
       if (hikingTitleSetting) {
         setHikingToursTitle(hikingTitleSetting.value);
         setDbHikingTitleId((hikingTitleSetting as any).id);
       }
       
-      const hikingSubtitleSetting = settings.find(s => s.key === "hiking_tours_subtitle");
+      const hikingSubtitleSetting = siteSettings.find(s => s.key === "hiking_tours_subtitle");
       if (hikingSubtitleSetting) {
         setHikingToursSubtitle(hikingSubtitleSetting.value);
         setDbHikingSubtitleId((hikingSubtitleSetting as any).id);
       }
       
-      const aboutTitleSetting = settings.find(s => s.key === "about_title");
+      const aboutTitleSetting = siteSettings.find(s => s.key === "about_title");
       if (aboutTitleSetting) {
         setAboutTitle(aboutTitleSetting.value);
         setDbAboutTitleId((aboutTitleSetting as any).id);
@@ -140,7 +142,7 @@ const AdminHero = () => {
         setAboutTitle("Sua Porta de Entrada para a Cidade Maravilhosa");
       }
       
-      const aboutDescSetting = settings.find(s => s.key === "about_desc");
+      const aboutDescSetting = siteSettings.find(s => s.key === "about_desc");
       if (aboutDescSetting) {
         setAboutDesc(aboutDescSetting.value);
         setDbAboutDescId((aboutDescSetting as any).id);
@@ -148,7 +150,7 @@ const AdminHero = () => {
         setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
       }
 
-      const aboutLabelSetting = settings.find(s => s.key === "about_label");
+      const aboutLabelSetting = siteSettings.find(s => s.key === "about_label");
       if (aboutLabelSetting) {
         setAboutLabel(aboutLabelSetting.value);
         setDbAboutLabelId((aboutLabelSetting as any).id);
@@ -156,7 +158,7 @@ const AdminHero = () => {
         setAboutLabel("Sobre a Passeio Rio");
       }
 
-      const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
+      const aboutDesc2Setting = siteSettings.find(s => s.key === "about_desc2");
       if (aboutDesc2Setting) {
         setAboutDesc2(aboutDesc2Setting.value);
         setDbAboutDesc2Id((aboutDesc2Setting as any).id);
@@ -342,7 +344,7 @@ const AdminHero = () => {
               
               for (let i = 0; i < keys.length; i++) {
                 if (translations[i]) {
-                  const existing = settings.find(s => s.key === keys[i]);
+                  const existing = siteSettings.find(s => s.key === keys[i]);
                   if (existing) await updateLovable("site_settings", (existing as any).id, { value: translations[i] });
                   else await insertLovable("site_settings", { key: keys[i], value: translations[i] });
                 }
@@ -413,22 +415,22 @@ const AdminHero = () => {
                 // Save translations to site_settings
                 const keysToSave = [];
                 if (results[0]) {
-                  const existing = settings.find(s => s.key === "hero_title_en");
+                  const existing = siteSettings.find(s => s.key === "hero_title_en");
                   if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[0] });
                   else await insertLovable("site_settings", { key: "hero_title_en", value: results[0] });
                 }
                 if (results[1]) {
-                  const existing = settings.find(s => s.key === "hero_title_es");
+                  const existing = siteSettings.find(s => s.key === "hero_title_es");
                   if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[1] });
                   else await insertLovable("site_settings", { key: "hero_title_es", value: results[1] });
                 }
                 if (results[2]) {
-                  const existing = settings.find(s => s.key === "hero_subtitle_en");
+                  const existing = siteSettings.find(s => s.key === "hero_subtitle_en");
                   if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[2] });
                   else await insertLovable("site_settings", { key: "hero_subtitle_en", value: results[2] });
                 }
                 if (results[3]) {
-                  const existing = settings.find(s => s.key === "hero_subtitle_es");
+                  const existing = siteSettings.find(s => s.key === "hero_subtitle_es");
                   if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[3] });
                   else await insertLovable("site_settings", { key: "hero_subtitle_es", value: results[3] });
                 }
@@ -491,7 +493,7 @@ const AdminHero = () => {
                 const keys = ["tours_section_title_en", "tours_section_title_es", "tours_section_subtitle_en", "tours_section_subtitle_es"];
                 for (let i = 0; i < 4; i++) {
                   if (results[i]) {
-                    const existing = settings.find(s => s.key === keys[i]);
+                    const existing = siteSettings.find(s => s.key === keys[i]);
                     if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
                     else await insertLovable("site_settings", { key: keys[i], value: results[i] });
                   }
@@ -634,7 +636,7 @@ const AdminHero = () => {
                 const keys = ["about_label_en", "about_label_es", "about_title_en", "about_title_es", "about_desc_en", "about_desc_es", "about_desc2_en", "about_desc2_es"];
                 for (let i = 0; i < 8; i++) {
                   if (results[i]) {
-                    const existing = settings.find(s => s.key === keys[i]);
+                    const existing = siteSettings.find(s => s.key === keys[i]);
                     if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
                     else await insertLovable("site_settings", { key: keys[i], value: results[i] });
                   }
