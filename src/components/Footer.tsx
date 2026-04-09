@@ -36,7 +36,9 @@ export function Footer() {
       ];
 
   const activeSocials = socialMedia.length > 0
-    ? socialMedia.map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
+    ? socialMedia
+      .filter(s => s.platform.toLowerCase() !== 'email')
+      .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
     : [];
 
   // Get email and phone from social media
