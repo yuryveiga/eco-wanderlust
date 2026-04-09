@@ -43,10 +43,10 @@ const translations = {
     guias_espec: 'Guias Locais Especializados',
 
     // About
-    sobre_passeiorio: 'Sobre a Passeio Rio',
+    sobre_passeiorio: 'Sobre a Tocorime Rio',
     porta_entrada: 'Sua Porta de Entrada para a',
     cidade_maravilhosa: 'Cidade Maravilhosa',
-    sobre_desc1: 'A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnífica.',
+    sobre_desc1: 'A Tocorime Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnífica.',
     sobre_desc2: 'Com guias locais especializados e saídas diárias confirmadas, garantimos uma experiência segura, confortável e inesquecível.',
     feat_transporte: 'Transporte Confortável',
     feat_transporte_desc: 'Veículos com ar-condicionado, assentos confortáveis e amplo espaço para bagagens.',
@@ -196,10 +196,10 @@ const translations = {
     guias_espec: 'Expert Local Guides',
 
     // About
-    sobre_passeiorio: 'About Passeio Rio',
+    sobre_passeiorio: 'About Tocorime Rio',
     porta_entrada: 'Your Gateway to the',
     cidade_maravilhosa: 'Cidade Maravilhosa',
-    sobre_desc1: 'Passeio Rio offers authentic tourist experiences that show the best of Rio de Janeiro. From Christ the Redeemer to Sugarloaf Mountain, from Arraial do Cabo to Angra dos Reis, we reveal the incomparable beauty of this magnificent city.',
+    sobre_desc1: 'Tocorime Rio offers authentic tourist experiences that show the best of Rio de Janeiro. From Christ the Redeemer to Sugarloaf Mountain, from Arraial do Cabo to Angra dos Reis, we reveal the incomparable beauty of this magnificent city.',
     sobre_desc2: 'With specialized local guides and confirmed daily departures, we guarantee a safe, comfortable, and unforgettable experience.',
     feat_transporte: 'Comfortable Transport',
     feat_transporte_desc: 'Air-conditioned vehicles, comfortable seats, and ample luggage space.',
@@ -349,10 +349,10 @@ const translations = {
     guias_espec: 'Guías Locales Expertos',
 
     // About
-    sobre_passeiorio: 'Sobre Passeio Rio',
+    sobre_passeiorio: 'Sobre Tocorime Rio',
     porta_entrada: 'Tu Puerta de Entrada a la',
     cidade_maravilhosa: 'Cidade Maravilhosa',
-    sobre_desc1: 'Passeio Rio ofrece experiencias turísticas auténticas que muestran lo mejor de Río de Janeiro. Del Cristo Redentor al Pan de Azúcar, de Arraial do Cabo a Angra dos Reis, revelamos la belleza incomparable de esta magnífica ciudad.',
+    sobre_desc1: 'Tocorime Rio ofrece experiencias turísticas auténticas que muestran lo mejor de Río de Janeiro. Del Cristo Redentor al Pan de Azúcar, de Arraial do Cabo a Angra dos Reis, revelamos la belleza incomparable de esta magnífica ciudad.',
     sobre_desc2: 'Con guías locales especializados y salidas diarias confirmadas, garantizamos una experiencia segura, cómoda e inolvidable.',
     feat_transporte: 'Transporte Cómodo',
     feat_transporte_desc: 'Vehículos con aire acondicionado, asientos cómodos y amplio espacio para equipaje.',

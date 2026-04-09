@@ -147,7 +147,7 @@ const AdminHero = () => {
         setAboutDesc(aboutDescSetting.value);
         setDbAboutDescId((aboutDescSetting as any).id);
       } else {
-        setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
+        setAboutDesc("A Tocorime Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
       }
 
       const aboutLabelSetting = settings.find(s => s.key === "about_label");
@@ -155,7 +155,7 @@ const AdminHero = () => {
         setAboutLabel(aboutLabelSetting.value);
         setDbAboutLabelId((aboutLabelSetting as any).id);
       } else {
-        setAboutLabel("Sobre a Passeio Rio");
+        setAboutLabel("Sobre a Tocorime Rio");
       }
 
       const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
@@ -586,12 +586,12 @@ const AdminHero = () => {
         
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="aboutLabel">Label (Sobre a Passeio Rio)</Label>
+            <Label htmlFor="aboutLabel">Label (Sobre a Tocorime Rio)</Label>
             <Input
               id="aboutLabel"
               value={aboutLabel}
               onChange={(e) => setAboutLabel(e.target.value)}
-              placeholder="Ex: Sobre a Passeio Rio"
+              placeholder="Ex: Sobre a Tocorime Rio"
             />
           </div>
           

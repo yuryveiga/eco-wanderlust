@@ -119,7 +119,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Passeio Rio. {t("direitos")}</p>
+            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Tocorime Rio. {t("direitos")}</p>
             <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">{t("turismo_sustentavel")}</p>
           </div>
         </div>
