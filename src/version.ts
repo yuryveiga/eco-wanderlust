@@ -1,1 +1,1 @@
-export const BUILD_ID = "v_1775765023957"; // Identificador único da versão atual
+export const BUILD_ID = "v_1775767344539"; // Identificador único da versão atual
