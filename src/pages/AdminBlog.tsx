@@ -371,20 +371,20 @@ const AdminBlog = () => {
                           <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título</Label>
                           <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
                        </div>
-                       <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                          <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
-                             <ReactQuill 
-                                ref={quillRef}
-                                theme="snow" 
-                                value={editing.content || ""} 
-                                onChange={(val) => setEditing({ ...editing, content: val })} 
-                                className="editor-container"
-                                modules={modules}
-                                formats={formats}
-                                placeholder="Comece a contar sua história..."
-                             />
-                          </Suspense>
-                       </div>
+                        <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0 max-h-[500px]">
+                           <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
+                              <ReactQuill 
+                                 ref={quillRef}
+                                 theme="snow" 
+                                 value={editing.content || ""} 
+                                 onChange={(val) => setEditing({ ...editing, content: val })} 
+                                 className="editor-container h-full"
+                                 modules={modules}
+                                 formats={formats}
+                                 placeholder="Comece a contar sua história..."
+                              />
+                           </Suspense>
+                        </div>
                     </div>
                  </div>
                </TabsContent>
