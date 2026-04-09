@@ -15,6 +15,18 @@ const Blog = () => {
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
+  const loadPosts = async () => {
+    setIsLoading(true);
+    const data = await fetchLovable<LovableBlogPost>("blog_posts");
+    
+    const published = data
+      .filter(p => p.is_published)
+      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+      
+    setPosts(published);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     loadPosts();
   }, []);

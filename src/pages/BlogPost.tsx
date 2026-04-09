@@ -21,12 +21,19 @@ const BlogPost = () => {
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
 
+  const loadPost = async () => {
+    setIsLoading(true);
+    const posts = await fetchLovable<LovableBlogPost>("blog_posts");
+    const found = posts.find((p) => p.slug === slug && p.is_published);
+    
+    setPost(found || null);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadPost();
   }, [slug]);
-
-  const loadPost = async () => {
     setIsLoading(true);
     const posts = await fetchLovable<LovableBlogPost>("blog_posts");
     const found = posts.find((p) => p.slug === slug && p.is_published);
