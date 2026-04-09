@@ -398,13 +398,14 @@ export function TourDetail() {
                     <span className="text-muted-foreground font-sans text-sm block mt-2">{quantity} {quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}</span>
                   </div>
                   <div className="space-y-8 mb-8">
-                    <div className="border-t pt-6">
+                     <div className="border-t pt-6">
                        <h4 className="font-serif font-bold text-foreground mb-4 text-center">{language === 'pt' ? 'Quantas pessoas?' : 'How many people?'}</h4>
                        <div className="flex items-center justify-between bg-muted/30 p-2 rounded-2xl border border-border/50 w-48 mx-auto">
                           <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center disabled:opacity-30" disabled={quantity <= 1}><Minus className="w-5 h-5" /></button>
                           <span className="font-sans font-black text-xl w-10 text-center">{quantity}</span>
-                          <button onClick={() => setQuantity(Math.min(tour.max_group_size || 10, quantity + 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center"><Plus className="w-5 h-5" /></button>
+                          <button onClick={() => setQuantity(Math.min(tour.max_group_size || 10, quantity + 1))} className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center disabled:opacity-30" disabled={quantity >= (tour.max_group_size || 10)}><Plus className="w-5 h-5" /></button>
                        </div>
+                       <p className="text-center text-xs text-muted-foreground font-sans mt-2">{language === 'pt' ? `Máximo ${tour.max_group_size || 10} pessoas` : `Max ${tour.max_group_size || 10} people`}</p>
                     </div>
                     {availablePeriods.length > 0 && (
                       <div className="border-t pt-6">
