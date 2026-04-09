@@ -57,10 +57,10 @@ export function Header() {
   const navLinks = [
     { label: t("inicio"), href: "#top" },
     { label: t("passeios"), href: "#tours" },
-    ...dynamicLinks,
     { label: t("sobre"), href: "#about" },
     { label: t("contato"), href: "#contact" },
     { label: "Blog", href: "/blog" },
+    ...dynamicLinks,
   ];
 
   const activeSocials = socialMedia.filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email').length > 0
