@@ -35,6 +35,7 @@ const translations = {
     ate_pessoas: 'até pessoas',
     trilhas: 'Trilhas',
     city_tours: 'City Tours',
+    destaque: 'Destaque',
     
     // Hero
     avaliados: 'Avaliados com 5.0 no TripAdvisor',
@@ -196,8 +197,9 @@ const translations = {
     max_pessoas: 'Max',
     ate: 'up to',
     ate_pessoas: 'people',
-    trilhas: 'Hiking',
-    city_tours: 'City Tours',
+    trilhas: 'HIKING',
+    city_tours: 'CITY TOUR',
+    destaque: 'FEATURED',
     
     // Hero
     avaliados: 'Rated 5.0 on TripAdvisor',
@@ -359,8 +361,9 @@ const translations = {
     max_pessoas: 'Máximo',
     ate: 'hasta',
     ate_pessoas: 'personas',
-    trilhas: 'Senderismo',
-    city_tours: 'Tours por la Ciudad',
+    trilhas: 'SENDERISMO',
+    city_tours: 'TOURS POR LA CIUDAD',
+    destaque: 'DESTACADO',
     
     // Hero
     avaliados: 'Puntuado 5.0 en TripAdvisor',

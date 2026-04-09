@@ -48,7 +48,14 @@ export function TourDetail() {
 
   const translatedTitle = getTranslated(tour, 'title');
   const translatedShortDesc = getTranslated(tour, 'short_description');
-  const translatedCategory = getTranslated(tour, 'category');
+  
+  const translatedCategory = useMemo(() => {
+    const rawCat = tour?.category;
+    if (rawCat === 'TRILHA') return t('trilhas');
+    if (rawCat === 'CITY TOUR') return t('city_tours');
+    return getTranslated(tour, 'category');
+  }, [tour, language, t]);
+
   const translatedDifficulty = getTranslated(tour, 'difficulty');
   const translatedItinerary = getTranslated(tour, `itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json;
   const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;

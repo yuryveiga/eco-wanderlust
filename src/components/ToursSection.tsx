@@ -35,7 +35,14 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 
   const title = getTranslated('title');
   const short_description = getTranslated('short_description');
-  const category = getTranslated('category');
+  
+  const category = (() => {
+    const rawCat = tour?.category;
+    if (rawCat === 'TRILHA') return t('trilhas');
+    if (rawCat === 'CITY TOUR') return t('city_tours');
+    return getTranslated('category');
+  })();
+
   const duration = language === 'pt' ? tour.duration : tour.duration
     ?.replace(/horas/gi, t("horas"))
     .replace(/hora/gi, t("hora"))
@@ -51,10 +58,10 @@ function TourCard({ tour }: { tour: TourCardProps }) {
         <img src={tour.image_url} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
           <div className="absolute top-4 left-4 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full font-sans flex items-center gap-1">
-            <Star className="w-3 h-3 fill-current" /> {language === 'pt' ? 'Destaque' : language === 'es' ? 'Destacado' : 'Featured'}
+            <Star className="w-3 h-3 fill-current" /> {t("destaque")}
           </div>
         )}
-        <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium px-3 py-1 rounded-full font-sans">{category}</div>
+        <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-xs font-black px-3 py-1 rounded-full font-sans uppercase tracking-widest">{category}</div>
       </div>
       <div className="p-6">
         <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{title}</h3>
