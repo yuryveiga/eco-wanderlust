@@ -2,6 +2,8 @@ import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, Calendar } from "lucide-react";
 
 const MaracanaCalendar = () => {
   const [calendarUrl] = useState("https://maracanamatchday.com/calendar");
@@ -62,62 +64,91 @@ const MaracanaCalendar = () => {
       
       <Header />
       
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-            Calendário de Jogos do Maracanã
-          </h1>
+      <div className="min-h-screen bg-muted/30 py-20 pb-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 animate-fade-in">
+            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-4">
+              Calendário Maracanã
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
+              Acompanhe os jogos e eventos no Templo do Futebol e planeje sua experiência com a Tocorime Rio.
+            </p>
+          </div>
           
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="px-6 py-4 bg-gray-50 border-b">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                <svg className="h-5 w-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Como funciona nosso calendário
-              </h2>
-            </div>
-            <div className="px-6 py-6">
-              <p className="text-gray-700 mb-4">
-                Nosso calendário é atualizado em tempo real com informações diretamente do 
-                <a href="https://maracanamatchday.com/calendar" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  Maracanã Match Day
-                </a>. Aqui você encontra todos os jogos, shows e eventos programados no Estádio do Maracanã.
-              </p>
-              
-              <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-blue-800 flex items-center">
-                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 4a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                  </svg>
-                    Dica: Combine sua visita ao jogo com um dos nossos passeios exclusivos pelo Rio de Janeiro!
-                </p>
+          <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border/50 transition-all hover:shadow-2xl">
+            <div className="aspect-[16/6] relative overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1599327311438-ef2766ec0667?auto=format&fit=crop&q=80&w=1200" 
+                alt="Estádio do Maracanã" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+              <div className="absolute bottom-6 left-8">
+                <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">
+                  Oficial
+                </span>
+                <h2 className="text-2xl font-bold text-foreground font-serif">Maracanã Match Day</h2>
               </div>
-              
-              <div className="ratio ratio-16x9">
-                <iframe 
-                  title="Calendário do Estádio Maracanã" 
-                  src="https://maracanamatchday.com/calendar" 
-                  allowFullScreen
-                  sandbox="allow-scripts allow-same-origin allow-popups"
-                  className="w-full h-full border-0"
-                ></iframe>
+            </div>
+
+            <div className="p-8 sm:p-10">
+              <div className="flex flex-col md:flex-row gap-8 items-center justify-between bg-muted/30 p-8 rounded-2xl border border-primary/10">
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-2 font-serif">Acesse o Calendário Oficial</h3>
+                  <p className="text-muted-foreground text-sm font-sans leading-relaxed">
+                    Para garantir que você veja as informações mais atualizadas sobre ingressos, horários e disponibilidade em tempo real, recomendamos acessar o portal oficial do Maracanã.
+                  </p>
+                </div>
+                <Button asChild size="lg" className="font-bold px-8 h-14 shadow-lg shadow-primary/20 group">
+                  <a href="https://maracanamatchday.com/calendar" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    Ver Calendário Completo
+                    <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </a>
+                </Button>
+              </div>
+
+              <div className="mt-12">
+                <h3 className="text-lg font-bold mb-6 font-serif flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  Destaques de Abril 2026
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   {[
+                     { date: "11/04", teams: "Fluminense x Flamengo", icon: "⚽" },
+                     { date: "15/04", teams: "Fluminense x Ind. Rivadavia", icon: "🏆" },
+                     { date: "16/04", teams: "Flamengo x Ind. Medelin", icon: "⚽" },
+                     { date: "19/04", teams: "Flamengo x Bahia", icon: "⚽" },
+                     { date: "22/04", teams: "Flamengo x Vitória", icon: "⚽" },
+                     { date: "26/04", teams: "Fluminense x Chapecoense", icon: "⚽" },
+                   ].map((match, i) => (
+                     <div key={i} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/40 hover:border-primary/20 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-1 rounded">{match.date}</span>
+                          <span className="font-medium text-sm">{match.teams}</span>
+                        </div>
+                        <span>{match.icon}</span>
+                     </div>
+                   ))}
+                </div>
               </div>
             </div>
           </div>
           
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Combine seu passeio com um jogo no Maracanã
+          <div className="mt-16 text-center bg-primary/5 p-10 rounded-3xl border border-primary/10">
+            <h2 className="text-2xl font-bold text-foreground mb-4 font-serif">
+              Viva a Emoção do Futebol Carioca
             </h2>
-            <p className="text-gray-600 mb-6">
-              A Tocorime Rio oferece passeios especiais que podem ser combinados com os jogos no Estádio do Maracanã. 
-              Confira nossos roteiros personalizados para tornar sua experiência ainda mais completa.
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto font-sans">
+              Não quer se preocupar com transporte ou segurança para ir ao estádio? 
+              A Tocorime Rio oferece experiências completas de ida ao Maracanã com guias locais.
             </p>
-            <div className="text-center">
-              <a href="/passeio" className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                Ver Nossos Passeios
-              </a>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button asChild variant="outline" className="font-bold border-primary text-primary hover:bg-primary/5">
+                <a href="/passeios">Explorar Passeios</a>
+              </Button>
+              <Button asChild className="font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+                <a href="https://wa.me/5521995624596" target="_blank" rel="noopener noreferrer">Falar com Consultor</a>
+              </Button>
             </div>
           </div>
         </div>
