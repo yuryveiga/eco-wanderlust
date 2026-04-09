@@ -8,6 +8,8 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
 import { FloatingButtons } from "./components/FloatingButtons";
+import { useEffect } from "react";
+import { supabase } from "./integrations/supabase/client";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -32,6 +34,29 @@ import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
 
+// Track online visitors
+const VisitorTracker = () => {
+  useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        const visitorId = localStorage.getItem('visitor_id') || Math.random().toString(36).substring(2);
+        localStorage.setItem('visitor_id', visitorId);
+        
+        await supabase.from('site_visitors').upsert({
+          id: visitorId,
+          last_seen: new Date().toISOString(),
+        }, { onConflict: 'id' });
+      } catch (e) { console.error('Visitor tracking error:', e); }
+    };
+    
+    trackVisitor();
+    const interval = setInterval(trackVisitor, 30000); // Update every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -39,6 +64,7 @@ const App = () => (
         <CartProvider>
           <HelmetProvider>
             <TooltipProvider>
+              <VisitorTracker />
               <Toaster />
               <Sonner />
               <ThemeApplier />

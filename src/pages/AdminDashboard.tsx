@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2, DollarSign } from "lucide-react";
+import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2, DollarSign, Users } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
 import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { translateText } from "@/utils/translate";
 
 const AdminDashboard = () => {
-  const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0, sales: 0, salesPaid: 0 });
+  const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0, sales: 0, salesPaid: 0, onlineUsers: 0 });
   const [settingsList, setSettingsList] = useState<LovableSiteSetting[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -20,14 +20,20 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [t, p, i, s, settingsData, salesData] = await Promise.all([
+      const [t, p, i, s, settingsData, salesData, visitorsData] = await Promise.all([
         fetchLovable<{ id: string }>("tours"),
         fetchLovable<{ id: string }>("pages"),
         fetchLovable<{ id: string }>("site_images"),
         fetchLovable<{ id: string }>("social_media"),
         fetchLovable<LovableSiteSetting>("site_settings"),
         fetchLovable<{ id: string }>("sales"),
+        fetchLovable<{ id: string }>("site_visitors"),
       ]);
+      
+      // Count visitors in last 30 minutes
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const onlineCount = visitorsData?.filter((v: any) => new Date(v.last_seen) > new Date(thirtyMinutesAgo)).length || 0;
+      
       setCounts({
         tours: t.length,
         pages: p.length,
@@ -35,6 +41,7 @@ const AdminDashboard = () => {
         social: s.length,
         sales: salesData.length,
         salesPaid: salesData.filter((sale: any) => sale.is_paid).length,
+        onlineUsers: onlineCount,
       });
 
       setSettingsList(settingsData);
@@ -103,6 +110,7 @@ const AdminDashboard = () => {
     { label: "Redes Sociais", count: counts.social, icon: Share2, color: "bg-destructive/10 text-destructive" },
     { label: "Vendas", count: counts.sales, icon: DollarSign, color: "bg-green-100 text-green-600" },
     { label: "Pagas", count: counts.salesPaid, icon: DollarSign, color: "bg-green-500/10 text-green-600" },
+    { label: "Online", count: counts.onlineUsers, icon: Users, color: "bg-blue-100 text-blue-600" },
   ];
 
   return (
