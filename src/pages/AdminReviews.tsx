@@ -160,8 +160,8 @@ export default function AdminReviews() {
         {reviews.map((r) => (
         <Card key={r.id} className={`${!r.is_published ? "opacity-50" : ""} w-full max-w-full`}>
             <CardContent className="flex items-center gap-4 py-4 w-full max-w-full overflow-hidden">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
+              <div className="flex-1 min-w-0 w-full">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="font-bold">{r.author_name}</span>
                   <span className="text-muted-foreground text-sm">— {r.author_location}</span>
                   <div className="flex gap-0.5 ml-2">
@@ -170,8 +170,8 @@ export default function AdminReviews() {
                     ))}
                   </div>
                 </div>
-                <p className="font-medium">{r.title}</p>
-                <p className="text-sm text-muted-foreground truncate">{r.content}</p>
+                <p className="font-medium break-words">{r.title}</p>
+                <p className="text-sm text-muted-foreground break-words">{r.content}</p>
                 <p className="text-xs text-primary mt-1">{r.tour_name} • {r.review_date}</p>
               </div>
               <div className="flex gap-2 flex-shrink-0">
