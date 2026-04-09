@@ -1,0 +1,27 @@
+{
+  "name": "TocorimeRio",
+  "short_name": "TocorimeRio",
+  "description": "Passeios Privativos no Rio de Janeiro - Experiências Inesquecíveis",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2A9D8F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["travel", "tourism"],
+  "lang": "pt-BR"
+}
