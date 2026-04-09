@@ -14,7 +14,7 @@ export function InstagramFloat() {
       href={instagram.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 left-6 z-50 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group"
+      className="fixed bottom-24 left-6 z-50 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group"
       aria-label="Siga no Instagram"
     >
       <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">

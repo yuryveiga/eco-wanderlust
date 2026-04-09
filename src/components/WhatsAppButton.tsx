@@ -27,7 +27,7 @@ export function WhatsAppButton() {
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-24 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group"
+      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group"
       aria-label="Contato via WhatsApp"
     >
       <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
