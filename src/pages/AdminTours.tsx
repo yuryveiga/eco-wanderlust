@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube, ExternalLink } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
@@ -414,7 +414,9 @@ const AdminTours = () => {
                 <DialogTitle className="font-serif text-2xl mb-4">{isNew ? "Criar Experiência Premium" : "Ajustar Detalhes do Passeio"}</DialogTitle>
                 <TabsList className="w-full justify-start gap-4 bg-transparent border-none p-0 mb-[-1px] overflow-x-auto">
                   <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Conteúdo Base</TabsTrigger>
-                  <TabsTrigger value="info" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Informações do Passeio</TabsTrigger>
+                  {!editing.external_url && (
+                    <TabsTrigger value="info" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Informações do Passeio</TabsTrigger>
+                  )}
                   <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Imagens</TabsTrigger>
                   <TabsTrigger value="settings" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Preços e Config</TabsTrigger>
                 </TabsList>
@@ -458,6 +460,19 @@ const AdminTours = () => {
                                 </label>
                               </div>
                             </div>
+                          </div>
+                          
+                          <div className="space-y-3 bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                             <Label className="text-[10px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
+                                <ExternalLink className="w-4 h-4" /> DIRECIONAR PARA (Link Externo)
+                             </Label>
+                             <Input 
+                                value={editing.external_url ?? ""} 
+                                onChange={(e) => setEditing({ ...editing, external_url: e.target.value })} 
+                                placeholder="https://exemplo.com/pagina-do-passeio" 
+                                className="h-12 border-blue-200 bg-white"
+                             />
+                             <p className="text-[10px] text-muted-foreground italic">Se preenchido, este passeio enviará o usuário direto para este link e não terá página interna.</p>
                           </div>
                           <div className="space-y-2">
                             <Label className="text-xs uppercase font-bold text-muted-foreground">Resumo (PT)</Label>
@@ -636,6 +651,7 @@ const AdminTours = () => {
 
                   {/* TAB SETTINGS */}
                   <TabsContent value="settings" className="m-0 space-y-10">
+                    {!editing.external_url ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="space-y-3">
                         <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Valor por Pessoa (R$)</Label>
@@ -654,26 +670,36 @@ const AdminTours = () => {
                         <Input type="number" value={editing.max_group_size ?? 1} onChange={(e) => setEditing({ ...editing, max_group_size: Number(e.target.value) })} className="h-14 rounded-2xl" />
                       </div>
                     </div>
+                    ) : (
+                      <div className="p-10 border rounded-3xl bg-muted/20 text-center">
+                        <p className="text-muted-foreground">Este é um passeio de redirecionamento externo. Apenas a opção de <strong>Destaque</strong> está disponível nesta aba.</p>
+                      </div>
+                    )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-10 border-t">
-                        <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
-                            <Label className="font-bold">Ativo no Site</Label>
-                            <Switch checked={editing.is_active ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_active: v })} />
-                        </div>
-                        <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
-                            <Label className="font-bold">Permitir Privado</Label>
-                            <Switch checked={editing.allows_private ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
-                        </div>
-                        <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between opacity-50">
-                            <Label className="font-bold">Grupo Aberto (inativo)</Label>
-                            <Switch checked={false} disabled />
-                        </div>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-10 border-t ${editing.external_url ? 'flex justify-center' : ''}`}>
+                        {!editing.external_url && (
+                          <>
+                            <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
+                                <Label className="font-bold">Ativo no Site</Label>
+                                <Switch checked={editing.is_active ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_active: v })} />
+                            </div>
+                            <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
+                                <Label className="font-bold">Permitir Privado</Label>
+                                <Switch checked={editing.allows_private ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
+                            </div>
+                            <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between opacity-50">
+                                <Label className="font-bold">Grupo Aberto (inativo)</Label>
+                                <Switch checked={false} disabled />
+                            </div>
+                          </>
+                        )}
                         <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
                             <Label className="font-bold">Destaque</Label>
                             <Switch checked={editing.is_featured ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_featured: v })} />
                         </div>
                     </div>
 
+                     {!editing.external_url && (
                     <div className="space-y-6 pt-10 border-t pb-10">
                        <Label className="font-black text-xs uppercase tracking-widest text-primary block mb-6">Turnos</Label>
                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -691,6 +717,7 @@ const AdminTours = () => {
                           </div>
                        </div>
                     </div>
+                     )}
                   </TabsContent>
                 </div>
                 

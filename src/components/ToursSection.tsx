@@ -22,6 +22,7 @@ type TourCardProps = {
   short_description_es?: string;
   category_en?: string;
   category_es?: string;
+  external_url?: string;
 };
 
 function TourCard({ tour }: { tour: TourCardProps }) {
@@ -36,9 +37,11 @@ function TourCard({ tour }: { tour: TourCardProps }) {
   const short_description = getTranslated('short_description');
   const category = getTranslated('category');
   const duration = language === 'pt' ? tour.duration : tour.duration?.replace(/horas/gi, t("horas")).replace(/hora/gi, t("hora"));
+  const href = tour.external_url || `/passeio/${tour.slug || tour.id}`;
+  const isExternal = !!tour.external_url;
 
-  return (
-    <Link to={`/passeio/${tour.slug || tour.id}`} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+  const CardContent = (
+    <>
       <div className="relative h-56 overflow-hidden">
         <img src={tour.image_url} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
@@ -51,18 +54,38 @@ function TourCard({ tour }: { tour: TourCardProps }) {
       <div className="p-6">
         <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{title}</h3>
         <p className="text-muted-foreground text-sm mb-4 font-sans line-clamp-2">{short_description}</p>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 font-sans">
-          <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{duration}</span></div>
-          <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>Max {tour.max_group_size}</span></div>
-        </div>
+        {!isExternal && (
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 font-sans">
+            <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{duration}</span></div>
+            <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>Max {tour.max_group_size}</span></div>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-2xl font-bold text-primary font-sans">{formatPrice(tour.price)}</span>
-            <span className="text-muted-foreground text-sm font-sans"> / {t("por_pessoa")}</span>
+            {tour.price > 0 && (
+              <>
+                <span className="text-2xl font-bold text-primary font-sans">{formatPrice(tour.price)}</span>
+                <span className="text-muted-foreground text-sm font-sans"> / {t("por_pessoa")}</span>
+              </>
+            )}
           </div>
-          <Button size="sm" className="font-sans">{t("reservar")}</Button>
+          <Button size="sm" className="font-sans">{isExternal ? (language === 'pt' ? 'Saber Mais' : 'Learn More') : t("reservar")}</Button>
         </div>
       </div>
+    </>
+  );
+
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+        {CardContent}
+      </a>
+    );
+  }
+
+  return (
+    <Link to={href} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+      {CardContent}
     </Link>
   );
 }

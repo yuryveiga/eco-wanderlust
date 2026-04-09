@@ -163,6 +163,7 @@ export type LovableTour = {
   meeting_point_address_en?: string;
   meeting_point_address_es?: string;
   youtube_video_url?: string;
+  external_url?: string;
 };
 
 export type LovablePage = {
