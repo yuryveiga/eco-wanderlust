@@ -15,6 +15,7 @@ const AdminSales = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -93,10 +94,10 @@ const AdminSales = () => {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === sales.length) {
+    if (selectedIds.size === filteredSales.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(sales.map(s => s.id)));
+      setSelectedIds(new Set(filteredSales.map(s => s.id)));
     }
   };
 
@@ -126,6 +127,14 @@ const AdminSales = () => {
     return new Date(date).toLocaleDateString('pt-BR');
   };
 
+  const filteredSales = sales.filter(sale => {
+    if (filter === 'all') return true;
+    if (filter === 'pending') return !sale.is_paid;
+    if (filter === 'paid') return sale.is_paid;
+    if (filter === 'cancelled') return (sale as any).is_cancelled;
+    return true;
+  });
+
   if (isLoading) {
     return <div className="p-8">Carregando...</div>;
   }
@@ -139,6 +148,25 @@ const AdminSales = () => {
             <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
           </Button>
         )}
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-2 mb-4">
+        {[
+          { key: 'all', label: 'Todas' },
+          { key: 'pending', label: 'Pendentes' },
+          { key: 'paid', label: 'Pagas' },
+          { key: 'cancelled', label: 'Canceladas' },
+        ].map((f) => (
+          <Button
+            key={f.key}
+            variant={filter === f.key ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter(f.key as any)}
+          >
+            {f.label}
+          </Button>
+        ))}
       </div>
 
       <div className="bg-card rounded-xl border overflow-hidden">
@@ -161,7 +189,7 @@ const AdminSales = () => {
               </tr>
             </thead>
             <tbody>
-              {sales.map((sale) => (
+              {filteredSales.map((sale) => (
                 <tr key={sale.id} className={`border-t hover:bg-muted/30 ${selectedIds.has(sale.id) ? 'bg-primary/5' : ''}`}>
                   <td className="p-4">
                     <button onClick={() => toggleSelect(sale.id)}>
