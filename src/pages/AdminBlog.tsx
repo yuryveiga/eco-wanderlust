@@ -10,15 +10,11 @@ import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loade
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText, translateHtml } from "@/utils/translate";
-import 'react-quill/dist/quill.snow.css';
-
-// Importing Quill and registering the module
-import { Quill } from "react-quill";
+import ReactQuill, { Quill } from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 // @ts-ignore
 import ImageResize from "quill-image-resize-module-react";
 Quill.register("modules/imageResize", ImageResize);
-
-const ReactQuill = lazy(() => import('react-quill'));
 
 const AdminBlog = () => {
   const [searchParams] = useSearchParams();
@@ -387,18 +383,16 @@ const AdminBlog = () => {
                           <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-16 text-2xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante..." />
                        </div>
                         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0 max-h-[500px]">
-                           <Suspense fallback={<div className="p-24 text-center font-sans">Carregando Editor de Conteúdo...</div>}>
-                              <ReactQuill 
-                                 ref={quillRef}
-                                 theme="snow" 
-                                 value={editing.content || ""} 
-                                 onChange={(val) => setEditing({ ...editing, content: val })} 
-                                 className="editor-container h-full"
-                                 modules={modules}
-                                 formats={formats}
-                                 placeholder="Comece a contar sua história..."
-                              />
-                           </Suspense>
+                           <ReactQuill 
+                              ref={quillRef}
+                              theme="snow" 
+                              value={editing.content || ""} 
+                              onChange={(val) => setEditing({ ...editing, content: val })} 
+                              className="editor-container h-full"
+                              modules={modules}
+                              formats={formats}
+                              placeholder="Comece a contar sua história..."
+                           />
                         </div>
                     </div>
                  </div>
