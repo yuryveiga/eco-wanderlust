@@ -57,6 +57,7 @@ const AdminHero = () => {
   const [dbAboutDesc2Id, setDbAboutDesc2Id] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [allTranslated, setAllTranslated] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -309,6 +310,62 @@ const AdminHero = () => {
         <p className="text-muted-foreground font-sans text-sm mt-1">
           A seção "Hero" é a primeira coisa que o cliente vê ao entrar no site.
         </p>
+        
+        <Button 
+          variant="default" 
+          onClick={async () => {
+            const allFields = [heroTitle, heroSubtitle, toursSectionTitle, toursSectionSubtitle, aboutLabel, aboutTitle, aboutDesc, aboutDesc2];
+            if (allFields.every(f => !f)) {
+              toast({ title: "Preencha algum campo primeiro", variant: "destructive" });
+              return;
+            }
+            setIsTranslating(true);
+            try {
+              const translations = await Promise.all([
+                heroTitle ? translateText(heroTitle, "en") : null, heroTitle ? translateText(heroTitle, "es") : null,
+                heroSubtitle ? translateText(heroSubtitle, "en") : null, heroSubtitle ? translateText(heroSubtitle, "es") : null,
+                toursSectionTitle ? translateText(toursSectionTitle, "en") : null, toursSectionTitle ? translateText(toursSectionTitle, "es") : null,
+                toursSectionSubtitle ? translateText(toursSectionSubtitle, "en") : null, toursSectionSubtitle ? translateText(toursSectionSubtitle, "es") : null,
+                aboutLabel ? translateText(aboutLabel, "en") : null, aboutLabel ? translateText(aboutLabel, "es") : null,
+                aboutTitle ? translateText(aboutTitle, "en") : null, aboutTitle ? translateText(aboutTitle, "es") : null,
+                aboutDesc ? translateText(aboutDesc, "en") : null, aboutDesc ? translateText(aboutDesc, "es") : null,
+                aboutDesc2 ? translateText(aboutDesc2, "en") : null, aboutDesc2 ? translateText(aboutDesc2, "es") : null,
+              ]);
+              
+              const keys = [
+                "hero_title_en", "hero_title_es", "hero_subtitle_en", "hero_subtitle_es",
+                "tours_section_title_en", "tours_section_title_es", "tours_section_subtitle_en", "tours_section_subtitle_es",
+                "about_label_en", "about_label_es", "about_title_en", "about_title_es", 
+                "about_desc_en", "about_desc_es", "about_desc2_en", "about_desc2_es"
+              ];
+              
+              for (let i = 0; i < keys.length; i++) {
+                if (translations[i]) {
+                  const existing = settings.find(s => s.key === keys[i]);
+                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: translations[i] });
+                  else await insertLovable("site_settings", { key: keys[i], value: translations[i] });
+                }
+              }
+              
+              setAllTranslated(true);
+              toast({ title: "Tradução concluída! Salve as alterações." });
+            } catch (e) {
+              console.error("Translation error:", e);
+              toast({ title: "Erro ao traduzir", variant: "destructive" });
+            } finally {
+              setIsTranslating(false);
+            }
+          }}
+          disabled={isTranslating}
+          className="mt-4"
+        >
+          {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+          Traduzir Tudo
+        </Button>
+        
+        {allTranslated && (
+          <span className="ml-3 text-sm text-green-600 font-sans">✓ Traduzido! Agora clique em Salvar em cada seção.</span>
+        )}
       </div>
 
       <div className="bg-card rounded-xl border p-6 mb-8">
@@ -384,8 +441,6 @@ const AdminHero = () => {
             disabled={isTranslating}
             className="mt-2"
           >
-            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            Traduzir
           </Button>
         </div>
       </div>
@@ -449,8 +504,6 @@ const AdminHero = () => {
             }}
             disabled={isTranslating}
           >
-            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            Traduzir
           </Button>
         </div>
       </div>
@@ -594,8 +647,6 @@ const AdminHero = () => {
             }}
             disabled={isTranslating}
           >
-            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            Traduzir Sobre
           </Button>
           
           <Button onClick={handleSaveTitleSubtitle} className="w-fit font-sans">
