@@ -72,13 +72,13 @@ const AdminHero = () => {
       setSiteSettings(settings);
       console.log("Settings carregados:", settings);
       
-      const heroStyleSetting = siteSettings.find(s => s.key === "hero_style");
+      const heroStyleSetting = settings.find(s => s.key === "hero_style");
       if (heroStyleSetting) {
         setActiveStyle(heroStyleSetting.value);
         setDbSettingId((heroStyleSetting as any).id);
       }
       
-      const heroTitleSetting = siteSettings.find(s => s.key === "hero_title");
+      const heroTitleSetting = settings.find(s => s.key === "hero_title");
       if (heroTitleSetting) {
         setHeroTitle(heroTitleSetting.value);
         setDbTitleId((heroTitleSetting as any).id);
@@ -86,7 +86,7 @@ const AdminHero = () => {
         setHeroTitle("Eco-Wanderlust | Passeios Inesquecíveis no Rio de Janeiro");
       }
       
-      const heroSubtitleSetting = siteSettings.find(s => s.key === "hero_subtitle");
+      const heroSubtitleSetting = settings.find(s => s.key === "hero_subtitle");
       if (heroSubtitleSetting) {
         setHeroSubtitle(heroSubtitleSetting.value);
         setDbSubtitleId((heroSubtitleSetting as any).id);
@@ -94,7 +94,7 @@ const AdminHero = () => {
         setHeroSubtitle("Descubra a magia do Rio de Janeiro com nossos passeios exclusivos e guias especializados.");
       }
       
-      const toursTitleSetting = siteSettings.find(s => s.key === "tours_section_title");
+      const toursTitleSetting = settings.find(s => s.key === "tours_section_title");
       if (toursTitleSetting) {
         setToursSectionTitle(toursTitleSetting.value);
         setDbToursTitleId((toursTitleSetting as any).id);
@@ -102,7 +102,7 @@ const AdminHero = () => {
         setToursSectionTitle("Conheça o Melhor do Rio de Janeiro");
       }
       
-      const toursSubtitleSetting = siteSettings.find(s => s.key === "tours_section_subtitle");
+      const toursSubtitleSetting = settings.find(s => s.key === "tours_section_subtitle");
       if (toursSubtitleSetting) {
         setToursSectionSubtitle(toursSubtitleSetting.value);
         setDbToursSubtitleId((toursSubtitleSetting as any).id);
@@ -110,31 +110,31 @@ const AdminHero = () => {
         setToursSectionSubtitle("City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.");
       }
       
-      const cityTitleSetting = siteSettings.find(s => s.key === "city_tours_title");
+      const cityTitleSetting = settings.find(s => s.key === "city_tours_title");
       if (cityTitleSetting) {
         setCityToursTitle(cityTitleSetting.value);
         setDbCityTitleId((cityTitleSetting as any).id);
       }
       
-      const citySubtitleSetting = siteSettings.find(s => s.key === "city_tours_subtitle");
+      const citySubtitleSetting = settings.find(s => s.key === "city_tours_subtitle");
       if (citySubtitleSetting) {
         setCityToursSubtitle(citySubtitleSetting.value);
         setDbCitySubtitleId((citySubtitleSetting as any).id);
       }
       
-      const hikingTitleSetting = siteSettings.find(s => s.key === "hiking_tours_title");
+      const hikingTitleSetting = settings.find(s => s.key === "hiking_tours_title");
       if (hikingTitleSetting) {
         setHikingToursTitle(hikingTitleSetting.value);
         setDbHikingTitleId((hikingTitleSetting as any).id);
       }
       
-      const hikingSubtitleSetting = siteSettings.find(s => s.key === "hiking_tours_subtitle");
+      const hikingSubtitleSetting = settings.find(s => s.key === "hiking_tours_subtitle");
       if (hikingSubtitleSetting) {
         setHikingToursSubtitle(hikingSubtitleSetting.value);
         setDbHikingSubtitleId((hikingSubtitleSetting as any).id);
       }
       
-      const aboutTitleSetting = siteSettings.find(s => s.key === "about_title");
+      const aboutTitleSetting = settings.find(s => s.key === "about_title");
       if (aboutTitleSetting) {
         setAboutTitle(aboutTitleSetting.value);
         setDbAboutTitleId((aboutTitleSetting as any).id);
@@ -142,7 +142,7 @@ const AdminHero = () => {
         setAboutTitle("Sua Porta de Entrada para a Cidade Maravilhosa");
       }
       
-      const aboutDescSetting = siteSettings.find(s => s.key === "about_desc");
+      const aboutDescSetting = settings.find(s => s.key === "about_desc");
       if (aboutDescSetting) {
         setAboutDesc(aboutDescSetting.value);
         setDbAboutDescId((aboutDescSetting as any).id);
@@ -150,7 +150,7 @@ const AdminHero = () => {
         setAboutDesc("A Passeio Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
       }
 
-      const aboutLabelSetting = siteSettings.find(s => s.key === "about_label");
+      const aboutLabelSetting = settings.find(s => s.key === "about_label");
       if (aboutLabelSetting) {
         setAboutLabel(aboutLabelSetting.value);
         setDbAboutLabelId((aboutLabelSetting as any).id);
@@ -158,7 +158,7 @@ const AdminHero = () => {
         setAboutLabel("Sobre a Passeio Rio");
       }
 
-      const aboutDesc2Setting = siteSettings.find(s => s.key === "about_desc2");
+      const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
       if (aboutDesc2Setting) {
         setAboutDesc2(aboutDesc2Setting.value);
         setDbAboutDesc2Id((aboutDesc2Setting as any).id);
