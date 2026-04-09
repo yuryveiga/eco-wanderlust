@@ -83,15 +83,15 @@ export function Header() {
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2 border-b border-border/50"}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="flex items-center justify-between h-18 md:h-26">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-10 w-10 md:h-14 md:w-14 object-contain transition-all duration-300 focus:outline-none" />
+              <img src={logoUrl} alt="Logo" className="h-16 w-16 md:h-22 md:w-22 object-contain transition-all duration-300 focus:outline-none" />
             ) : (
-              <div className="w-10 h-10 md:h-14 md:w-14 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
-                <span className="text-primary-foreground font-bold text-xl font-sans">P</span>
+              <div className="w-16 h-16 md:h-22 md:w-22 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span className="text-primary-foreground font-bold text-2xl font-sans">P</span>
               </div>
             )}
           </Link>
