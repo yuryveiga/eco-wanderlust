@@ -56,6 +56,7 @@ const AdminHero = () => {
   const [dbAboutDescId, setDbAboutDescId] = useState<string | null>(null);
   const [dbAboutDesc2Id, setDbAboutDesc2Id] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTranslating, setIsTranslating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -336,6 +337,56 @@ const AdminHero = () => {
               placeholder="Digite o subtítulo..."
             />
           </div>
+          <Button 
+            variant="outline" 
+            onClick={async () => {
+              if (!heroTitle && !heroSubtitle) {
+                toast({ title: "Preencha o título ou subtítulo primeiro", variant: "destructive" });
+                return;
+              }
+              setIsTranslating(true);
+              try {
+                const results = await Promise.all([
+                  heroTitle ? translateText(heroTitle, "en") : null,
+                  heroTitle ? translateText(heroTitle, "es") : null,
+                  heroSubtitle ? translateText(heroSubtitle, "en") : null,
+                  heroSubtitle ? translateText(heroSubtitle, "es") : null,
+                ]);
+                // Save translations to site_settings
+                const keysToSave = [];
+                if (results[0]) {
+                  const existing = settings.find(s => s.key === "hero_title_en");
+                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[0] });
+                  else await insertLovable("site_settings", { key: "hero_title_en", value: results[0] });
+                }
+                if (results[1]) {
+                  const existing = settings.find(s => s.key === "hero_title_es");
+                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[1] });
+                  else await insertLovable("site_settings", { key: "hero_title_es", value: results[1] });
+                }
+                if (results[2]) {
+                  const existing = settings.find(s => s.key === "hero_subtitle_en");
+                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[2] });
+                  else await insertLovable("site_settings", { key: "hero_subtitle_en", value: results[2] });
+                }
+                if (results[3]) {
+                  const existing = settings.find(s => s.key === "hero_subtitle_es");
+                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[3] });
+                  else await insertLovable("site_settings", { key: "hero_subtitle_es", value: results[3] });
+                }
+                toast({ title: "Tradução concluída! Salve as alterações." });
+              } catch (e) {
+                toast({ title: "Erro ao traduzir", variant: "destructive" });
+              } finally {
+                setIsTranslating(false);
+              }
+            }}
+            disabled={isTranslating}
+            className="mt-2"
+          >
+            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Traduzir
+          </Button>
         </div>
       </div>
 
@@ -365,6 +416,42 @@ const AdminHero = () => {
               placeholder="Ex: City tours completos..."
             />
           </div>
+          
+          <Button 
+            variant="outline" 
+            onClick={async () => {
+              if (!toursSectionTitle && !toursSectionSubtitle) {
+                toast({ title: "Preencha o título ou subtítulo primeiro", variant: "destructive" });
+                return;
+              }
+              setIsTranslating(true);
+              try {
+                const results = await Promise.all([
+                  toursSectionTitle ? translateText(toursSectionTitle, "en") : null,
+                  toursSectionTitle ? translateText(toursSectionTitle, "es") : null,
+                  toursSectionSubtitle ? translateText(toursSectionSubtitle, "en") : null,
+                  toursSectionSubtitle ? translateText(toursSectionSubtitle, "es") : null,
+                ]);
+                const keys = ["tours_section_title_en", "tours_section_title_es", "tours_section_subtitle_en", "tours_section_subtitle_es"];
+                for (let i = 0; i < 4; i++) {
+                  if (results[i]) {
+                    const existing = settings.find(s => s.key === keys[i]);
+                    if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
+                    else await insertLovable("site_settings", { key: keys[i], value: results[i] });
+                  }
+                }
+                toast({ title: "Tradução concluída! Salve as alterações." });
+              } catch (e) {
+                toast({ title: "Erro ao traduzir", variant: "destructive" });
+              } finally {
+                setIsTranslating(false);
+              }
+            }}
+            disabled={isTranslating}
+          >
+            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Traduzir
+          </Button>
         </div>
       </div>
 
@@ -470,6 +557,46 @@ const AdminHero = () => {
               className="w-full min-h-[100px] rounded-xl border p-4 text-sm font-sans"
             />
           </div>
+          
+          <Button 
+            variant="outline" 
+            onClick={async () => {
+              if (!aboutLabel && !aboutTitle && !aboutDesc && !aboutDesc2) {
+                toast({ title: "Preencha algum campo primeiro", variant: "destructive" });
+                return;
+              }
+              setIsTranslating(true);
+              try {
+                const results = await Promise.all([
+                  aboutLabel ? translateText(aboutLabel, "en") : null,
+                  aboutLabel ? translateText(aboutLabel, "es") : null,
+                  aboutTitle ? translateText(aboutTitle, "en") : null,
+                  aboutTitle ? translateText(aboutTitle, "es") : null,
+                  aboutDesc ? translateText(aboutDesc, "en") : null,
+                  aboutDesc ? translateText(aboutDesc, "es") : null,
+                  aboutDesc2 ? translateText(aboutDesc2, "en") : null,
+                  aboutDesc2 ? translateText(aboutDesc2, "es") : null,
+                ]);
+                const keys = ["about_label_en", "about_label_es", "about_title_en", "about_title_es", "about_desc_en", "about_desc_es", "about_desc2_en", "about_desc2_es"];
+                for (let i = 0; i < 8; i++) {
+                  if (results[i]) {
+                    const existing = settings.find(s => s.key === keys[i]);
+                    if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
+                    else await insertLovable("site_settings", { key: keys[i], value: results[i] });
+                  }
+                }
+                toast({ title: "Tradução concluída! Salve as alterações." });
+              } catch (e) {
+                toast({ title: "Erro ao traduzir", variant: "destructive" });
+              } finally {
+                setIsTranslating(false);
+              }
+            }}
+            disabled={isTranslating}
+          >
+            {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Traduzir Sobre
+          </Button>
           
           <Button onClick={handleSaveTitleSubtitle} className="w-fit font-sans">
             <Save className="w-4 h-4 mr-2" />
