@@ -33,6 +33,7 @@ const AdminBlog = () => {
   const { toast } = useToast();
 
   const loadPosts = async () => {
+    console.log("loadPosts called");
     setIsLoading(true);
     const data = await fetchLovable<LovableBlogPost>("blog_posts");
     setPosts(data.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
