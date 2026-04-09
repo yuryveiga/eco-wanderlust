@@ -317,7 +317,6 @@ const AdminSales = () => {
               </Button>
             </div>
           </div>
-          </div>
         </DialogContent>
       </Dialog>
     </div>
