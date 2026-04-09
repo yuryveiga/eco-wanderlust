@@ -167,10 +167,6 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        {/* Elfsight TripAdvisor Widget */}
-        <div className="mb-12">
-          <div className="elfsight-app-a8e8bba0-e42c-47cd-a67d-a76cbb8bbd82" data-elfsight-app-lazy></div>
-        </div>
 
         <div className="relative">
           <div className="overflow-hidden">
