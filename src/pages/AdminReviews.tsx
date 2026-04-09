@@ -99,12 +99,14 @@ export default function AdminReviews() {
     };
 
     if (editingId) {
-      const { error } = await supabase.from("reviews").update(payload).eq("id", editingId);
-      if (error) { toast.error("Erro ao atualizar"); return; }
+      const { error, data } = await supabase.from("reviews").update(payload).eq("id", editingId);
+      console.log("Update result:", error, data);
+      if (error) { toast.error("Erro ao atualizar: " + error.message); return; }
       toast.success("Review atualizado!");
     } else {
-      const { error } = await supabase.from("reviews").insert(payload);
-      if (error) { toast.error("Erro ao criar"); return; }
+      const { error, data } = await supabase.from("reviews").insert(payload);
+      console.log("Insert result:", error, data);
+      if (error) { toast.error("Erro ao criar: " + error.message); return; }
       toast.success("Review criado!");
     }
     setDialogOpen(false);
