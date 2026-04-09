@@ -5,12 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, fetchLovable as fetchSiteImages, LovableSiteImage } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
 import { Sunrise, Sun, Moon } from "lucide-react";
+
+type JsonFieldItem = {
+  time?: string;
+  description?: string;
+  text?: string;
+  q?: string;
+  a?: string;
+  icon?: string;
+};
 
 const AdminTours = () => {
   const [searchParams] = useSearchParams();
@@ -144,13 +153,14 @@ const AdminTours = () => {
         translateText(editing.meeting_point_address || "", "es")
       ]);
 
-      const translateJsonArray = async (arr: any[], fields: string[], lang: 'en' | 'es'): Promise<any[]> => {
+      const translateJsonArray = async (arr: JsonFieldItem[], fields: (keyof JsonFieldItem)[], lang: 'en' | 'es'): Promise<JsonFieldItem[]> => {
         if (!arr || !Array.isArray(arr)) return arr;
         const translated = await Promise.all(arr.map(async (item) => {
-          const newItem: any = { ...item };
+          const newItem: JsonFieldItem = { ...item };
           for (const field of fields) {
-            if (item[field]) {
-              newItem[field] = await translateText(item[field], lang);
+            const val = item[field];
+            if (val) {
+              newItem[field] = await translateText(val, lang);
             }
           }
           return newItem;
@@ -181,14 +191,14 @@ const AdminTours = () => {
         difficulty_es: tDifEs,
         meeting_point_address_en: tAddrEn,
         meeting_point_address_es: tAddrEs,
-        itinerary_json_en: tItineraryEn,
-        itinerary_json_es: tItineraryEs,
-        included_json_en: tIncludedEn,
-        included_json_es: tIncludedEs,
-        highlights_json_en: tHighlightsEn,
-        highlights_json_es: tHighlightsEs,
-        faq_json_en: tFaqEn,
-        faq_json_es: tFaqEs,
+        itinerary_json_en: tItineraryEn as any,
+        itinerary_json_es: tItineraryEs as any,
+        included_json_en: tIncludedEn as any,
+        included_json_es: tIncludedEs as any,
+        highlights_json_en: tHighlightsEn as any,
+        highlights_json_es: tHighlightsEs as any,
+        faq_json_en: tFaqEn as any,
+        faq_json_es: tFaqEs as any,
       });
       
       toast({ title: "Sucesso!", description: "Tradução para Inglês e Espanhol concluída." });
@@ -199,14 +209,14 @@ const AdminTours = () => {
     }
   };
 
-  const updateJsonField = (field: keyof LovableTour, index: number, subField: string, value: any) => {
+  const updateJsonField = (field: keyof LovableTour, index: number, subField: string, value: string) => {
     if (!editing) return;
     const arr = [...((editing[field] as any[]) || [])];
     arr[index] = { ...arr[index], [subField]: value };
     setEditing({ ...editing, [field]: arr });
   };
 
-  const addJsonItem = (field: keyof LovableTour, newItem: any) => {
+  const addJsonItem = (field: keyof LovableTour, newItem: JsonFieldItem) => {
     if (!editing) return;
     const arr = [...((editing[field] as any[]) || []), newItem];
     setEditing({ ...editing, [field]: arr });
@@ -243,26 +253,26 @@ const AdminTours = () => {
                   translateText(tour.difficulty || "", "es"),
                 ]);
 
-                const translateJsonField = async (json: any[], lang: 'en' | 'es'): Promise<any[]> => {
-                  if (!json || !Array.isArray(json)) return json;
+                const translateJsonField = async (json: any[] | undefined, lang: 'en' | 'es'): Promise<any[]> => {
+                  if (!json || !Array.isArray(json)) return [];
                   const translated = await Promise.all(json.map(async (item) => {
                     if (item.text) {
-                      const translatedText = await translateText(item.text, lang);
-                      return { ...item, text: translatedText };
+                      const t = await translateText(item.text, lang);
+                      return { ...item, text: t };
                     }
                     if (item.description) {
-                      const translatedDesc = await translateText(item.description, lang);
-                      return { ...item, description: translatedDesc };
+                      const t = await translateText(item.description, lang);
+                      return { ...item, description: t };
                     }
                     if (item.q && item.a) {
-                      const translatedQ = await translateText(item.q, lang);
-                      const translatedA = await translateText(item.a, lang);
-                      return { q: translatedQ, a: translatedA };
+                      const q = await translateText(item.q, lang);
+                      const a = await translateText(item.a, lang);
+                      return { q, a };
                     }
                     if (item.time && item.description) {
-                      const translatedTime = await translateText(item.time, lang);
-                      const translatedDesc = await translateText(item.description, lang);
-                      return { time: translatedTime, description: translatedDesc };
+                      const time = await translateText(item.time, lang);
+                      const desc = await translateText(item.description, lang);
+                      return { time, description: desc };
                     }
                     return item;
                   }));
@@ -366,7 +376,7 @@ const AdminTours = () => {
                       setEditing(tourWithCategory); 
                       setIsNew(false); 
                       // Load gallery images
-                      fetchSiteImages<LovableSiteImage>("site_images").then(imgs => {
+                      fetchLovable<LovableSiteImage>("site_images").then(imgs => {
                         setGalleryImages(imgs.filter(i => i.key?.startsWith('gallery')));
                       });
                     }}>
@@ -504,7 +514,7 @@ const AdminTours = () => {
                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('itinerary_json', { time: '08:00', description: '' })} className="font-bold text-xs h-8">+ Adicionar Etapa</Button>
                         </div>
                         <div className="grid grid-cols-1 gap-3">
-                           {(editing.itinerary_json as any[])?.map((step, i) => (
+                           {((editing.itinerary_json as JsonFieldItem[]) || [])?.map((step, i) => (
                              <div key={i} className="flex gap-4 items-start bg-muted/20 p-4 rounded-2xl border">
                                 <div className="w-24 shrink-0"><Input value={step.time} onChange={(e) => updateJsonField('itinerary_json', i, 'time', e.target.value)} className="h-10" /></div>
                                 <div className="flex-1"><Input value={step.description} onChange={(e) => updateJsonField('itinerary_json', i, 'description', e.target.value)} className="h-10" /></div>
@@ -522,7 +532,7 @@ const AdminTours = () => {
                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('included_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar Item</Button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           {(editing.included_json as any[])?.map((item, i) => (
+                           {((editing.included_json as JsonFieldItem[]) || [])?.map((item, i) => (
                              <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
                                 <Input value={item.text} onChange={(e) => updateJsonField('included_json', i, 'text', e.target.value)} className="h-10" />
                                 <Button size="icon" variant="ghost" onClick={() => removeJsonItem('included_json', i)}><Trash className="w-4 h-4" /></Button>
@@ -539,7 +549,7 @@ const AdminTours = () => {
                             <Button size="sm" variant="ghost" onClick={() => addJsonItem('highlights_json', { icon: 'Check', text: '' })} className="font-bold text-xs h-8">+ Adicionar</Button>
                          </div>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {(editing.highlights_json as any[])?.map((item, i) => (
+                            {((editing.highlights_json as JsonFieldItem[]) || [])?.map((item, i) => (
                               <div key={i} className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
                                  <Input value={item.text} onChange={(e) => updateJsonField('highlights_json', i, 'text', e.target.value)} placeholder="Destaque..." className="h-10" />
                                  <Button size="icon" variant="ghost" onClick={() => removeJsonItem('highlights_json', i)}><Trash className="w-4 h-4" /></Button>
@@ -556,7 +566,7 @@ const AdminTours = () => {
                            <Button size="sm" variant="ghost" onClick={() => addJsonItem('faq_json', { q: '', a: '' })} className="font-bold text-xs h-8">+ Nova Pergunta</Button>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
-                           {(editing.faq_json as any[])?.map((item, i) => (
+                           {((editing.faq_json as JsonFieldItem[]) || [])?.map((item, i) => (
                              <div key={i} className="bg-muted/10 p-5 rounded-3xl border space-y-4">
                                 <Input value={item.q} onChange={(e) => updateJsonField('faq_json', i, 'q', e.target.value)} placeholder="Pergunta..." className="font-bold border-none bg-transparent" />
                                 <textarea className="w-full text-sm text-muted-foreground bg-transparent border-none p-0 min-h-[60px]" value={item.a} onChange={(e) => updateJsonField('faq_json', i, 'a', e.target.value)} placeholder="Resposta..." />

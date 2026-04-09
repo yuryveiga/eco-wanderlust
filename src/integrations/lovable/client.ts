@@ -5,28 +5,23 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
     
-    console.log("Uploading to bucket 'site-images', file:", fileName);
-    
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('site-images')
       .upload(fileName, file);
 
     if (uploadError) {
-      console.error("Upload error:", uploadError);
       alert(`ERRO DE BUCKET (Storage): ${uploadError.message}`);
       return null;
     }
 
-    console.log("Upload success:", data);
-    
     const { data: { publicUrl } } = supabase.storage
       .from('site-images')
       .getPublicUrl(fileName);
 
     return publicUrl;
-  } catch (error: any) {
-    console.error("Upload error:", error);
-    alert(`ERRO DE BUCKET: ${error?.message || 'Erro desconhecido'}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Erro desconhecido';
+    alert(`ERRO DE BUCKET: ${message}`);
     return null;
   }
 }
@@ -42,37 +37,34 @@ export function fileToBase64(file: File): Promise<string> {
 
 export async function fetchLovable<T>(table: string): Promise<T[]> {
   try {
-    console.log(`Fetching from ${table}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query = supabase.from(table as any).select('*');
     
-    // Only add sort_order for tables that have it
     if (table === 'tours' || table === 'pages' || table === 'social_media') {
       query = query.order('sort_order');
     }
     
     const { data, error } = await query;
     if (error) {
-      console.error(`Fetch error for ${table}:`, error);
       throw error;
     }
-    console.log(`Fetched ${table}:`, data);
     return (data || []) as T[];
-  } catch (error: any) {
-    console.error(`Error fetching ${table}:`, error);
-    alert(`Erro ao carregar ${table}: ` + error?.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Erro desconhecido';
+    alert(`Erro ao carregar ${table}: ` + message);
     return [];
   }
 }
 
-export async function insertLovable<T>(table: string, data: any): Promise<T | null> {
+export async function insertLovable<T>(table: string, data: Partial<T>): Promise<T | null> {
   try {
-    // Strip id, created_at, updated_at out of the data to avoid Postgres primary key or timestamp errors
-    const sanitizedData = { ...data } as any;
+    const sanitizedData = { ...data } as Record<string, unknown>;
     delete sanitizedData.id;
     delete sanitizedData.created_at;
     delete sanitizedData.updated_at;
     
     const { data: result, error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from(table as any)
       .insert(sanitizedData)
       .select()
@@ -80,8 +72,7 @@ export async function insertLovable<T>(table: string, data: any): Promise<T | nu
       
     if (error) throw error;
     return result as T;
-  } catch (error: any) {
-    console.error(`Error inserting ${table}:`, error);
+  } catch (error: unknown) {
     alert(`Erro ao salvar no banco (${table}): \n\n` + JSON.stringify(error));
     return null;
   }
@@ -89,25 +80,24 @@ export async function insertLovable<T>(table: string, data: any): Promise<T | nu
 
 export async function updateLovable<T>(table: string, id: string, data: Partial<T>): Promise<boolean> {
   try {
-    const sanitizedData = { ...data } as any;
+    const sanitizedData = { ...data } as Record<string, unknown>;
     delete sanitizedData.id;
     delete sanitizedData.created_at;
     delete sanitizedData.updated_at;
 
-    const { data: result, error } = await supabase
+    const { error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from(table as any)
       .update(sanitizedData)
       .eq('id', id)
       .select();
       
     if (error) {
-      console.error("Supabase error:", error);
       throw error;
     }
     
     return true;
-  } catch (error: any) {
-    console.error(`Error updating ${table}:`, error);
+  } catch (error: unknown) {
     alert(`Erro ao atualizar no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }
@@ -116,14 +106,14 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
 export async function deleteLovable(table: string, id: string): Promise<boolean> {
   try {
     const { error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from(table as any)
       .delete()
       .eq('id', id);
       
     if (error) throw error;
     return true;
-  } catch (error: any) {
-    console.error(`Error deleting ${table}:`, error);
+  } catch (error: unknown) {
     alert(`Erro ao excluir no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }

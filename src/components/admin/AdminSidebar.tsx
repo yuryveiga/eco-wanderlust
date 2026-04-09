@@ -27,6 +27,7 @@ const items = [
   { title: "Redes Sociais", url: "/admin/social", icon: Share2 },
   { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
   { title: "Vendas", url: "/admin/sales", icon: DollarSign },
+  { title: "Páginas CMS", url: "/admin/pages", icon: FileText },
   { title: "Usuários", url: "/admin/users", icon: Users },
 ];
 

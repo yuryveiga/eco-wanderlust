@@ -70,18 +70,17 @@ const AdminHero = () => {
     try {
       const settings = await fetchLovable<LovableSiteSetting>("site_settings");
       setSiteSettings(settings);
-      console.log("Settings carregados:", settings);
       
       const heroStyleSetting = settings.find(s => s.key === "hero_style");
       if (heroStyleSetting) {
         setActiveStyle(heroStyleSetting.value);
-        setDbSettingId((heroStyleSetting as any).id);
+        setDbSettingId(heroStyleSetting.id);
       }
       
       const heroTitleSetting = settings.find(s => s.key === "hero_title");
       if (heroTitleSetting) {
         setHeroTitle(heroTitleSetting.value);
-        setDbTitleId((heroTitleSetting as any).id);
+        setDbTitleId(heroTitleSetting.id);
       } else {
         setHeroTitle("Eco-Wanderlust | Passeios Inesquecíveis no Rio de Janeiro");
       }
@@ -89,7 +88,7 @@ const AdminHero = () => {
       const heroSubtitleSetting = settings.find(s => s.key === "hero_subtitle");
       if (heroSubtitleSetting) {
         setHeroSubtitle(heroSubtitleSetting.value);
-        setDbSubtitleId((heroSubtitleSetting as any).id);
+        setDbSubtitleId(heroSubtitleSetting.id);
       } else {
         setHeroSubtitle("Descubra a magia do Rio de Janeiro com nossos passeios exclusivos e guias especializados.");
       }
@@ -97,7 +96,7 @@ const AdminHero = () => {
       const toursTitleSetting = settings.find(s => s.key === "tours_section_title");
       if (toursTitleSetting) {
         setToursSectionTitle(toursTitleSetting.value);
-        setDbToursTitleId((toursTitleSetting as any).id);
+        setDbToursTitleId(toursTitleSetting.id);
       } else {
         setToursSectionTitle("Conheça o Melhor do Rio de Janeiro");
       }
@@ -105,7 +104,7 @@ const AdminHero = () => {
       const toursSubtitleSetting = settings.find(s => s.key === "tours_section_subtitle");
       if (toursSubtitleSetting) {
         setToursSectionSubtitle(toursSubtitleSetting.value);
-        setDbToursSubtitleId((toursSubtitleSetting as any).id);
+        setDbToursSubtitleId(toursSubtitleSetting.id);
       } else {
         setToursSectionSubtitle("City tours completos, passeios de barco em Arraial do Cabo e Angra dos Reis, e experiências inesquecíveis com guias especializados.");
       }
@@ -113,31 +112,31 @@ const AdminHero = () => {
       const cityTitleSetting = settings.find(s => s.key === "city_tours_title");
       if (cityTitleSetting) {
         setCityToursTitle(cityTitleSetting.value);
-        setDbCityTitleId((cityTitleSetting as any).id);
+        setDbCityTitleId(cityTitleSetting.id);
       }
       
       const citySubtitleSetting = settings.find(s => s.key === "city_tours_subtitle");
       if (citySubtitleSetting) {
         setCityToursSubtitle(citySubtitleSetting.value);
-        setDbCitySubtitleId((citySubtitleSetting as any).id);
+        setDbCitySubtitleId(citySubtitleSetting.id);
       }
       
       const hikingTitleSetting = settings.find(s => s.key === "hiking_tours_title");
       if (hikingTitleSetting) {
         setHikingToursTitle(hikingTitleSetting.value);
-        setDbHikingTitleId((hikingTitleSetting as any).id);
+        setDbHikingTitleId(hikingTitleSetting.id);
       }
       
       const hikingSubtitleSetting = settings.find(s => s.key === "hiking_tours_subtitle");
       if (hikingSubtitleSetting) {
         setHikingToursSubtitle(hikingSubtitleSetting.value);
-        setDbHikingSubtitleId((hikingSubtitleSetting as any).id);
+        setDbHikingSubtitleId(hikingSubtitleSetting.id);
       }
       
       const aboutTitleSetting = settings.find(s => s.key === "about_title");
       if (aboutTitleSetting) {
         setAboutTitle(aboutTitleSetting.value);
-        setDbAboutTitleId((aboutTitleSetting as any).id);
+        setDbAboutTitleId(aboutTitleSetting.id);
       } else {
         setAboutTitle("Sua Porta de Entrada para a Cidade Maravilhosa");
       }
@@ -145,7 +144,7 @@ const AdminHero = () => {
       const aboutDescSetting = settings.find(s => s.key === "about_desc");
       if (aboutDescSetting) {
         setAboutDesc(aboutDescSetting.value);
-        setDbAboutDescId((aboutDescSetting as any).id);
+        setDbAboutDescId(aboutDescSetting.id);
       } else {
         setAboutDesc("A Tocorime Rio oferece experiências turísticas autênticas que mostram o melhor do Rio de Janeiro. Do Cristo Redentor ao Pão de Açúcar, de Arraial do Cabo a Angra dos Reis, revelamos a beleza incomparável desta cidade magnification.");
       }
@@ -153,7 +152,7 @@ const AdminHero = () => {
       const aboutLabelSetting = settings.find(s => s.key === "about_label");
       if (aboutLabelSetting) {
         setAboutLabel(aboutLabelSetting.value);
-        setDbAboutLabelId((aboutLabelSetting as any).id);
+        setDbAboutLabelId(aboutLabelSetting.id);
       } else {
         setAboutLabel("Sobre a Tocorime Rio");
       }
@@ -161,7 +160,7 @@ const AdminHero = () => {
       const aboutDesc2Setting = settings.find(s => s.key === "about_desc2");
       if (aboutDesc2Setting) {
         setAboutDesc2(aboutDesc2Setting.value);
-        setDbAboutDesc2Id((aboutDesc2Setting as any).id);
+        setDbAboutDesc2Id(aboutDesc2Setting.id);
       } else {
         setAboutDesc2("Com guias locais especializados e saídas diárias confirmadas, garantimos uma experiência segura, confortável e inesquecível.");
       }
@@ -173,96 +172,89 @@ const AdminHero = () => {
 
   const handleSaveTitleSubtitle = async () => {
     try {
-      console.log("Saving about_title:", aboutTitle, "dbAboutTitleId:", dbAboutTitleId);
-      console.log("Saving about_desc:", aboutDesc, "dbAboutDescId:", dbAboutDescId);
-      
       if (dbTitleId) {
         await updateLovable("site_settings", dbTitleId, { value: heroTitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "hero_title", value: heroTitle });
-        if (res) setDbTitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "hero_title", value: heroTitle });
+        if (res) setDbTitleId(res.id);
       }
       
       if (dbSubtitleId) {
         await updateLovable("site_settings", dbSubtitleId, { value: heroSubtitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "hero_subtitle", value: heroSubtitle });
-        if (res) setDbSubtitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "hero_subtitle", value: heroSubtitle });
+        if (res) setDbSubtitleId(res.id);
       }
       
       if (dbToursTitleId) {
         await updateLovable("site_settings", dbToursTitleId, { value: toursSectionTitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "tours_section_title", value: toursSectionTitle });
-        if (res) setDbToursTitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "tours_section_title", value: toursSectionTitle });
+        if (res) setDbToursTitleId(res.id);
       }
       
       if (dbToursSubtitleId) {
         await updateLovable("site_settings", dbToursSubtitleId, { value: toursSectionSubtitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "tours_section_subtitle", value: toursSectionSubtitle });
-        if (res) setDbToursSubtitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "tours_section_subtitle", value: toursSectionSubtitle });
+        if (res) setDbToursSubtitleId(res.id);
       }
       
       if (dbCityTitleId) {
         await updateLovable("site_settings", dbCityTitleId, { value: cityToursTitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "city_tours_title", value: cityToursTitle });
-        if (res) setDbCityTitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "city_tours_title", value: cityToursTitle });
+        if (res) setDbCityTitleId(res.id);
       }
       
       if (dbCitySubtitleId) {
         await updateLovable("site_settings", dbCitySubtitleId, { value: cityToursSubtitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "city_tours_subtitle", value: cityToursSubtitle });
-        if (res) setDbCitySubtitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "city_tours_subtitle", value: cityToursSubtitle });
+        if (res) setDbCitySubtitleId(res.id);
       }
       
       if (dbHikingTitleId) {
         await updateLovable("site_settings", dbHikingTitleId, { value: hikingToursTitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "hiking_tours_title", value: hikingToursTitle });
-        if (res) setDbHikingTitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "hiking_tours_title", value: hikingToursTitle });
+        if (res) setDbHikingTitleId(res.id);
       }
       
       if (dbHikingSubtitleId) {
         await updateLovable("site_settings", dbHikingSubtitleId, { value: hikingToursSubtitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "hiking_tours_subtitle", value: hikingToursSubtitle });
-        if (res) setDbHikingSubtitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "hiking_tours_subtitle", value: hikingToursSubtitle });
+        if (res) setDbHikingSubtitleId(res.id);
       }
       
       // Save about section
       if (dbAboutTitleId) {
-        const result = await updateLovable("site_settings", dbAboutTitleId, { value: aboutTitle });
-        console.log("Update about_title result:", result);
+        await updateLovable("site_settings", dbAboutTitleId, { value: aboutTitle });
       } else {
-        const res = await insertLovable("site_settings", { key: "about_title", value: aboutTitle });
-        console.log("Insert about_title result:", res);
-        if (res) setDbAboutTitleId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "about_title", value: aboutTitle });
+        if (res) setDbAboutTitleId(res.id);
       }
       
       if (dbAboutDescId) {
-        const result = await updateLovable("site_settings", dbAboutDescId, { value: aboutDesc });
-        console.log("Update about_desc result:", result);
+        await updateLovable("site_settings", dbAboutDescId, { value: aboutDesc });
       } else {
-        const res = await insertLovable("site_settings", { key: "about_desc", value: aboutDesc });
-        console.log("Insert about_desc result:", res);
-        if (res) setDbAboutDescId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "about_desc", value: aboutDesc });
+        if (res) setDbAboutDescId(res.id);
       }
 
       if (dbAboutLabelId) {
         await updateLovable("site_settings", dbAboutLabelId, { value: aboutLabel });
       } else {
-        const res = await insertLovable("site_settings", { key: "about_label", value: aboutLabel });
-        if (res) setDbAboutLabelId((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "about_label", value: aboutLabel });
+        if (res) setDbAboutLabelId(res.id);
       }
 
       if (dbAboutDesc2Id) {
         await updateLovable("site_settings", dbAboutDesc2Id, { value: aboutDesc2 });
       } else {
-        const res = await insertLovable("site_settings", { key: "about_desc2", value: aboutDesc2 });
-        if (res) setDbAboutDesc2Id((res as any).id);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "about_desc2", value: aboutDesc2 });
+        if (res) setDbAboutDesc2Id(res.id);
       }
       
       localStorage.removeItem('site_settings');
@@ -274,20 +266,14 @@ const AdminHero = () => {
   };
 
   const handleSave = async (styleId: string) => {
-    console.log("Salvando hero_style:", styleId, "dbSettingId:", dbSettingId);
-    
     try {
       let success = false;
       if (dbSettingId) {
-        console.log("Atualizando registro:", dbSettingId);
         success = await updateLovable("site_settings", dbSettingId, { value: styleId });
-        console.log("Resultado do update:", success);
       } else {
-        console.log("Inserindo novo registro");
-        const res = await insertLovable("site_settings", { key: "hero_style", value: styleId });
-        console.log("Resultado do insert:", res);
+        const res = await insertLovable<LovableSiteSetting>("site_settings", { key: "hero_style", value: styleId });
         success = !!res;
-        if (res) setDbSettingId((res as any).id || "hero_style");
+        if (res) setDbSettingId(res.id || "hero_style");
       }
       
       if (success) {
@@ -299,7 +285,7 @@ const AdminHero = () => {
       }
     } catch (e) {
       console.error("Erro ao salvar hero style:", e);
-      toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi créée no Supabase.", variant: "destructive" });
+      toast({ title: "Erro ao salvar", description: "Verifique se a tabela site_settings foi criada no Supabase.", variant: "destructive" });
     }
   };
 
@@ -316,8 +302,6 @@ const AdminHero = () => {
         <Button 
           variant="default" 
           onClick={async () => {
-            console.log("siteSettings state:", siteSettings);
-            console.log("Fields:", heroTitle, heroSubtitle, toursSectionTitle, toursSectionSubtitle, aboutLabel, aboutTitle, aboutDesc, aboutDesc2);
             const allFields = [heroTitle, heroSubtitle, toursSectionTitle, toursSectionSubtitle, aboutLabel, aboutTitle, aboutDesc, aboutDesc2];
             if (allFields.every(f => !f)) {
               toast({ title: "Preencha algum campo primeiro", variant: "destructive" });
@@ -328,9 +312,7 @@ const AdminHero = () => {
               // Reload settings before saving
               const freshSettings = await fetchLovable<LovableSiteSetting>("site_settings");
               setSiteSettings(freshSettings);
-              console.log("Fresh settings:", freshSettings);
               
-              console.log("Starting translation for fields:", allFields);
               const translations = await Promise.all([
                 heroTitle ? translateText(heroTitle, "en") : null, heroTitle ? translateText(heroTitle, "es") : null,
                 heroSubtitle ? translateText(heroSubtitle, "en") : null, heroSubtitle ? translateText(heroSubtitle, "es") : null,
@@ -350,24 +332,23 @@ const AdminHero = () => {
               ];
               
               for (let i = 0; i < keys.length; i++) {
-                if (translations[i]) {
-                  console.log(`Saving ${keys[i]}:`, translations[i]);
+                const translation = translations[i];
+                if (translation) {
                   const existing = freshSettings.find(s => s.key === keys[i]);
                   if (existing) {
-                    console.log("Updating existing:", existing.id);
-                    await updateLovable("site_settings", (existing as any).id, { value: translations[i] });
+                    await updateLovable("site_settings", existing.id, { value: translation });
                   } else {
-                    console.log("Inserting new:", keys[i]);
-                    await insertLovable("site_settings", { key: keys[i], value: translations[i] });
+                    await insertLovable("site_settings", { key: keys[i], value: translation });
                   }
                 }
               }
               
               setAllTranslated(true);
               toast({ title: "Tradução concluída! Salve as alterações." });
-            } catch (e: any) {
+            } catch (e: unknown) {
+              const message = e instanceof Error ? e.message : 'Erro desconhecido';
               console.error("Translation error:", e);
-              toast({ title: "Erro ao traduzir: " + (e?.message || e?.toString() || "Verifique a API key"), variant: "destructive" });
+              toast({ title: "Erro ao traduzir: " + message, variant: "destructive" });
             } finally {
               setIsTranslating(false);
             }
@@ -426,25 +407,24 @@ const AdminHero = () => {
                   heroSubtitle ? translateText(heroSubtitle, "es") : null,
                 ]);
                 // Save translations to site_settings
-                const keysToSave = [];
                 if (results[0]) {
                   const existing = siteSettings.find(s => s.key === "hero_title_en");
-                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[0] });
+                  if (existing) await updateLovable("site_settings", existing.id, { value: results[0] });
                   else await insertLovable("site_settings", { key: "hero_title_en", value: results[0] });
                 }
                 if (results[1]) {
                   const existing = siteSettings.find(s => s.key === "hero_title_es");
-                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[1] });
+                  if (existing) await updateLovable("site_settings", existing.id, { value: results[1] });
                   else await insertLovable("site_settings", { key: "hero_title_es", value: results[1] });
                 }
                 if (results[2]) {
                   const existing = siteSettings.find(s => s.key === "hero_subtitle_en");
-                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[2] });
+                  if (existing) await updateLovable("site_settings", existing.id, { value: results[2] });
                   else await insertLovable("site_settings", { key: "hero_subtitle_en", value: results[2] });
                 }
                 if (results[3]) {
                   const existing = siteSettings.find(s => s.key === "hero_subtitle_es");
-                  if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[3] });
+                  if (existing) await updateLovable("site_settings", existing.id, { value: results[3] });
                   else await insertLovable("site_settings", { key: "hero_subtitle_es", value: results[3] });
                 }
                 toast({ title: "Tradução concluída! Salve as alterações." });
@@ -505,10 +485,11 @@ const AdminHero = () => {
                 ]);
                 const keys = ["tours_section_title_en", "tours_section_title_es", "tours_section_subtitle_en", "tours_section_subtitle_es"];
                 for (let i = 0; i < 4; i++) {
-                  if (results[i]) {
+                  const result = results[i];
+                  if (result) {
                     const existing = siteSettings.find(s => s.key === keys[i]);
-                    if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
-                    else await insertLovable("site_settings", { key: keys[i], value: results[i] });
+                    if (existing) await updateLovable("site_settings", existing.id, { value: result });
+                    else await insertLovable("site_settings", { key: keys[i], value: result });
                   }
                 }
                 toast({ title: "Tradução concluída! Salve as alterações." });
@@ -648,10 +629,11 @@ const AdminHero = () => {
                 ]);
                 const keys = ["about_label_en", "about_label_es", "about_title_en", "about_title_es", "about_desc_en", "about_desc_es", "about_desc2_en", "about_desc2_es"];
                 for (let i = 0; i < 8; i++) {
-                  if (results[i]) {
+                  const result = results[i];
+                  if (result) {
                     const existing = siteSettings.find(s => s.key === keys[i]);
-                    if (existing) await updateLovable("site_settings", (existing as any).id, { value: results[i] });
-                    else await insertLovable("site_settings", { key: keys[i], value: results[i] });
+                    if (existing) await updateLovable("site_settings", existing.id, { value: result });
+                    else await insertLovable("site_settings", { key: keys[i], value: result });
                   }
                 }
                 toast({ title: "Tradução concluída! Salve as alterações." });
@@ -708,8 +690,8 @@ const AdminHero = () => {
                 <div className="w-full h-full bg-slate-800 relative flex items-center justify-center p-4">
                   <div className="w-3/4 h-3/4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 flex flex-col items-center justify-center gap-3">
                     <div className="w-2/3 h-6 bg-white/40 rounded"></div>
-                    <div className="w-3/4 h-3 bg-white/20 rounded"></div>
-                    <div className="w-3/4 h-3 bg-white/20 rounded"></div>
+                    <div className="w-3/4 h-3/4 bg-white/20 rounded"></div>
+                    <div className="w-3/4 h-3/4 bg-white/20 rounded"></div>
                     <div className="w-1/2 h-8 bg-primary rounded mt-2"></div>
                   </div>
                 </div>

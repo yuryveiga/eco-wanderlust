@@ -29,6 +29,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Cart from "./pages/Cart";
 import MaracanaCalendar from "./pages/MaracanaCalendar";
+import GenericPage from "./pages/GenericPage";
 import { ThemeApplier } from "./components/ThemeApplier";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/carrinho" element={<Cart />} />
             <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
+            <Route path="/passeio/:id" element={<TourDetail />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
@@ -64,7 +66,9 @@ const App = () => (
                 <Route path="gallery" element={<AdminGallery />} />
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="sales" element={<AdminSales />} />
+                <Route path="pages" element={<AdminPages />} />
             </Route>
+            <Route path="/:slug" element={<GenericPage />} />
             <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
