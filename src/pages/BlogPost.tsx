@@ -61,6 +61,51 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background">
+      <style>{`
+        .blog-content-area {
+          font-family: inherit;
+          color: inherit;
+          line-height: 1.8;
+        }
+        .blog-content-area p {
+          margin-bottom: 1.5rem;
+          font-size: 1.125rem;
+          opacity: 0.9;
+        }
+        .blog-content-area h1, 
+        .blog-content-area h2, 
+        .blog-content-area h3 {
+          font-family: var(--font-serif);
+          font-weight: 700;
+          color: var(--foreground);
+          margin-top: 2.5rem;
+          margin-bottom: 1.25rem;
+          line-height: 1.3;
+        }
+        .blog-content-area h2 { font-size: 2rem; }
+        .blog-content-area h3 { font-size: 1.5rem; }
+        
+        .blog-content-area ul, 
+        .blog-content-area ol {
+          margin-bottom: 1.5rem;
+          padding-left: 1.5rem;
+        }
+        .blog-content-area li {
+          margin-bottom: 0.5rem;
+        }
+        .blog-content-area img {
+          border-radius: 1rem;
+          margin: 2rem 0;
+          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+        .blog-content-area blockquote {
+          border-left: 4px solid var(--primary);
+          padding-left: 1.5rem;
+          font-style: italic;
+          margin: 2rem 0;
+          opacity: 0.8;
+        }
+      `}</style>
       <Helmet>
         <title>{title} | {siteTitle}</title>
         <meta name="description" content={excerpt || title} />
