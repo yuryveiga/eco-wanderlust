@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ import { translateText } from "@/utils/translate";
 import { Sunrise, Sun, Moon } from "lucide-react";
 
 const AdminTours = () => {
+  const [searchParams] = useSearchParams();
   const [tours, setTours] = useState<LovableTour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableTour> | null>(null);
@@ -26,6 +28,17 @@ const AdminTours = () => {
   useEffect(() => {
     loadTours();
   }, []);
+
+  useEffect(() => {
+    const tourId = searchParams.get('tour');
+    if (tourId && tours.length > 0) {
+      const tour = tours.find(t => t.id === tourId);
+      if (tour) {
+        setEditing(tour);
+        setIsNew(false);
+      }
+    }
+  }, [searchParams, tours]);
 
   const loadTours = async () => {
     const data = await fetchLovable<LovableTour>("tours");

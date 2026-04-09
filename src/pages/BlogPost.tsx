@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
-import { useParams, Navigate, Link } from "react-router-dom";
+import { useParams, Navigate, Link, useNavigate } from "react-router-dom";
 import { fetchLovable, LovableBlogPost } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Calendar, ArrowLeft } from "lucide-react";
+import { Calendar, ArrowLeft, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useAuth } from "@/hooks/useAuth";
 import "react-quill/dist/quill.snow.css";
 
 const BlogPost = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState<LovableBlogPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
   const { siteSettings } = useSiteData();
+  const { isAdmin } = useAuth();
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
@@ -66,6 +69,18 @@ const BlogPost = () => {
         {post.image_url && <meta property="og:image" content={post.image_url} />}
       </Helmet>
       <Header />
+      
+      {isAdmin && post && (
+        <div className="bg-primary text-white py-2 px-4 text-center">
+          <button 
+            onClick={() => navigate(`/admin/blog?post=${post.id}`)}
+            className="flex items-center gap-2 mx-auto font-bold hover:underline"
+          >
+            <Pencil className="w-4 h-4" />
+            EDITAR POST
+          </button>
+        </div>
+      )}
       
       <main className="flex-1 bg-background pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">

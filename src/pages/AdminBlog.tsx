@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense, useMemo, useCallback, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ Quill.register("modules/imageResize", ImageResize);
 const ReactQuill = lazy(() => import('react-quill'));
 
 const AdminBlog = () => {
+  const [searchParams] = useSearchParams();
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableBlogPost> | null>(null);
@@ -28,20 +30,21 @@ const AdminBlog = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
-  const { toast } = useToast();
-  
-  // Ref to avoid constant re-renders causing editor to lose focus
-  const quillRef = useRef<any>(null);
-
-  const loadPosts = async () => {
-    const data = await fetchLovable<LovableBlogPost>("blog_posts");
-    setPosts(data.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
-    setIsLoading(false);
-  };
 
   useEffect(() => {
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    const postId = searchParams.get('post');
+    if (postId && posts.length > 0) {
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        setEditing(post);
+        setIsNew(false);
+      }
+    }
+  }, [searchParams, posts]);
 
   const loadGalleryImages = async () => {
     const imgs = await fetchLovable<LovableSiteImage>("site_images");

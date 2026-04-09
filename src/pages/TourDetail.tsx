@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   Carousel, 
   CarouselContent, 
@@ -25,6 +26,7 @@ export function TourDetail() {
   const [isPrivate, setIsPrivate] = useState(false);
   const { t, language, formatPrice } = useLocale();
   const { addToCart } = useCart();
+  const { isAdmin } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -252,6 +254,18 @@ export function TourDetail() {
         <link rel="canonical" href={window.location.href} />
       </Helmet>
       <Header />
+
+      {isAdmin && (
+        <div className="bg-primary text-white py-2 px-4 text-center">
+          <button 
+            onClick={() => navigate(`/admin/tours?tour=${tour.id}`)}
+            className="flex items-center gap-2 mx-auto font-bold hover:underline"
+          >
+            <Pencil className="w-4 h-4" />
+            EDITAR PASSEIO
+          </button>
+        </div>
+      )}
 
       <div className="pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
