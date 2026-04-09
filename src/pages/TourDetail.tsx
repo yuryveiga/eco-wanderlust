@@ -27,7 +27,8 @@ export function TourDetail() {
   const { t, language, formatPrice } = useLocale();
   const { addToCart } = useCart();
   const { isAdmin } = useAuth();
-  const isAdminLoggedIn = isAdmin || localStorage.getItem("admin_user");
+  const isAdminLoggedIn = isAdmin || !!localStorage.getItem("admin_user");
+  console.log("isAdmin:", isAdmin, "localStorage admin_user:", localStorage.getItem("admin_user"));
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
   const [quantity, setQuantity] = useState(1);
