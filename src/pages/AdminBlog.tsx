@@ -337,6 +337,11 @@ const AdminBlog = () => {
                 </TabsList>
               </DialogHeader>
               
+              <div className="px-6 py-3 border-b bg-muted/5 flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setEditing(null)}>Cancelar</Button>
+                <Button onClick={handleSave}>{isNew ? "Criar Post" : "Salvar Alterações"}</Button>
+              </div>
+              
               <TabsContent value="content" className="m-0 flex-1 overflow-hidden">
                 <div className="flex-1 flex gap-8 overflow-hidden p-8 bg-muted/[0.02]">
                     {/* Left Sidebar for Metadata */}
