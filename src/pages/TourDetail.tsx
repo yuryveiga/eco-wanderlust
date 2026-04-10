@@ -225,7 +225,7 @@ export function TourDetail() {
                <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px] px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{translatedCategory}</span>
                {tour.is_featured && <span className="bg-amber-100 text-amber-700 font-black text-[10px] px-3 py-1 rounded-full border border-amber-200 uppercase tracking-widest">{language === 'pt' ? 'Destaque' : 'Featured'}</span>}
             </div>
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-black text-foreground leading-[1.05] tracking-tight">{translatedTitle}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-[1.1] tracking-tight">{translatedTitle}</h1>
           </div>
           <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
             <div className="text-right">
