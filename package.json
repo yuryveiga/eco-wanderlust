@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "sitemap": "node --env-file=.env scripts/generate-sitemap.js",
+    "postbuild": "npm run sitemap"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
