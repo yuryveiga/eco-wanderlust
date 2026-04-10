@@ -67,10 +67,10 @@ const BlogPost = () => {
         .blog-content-area {
           font-family: inherit;
           color: inherit;
-          line-height: 1.6;
+          line-height: 1.5 !important;
         }
         .blog-content-area p {
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem !important;
           font-size: 1.125rem;
           opacity: 0.9;
         }
