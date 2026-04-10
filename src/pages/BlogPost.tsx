@@ -65,27 +65,29 @@ const BlogPost = () => {
     <div className="min-h-screen flex flex-col font-sans bg-background">
       <style>{`
         .blog-content-area {
-          font-family: inherit;
-          color: inherit;
-          line-height: 1.5 !important;
+          font-family: 'Open Sans', sans-serif !important;
+          color: #7a7a7a !important;
+          line-height: 1.6 !important;
+          font-size: 1.125rem;
         }
         .blog-content-area p {
-          margin-bottom: 0.4rem !important;
+          margin-bottom: 1.5rem !important;
           font-size: 1.125rem;
-          opacity: 0.9;
+          opacity: 1;
         }
         .blog-content-area h1, 
         .blog-content-area h2, 
         .blog-content-area h3 {
-          font-family: var(--font-serif);
-          font-weight: 700;
-          color: var(--foreground);
-          margin-top: 0.75rem !important;
-          margin-bottom: 0.5rem !important;
-          line-height: 1.2 !important;
+          font-family: 'Montserrat', sans-serif !important;
+          font-weight: 700 !important;
+          color: #54595f !important;
+          margin-top: 2rem !important;
+          margin-bottom: 1.25rem !important;
+          line-height: 1.3 !important;
         }
-        .blog-content-area h2 { font-size: 2rem; }
-        .blog-content-area h3 { font-size: 1.5rem; }
+        .blog-content-area h1 { font-size: 2.6rem !important; }
+        .blog-content-area h2 { font-size: 2rem !important; }
+        .blog-content-area h3 { font-size: 1.5rem !important; }
         
         .blog-content-area ul, 
         .blog-content-area ol {
@@ -94,6 +96,7 @@ const BlogPost = () => {
         }
         .blog-content-area li {
           margin-bottom: 0.5rem;
+          font-family: 'Open Sans', sans-serif !important;
         }
         .blog-content-area img {
           border-radius: 1rem;
@@ -106,6 +109,7 @@ const BlogPost = () => {
           font-style: italic;
           margin: 2rem 0;
           opacity: 0.8;
+          font-family: 'Open Sans', sans-serif !important;
         }
       `}</style>
       <Helmet>
@@ -113,6 +117,7 @@ const BlogPost = () => {
         <meta name="description" content={excerpt || title} />
         <meta property="og:title" content={`${title} | ${siteTitle}`} />
         <meta property="og:image" content={post.image_url || fallbackImage} />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
       </Helmet>
       
       <Header />
