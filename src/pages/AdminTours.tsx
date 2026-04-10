@@ -255,80 +255,50 @@ const AdminTours = () => {
         <Button 
           variant="outline" 
           onClick={async () => {
-            if (!confirm("Traduzir TODOS os passeios para inglês e espanhol?")) return;
+            if (!confirm("Traduzir TODOS os passeios para inglês e espanhol? Isso pode levar alguns minutos.")) return;
             setIsTranslatingAll(true);
-            let translated = 0;
+            let translatedCount = 0;
+            
+            toast({ 
+              title: "Processando tradução em massa", 
+              description: `Traduzindo ${tours.length} passeios. Por favor, aguarde...` 
+            });
+
             for (const tour of tours) {
               try {
-                const [titleEn, titleEs, descEn, descEs, diffEn, diffEs] = await Promise.all([
-                  translateText(tour.title || "", "en"),
-                  translateText(tour.title || "", "es"),
-                  translateText(tour.short_description || "", "en"),
-                  translateText(tour.short_description || "", "es"),
-                  translateText(tour.difficulty || "", "en"),
-                  translateText(tour.difficulty || "", "es"),
-                ]);
-
-                const translateJsonField = async (json: any[] | undefined, lang: 'en' | 'es'): Promise<any[]> => {
-                  if (!json || !Array.isArray(json)) return [];
-                  const translated = await Promise.all(json.map(async (item) => {
-                    if (item.text) {
-                      const t = await translateText(item.text, lang);
-                      return { ...item, text: t };
-                    }
-                    if (item.description) {
-                      const t = await translateText(item.description, lang);
-                      return { ...item, description: t };
-                    }
-                    if (item.q && item.a) {
-                      const q = await translateText(item.q, lang);
-                      const a = await translateText(item.a, lang);
-                      return { q, a };
-                    }
-                    if (item.time && item.description) {
-                      const time = await translateText(item.time, lang);
-                      const desc = await translateText(item.description, lang);
-                      return { time, description: desc };
-                    }
-                    return item;
-                  }));
-                  return translated;
-                };
-
-                const [itineraryEn, itineraryEs, includedEn, includedEs, highlightsEn, highlightsEs, faqEn, faqEs] = await Promise.all([
-                  translateJsonField(tour.itinerary_json, "en"),
-                  translateJsonField(tour.itinerary_json, "es"),
-                  translateJsonField(tour.included_json, "en"),
-                  translateJsonField(tour.included_json, "es"),
-                  translateJsonField(tour.highlights_json, "en"),
-                  translateJsonField(tour.highlights_json, "es"),
-                  translateJsonField(tour.faq_json, "en"),
-                  translateJsonField(tour.faq_json, "es"),
-                ]);
-
+                const translatedData = await translateTourData(tour);
+                
                 await updateLovable("tours", tour.id, {
-                  title_en: titleEn,
-                  title_es: titleEs,
-                  short_description_en: descEn,
-                  short_description_es: descEs,
-                  difficulty_en: diffEn,
-                  difficulty_es: diffEs,
-                  itinerary_json_en: itineraryEn,
-                  itinerary_json_es: itineraryEs,
-                  included_json_en: includedEn,
-                  included_json_es: includedEs,
-                  highlights_json_en: highlightsEn,
-                  highlights_json_es: highlightsEs,
-                  faq_json_en: faqEn,
-                  faq_json_es: faqEs,
+                  title_en: translatedData.title_en,
+                  title_es: translatedData.title_es,
+                  category_en: translatedData.category_en,
+                  category_es: translatedData.category_es,
+                  short_description_en: translatedData.short_description_en,
+                  short_description_es: translatedData.short_description_es,
+                  difficulty_en: translatedData.difficulty_en,
+                  difficulty_es: translatedData.difficulty_es,
+                  meeting_point_address_en: translatedData.meeting_point_address_en,
+                  meeting_point_address_es: translatedData.meeting_point_address_es,
+                  itinerary_json_en: translatedData.itinerary_json_en,
+                  itinerary_json_es: translatedData.itinerary_json_es,
+                  included_json_en: translatedData.included_json_en,
+                  included_json_es: translatedData.included_json_es,
+                  highlights_json_en: translatedData.highlights_json_en,
+                  highlights_json_es: translatedData.highlights_json_es,
+                  faq_json_en: translatedData.faq_json_en,
+                  faq_json_es: translatedData.faq_json_es,
                 });
-                translated++;
+                translatedCount++;
+                
+                // Small delay to be gentle with the translation API
+                await new Promise(r => setTimeout(r, 300));
               } catch (e) {
                 console.error("Error translating tour:", tour.id, e);
               }
             }
+            
             setIsTranslatingAll(false);
-            toast({ title: `${translated} passeios traduzidos!` });
+            toast({ title: "Concluído!", description: `${translatedCount} passeios foram traduzidos.` });
             loadTours();
           }}
           disabled={isTranslatingAll}
