@@ -224,8 +224,8 @@ const AdminBlog = () => {
           min-height: 500px;
         }
         .editor-container .ql-container {
-          flex: 1;
-          min-height: 400px;
+          height: 450px !important;
+          overflow-y: auto !important;
           font-family: inherit;
           font-size: 16px;
           border-bottom-left-radius: 12px;
@@ -233,7 +233,7 @@ const AdminBlog = () => {
           background: white;
         }
         .editor-container .ql-editor {
-          min-height: 400px;
+          min-height: 100%;
           line-height: 1.6;
         }
         .editor-container .ql-toolbar {
