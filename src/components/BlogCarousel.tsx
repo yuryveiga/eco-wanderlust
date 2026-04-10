@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { fetchLovable, LovableBlogPost } from "@/integrations/lovable/client";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 import { 
   Carousel, 
   CarouselContent, 
@@ -16,6 +17,8 @@ export function BlogCarousel() {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
+  const { images } = useSiteData();
+  const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200";
 
   useEffect(() => {
     fetchLovable<LovableBlogPost>("blog_posts").then((data) => {
@@ -68,7 +71,7 @@ export function BlogCarousel() {
                       <div className="bg-card rounded-2xl overflow-hidden shadow-2xl h-[480px] flex flex-col group border-none">
                         <div className="h-2/5 overflow-hidden">
                           <img 
-                            src={post.image_url || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200"} 
+                            src={post.image_url || fallbackImage} 
                             alt={title} 
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />

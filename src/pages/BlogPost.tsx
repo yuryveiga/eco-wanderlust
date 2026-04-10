@@ -20,6 +20,8 @@ const BlogPost = () => {
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
+  const { images } = useSiteData();
+  const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
 
   const loadPost = async () => {
     setIsLoading(true);
@@ -110,7 +112,7 @@ const BlogPost = () => {
         <title>{title} | {siteTitle}</title>
         <meta name="description" content={excerpt || title} />
         <meta property="og:title" content={`${title} | ${siteTitle}`} />
-        {post.image_url && <meta property="og:image" content={post.image_url} />}
+        <meta property="og:image" content={post.image_url || fallbackImage} />
       </Helmet>
       
       <Header />
@@ -120,14 +122,10 @@ const BlogPost = () => {
           <>
             {/* HERO SECTION FOR BLOG POST - NEW STYLE */}
             <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
-              {post.image_url ? (
-                <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
-                  style={{ backgroundImage: `url('${post.image_url}')` }}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-primary/20" />
-              )}
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
+                style={{ backgroundImage: `url('${post.image_url || fallbackImage}')` }}
+              />
               <div className="absolute inset-0 bg-black/50" />
               <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
               
@@ -165,15 +163,13 @@ const BlogPost = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
               </Link>
    
-              {post.image_url && (
                 <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
                   <img 
-                    src={post.image_url} 
+                    src={post.image_url || fallbackImage} 
                     alt={title} 
                     className="w-full h-full object-cover"
                   />
                 </div>
-              )}
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-sans">
                 <Calendar className="w-4 h-4" />

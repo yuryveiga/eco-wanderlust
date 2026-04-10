@@ -7,11 +7,14 @@ import { ArrowRight, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 
 const Blog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
+  const { images } = useSiteData();
+  const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
@@ -69,18 +72,12 @@ const Blog = () => {
                   className="bg-card border rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
                 >
                   <div className="aspect-video relative overflow-hidden bg-muted">
-                    {post.image_url ? (
-                      <img 
-                        src={post.image_url} 
-                        alt={post.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-primary/5">
-                        <span className="font-serif text-3xl font-bold opacity-20">TocorimeRio</span>
-                      </div>
-                    )}
+                    <img 
+                      src={post.image_url || fallbackImage} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
                   
                   <div className="p-6 flex-1 flex flex-col">
