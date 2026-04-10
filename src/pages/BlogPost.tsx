@@ -66,54 +66,66 @@ const BlogPost = () => {
       <style>{`
         .blog-content-area {
           font-family: 'Open Sans', sans-serif !important;
-          color: #7a7a7a !important;
+          color: #555555 !important;
           line-height: 1.4 !important;
-          font-size: 1.05rem !important;
+          font-size: 1rem !important;
           text-align: left;
         }
-        .blog-content-area p {
-          margin-bottom: 0.8rem !important;
+        .blog-content-area * {
           margin-top: 0 !important;
+          margin-inline: 0 !important;
+        }
+        .blog-content-area p {
+          margin-bottom: 0.4rem !important;
           line-height: 1.4 !important;
-          opacity: 1;
+        }
+        /* Remove space from empty lines created by editor */
+        .blog-content-area p:has(br:only-child),
+        .blog-content-area br {
+          content: "";
+          display: block;
+          margin-bottom: 0.2rem !important;
         }
         .blog-content-area h1, 
         .blog-content-area h2, 
         .blog-content-area h3 {
           font-family: 'Montserrat', sans-serif !important;
           font-weight: 700 !important;
-          color: #54595f !important;
-          margin-top: 1.25rem !important;
-          margin-bottom: 0.5rem !important;
+          color: #333333 !important;
+          margin-top: 1rem !important;
+          margin-bottom: 0.3rem !important;
           line-height: 1.2 !important;
         }
-        .blog-content-area h1 { font-size: 2.2rem !important; }
-        .blog-content-area h2 { font-size: 1.8rem !important; }
-        .blog-content-area h3 { font-size: 1.4rem !important; }
+        .blog-content-area h1 { font-size: 2rem !important; }
+        .blog-content-area h2 { font-size: 1.6rem !important; }
+        .blog-content-area h3 { font-size: 1.3rem !important; }
         
         .blog-content-area ul, 
         .blog-content-area ol {
-          margin-bottom: 1rem !important;
-          margin-top: 0.5rem !important;
+          margin-bottom: 0.8rem !important;
+          margin-top: 0.3rem !important;
           padding-left: 1.2rem !important;
         }
         .blog-content-area li {
-          margin-bottom: 0.3rem !important;
+          margin-bottom: 0.2rem !important;
           line-height: 1.4 !important;
-          font-family: 'Open Sans', sans-serif !important;
         }
         .blog-content-area img {
-          border-radius: 0.75rem;
-          margin: 1.5rem 0 !important;
+          border-radius: 0.5rem;
+          margin: 1rem 0 !important;
           max-width: 100%;
+          display: block;
         }
         .blog-content-area blockquote {
           border-left: 3px solid #008967;
           padding-left: 1rem;
           font-style: italic;
-          margin: 1.5rem 0 !important;
+          margin: 1rem 0 !important;
           opacity: 0.9;
-          font-family: 'Open Sans', sans-serif !important;
+        }
+        /* Override Quill default padding */
+        .ql-editor.blog-content-area {
+          padding: 0 !important;
         }
       `}</style>
       <Helmet>
