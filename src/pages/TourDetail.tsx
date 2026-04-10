@@ -17,6 +17,8 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Maximize2, X } from "lucide-react";
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
@@ -176,9 +178,23 @@ export function TourDetail() {
 
   if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to="/"><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
 
-  const images = tour.images_json || (tour.image_url ? [tour.image_url] : ["/placeholder.svg"]);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const images = useMemo(() => {
+    let imgs = tour.images_json as string[] || [];
+    if (imgs.length === 0 && tour.image_url) imgs = [tour.image_url];
+    // Garantir que são URLs válidas
+    return imgs.filter(url => url && typeof url === 'string');
+  }, [tour]);
+
   const highlights = (translatedHighlights as any[]) || [];
   const faqItems = (translatedFaq as any[]) || [];
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+  };
 
   return (
     <main className="min-h-screen bg-background font-sans overflow-x-hidden">
@@ -194,63 +210,135 @@ export function TourDetail() {
       
       <Header />
 
-      <div className="pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground font-sans mb-8">
-            <Link to="/" className="hover:text-foreground transition-colors">{t("inicio")}</Link>
-            <span>/</span>
-            <Link to="/#tours" className="hover:text-foreground transition-colors">{t("passeios")}</Link>
-            <span>/</span>
-            <span className="text-foreground font-medium">{translatedTitle}</span>
-          </nav>
+      {/* Breadcrumbs & Title Section */}
+      <section className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <Link to="/" className="hover:text-primary transition-colors">{t("inicio")}</Link>
+          <span className="opacity-30">/</span>
+          <Link to="/#tours" className="hover:text-primary transition-colors">{t("passeios")}</Link>
+          <span className="opacity-30">/</span>
+          <span className="text-foreground">{translatedTitle}</span>
+        </nav>
+        
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+               <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px] px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{translatedCategory}</span>
+               {tour.is_featured && <span className="bg-amber-100 text-amber-700 font-black text-[10px] px-3 py-1 rounded-full border border-amber-200 uppercase tracking-widest">{language === 'pt' ? 'Destaque' : 'Featured'}</span>}
+            </div>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-black text-foreground leading-[1.05] tracking-tight">{translatedTitle}</h1>
+          </div>
+          <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
+            <div className="text-right">
+              <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">{t("a_partir_de")}</span>
+              <span className="text-4xl font-black text-primary">{formatPrice(tour.price)}</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pb-12">
-            <div className="lg:col-span-2 space-y-10">
-               {/* Gallery */}
-               <div className="rounded-3xl overflow-hidden shadow-2xl bg-muted/20 aspect-video md:aspect-[2/1]">
-                 <img src={getOptimizedImage(images[selectedImageIdx], 1200)} alt={translatedTitle} className="w-full h-full object-cover" />
+      {/* Full-width Mosaic Gallery */}
+      <section className="px-0 sm:px-4 md:px-6 lg:px-8 max-w-[1600px] mx-auto mb-16">
+        <div className="relative group overflow-hidden sm:rounded-[3rem] shadow-2xl bg-muted/20 ring-8 ring-white">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[450px] md:h-[650px] lg:h-[750px]">
+            {/* Main Image */}
+            <div 
+              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
+              onClick={() => openLightbox(0)}
+            >
+              <img 
+                src={getOptimizedImage(images[0] || "/placeholder.svg", 1200)} 
+                alt={translatedTitle} 
+                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-110" 
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
+            </div>
+
+            {/* Sub-images Grid */}
+            {images.slice(1, 5).map((img, idx) => (
+              <div 
+                key={idx}
+                className="hidden md:block relative overflow-hidden cursor-pointer group/item"
+                onClick={() => openLightbox(idx + 1)}
+              >
+                <img 
+                  src={getOptimizedImage(img, 800)} 
+                  alt={`${translatedTitle} ${idx + 1}`} 
+                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-125" 
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
+              </div>
+            ))}
+
+            {/* Empty Slots */}
+            {images.length < 5 && Array.from({ length: 5 - images.length }).map((_, i) => (
+              <div key={`empty-${i}`} className="hidden md:block bg-muted/20 animate-pulse border border-white/10" />
+            ))}
+          </div>
+
+          <Button 
+            variant="secondary" 
+            className="absolute bottom-10 right-10 gap-3 bg-white/90 backdrop-blur-2xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-14 rounded-2xl shadow-2xl transition-all hover:scale-105 ring-1 ring-black/5 active:scale-95"
+            onClick={() => openLightbox(0)}
+          >
+            <Maximize2 className="w-5 h-5 text-primary" />
+            {language === 'pt' ? 'Ver Galeria Completa' : 'View Full Gallery'}
+          </Button>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 pb-24">
+          <div className="lg:col-span-2 space-y-16">
+             {/* Dynamic Stats Bar */}
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 p-12 bg-card rounded-[3rem] border border-primary/5 shadow-sm ring-1 ring-border/50">
+               <div className="flex items-center gap-5">
+                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
+                    <Clock className="w-7 h-7 text-primary" />
+                 </div>
+                 <div className="flex flex-col">
+                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Duração' : 'Duration'}</span>
+                   <span className="text-sm font-black text-foreground">{translateDuration(tour.duration)}</span>
+                 </div>
                </div>
-
-               {/* Meta Info */}
-               <div className="bg-card rounded-2xl border p-8 shadow-sm">
-                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                   <div>
-                     <span className="text-primary font-black uppercase tracking-widest text-xs">{translatedCategory}</span>
-                     <h1 className="font-serif text-3xl lg:text-5xl font-bold mt-2 text-balance leading-tight">{translatedTitle}</h1>
-                   </div>
-                   <div className="flex items-center gap-4">
-                     <div className="text-right">
-                       <span className="text-muted-foreground text-xs uppercase block">{t("a_partir_de")}</span>
-                       <span className="text-3xl font-black text-primary">{formatPrice(tour.price)}</span>
-                     </div>
-                   </div>
+               <div className="flex items-center gap-5">
+                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
+                    <Users className="w-7 h-7 text-primary" />
                  </div>
-
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y">
-                   <div className="flex items-center gap-3">
-                     <Clock className="w-5 h-5 text-primary" />
-                     <div className="flex flex-col"><span className="text-[10px] uppercase text-muted-foreground font-bold">{language === 'pt' ? 'Duração' : 'Duration'}</span><span className="text-sm font-bold">{translateDuration(tour.duration)}</span></div>
-                   </div>
-                   <div className="flex items-center gap-3">
-                     <Users className="w-5 h-5 text-primary" />
-                     <div className="flex flex-col"><span className="text-[10px] uppercase text-muted-foreground font-bold">{language === 'pt' ? 'Carga Máxima' : 'Capacity'}</span><span className="text-sm font-bold">{tour.max_group_size} {t("pessoas")}</span></div>
-                   </div>
-                   <div className="flex items-center gap-3">
-                     <MapPin className="w-5 h-5 text-primary" />
-                     <div className="flex flex-col"><span className="text-[10px] uppercase text-muted-foreground font-bold">{language === 'pt' ? 'Saída' : 'Departure'}</span><span className="text-sm font-bold">Rio de Janeiro</span></div>
-                   </div>
-                   {translatedDifficulty && (
-                     <div className="flex items-center gap-3">
-                       <Gauge className="w-5 h-5 text-[#E76F51]" />
-                       <div className="flex flex-col"><span className="text-[10px] uppercase text-muted-foreground font-bold">{language === 'pt' ? 'Dificuldade' : 'Difficulty'}</span><span className="text-sm font-bold uppercase">{translatedDifficulty}</span></div>
-                     </div>
-                   )}
-                 </div>
-
-                 <div className="mt-8">
-                   <p className="text-lg text-muted-foreground leading-relaxed font-sans">{translatedShortDesc}</p>
+                 <div className="flex flex-col">
+                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Grupo Máximo' : 'Max Group'}</span>
+                   <span className="text-sm font-black text-foreground">{tour.max_group_size} {t("pessoas")}</span>
                  </div>
                </div>
+               <div className="flex items-center gap-5">
+                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
+                    <MapPin className="w-7 h-7 text-primary" />
+                 </div>
+                 <div className="flex flex-col">
+                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Saída' : 'Departure'}</span>
+                   <span className="text-sm font-black text-foreground">Rio de Janeiro</span>
+                 </div>
+               </div>
+               {translatedDifficulty && (
+                 <div className="flex items-center gap-5">
+                   <div className="w-14 h-14 rounded-2xl bg-[#E76F51]/10 flex items-center justify-center shrink-0 shadow-inner">
+                      <Gauge className="w-7 h-7 text-[#E76F51]" />
+                   </div>
+                   <div className="flex flex-col">
+                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Nível' : 'Level'}</span>
+                     <span className="text-sm font-black text-foreground uppercase">{translatedDifficulty}</span>
+                   </div>
+                 </div>
+               )}
+             </div>
+
+             <div className="space-y-8 prose prose-slate max-w-none">
+                <h2 className="text-4xl font-serif font-black flex items-center gap-4 text-foreground">
+                  <div className="w-2 h-10 bg-primary rounded-full" />
+                  {t("sobre_o_passeio")}
+                </h2>
+                <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">{translatedShortDesc}</p>
+             </div>
 
                {/* Highlights */}
                {highlights.length > 0 && (
@@ -366,6 +454,46 @@ export function TourDetail() {
       </div>
 
       <Footer />
+
+      {/* Lightbox Dialog */}
+      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
+        <DialogContent className="max-w-screen-2xl w-[95vw] h-[90vh] p-0 bg-black/95 border-none flex flex-col items-center justify-center overflow-hidden">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute top-4 right-4 text-white hover:bg-white/10 z-50 rounded-full"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            <X className="w-8 h-8" />
+          </Button>
+
+          <Carousel 
+            opts={{ startIndex: lightboxIndex, loop: true }} 
+            className="w-full h-full flex flex-col"
+          >
+            <CarouselContent className="h-full items-center">
+              {images.map((img, i) => (
+                <CarouselItem key={i} className="h-full flex items-center justify-center">
+                  <img 
+                    src={getOptimizedImage(img, 1600)} 
+                    alt={`${translatedTitle} full view ${i+1}`} 
+                    className="max-w-full max-h-full object-contain" 
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            
+            <div className="hidden sm:block">
+              <CarouselPrevious className="left-6 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
+              <CarouselNext className="right-6 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
+            </div>
+
+            <div className="absolute bottom-10 left-0 right-0 text-center text-white/60 text-sm font-bold">
+              {lightboxIndex + 1} / {images.length}
+            </div>
+          </Carousel>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
