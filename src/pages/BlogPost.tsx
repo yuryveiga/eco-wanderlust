@@ -67,27 +67,24 @@ const BlogPost = () => {
         .blog-content-area {
           font-family: 'Open Sans', sans-serif !important;
           color: #555555 !important;
-          line-height: 1.3 !important;
+          line-height: 1.4 !important;
           font-size: 1rem !important;
           text-align: left;
         }
         .blog-content-area * {
           margin-top: 0 !important;
-          margin-bottom: 0 !important;
           margin-inline: 0 !important;
         }
         .blog-content-area p {
-          margin-bottom: 0.1rem !important;
-          line-height: 1.3 !important;
+          margin-bottom: 0.4rem !important;
+          line-height: 1.4 !important;
         }
-        /* Handle empty lines or multiple paragraphs */
-        .blog-content-area p + p {
-          margin-top: 0.3rem !important;
-        }
-        .blog-content-area p:has(br:only-child) {
-          margin: 0 !important;
-          line-height: 0.1;
-          height: 0.1rem;
+        /* Remove space from empty lines created by editor */
+        .blog-content-area p:has(br:only-child),
+        .blog-content-area br {
+          content: "";
+          display: block;
+          margin-bottom: 0.2rem !important;
         }
         .blog-content-area h1, 
         .blog-content-area h2, 
@@ -95,14 +92,9 @@ const BlogPost = () => {
           font-family: 'Montserrat', sans-serif !important;
           font-weight: 700 !important;
           color: #333333 !important;
-          margin-top: 0.8rem !important;
-          margin-bottom: 0.2rem !important;
+          margin-top: 1rem !important;
+          margin-bottom: 0.3rem !important;
           line-height: 1.2 !important;
-        }
-        /* Spacing between text and following heading */
-        .blog-content-area p + h2, 
-        .blog-content-area p + h3 {
-          margin-top: 1.2rem !important;
         }
         .blog-content-area h1 { font-size: 2rem !important; }
         .blog-content-area h2 { font-size: 1.6rem !important; }
@@ -110,17 +102,17 @@ const BlogPost = () => {
         
         .blog-content-area ul, 
         .blog-content-area ol {
-          margin-bottom: 0.6rem !important;
-          margin-top: 0.2rem !important;
+          margin-bottom: 0.8rem !important;
+          margin-top: 0.3rem !important;
           padding-left: 1.2rem !important;
         }
         .blog-content-area li {
-          margin-bottom: 0.1rem !important;
-          line-height: 1.3 !important;
+          margin-bottom: 0.2rem !important;
+          line-height: 1.4 !important;
         }
         .blog-content-area img {
           border-radius: 0.5rem;
-          margin: 0.8rem 0 !important;
+          margin: 1rem 0 !important;
           max-width: 100%;
           display: block;
         }
@@ -128,7 +120,7 @@ const BlogPost = () => {
           border-left: 3px solid #008967;
           padding-left: 1rem;
           font-style: italic;
-          margin: 0.8rem 0 !important;
+          margin: 1rem 0 !important;
           opacity: 0.9;
         }
         /* Override Quill default padding */
