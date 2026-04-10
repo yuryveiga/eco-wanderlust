@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 
 type TourCardProps = {
   id: string;
@@ -25,7 +26,7 @@ type TourCardProps = {
   external_url?: string;
 };
 
-function TourCard({ tour }: { tour: TourCardProps }) {
+const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
 
   const getTranslated = (field: string) => {
@@ -43,7 +44,7 @@ function TourCard({ tour }: { tour: TourCardProps }) {
     return getTranslated('category');
   })();
 
-  const duration = language === 'pt' ? tour.duration : tour.duration
+  const durationStr = language === 'pt' ? tour.duration : tour.duration
     ?.replace(/horas/gi, t("horas"))
     .replace(/hora/gi, t("hora"))
     .replace(/minutos/gi, t("minutos"))
@@ -54,8 +55,8 @@ function TourCard({ tour }: { tour: TourCardProps }) {
 
   const CardContent = (
     <>
-      <div className="relative h-56 overflow-hidden">
-        <img src={tour.image_url} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+      <div className="relative h-56 overflow-hidden bg-muted">
+        <img src={getOptimizedImage(tour.image_url, 600)} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
           <div className="absolute top-4 left-4 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full font-sans flex items-center gap-1">
             <Star className="w-3 h-3 fill-current" /> {t("destaque")}
@@ -68,7 +69,7 @@ function TourCard({ tour }: { tour: TourCardProps }) {
         <p className="text-muted-foreground text-sm mb-4 font-sans line-clamp-2">{short_description}</p>
         {!isExternal && (
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 font-sans">
-            <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{duration}</span></div>
+            <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{durationStr}</span></div>
             <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>{t("ate")} {tour.max_group_size}</span></div>
           </div>
         )}
@@ -100,7 +101,10 @@ function TourCard({ tour }: { tour: TourCardProps }) {
       {CardContent}
     </Link>
   );
-}
+});
+
+TourCard.displayName = "TourCard";
+
 
 export function ToursSection() {
   const { tours, siteSettings, isLoading } = useSiteData();

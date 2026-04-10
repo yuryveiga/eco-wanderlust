@@ -3,6 +3,7 @@ import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 
 export function GallerySection() {
   const { images } = useSiteData();
@@ -73,7 +74,7 @@ export function GallerySection() {
                       className="relative w-full aspect-square rounded-xl overflow-hidden group bg-card border"
                     >
                       <img
-                        src={img.url}
+                        src={getOptimizedImage(img.url, 400)}
                         alt={img.key}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         loading="lazy"
@@ -118,7 +119,7 @@ export function GallerySection() {
           </button>
           
           <img
-            src={galleryImages[selectedIndex].url}
+            src={getOptimizedImage(galleryImages[selectedIndex].url, 1600)}
             alt={galleryImages[selectedIndex].key}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}

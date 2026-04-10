@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 import { 
   Carousel, 
   CarouselContent, 
@@ -156,7 +157,7 @@ export function TourDetail() {
       slug: tour.slug,
       title: translatedTitle,
       price: tour.price,
-      image_url: tour.image_url || "",
+      image_url: getOptimizedImage(tour.image_url || "", 800),
       date: selectedDate,
       period: selectedPeriod,
       isPrivate: isPrivate,
@@ -207,7 +208,7 @@ export function TourDetail() {
             <div className="lg:col-span-2 space-y-10">
                {/* Gallery */}
                <div className="rounded-3xl overflow-hidden shadow-2xl bg-muted/20 aspect-video md:aspect-[2/1]">
-                 <img src={images[selectedImageIdx]} alt={translatedTitle} className="w-full h-full object-cover" />
+                 <img src={getOptimizedImage(images[selectedImageIdx], 1200)} alt={translatedTitle} className="w-full h-full object-cover" />
                </div>
 
                {/* Meta Info */}
