@@ -310,15 +310,6 @@ export function TourDetail() {
                    <span className="text-sm font-black text-foreground">{tour.max_group_size} {t("pessoas")}</span>
                  </div>
                </div>
-               <div className="flex items-center gap-5">
-                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
-                    <MapPin className="w-7 h-7 text-primary" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Saída' : 'Departure'}</span>
-                   <span className="text-sm font-black text-foreground">Rio de Janeiro</span>
-                 </div>
-               </div>
                {translatedDifficulty && (
                  <div className="flex items-center gap-5">
                    <div className="w-14 h-14 rounded-2xl bg-[#E76F51]/10 flex items-center justify-center shrink-0 shadow-inner">
