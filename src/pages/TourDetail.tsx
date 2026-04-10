@@ -374,7 +374,7 @@ export function TourDetail() {
                    <div className="text-center mb-8">
                      <span className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em]">{t("a_partir_de")}</span>
                      <div className="flex items-center justify-center gap-2 mt-1">
-                       <span className="text-5xl font-black text-primary">{formatPrice(tour.price * quantity)}</span>
+                       <span className="text-5xl font-black text-primary">{formatPrice(tour.price)}</span>
                         <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">{t("por_pessoa")}</span>
                      </div>
                    </div>
