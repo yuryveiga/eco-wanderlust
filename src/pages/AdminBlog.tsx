@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText, translateHtml } from "@/utils/translate";
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-// @ts-ignore
+// @ts-expect-error - No types available for this module
 import ImageResize from "quill-image-resize-module-react";
 Quill.register("modules/imageResize", ImageResize);
 
@@ -28,17 +28,17 @@ const AdminBlog = () => {
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const { toast } = useToast();
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     console.log("loadPosts called");
     setIsLoading(true);
     const data = await fetchLovable<LovableBlogPost>("blog_posts");
     setPosts(data.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
     setIsLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     loadPosts();
-  }, []);
+  }, [loadPosts]);
 
   useEffect(() => {
     const postId = searchParams.get('post');

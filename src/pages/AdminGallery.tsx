@@ -155,7 +155,9 @@ const AdminGallery = () => {
           const fileName = img.image_url.substring(img.image_url.lastIndexOf('/') + 1);
           await supabase.storage.from('site-images').remove([fileName]);
         }
-      } catch(e) {}
+      } catch(e) {
+        console.warn("Could not delete from storage:", e);
+      }
     }
 
     const { error } = await supabase.from('site_images').delete().in('id', idsToDelete);

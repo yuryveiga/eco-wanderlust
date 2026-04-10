@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart } from "lucide-react";
@@ -42,14 +42,14 @@ export function TourDetail() {
   );
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
-  const getTranslated = (obj: any, field: string) => {
-    if (!obj) return "";
-    if (language === 'pt') return obj[field];
-    return obj[`${field}_${language}`] || obj[field];
-  };
+  const getTranslated = useCallback((field: string) => {
+    if (!tour) return "";
+    if (language === 'pt') return (tour as any)[field];
+    return (tour as any)[`${field}_${language}`] || (tour as any)[field];
+  }, [language, tour]);
 
-  const translatedTitle = getTranslated(tour, 'title');
-  const translatedShortDesc = getTranslated(tour, 'short_description');
+  const translatedTitle = useMemo(() => getTranslated('title'), [getTranslated]);
+  const translatedShortDesc = useMemo(() => getTranslated('short_description'), [getTranslated]);
   
   const translatedCategory = useMemo(() => {
     const rawCat = tour?.category;
