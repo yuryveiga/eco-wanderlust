@@ -290,37 +290,38 @@ export function TourDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 pb-24">
           <div className="lg:col-span-2 space-y-16">
-             {/* Dynamic Stats Bar */}
-             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 p-12 bg-card rounded-[3rem] border border-primary/5 shadow-sm ring-1 ring-border/50">
-               <div className="flex items-center gap-5">
-                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
-                    <Clock className="w-7 h-7 text-primary" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Duração' : 'Duration'}</span>
-                   <span className="text-sm font-black text-foreground">{translateDuration(tour.duration)}</span>
-                 </div>
-               </div>
-               <div className="flex items-center gap-5">
-                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-inner">
-                    <Users className="w-7 h-7 text-primary" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Grupo Máximo' : 'Max Group'}</span>
-                   <span className="text-sm font-black text-foreground">{tour.max_group_size} {t("pessoas")}</span>
-                 </div>
-               </div>
-               {translatedDifficulty && (
-                 <div className="flex items-center gap-5">
-                   <div className="w-14 h-14 rounded-2xl bg-[#E76F51]/10 flex items-center justify-center shrink-0 shadow-inner">
-                      <Gauge className="w-7 h-7 text-[#E76F51]" />
-                   </div>
-                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{language === 'pt' ? 'Nível' : 'Level'}</span>
-                     <span className="text-sm font-black text-foreground uppercase">{translatedDifficulty}</span>
-                   </div>
-                 </div>
-               )}
+             {/* Ultra-Premium Stats Bar */}
+             <div className="bg-card rounded-[2.5rem] border border-primary/10 shadow-xl overflow-hidden ring-1 ring-primary/5">
+                <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-primary/10">
+                  {/* Duration */}
+                  <div className="px-8 py-10 flex flex-col items-center text-center group hover:bg-primary/5 transition-colors">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
+                      <Clock className="w-8 h-8 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Duração' : 'Duration'}</span>
+                    <span className="text-xl font-black text-foreground">{translateDuration(tour.duration)}</span>
+                  </div>
+
+                  {/* Max People */}
+                  <div className="px-8 py-10 flex flex-col items-center text-center group hover:bg-primary/5 transition-colors">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
+                      <Users className="w-8 h-8 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Grupo Máximo' : 'Capacity'}</span>
+                    <span className="text-xl font-black text-foreground">{tour.max_group_size} {t("pessoas")}</span>
+                  </div>
+
+                  {/* Difficulty */}
+                  {translatedDifficulty && (
+                    <div className="px-8 py-10 flex flex-col items-center text-center group hover:bg-[#E76F51]/5 transition-colors">
+                      <div className="w-16 h-16 rounded-2xl bg-[#E76F51]/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
+                        <Gauge className="w-8 h-8 text-[#E76F51]" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Nível' : 'Difficulty'}</span>
+                      <span className="text-xl font-black text-foreground uppercase">{translatedDifficulty}</span>
+                    </div>
+                  )}
+                </div>
              </div>
 
              <div className="space-y-8 prose prose-slate max-w-none">
