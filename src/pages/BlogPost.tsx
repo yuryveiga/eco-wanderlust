@@ -67,10 +67,10 @@ const BlogPost = () => {
         .blog-content-area {
           font-family: inherit;
           color: inherit;
-          line-height: 1.8;
+          line-height: 1.6;
         }
         .blog-content-area p {
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
           font-size: 1.125rem;
           opacity: 0.9;
         }
@@ -80,8 +80,8 @@ const BlogPost = () => {
           font-family: var(--font-serif);
           font-weight: 700;
           color: var(--foreground);
-          margin-top: 2.5rem;
-          margin-bottom: 1.25rem;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
           line-height: 1.3;
         }
         .blog-content-area h2 { font-size: 2rem; }
