@@ -237,9 +237,9 @@ export function TourDetail() {
       </section>
 
       {/* Mosaic Gallery Section */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
-        <div className="relative group overflow-hidden rounded-[2rem] sm:rounded-[3rem] shadow-2xl bg-muted/20 ring-1 ring-border/50">
-          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[450px] md:h-[650px] lg:h-[750px]">
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
+        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/20 border">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[350px] md:h-[400px] lg:h-[450px]">
             {/* Main Image */}
             <div 
               className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
