@@ -64,7 +64,7 @@ export function TourDetail() {
   const translatedItinerary = useMemo(() => getTranslated(`itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json, [getTranslated, language, tour?.itinerary_json]);
   const translatedIncluded = useMemo(() => getTranslated(`included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json, [getTranslated, language, tour?.included_json]);
   const translatedFaq = useMemo(() => getTranslated(`faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json, [getTranslated, language, tour?.faq_json]);
-  const translatedRio Highlights = useMemo(() => getTranslated(`Rio Highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.Rio Highlights_json, [getTranslated, language, tour?.Rio Highlights_json]);
+  const translatedHighlights = useMemo(() => getTranslated(`highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json, [getTranslated, language, tour?.highlights_json]);
 
   const translateDuration = (duration: string) => {
     if (language === 'pt' || !duration) return duration;
@@ -187,7 +187,7 @@ export function TourDetail() {
 
   if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to="/"><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
 
-  const Rio Highlights = (translatedRio Highlights as any[]) || [];
+  const highlights = (translatedHighlights as any[]) || [];
   const faqItems = (translatedFaq as any[]) || [];
 
   const openLightbox = (index: number) => {
@@ -332,12 +332,12 @@ export function TourDetail() {
                 <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">{translatedShortDesc}</p>
              </div>
 
-               {/* Rio Highlights */}
-               {Rio Highlights.length > 0 && (
+               {/* Highlights */}
+               {highlights.length > 0 && (
                  <div className="bg-card rounded-2xl border p-8 space-y-6">
-                   <h2 className="text-xl font-serif font-black flex items-center gap-3 text-foreground/90 uppercase tracking-tight"><Star className="text-primary fill-primary" /> {language === 'pt' ? 'Destaques do Rio' : 'Rio Highlights'}</h2>
+                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3"><Star className="text-primary fill-primary" /> {language === 'pt' ? 'Destaques' : 'Highlights'}</h2>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     {Rio Highlights.map((h, i) => (
+                     {highlights.map((h, i) => (
                        <div key={i} className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl">
                          <Check className="text-primary w-5 h-5" />
                          <span className="text-sm font-medium">{h.text}</span>
