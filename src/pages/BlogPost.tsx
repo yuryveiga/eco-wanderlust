@@ -70,7 +70,7 @@ const BlogPost = () => {
           line-height: 1.5 !important;
         }
         .blog-content-area p {
-          margin-bottom: 0.75rem !important;
+          margin-bottom: 0.4rem !important;
           font-size: 1.125rem;
           opacity: 0.9;
         }
@@ -80,9 +80,9 @@ const BlogPost = () => {
           font-family: var(--font-serif);
           font-weight: 700;
           color: var(--foreground);
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-          line-height: 1.3;
+          margin-top: 0.75rem !important;
+          margin-bottom: 0.5rem !important;
+          line-height: 1.2 !important;
         }
         .blog-content-area h2 { font-size: 2rem; }
         .blog-content-area h3 { font-size: 1.5rem; }
