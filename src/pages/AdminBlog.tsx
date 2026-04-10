@@ -218,32 +218,41 @@ const AdminBlog = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <style>{`
         .editor-container {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          min-height: 500px;
-        }
-        .editor-container .ql-container {
           height: 450px !important;
-          overflow-y: auto !important;
-          font-family: inherit;
-          font-size: 16px;
-          border-bottom-left-radius: 12px;
-          border-bottom-right-radius: 12px;
-          background: white;
-        }
-        .editor-container .ql-editor {
-          min-height: 100%;
-          line-height: 1.6;
+          display: flex !important;
+          flex-direction: column !important;
+          border-radius: 12px !important;
+          border: 1px solid #eee !important;
+          overflow: hidden !important;
         }
         .editor-container .ql-toolbar {
-          border-top-left-radius: 12px;
-          border-top-right-radius: 12px;
-          background: #fdfdfd;
-          border-bottom: 1px solid #eee;
+          shrink-0: true !important;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          border-bottom: 1px solid #eee !important;
+          background: #fdfdfd !important;
+        }
+        .editor-container .ql-container {
+          flex: 1 !important;
+          overflow: hidden !important; /* The container doesn't scroll, the editor does */
+          border: none !important;
+          background: white !important;
+        }
+        .editor-container .ql-editor {
+          height: 100% !important;
+          overflow-y: auto !important;
+          line-height: 1.6 !important;
+          padding: 20px !important;
         }
         .ql-image-resize-module {
           z-index: 100 !important;
+        }
+        /* Fix for the stretching problem specifically */
+        .quill.editor-container {
+           height: 450px !important;
+           min-height: 450px !important;
+           max-height: 450px !important;
         }
       `}</style>
       <div className="flex items-center justify-between mb-6 shrink-0">
