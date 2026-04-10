@@ -337,7 +337,7 @@ const AdminBlog = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-[1400px] w-[95vw] min-h-[85vh] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="max-w-[1400px] w-[95vw] min-h-[85vh] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
           {editing && (
             <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden">
               <DialogHeader className="p-6 pb-0 border-b bg-muted/10 shrink-0">

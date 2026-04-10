@@ -393,7 +393,7 @@ const AdminTours = () => {
       </div>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl font-sans">
+        <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl font-sans" onPointerDownOutside={(e) => e.preventDefault()}>
           {editing && (
             <Tabs defaultValue="content" className="flex-1 flex flex-col h-full overflow-hidden">
               <DialogHeader className="p-6 pb-0 border-b bg-muted/20 shrink-0">
