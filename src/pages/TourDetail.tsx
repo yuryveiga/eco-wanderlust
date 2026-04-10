@@ -387,6 +387,10 @@ export function TourDetail() {
                           <span className="font-black text-xl">{quantity}</span>
                           <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}><Plus className="w-4 h-4" /></Button>
                         </div>
+                        <div className="flex items-center justify-between pt-2 px-1">
+                           <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{language === 'pt' ? 'Valor Total:' : 'Total Value:'}</span>
+                           <span className="text-lg font-black text-primary">{formatPrice(tour.price * quantity)}</span>
+                        </div>
                      </div>
 
                      <div className="space-y-3">
