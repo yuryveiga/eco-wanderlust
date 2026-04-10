@@ -159,7 +159,7 @@ export function TourDetail() {
   const handleBooking = () => {
     if (!tour) return;
     if (!selectedDate) {
-      toast.error(language === 'pt' ? "Por favor, selecione uma data." : "Please select a date.");
+      toast.error(t("selecione_data"));
       return;
     }
 
@@ -175,7 +175,7 @@ export function TourDetail() {
       quantity: quantity
     });
 
-    toast.success(language === 'pt' ? "Passeio adicionado ao carrinho!" : "Tour added to cart!", {
+    toast.success(t("passeio_adicionado"), {
       action: {
         label: t("reservar"),
         onClick: () => navigate("/carrinho")
@@ -223,7 +223,7 @@ export function TourDetail() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
                <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px] px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{translatedCategory}</span>
-               {tour.is_featured && <span className="bg-amber-100 text-amber-700 font-black text-[10px] px-3 py-1 rounded-full border border-amber-200 uppercase tracking-widest">{language === 'pt' ? 'Destaque' : 'Featured'}</span>}
+               {tour.is_featured && <span className="bg-amber-100 text-amber-700 font-black text-[10px] px-3 py-1 rounded-full border border-amber-200 uppercase tracking-widest">{t("destaque")}</span>}
             </div>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-[1.1] tracking-tight">{translatedTitle}</h1>
           </div>
@@ -282,7 +282,7 @@ export function TourDetail() {
             onClick={() => openLightbox(0)}
           >
             <Maximize2 className="w-5 h-5 text-primary" />
-            {language === 'pt' ? 'Ver Galeria Completa' : 'View Full Gallery'}
+            {t("ver_galeria_completa")}
           </Button>
         </div>
       </section>
@@ -298,7 +298,7 @@ export function TourDetail() {
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
                       <Clock className="w-8 h-8 text-primary" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Duração' : 'Duration'}</span>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{t("duracao")}</span>
                     <span className="text-xl font-black text-foreground">{translateDuration(tour.duration)}</span>
                   </div>
 
@@ -307,7 +307,7 @@ export function TourDetail() {
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
                       <Users className="w-8 h-8 text-primary" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Grupo Máximo' : 'Capacity'}</span>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{t("capacidade")}</span>
                     <span className="text-xl font-black text-foreground">{tour.max_group_size} {t("pessoas")}</span>
                   </div>
 
@@ -317,7 +317,7 @@ export function TourDetail() {
                       <div className="w-16 h-16 rounded-2xl bg-[#E76F51]/10 flex items-center justify-center mb-5 shadow-inner group-hover:scale-110 transition-transform">
                         <Gauge className="w-8 h-8 text-[#E76F51]" />
                       </div>
-                      <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{language === 'pt' ? 'Nível' : 'Difficulty'}</span>
+                      <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-2">{t("nivel")}</span>
                       <span className="text-xl font-black text-foreground uppercase">{translatedDifficulty}</span>
                     </div>
                   )}
@@ -335,7 +335,7 @@ export function TourDetail() {
                {/* Highlights */}
                {highlights.length > 0 && (
                  <div className="bg-card rounded-2xl border p-8 space-y-6">
-                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3"><Star className="text-primary fill-primary" /> {language === 'pt' ? 'Destaques' : 'Highlights'}</h2>
+                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3"><Star className="text-primary fill-primary" /> {t("destaques")}</h2>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      {highlights.map((h, i) => (
                        <div key={i} className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl">
@@ -388,7 +388,7 @@ export function TourDetail() {
                           <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}><Plus className="w-4 h-4" /></Button>
                         </div>
                         <div className="flex items-center justify-between pt-2 px-1">
-                           <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{language === 'pt' ? 'Valor Total:' : 'Total Value:'}</span>
+                           <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("valor_total")}</span>
                            <span className="text-lg font-black text-primary">{formatPrice(tour.price * quantity)}</span>
                         </div>
                      </div>
@@ -431,7 +431,7 @@ export function TourDetail() {
                        <Star className="w-4 h-4 fill-emerald-600 text-emerald-600" />
                        <Star className="w-4 h-4 fill-emerald-600 text-emerald-600" />
                     </div>
-                    <span className="text-xs font-black text-emerald-800 uppercase tracking-widest group-hover:underline">Excellent on TripAdvisor</span>
+                    <span className="text-xs font-black text-emerald-800 uppercase tracking-widest group-hover:underline">{t("excelente_tripadvisor")}</span>
                  </a>
               </div>
             </div>

@@ -62,28 +62,35 @@ const AdminTours = () => {
       return;
     }
 
-    const slug = editing.slug || editing.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    
-    // Ensure category is included
-    const dataToSave = {
-      ...editing,
-      slug,
-      category: editing.category || 'CITY TOUR'
-    };
+    setIsTranslating(true);
+    toast({ title: "Salvando e Traduzindo...", description: "Isso pode levar alguns segundos." });
 
     try {
+      const slug = editing.slug || editing.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      
+      const translatedData = await translateTourData(editing);
+      
+      // Ensure category is included
+      const dataToSave = {
+        ...translatedData,
+        slug,
+        category: translatedData.category || 'CITY TOUR'
+      };
+
       if (isNew) {
         await insertLovable("tours", dataToSave);
-        toast({ title: "Passeio criado!" });
+        toast({ title: "Passeio criado e traduzido!" });
       } else if (editing.id) {
         await updateLovable("tours", editing.id, dataToSave);
-        toast({ title: "Passeio atualizado!" });
+        toast({ title: "Passeio atualizado e traduzido!" });
       }
 
       await loadTours();
       setEditing(null);
     } catch {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -130,6 +137,73 @@ const AdminTours = () => {
     setEditing({ ...editing, images_json: newImages, image_url: newMain });
   };
 
+  const translateTourData = async (data: Partial<LovableTour>): Promise<Partial<LovableTour>> => {
+    if (!data.title && !data.category && !data.short_description) {
+      return data;
+    }
+
+    const [tTitleEn, tTitleEs, tCatEn, tCatEs, tDescEn, tDescEs, tDifEn, tDifEs, tAddrEn, tAddrEs] = await Promise.all([
+      translateText(data.title || "", "en"),
+      translateText(data.title || "", "es"),
+      translateText(data.category || "", "en"),
+      translateText(data.category || "", "es"),
+      translateText(data.short_description || "", "en"),
+      translateText(data.short_description || "", "es"),
+      translateText(data.difficulty || "", "en"),
+      translateText(data.difficulty || "", "es"),
+      translateText(data.meeting_point_address || "", "en"),
+      translateText(data.meeting_point_address || "", "es")
+    ]);
+
+    const translateJsonArray = async (arr: JsonFieldItem[], fields: (keyof JsonFieldItem)[], lang: 'en' | 'es'): Promise<JsonFieldItem[]> => {
+      if (!arr || !Array.isArray(arr)) return arr;
+      const translated = await Promise.all(arr.map(async (item) => {
+        const newItem: JsonFieldItem = { ...item };
+        for (const field of fields) {
+          const val = item[field];
+          if (val) {
+            newItem[field] = await translateText(val, lang);
+          }
+        }
+        return newItem;
+      }));
+      return translated;
+    };
+
+    const [tItineraryEn, tItineraryEs, tIncludedEn, tIncludedEs, tHighlightsEn, tHighlightsEs, tFaqEn, tFaqEs] = await Promise.all([
+      translateJsonArray(data.itinerary_json || [], ['time', 'description'], "en"),
+      translateJsonArray(data.itinerary_json || [], ['time', 'description'], "es"),
+      translateJsonArray(data.included_json || [], ['text'], "en"),
+      translateJsonArray(data.included_json || [], ['text'], "es"),
+      translateJsonArray(data.highlights_json || [], ['text'], "en"),
+      translateJsonArray(data.highlights_json || [], ['text'], "es"),
+      translateJsonArray(data.faq_json || [], ['q', 'a'], "en"),
+      translateJsonArray(data.faq_json || [], ['q', 'a'], "es"),
+    ]);
+
+    return {
+      ...data,
+      title_en: tTitleEn,
+      title_es: tTitleEs,
+      category_en: tCatEn,
+      category_es: tCatEs,
+      short_description_en: tDescEn,
+      short_description_es: tDescEs,
+      difficulty_en: tDifEn,
+      difficulty_es: tDifEs,
+      meeting_point_address_en: tAddrEn,
+      meeting_point_address_es: tAddrEs,
+      itinerary_json_en: tItineraryEn as any,
+      itinerary_json_es: tItineraryEs as any,
+      included_json_en: tIncludedEn as any,
+      included_json_es: tIncludedEs as any,
+      highlights_json_en: tHighlightsEn as any,
+      highlights_json_es: tHighlightsEs as any,
+      faq_json_en: tFaqEn as any,
+      faq_json_es: tFaqEs as any,
+    };
+  };
+
   const autoTranslate = async () => {
     if (!editing) return;
     if (!editing.title && !editing.category && !editing.short_description) {
@@ -141,67 +215,8 @@ const AdminTours = () => {
     toast({ title: "Mágica em andamento...", description: "Traduzindo para Inglês e Espanhol..." });
 
     try {
-      const [tTitleEn, tTitleEs, tCatEn, tCatEs, tDescEn, tDescEs, tDifEn, tDifEs, tAddrEn, tAddrEs] = await Promise.all([
-        translateText(editing.title || "", "en"),
-        translateText(editing.title || "", "es"),
-        translateText(editing.category || "", "en"),
-        translateText(editing.category || "", "es"),
-        translateText(editing.short_description || "", "en"),
-        translateText(editing.short_description || "", "es"),
-        translateText(editing.difficulty || "", "en"),
-        translateText(editing.difficulty || "", "es"),
-        translateText(editing.meeting_point_address || "", "en"),
-        translateText(editing.meeting_point_address || "", "es")
-      ]);
-
-      const translateJsonArray = async (arr: JsonFieldItem[], fields: (keyof JsonFieldItem)[], lang: 'en' | 'es'): Promise<JsonFieldItem[]> => {
-        if (!arr || !Array.isArray(arr)) return arr;
-        const translated = await Promise.all(arr.map(async (item) => {
-          const newItem: JsonFieldItem = { ...item };
-          for (const field of fields) {
-            const val = item[field];
-            if (val) {
-              newItem[field] = await translateText(val, lang);
-            }
-          }
-          return newItem;
-        }));
-        return translated;
-      };
-
-      const [tItineraryEn, tItineraryEs, tIncludedEn, tIncludedEs, tHighlightsEn, tHighlightsEs, tFaqEn, tFaqEs] = await Promise.all([
-        translateJsonArray(editing.itinerary_json || [], ['time', 'description'], "en"),
-        translateJsonArray(editing.itinerary_json || [], ['time', 'description'], "es"),
-        translateJsonArray(editing.included_json || [], ['text'], "en"),
-        translateJsonArray(editing.included_json || [], ['text'], "es"),
-        translateJsonArray(editing.highlights_json || [], ['text'], "en"),
-        translateJsonArray(editing.highlights_json || [], ['text'], "es"),
-        translateJsonArray(editing.faq_json || [], ['q', 'a'], "en"),
-        translateJsonArray(editing.faq_json || [], ['q', 'a'], "es"),
-      ]);
-
-      setEditing({
-        ...editing,
-        title_en: tTitleEn,
-        title_es: tTitleEs,
-        category_en: tCatEn,
-        category_es: tCatEs,
-        short_description_en: tDescEn,
-        short_description_es: tDescEs,
-        difficulty_en: tDifEn,
-        difficulty_es: tDifEs,
-        meeting_point_address_en: tAddrEn,
-        meeting_point_address_es: tAddrEs,
-        itinerary_json_en: tItineraryEn as any,
-        itinerary_json_es: tItineraryEs as any,
-        included_json_en: tIncludedEn as any,
-        included_json_es: tIncludedEs as any,
-        highlights_json_en: tHighlightsEn as any,
-        highlights_json_es: tHighlightsEs as any,
-        faq_json_en: tFaqEn as any,
-        faq_json_es: tFaqEs as any,
-      });
-      
+      const translatedData = await translateTourData(editing);
+      setEditing(translatedData);
       toast({ title: "Sucesso!", description: "Tradução para Inglês e Espanhol concluída." });
     } catch (err) {
       toast({ title: "Erro na tradução", description: "Tente novamente.", variant: "destructive" });
@@ -758,7 +773,8 @@ const AdminTours = () => {
                 
                 <div className="p-6 border-t bg-muted/10 shrink-0 flex justify-end gap-4">
                   <Button type="button" variant="outline" onClick={() => setEditing(null)} className="px-10 h-14 rounded-2xl">Descartar</Button>
-                  <Button onClick={handleSave} className="px-16 h-14 bg-primary text-white rounded-2xl font-black" disabled={isUploading}>
+                  <Button onClick={handleSave} className="px-16 h-14 bg-primary text-white rounded-2xl font-black" disabled={isUploading || isTranslating}>
+                    {isTranslating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                     {isNew ? "Publicar" : "Salvar"}
                   </Button>
                 </div>
