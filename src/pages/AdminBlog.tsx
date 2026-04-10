@@ -26,6 +26,7 @@ const AdminBlog = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
+  const [pickerMode, setPickerMode] = useState<'cover' | 'editor'>('editor');
   const { toast } = useToast();
 
   const loadPosts = useCallback(async () => {
@@ -153,6 +154,7 @@ const AdminBlog = () => {
   const imageHandler = useCallback(() => {
     const choice = confirm("Escolher da galeria do site? (OK = Galeria, Cancelar = Upload)");
     if (choice) {
+      setPickerMode('editor');
       setShowGalleryPicker(true);
     } else {
       const input = document.createElement('input');
@@ -182,13 +184,20 @@ const AdminBlog = () => {
   }, [toast]);
 
   const insertImageFromGallery = (url: string) => {
+    if (pickerMode === 'cover' && editing) {
+      setEditing({ ...editing, image_url: url });
+      setShowGalleryPicker(false);
+      toast({ title: "Capa atualizada!" });
+      return;
+    }
+
     const quill = quillRef.current?.getEditor();
     if (quill) {
       const range = quill.getSelection(true);
       quill.insertEmbed(range.index, 'image', url);
     }
     setShowGalleryPicker(false);
-    toast({ title: "Imagem inserida!" });
+    toast({ title: "Imagem inserida no post!" });
   };
 
   const modules = useMemo(() => ({
@@ -363,10 +372,10 @@ const AdminBlog = () => {
                                 </div>
                              )}
                              <div className="absolute inset-0 flex gap-2 justify-center items-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Button size="sm" variant="secondary" className="h-8 bg-white">
+                                <Button size="sm" variant="secondary" className="h-8 bg-white" onClick={() => document.getElementById('blog-capa-upload')?.click()}>
                                   <Upload className="w-3 h-3 mr-1" />Upload
                                 </Button>
-                                <Button size="sm" variant="secondary" className="h-8 bg-white" onClick={() => setShowGalleryPicker(true)}>
+                                <Button size="sm" variant="secondary" className="h-8 bg-white" onClick={() => { setPickerMode('cover'); setShowGalleryPicker(true); }}>
                                   <FolderOpen className="w-3 h-3 mr-1" />Galeria
                                 </Button>
                              </div>
