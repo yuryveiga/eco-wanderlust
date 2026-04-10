@@ -67,12 +67,14 @@ const BlogPost = () => {
         .blog-content-area {
           font-family: 'Open Sans', sans-serif !important;
           color: #7a7a7a !important;
-          line-height: 1.6 !important;
-          font-size: 1.125rem;
+          line-height: 1.4 !important;
+          font-size: 1.05rem !important;
+          text-align: left;
         }
         .blog-content-area p {
-          margin-bottom: 1.5rem !important;
-          font-size: 1.125rem;
+          margin-bottom: 0.8rem !important;
+          margin-top: 0 !important;
+          line-height: 1.4 !important;
           opacity: 1;
         }
         .blog-content-area h1, 
@@ -81,34 +83,36 @@ const BlogPost = () => {
           font-family: 'Montserrat', sans-serif !important;
           font-weight: 700 !important;
           color: #54595f !important;
-          margin-top: 2rem !important;
-          margin-bottom: 1.25rem !important;
-          line-height: 1.3 !important;
+          margin-top: 1.25rem !important;
+          margin-bottom: 0.5rem !important;
+          line-height: 1.2 !important;
         }
-        .blog-content-area h1 { font-size: 2.6rem !important; }
-        .blog-content-area h2 { font-size: 2rem !important; }
-        .blog-content-area h3 { font-size: 1.5rem !important; }
+        .blog-content-area h1 { font-size: 2.2rem !important; }
+        .blog-content-area h2 { font-size: 1.8rem !important; }
+        .blog-content-area h3 { font-size: 1.4rem !important; }
         
         .blog-content-area ul, 
         .blog-content-area ol {
-          margin-bottom: 1.5rem;
-          padding-left: 1.5rem;
+          margin-bottom: 1rem !important;
+          margin-top: 0.5rem !important;
+          padding-left: 1.2rem !important;
         }
         .blog-content-area li {
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.3rem !important;
+          line-height: 1.4 !important;
           font-family: 'Open Sans', sans-serif !important;
         }
         .blog-content-area img {
-          border-radius: 1rem;
-          margin: 2rem 0;
-          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+          border-radius: 0.75rem;
+          margin: 1.5rem 0 !important;
+          max-width: 100%;
         }
         .blog-content-area blockquote {
-          border-left: 4px solid var(--primary);
-          padding-left: 1.5rem;
+          border-left: 3px solid #008967;
+          padding-left: 1rem;
           font-style: italic;
-          margin: 2rem 0;
-          opacity: 0.8;
+          margin: 1.5rem 0 !important;
+          opacity: 0.9;
           font-family: 'Open Sans', sans-serif !important;
         }
       `}</style>
@@ -154,7 +158,7 @@ const BlogPost = () => {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 mb-20">
               <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-16 border border-border/50">
                 <div 
-                  className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor blog-content-area"
+                  className="max-w-none ql-editor blog-content-area"
                   style={{ padding: 0 }}
                   dangerouslySetInnerHTML={{ __html: content || "" }}
                 />
@@ -186,7 +190,7 @@ const BlogPost = () => {
               </h1>
               
               <div 
-                className="prose prose-lg dark:prose-invert max-w-none font-sans ql-editor blog-content-area"
+                className="max-w-none ql-editor blog-content-area"
                 style={{ padding: 0 }}
                 dangerouslySetInnerHTML={{ __html: content || "" }}
               />
