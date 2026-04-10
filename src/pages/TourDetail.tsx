@@ -231,6 +231,7 @@ export function TourDetail() {
             <div className="text-right">
               <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">{t("a_partir_de")}</span>
               <span className="text-4xl font-black text-primary">{formatPrice(tour.price)}</span>
+              <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">{t("por_pessoa")}</span>
             </div>
           </div>
         </div>
@@ -382,6 +383,7 @@ export function TourDetail() {
                      <span className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em]">{t("a_partir_de")}</span>
                      <div className="flex items-center justify-center gap-2 mt-1">
                        <span className="text-5xl font-black text-primary">{formatPrice(tour.price * quantity)}</span>
+                        <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">{t("por_pessoa")}</span>
                      </div>
                    </div>
 
@@ -445,7 +447,10 @@ export function TourDetail() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("a_partir_de")}</span>
-            <div className="font-black text-xl text-primary">{formatPrice(tour.price)}</div>
+            <div className="flex items-baseline gap-1">
+               <div className="font-black text-xl text-primary">{formatPrice(tour.price)}</div>
+               <span className="text-[9px] font-black text-muted-foreground uppercase opacity-70">/ {t("pessoa")}</span>
+            </div>
           </div>
           <Button onClick={handleBooking} className="flex-1 h-12 rounded-xl font-black">{t("reservar_agora")}</Button>
         </div>
