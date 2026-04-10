@@ -127,7 +127,8 @@ const AdminTheme = () => {
       if (settings['theme_primary'] !== settings['theme_primary_old']) {
          // window.location.reload();
       }
-    } catch {
+    } catch (e) {
+      console.warn("TourDetail: Failed to load images", e);
       toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
       setIsSaving(false);

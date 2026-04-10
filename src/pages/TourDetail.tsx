@@ -57,14 +57,14 @@ export function TourDetail() {
     const rawCat = tour?.category;
     if (rawCat === 'TRILHA') return t('trilhas');
     if (rawCat === 'CITY TOUR') return t('city_tours');
-    return getTranslated(tour, 'category');
-  }, [tour, language, t]);
+    return getTranslated('category');
+  }, [tour, t, getTranslated]);
 
-  const translatedDifficulty = getTranslated(tour, 'difficulty');
-  const translatedItinerary = getTranslated(tour, `itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json;
-  const translatedIncluded = getTranslated(tour, `included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
-  const translatedFaq = getTranslated(tour, `faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json;
-  const translatedHighlights = getTranslated(tour, `highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json;
+  const translatedDifficulty = useMemo(() => getTranslated('difficulty'), [getTranslated]);
+  const translatedItinerary = useMemo(() => getTranslated(`itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json, [getTranslated, language, tour?.itinerary_json]);
+  const translatedIncluded = useMemo(() => getTranslated(`included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json, [getTranslated, language, tour?.included_json]);
+  const translatedFaq = useMemo(() => getTranslated(`faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json, [getTranslated, language, tour?.faq_json]);
+  const translatedHighlights = useMemo(() => getTranslated(`highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json, [getTranslated, language, tour?.highlights_json]);
 
   const translateDuration = (duration: string) => {
     if (language === 'pt' || !duration) return duration;
@@ -112,6 +112,15 @@ export function TourDetail() {
         setIsPrivate(false);
       }
     }
+  }, [tour]);
+
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const images = useMemo(() => {
+    let imgs = tour?.images_json as string[] || [];
+    if (imgs.length === 0 && tour?.image_url) imgs = [tour.image_url];
+    return imgs.filter(url => url && typeof url === 'string');
   }, [tour]);
 
   useEffect(() => {
@@ -177,16 +186,6 @@ export function TourDetail() {
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
 
   if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to="/"><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
-
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-
-  const images = useMemo(() => {
-    let imgs = tour.images_json as string[] || [];
-    if (imgs.length === 0 && tour.image_url) imgs = [tour.image_url];
-    // Garantir que são URLs válidas
-    return imgs.filter(url => url && typeof url === 'string');
-  }, [tour]);
 
   const highlights = (translatedHighlights as any[]) || [];
   const faqItems = (translatedFaq as any[]) || [];
@@ -440,7 +439,6 @@ export function TourDetail() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Sticky Mobile Bar */}
       <div className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-xl border-t transform transition-transform duration-500 md:hidden ${showStickyBar ? "translate-y-0" : "translate-y-full"}`}>
