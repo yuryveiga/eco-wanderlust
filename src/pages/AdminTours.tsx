@@ -39,6 +39,11 @@ const AdminTours = () => {
 
   useEffect(() => {
     loadTours();
+    fetchLovable<LovableSiteSetting>("site_settings").then(data => {
+      const map: Record<string, string> = {};
+      data.forEach(s => { map[s.key] = s.value; });
+      setSiteSettings(map);
+    });
   }, []);
 
   useEffect(() => {
