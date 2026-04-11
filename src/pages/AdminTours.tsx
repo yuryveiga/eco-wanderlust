@@ -689,7 +689,79 @@ const AdminTours = () => {
                     </div>
                   </TabsContent>
 
-                  {/* TAB SETTINGS */}
+                  {/* TAB CAROUSEL GALLERY */}
+                  <TabsContent value="carousel" className="m-0 space-y-6">
+                    <div className="p-10 border-4 border-dashed rounded-[40px] bg-muted/20 flex flex-col items-center justify-center gap-4 transition-all hover:bg-muted/30 text-center relative group">
+                      <ImageIcon className="w-10 h-10 text-primary" />
+                      <div>
+                        <h4 className="font-black text-xl">Galeria do Carrossel</h4>
+                        <p className="text-sm text-muted-foreground mt-2">Fotos que aparecerão no carrossel da página do passeio. Máximo de 10 fotos.</p>
+                        <p className="text-xs text-muted-foreground mt-1">{(editing.carousel_images_json || []).length}/10 fotos</p>
+                        <Input 
+                          type="file" 
+                          multiple 
+                          accept="image/*" 
+                          onChange={async (e) => {
+                            const files = e.target.files;
+                            if (!files || files.length === 0 || !editing) return;
+                            const current = editing.carousel_images_json || [];
+                            if (current.length + files.length > 10) {
+                              toast({ title: "Limite atingido", description: "Máximo de 10 fotos na galeria.", variant: "destructive" });
+                              return;
+                            }
+                            setIsUploadingCarousel(true);
+                            try {
+                              const newImages = [...current];
+                              for (const file of Array.from(files)) {
+                                const url = await uploadLovableFile(file);
+                                if (url) newImages.push(url);
+                              }
+                              setEditing({ ...editing, carousel_images_json: newImages.slice(0, 10) });
+                              toast({ title: "Fotos adicionadas!" });
+                            } catch {
+                              toast({ title: "Erro ao enviar fotos", variant: "destructive" });
+                            } finally {
+                              setIsUploadingCarousel(false);
+                            }
+                          }} 
+                          className="hidden" 
+                          id="carousel-files-upload" 
+                          disabled={isUploadingCarousel || (editing.carousel_images_json || []).length >= 10} 
+                        />
+                        <Label htmlFor="carousel-files-upload" className="absolute inset-0 cursor-pointer opacity-0" />
+                      </div>
+                      {isUploadingCarousel && <Loader2 className="w-6 h-6 animate-spin text-primary" />}
+                    </div>
+
+                    {(editing.carousel_images_json || []).length > 0 && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {editing.carousel_images_json?.map((url, index) => (
+                          <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-border group">
+                            <img src={url} alt={`Carousel ${index + 1}`} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Button 
+                                size="icon" 
+                                variant="ghost" 
+                                className="text-white" 
+                                onClick={() => {
+                                  const newArr = [...(editing.carousel_images_json || [])];
+                                  newArr.splice(index, 1);
+                                  setEditing({ ...editing, carousel_images_json: newArr });
+                                }}
+                              >
+                                <Trash2 className="w-6 h-6" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {(editing.carousel_images_json || []).length === 0 && (
+                      <p className="text-center text-muted-foreground text-sm py-8">Nenhuma foto adicionada. A galeria só aparecerá na página do passeio se tiver fotos.</p>
+                    )}
+                  </TabsContent>
+
                   <TabsContent value="settings" className="m-0 space-y-10">
                     {!editing.external_url ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
