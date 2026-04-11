@@ -12,7 +12,9 @@ const AdminSimulator = () => {
   const [tours, setTours] = useState<LovableTour[]>([]);
   const [selectedTourId, setSelectedTourId] = useState("");
   const [customerName, setCustomerName] = useState("Cliente de Teste");
+  const [customerEmail, setCustomerEmail] = useState("teste@exemplo.com");
   const [bookingDate, setBookingDate] = useState("2026-04-13");
+  const [selectedPeriod, setSelectedPeriod] = useState("Manhã");
   const [isSimulating, setIsSimulating] = useState(false);
   const { toast } = useToast();
 
@@ -31,29 +33,26 @@ const AdminSimulator = () => {
       const tour = tours.find(t => t.id === selectedTourId);
       
       // 1. Criar a reserva (sale) como pendente
-      toast({ title: "Passo 1/2", description: "Criando reserva no banco de dados..." });
+      toast({ title: "Passo 1/3", description: "Criando reserva no banco de dados..." });
       
       const newSale = await insertLovable<any>("sales", {
         tour_id: selectedTourId,
         tour_title: tour?.title || "Passeio de Teste",
         tour_slug: tour?.slug || "teste",
         customer_name: customerName,
-        customer_email: "teste@exemplo.com",
+        customer_email: customerEmail,
         customer_phone: "(21) 99999-9999",
         quantity: 1,
         total_price: tour?.price || 100,
         selected_date: bookingDate,
-        selected_period: "Manhã",
+        selected_period: selectedPeriod,
         is_private: false,
         is_paid: false
       });
 
       if (!newSale?.id) throw new Error("Falha ao criar venda");
 
-      // 2. Simular a chamada do Webhook do Stripe
-      // Nota: Como não podemos gerar a assinatura do Stripe no front-end por segurança, 
-      // vamos atualizar o status diretamente para simular o efeito do webhook.
-      
+      // 2. Simular a confirmação de pagamento
       toast({ title: "Passo 2/3", description: "Simulando confirmação de pagamento..." });
       
       const { error: updateError } = await supabase
@@ -87,25 +86,26 @@ const AdminSimulator = () => {
 
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-6">
-      <Card>
+      <Card className="border-2 border-primary/20 shadow-xl overflow-hidden">
+        <div className="h-2 bg-primary" />
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-2xl">
-            <Play className="text-primary fill-primary" />
-            Simulador de Reserva
+          <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+            <Play className="text-primary fill-primary w-8 h-8" />
+            Simulador de Reserva Completo
           </CardTitle>
           <CardDescription>
-            Use esta ferramenta para testar o fluxo de confirmação e integração com a Google Agenda.
+            Teste o processamento de pagamentos e a integração com o Google Agenda em tempo real.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label>Passeio</Label>
+            <Label className="text-sm font-semibold">Passeio Desejado</Label>
             <select
               value={selectedTourId}
               onChange={(e) => setSelectedTourId(e.target.value)}
-              className="w-full h-10 rounded-md border bg-background px-3 py-2"
+              className="w-full h-11 rounded-lg border-2 border-muted bg-background px-3 py-2 focus:border-primary transition-colors"
             >
-              <option value="">Selecione o passeio</option>
+              <option value="">Selecione o passeio para simular</option>
               {tours.map(t => (
                 <option key={t.id} value={t.id}>{t.title}</option>
               ))}
@@ -114,50 +114,80 @@ const AdminSimulator = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Nome do Cliente</Label>
-              <Input value={customerName} onChange={e => setCustomerName(e.target.value)} />
+              <Label className="text-sm font-semibold">Nome do Cliente</Label>
+              <Input 
+                className="h-11 border-2 border-muted"
+                value={customerName} 
+                onChange={e => setCustomerName(e.target.value)} 
+              />
             </div>
             <div className="space-y-2">
-              <Label>Data da Reserva</Label>
-              <Input type="date" value={bookingDate} onChange={e => setBookingDate(e.target.value)} />
+              <Label className="text-sm font-semibold">Email (Google Agenda)</Label>
+              <Input 
+                className="h-11 border-2 border-muted"
+                type="email"
+                value={customerEmail} 
+                onChange={e => setCustomerEmail(e.target.value)} 
+              />
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg flex gap-3 text-amber-800 text-sm">
-            <AlertTriangle className="w-5 h-5 shrink-0" />
-            <p>
-              Esta simulação criará uma reserva real marcada como "Paga". 
-              Se a sua Edge Function estiver configurada para ouvir mudanças no banco, 
-              o evento será criado na conta <strong>{bookingDate}</strong>.
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Data da Reserva</Label>
+              <Input 
+                type="date" 
+                className="h-11 border-2 border-muted"
+                value={bookingDate} 
+                onChange={e => setBookingDate(e.target.value)} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Período / Turno</Label>
+              <select
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                className="w-full h-11 rounded-lg border-2 border-muted bg-background px-3 py-2 focus:border-primary transition-colors"
+              >
+                <option value="Manhã">Manhã (09h)</option>
+                <option value="Tarde">Tarde (14h)</option>
+                <option value="Outro">Outro (10h default)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="bg-primary/5 border-l-4 border-primary p-5 rounded-r-lg flex gap-4 text-primary/80 text-sm italic">
+            <AlertTriangle className="w-6 h-6 shrink-0 text-primary" />
+            <p className="leading-relaxed">
+              <strong>Simulação Real:</strong> Esta ferramenta cria um registro de venda no banco e aciona o 
+              fluxo de backend. Certifique-se de que a Edge Function <code className="bg-primary/10 px-1 rounded">sync-calendar</code> 
+              esteja implantada.
             </p>
           </div>
 
           <Button 
-            className="w-full h-12 text-lg font-bold" 
+            className="w-full h-14 text-xl font-black bg-primary hover:bg-primary/90 shadow-lg transition-all active:scale-[0.98]" 
             onClick={runSimulation}
             disabled={isSimulating}
           >
-            {isSimulating ? "Processando..." : "Simular Reserva e Pagamento"}
+            {isSimulating ? "PROCESSANDO FLUXO..." : "EXECUTAR SIMULAÇÃO COMPLETA"}
           </Button>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-3 gap-4 text-center">
-        <div className="p-4 bg-muted rounded-xl">
-          <Calendar className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <div className="text-xs font-bold uppercase">Agenda</div>
-          <div className="text-sm">Link Ativo</div>
-        </div>
-        <div className="p-4 bg-muted rounded-xl">
-          <CheckCircle className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <div className="text-xs font-bold uppercase">Banco</div>
-          <div className="text-sm">Public Key OK</div>
-        </div>
-        <div className="p-4 bg-muted rounded-xl">
-          <CheckCircle className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <div className="text-xs font-bold uppercase">Stripe</div>
-          <div className="text-sm">Webhook Pronto</div>
-        </div>
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { icon: Calendar, label: "Agenda", status: "Integrado", sub: "Google API" },
+          { icon: CheckCircle, label: "Database", status: "Conectado", sub: "Supabase" },
+          { icon: Play, label: "Stripe", status: "Simulado", sub: "Webhook" },
+        ].map((item, idx) => (
+          <div key={idx} className="p-4 bg-muted/30 border border-muted rounded-2xl text-center group hover:bg-white hover:shadow-md transition-all">
+            <item.icon className="w-8 h-8 mx-auto mb-3 text-primary/60 group-hover:text-primary transition-colors" />
+            <div className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{item.label}</div>
+            <div className="text-sm font-bold text-foreground">{item.status}</div>
+            <div className="text-[10px] text-muted-foreground">{item.sub}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
