@@ -11,14 +11,25 @@ const AdminLayout = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          <p className="text-xs text-muted-foreground font-sans animate-pulse">Autenticando...</p>
+        </div>
       </div>
     );
   }
 
-  if (!user) return <Navigate to="/admin/login" replace />;
-  if (!isAdmin) return <Navigate to="/" replace />;
+  // Se não tem usuário, vai para o Login do Admin obrigatoriamente
+  if (!user) {
+    return <Navigate to="/admin/login" state={{ from: window.location.pathname }} replace />;
+  }
+
+  // Se está logado mas não é admin, vai para a home do site
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
 
   return (
     <SidebarProvider>
