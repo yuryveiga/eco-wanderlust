@@ -19,8 +19,11 @@ function base64urlStr(str: string): string {
   return base64url(new TextEncoder().encode(str));
 }
 
-function decodeBase64(b64: string): Uint8Array {
-  const binString = atob(b64);
+function base64ToUint8Array(b64: string): Uint8Array {
+  const cleaned = b64.replace(/[^A-Za-z0-9+/]/g, "");
+  const pad = cleaned.length % 4;
+  const padded = pad ? cleaned + "=".repeat(4 - pad) : cleaned;
+  const binString = atob(padded);
   const bytes = new Uint8Array(binString.length);
   for (let i = 0; i < binString.length; i++) {
     bytes[i] = binString.charCodeAt(i);
@@ -31,9 +34,8 @@ function decodeBase64(b64: string): Uint8Array {
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
   const pemContents = pem
     .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
-    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "")
-    .replace(/[\r\n\s]/g, "");
-  const binaryDer = decodeBase64(pemContents);
+    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "");
+  const binaryDer = base64ToUint8Array(pemContents);
   return crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
@@ -104,23 +106,9 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
 
     const event = {
       summary: `Reserva: ${sale.tour_title} - ${sale.customer_name}`,
-      description: `
-        Cliente: ${sale.customer_name}
-        Email: ${sale.customer_email}
-        Telefone: ${sale.customer_phone}
-        Pessoas: ${sale.quantity}
-        Tipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}
-        Total: R$ ${sale.total_price}
-        Status: Pago via Stripe
-      `.trim(),
-      start: {
-        dateTime: startDate.toISOString(),
-        timeZone: "America/Sao_Paulo",
-      },
-      end: {
-        dateTime: endDate.toISOString(),
-        timeZone: "America/Sao_Paulo",
-      },
+      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nTelefone: ${sale.customer_phone}\nPessoas: ${sale.quantity}\nTipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}\nTotal: R$ ${sale.total_price}\nStatus: Pago via Stripe`,
+      start: { dateTime: startDate.toISOString(), timeZone: "America/Sao_Paulo" },
+      end: { dateTime: endDate.toISOString(), timeZone: "America/Sao_Paulo" },
       colorId: "2",
     };
 
@@ -165,14 +153,10 @@ serve(async (req) => {
       throw new Error("Missing environment variables");
     }
 
-    const stripe = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16",
-    });
+    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     const signature = req.headers.get("stripe-signature");
-    if (!signature) {
-      throw new Error("No signature");
-    }
+    if (!signature) throw new Error("No signature");
 
     const body = await req.text();
     let event;
