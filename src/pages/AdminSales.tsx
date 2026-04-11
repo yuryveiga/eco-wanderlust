@@ -472,6 +472,12 @@ const AdminSales = () => {
         open={!!viewingSale}
         onClose={() => setViewingSale(null)}
       />
+
+      <StripeCheckoutDialog
+        open={stripeDialogOpen}
+        onClose={() => setStripeDialogOpen(false)}
+        tours={tours}
+      />
     </div>
   );
 };
