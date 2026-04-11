@@ -71,15 +71,6 @@ const AdminSales = () => {
     };
   }, [loadData]);
 
-  const loadData = async () => {
-    const [salesData, toursData] = await Promise.all([
-      fetchLovable<LovableSale>("sales"),
-      fetchLovable<LovableTour>("tours")
-    ]);
-    setSales(salesData.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
-    setTours(toursData);
-    setIsLoading(false);
-  };
 
   const handleSave = async () => {
     if (!editing?.tour_id || !editing?.customer_name || !editing?.customer_email) {
