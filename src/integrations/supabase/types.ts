@@ -68,6 +68,84 @@ export type Database = {
         }
         Relationships: []
       }
+      matches: {
+        Row: {
+          available_spots: number
+          away_team: string
+          away_team_logo: string | null
+          competition: string
+          created_at: string
+          description_en: string | null
+          description_pt: string | null
+          high_demand: boolean | null
+          home_team: string
+          home_team_logo: string | null
+          id: string
+          image_url: string | null
+          includes_guide: boolean
+          includes_ticket: boolean
+          includes_transfer: boolean
+          match_date: string
+          price: number
+          slug: string | null
+          sold_count: number
+          stadium: string | null
+          status: string
+          updated_at: string
+          venue: string
+        }
+        Insert: {
+          available_spots?: number
+          away_team: string
+          away_team_logo?: string | null
+          competition?: string
+          created_at?: string
+          description_en?: string | null
+          description_pt?: string | null
+          high_demand?: boolean | null
+          home_team: string
+          home_team_logo?: string | null
+          id?: string
+          image_url?: string | null
+          includes_guide?: boolean
+          includes_ticket?: boolean
+          includes_transfer?: boolean
+          match_date: string
+          price: number
+          slug?: string | null
+          sold_count?: number
+          stadium?: string | null
+          status?: string
+          updated_at?: string
+          venue?: string
+        }
+        Update: {
+          available_spots?: number
+          away_team?: string
+          away_team_logo?: string | null
+          competition?: string
+          created_at?: string
+          description_en?: string | null
+          description_pt?: string | null
+          high_demand?: boolean | null
+          home_team?: string
+          home_team_logo?: string | null
+          id?: string
+          image_url?: string | null
+          includes_guide?: boolean
+          includes_ticket?: boolean
+          includes_transfer?: boolean
+          match_date?: string
+          price?: number
+          slug?: string | null
+          sold_count?: number
+          stadium?: string | null
+          status?: string
+          updated_at?: string
+          venue?: string
+        }
+        Relationships: []
+      }
       pages: {
         Row: {
           content: string | null
@@ -179,6 +257,60 @@ export type Database = {
         }
         Relationships: []
       }
+      sales: {
+        Row: {
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          is_cancelled: boolean | null
+          is_paid: boolean | null
+          is_private: boolean | null
+          quantity: number | null
+          selected_date: string | null
+          selected_period: string | null
+          total_price: number | null
+          tour_id: string
+          tour_slug: string | null
+          tour_title: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          is_cancelled?: boolean | null
+          is_paid?: boolean | null
+          is_private?: boolean | null
+          quantity?: number | null
+          selected_date?: string | null
+          selected_period?: string | null
+          total_price?: number | null
+          tour_id: string
+          tour_slug?: string | null
+          tour_title?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          is_cancelled?: boolean | null
+          is_paid?: boolean | null
+          is_private?: boolean | null
+          quantity?: number | null
+          selected_date?: string | null
+          selected_period?: string | null
+          total_price?: number | null
+          tour_id?: string
+          tour_slug?: string | null
+          tour_title?: string | null
+        }
+        Relationships: []
+      }
       site_images: {
         Row: {
           created_at: string
@@ -211,6 +343,10 @@ export type Database = {
           created_at: string
           id: string
           key: string
+          site_description_en: string | null
+          site_description_es: string | null
+          site_title_en: string | null
+          site_title_es: string | null
           updated_at: string
           value: string
         }
@@ -218,6 +354,10 @@ export type Database = {
           created_at?: string
           id?: string
           key: string
+          site_description_en?: string | null
+          site_description_es?: string | null
+          site_title_en?: string | null
+          site_title_es?: string | null
           updated_at?: string
           value: string
         }
@@ -225,8 +365,27 @@ export type Database = {
           created_at?: string
           id?: string
           key?: string
+          site_description_en?: string | null
+          site_description_es?: string | null
+          site_title_en?: string | null
+          site_title_es?: string | null
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      site_visitors: {
+        Row: {
+          id: string
+          last_seen: string | null
+        }
+        Insert: {
+          id: string
+          last_seen?: string | null
+        }
+        Update: {
+          id?: string
+          last_seen?: string | null
         }
         Relationships: []
       }
@@ -278,6 +437,7 @@ export type Database = {
           difficulty_en: string | null
           difficulty_es: string | null
           duration: string
+          external_url: string | null
           faq_json: Json | null
           faq_json_en: Json | null
           faq_json_es: Json | null
@@ -285,6 +445,8 @@ export type Database = {
           has_morning: boolean
           has_night: boolean
           highlights_json: Json | null
+          highlights_json_en: Json | null
+          highlights_json_es: Json | null
           id: string
           image_url: string
           images_json: Json | null
@@ -323,6 +485,7 @@ export type Database = {
           difficulty_en?: string | null
           difficulty_es?: string | null
           duration?: string
+          external_url?: string | null
           faq_json?: Json | null
           faq_json_en?: Json | null
           faq_json_es?: Json | null
@@ -330,6 +493,8 @@ export type Database = {
           has_morning?: boolean
           has_night?: boolean
           highlights_json?: Json | null
+          highlights_json_en?: Json | null
+          highlights_json_es?: Json | null
           id?: string
           image_url?: string
           images_json?: Json | null
@@ -368,6 +533,7 @@ export type Database = {
           difficulty_en?: string | null
           difficulty_es?: string | null
           duration?: string
+          external_url?: string | null
           faq_json?: Json | null
           faq_json_en?: Json | null
           faq_json_es?: Json | null
@@ -375,6 +541,8 @@ export type Database = {
           has_morning?: boolean
           has_night?: boolean
           highlights_json?: Json | null
+          highlights_json_en?: Json | null
+          highlights_json_es?: Json | null
           id?: string
           image_url?: string
           images_json?: Json | null
