@@ -363,6 +363,79 @@ export function TourDetail() {
                    </div>
                  </div>
                )}
+
+               {/* FAQ Section */}
+               {faqItems.length > 0 && (
+                 <div className="bg-card rounded-2xl border p-8 space-y-6">
+                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3"><ChevronDown className="text-primary" /> {t("faq_titulo") || "Para seu conhecimento (FAQ)"}</h2>
+                   <div className="space-y-3">
+                     {faqItems.map((item: any, i: number) => (
+                       <div key={i} className="border rounded-xl overflow-hidden">
+                         <button
+                           className="w-full text-left p-5 flex items-center justify-between font-bold text-sm hover:bg-muted/30 transition-colors"
+                           onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                         >
+                           <span>{item.q}</span>
+                           {openFaq === i ? <ChevronUp className="w-5 h-5 text-primary shrink-0" /> : <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" />}
+                         </button>
+                         {openFaq === i && (
+                           <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed border-t pt-4">{item.a}</div>
+                         )}
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
+
+               {/* Tour Photo Gallery Carousel */}
+               {images.length > 1 && (
+                 <div className="space-y-6">
+                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3">
+                     <div className="w-2 h-8 bg-primary rounded-full" />
+                     {t("galeria_fotos") || "Galeria de Fotos"}
+                   </h2>
+                   <Carousel opts={{ loop: true, align: "start" }} className="w-full">
+                     <CarouselContent className="-ml-4">
+                       {images.map((img, i) => (
+                         <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/3">
+                           <div 
+                             className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm"
+                             onClick={() => openLightbox(i)}
+                           >
+                             <img 
+                               src={getOptimizedImage(img, 600)} 
+                               alt={`${translatedTitle} ${i + 1}`} 
+                               className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
+                               loading="lazy"
+                             />
+                           </div>
+                         </CarouselItem>
+                       ))}
+                     </CarouselContent>
+                     <CarouselPrevious className="-left-4 bg-card shadow-lg" />
+                     <CarouselNext className="-right-4 bg-card shadow-lg" />
+                   </Carousel>
+                 </div>
+               )}
+
+               {/* YouTube Video */}
+               {tour.youtube_video_url && (
+                 <div className="space-y-6">
+                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3">
+                     <div className="w-2 h-8 bg-primary rounded-full" />
+                     {t("video") || "Vídeo"}
+                   </h2>
+                   <div className="aspect-video rounded-2xl overflow-hidden border shadow-lg">
+                     <iframe 
+                       src={tour.youtube_video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} 
+                       title={translatedTitle}
+                       className="w-full h-full"
+                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                       allowFullScreen
+                     />
+                   </div>
+                 </div>
+               )}
             </div>
 
             {/* Booking Sidebar */}
