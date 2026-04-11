@@ -18,7 +18,7 @@ const AdminSales = () => {
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled' | 'archived'>('all');
   const { toast } = useToast();
   const salesRef = useRef<LovableSale[]>([]);
 
@@ -204,9 +204,11 @@ const AdminSales = () => {
   };
 
   const filteredSales = sales.filter(sale => {
+    if (filter === 'archived') return sale.is_archived;
+    if (sale.is_archived) return false; // hide archived from other tabs
     if (filter === 'all') return true;
-    if (filter === 'pending') return !sale.is_paid;
-    if (filter === 'paid') return sale.is_paid;
+    if (filter === 'pending') return !sale.is_paid && !sale.is_cancelled;
+    if (filter === 'paid') return sale.is_paid && !sale.is_cancelled;
     if (filter === 'cancelled') return sale.is_cancelled;
     return true;
   });
@@ -233,6 +235,7 @@ const AdminSales = () => {
           { key: 'pending', label: 'Pendentes' },
           { key: 'paid', label: 'Pagas' },
           { key: 'cancelled', label: 'Canceladas' },
+          { key: 'archived', label: 'Arquivadas' },
         ].map((f) => (
           <Button
             key={f.key}
