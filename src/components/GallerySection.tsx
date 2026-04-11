@@ -12,7 +12,8 @@ export function GallerySection() {
 
   const galleryImages = Object.entries(images)
     .filter(([key]) => !['logo', 'hero_bg'].includes(key))
-    .map(([key, url]) => ({ key, url }));
+    .map(([key, url]) => ({ key, url }))
+    .filter((img, index, self) => self.findIndex(i => i.url === img.url) === index);
 
   if (galleryImages.length === 0) {
     return (

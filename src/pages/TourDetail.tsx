@@ -116,6 +116,7 @@ export function TourDetail() {
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxSource, setLightboxSource] = useState<'hero' | 'gallery'>('hero');
 
   const images = useMemo(() => {
     let imgs = tour?.images_json as string[] || [];
@@ -190,8 +191,9 @@ export function TourDetail() {
   const highlights = (translatedHighlights as any[]) || [];
   const faqItems = (translatedFaq as any[]) || [];
 
-  const openLightbox = (index: number) => {
+  const openLightbox = (index: number, source: 'hero' | 'gallery' = 'hero') => {
     setLightboxIndex(index);
+    setLightboxSource(source);
     setIsLightboxOpen(true);
   };
 
@@ -418,7 +420,7 @@ export function TourDetail() {
                            <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/3">
                              <div 
                                className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm"
-                               onClick={() => openLightbox(i)}
+                               onClick={() => openLightbox(i, 'gallery')}
                              >
                                <img 
                                  src={getOptimizedImage(img, 600)} 
@@ -563,7 +565,10 @@ export function TourDetail() {
             className="w-full h-full flex flex-col"
           >
             <CarouselContent className="h-full items-center">
-              {images.map((img, i) => (
+              {(lightboxSource === 'gallery' 
+                ? ((tour as any)?.carousel_images_json as string[] || [])
+                : images
+              ).map((img, i) => (
                 <CarouselItem key={i} className="h-full flex items-center justify-center">
                   <img 
                     src={getOptimizedImage(img, 1600)} 
@@ -580,7 +585,7 @@ export function TourDetail() {
             </div>
 
             <div className="absolute bottom-10 left-0 right-0 text-center text-white/60 text-sm font-bold">
-              {lightboxIndex + 1} / {images.length}
+              {lightboxIndex + 1} / {(lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []).length : images.length)}
             </div>
           </Carousel>
         </DialogContent>

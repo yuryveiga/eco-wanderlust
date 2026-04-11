@@ -8,16 +8,6 @@ Allow: /
 # Disallow admin and private areas
 Disallow: /admin/
 Disallow: /api/
-Disallow: /_next/
-Disallow: /*.js$
-Disallow: /*.css$
-Disallow: /*.map$
 
 # Crawl delay for aggressive bots
 Crawl-delay: 1
-
-# Allow indexing of main content
-Allow: /blog/
-Allow: /passeio/
-Allow: /sobre
-Allow: /contato

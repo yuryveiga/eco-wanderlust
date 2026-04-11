@@ -7,9 +7,118 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-/**
- * Creates an event in Google Calendar using a Service Account
- */
+// ---- Google Calendar JWT Auth (Deno-compatible) ----
+
+function base64url(data: Uint8Array): string {
+  let binary = "";
+  for (const byte of data) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64urlStr(str: string): string {
+  return base64url(new TextEncoder().encode(str));
+}
+
+function base64ToUint8Array(b64: string): Uint8Array {
+  const cleaned = b64.replace(/[^A-Za-z0-9+/]/g, "");
+  const pad = cleaned.length % 4;
+  const padded = pad ? cleaned + "=".repeat(4 - pad) : cleaned;
+  const binString = atob(padded);
+  const bytes = new Uint8Array(binString.length);
+  for (let i = 0; i < binString.length; i++) {
+    bytes[i] = binString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+async function importPrivateKey(pem: string): Promise<CryptoKey> {
+  const pemContents = pem
+    .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
+    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "");
+  const binaryDer = base64ToUint8Array(pemContents);
+  return crypto.subtle.importKey(
+    "pkcs8",
+    binaryDer,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+}
+
+async function createGoogleJWT(email: string, key: string, scopes: string[]): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const header = base64urlStr(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const payload = base64urlStr(JSON.stringify({
+    iss: email,
+    sub: email,
+    aud: "https://oauth2.googleapis.com/token",
+    iat: now,
+    exp: now + 3600,
+    scope: scopes.join(" "),
+  }));
+  const signingInput = `${header}.${payload}`;
+  const privateKey = await importPrivateKey(key);
+  const signature = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    privateKey,
+    new TextEncoder().encode(signingInput)
+  );
+  return `${signingInput}.${base64url(new Uint8Array(signature))}`;
+}
+
+async function getAccessToken(email: string, key: string): Promise<string> {
+  const jwt = await createGoogleJWT(email, key, [
+    "https://www.googleapis.com/auth/calendar.events",
+  ]);
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+  if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
+  const data = await res.json();
+  return data.access_token;
+}
+
+// ---- WhatsApp Alert ----
+
+const ADMIN_WHATSAPP = "5521995624596";
+
+async function sendWhatsAppAlert(sale: Record<string, any>, supabaseUrl: string) {
+  try {
+    const message = `🎉 *Nova venda paga!*\n\n` +
+      `📌 *Passeio:* ${sale.tour_title}\n` +
+      `👤 *Cliente:* ${sale.customer_name}\n` +
+      `📧 *Email:* ${sale.customer_email}\n` +
+      `📱 *Telefone:* ${sale.customer_phone || 'Não informado'}\n` +
+      `👥 *Pessoas:* ${sale.quantity}\n` +
+      `📅 *Data:* ${sale.selected_date}\n` +
+      `🕐 *Período:* ${sale.selected_period || 'Não definido'}\n` +
+      `💰 *Total:* R$ ${sale.total_price}\n` +
+      `🔒 *Tipo:* ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}`;
+
+    const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+      },
+      body: JSON.stringify({ message, phone: ADMIN_WHATSAPP }),
+    });
+
+    if (!res.ok) {
+      console.error("WhatsApp alert failed:", await res.text());
+    } else {
+      console.log("WhatsApp alert sent successfully for sale:", sale.id);
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    console.error("WhatsApp alert error:", msg);
+  }
+}
+
+// ---- Google Calendar Event Creation ----
+
 async function createGoogleCalendarEvent(sale: Record<string, any>) {
   const GOOGLE_EMAIL = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL");
   const GOOGLE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY")?.replace(/\\n/g, "\n");
@@ -21,71 +130,31 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
   }
 
   try {
-    // 1. Get Access Token using JWT
-    const now = Math.floor(Date.now() / 1000);
-    const header = { alg: "RS256", typ: "JWT" };
-    const payload = {
-      iss: GOOGLE_EMAIL,
-      sub: GOOGLE_EMAIL,
-      aud: "https://oauth2.googleapis.com/token",
-      iat: now,
-      exp: now + 3600,
-      scope: "https://www.googleapis.com/auth/calendar.events",
-    };
+    const token = await getAccessToken(GOOGLE_EMAIL, GOOGLE_KEY);
 
-    // We use a helper or manual signing here. 
-    // For simplicity in this demo environment, we'll assume the user will configure a bridge 
-    // or we can use a library if available. 
-    // However, to be "ready" as requested, I'll implement the logic using a standard library.
-    
-    const { JWT } = await import("https://esm.sh/google-auth-library@9?target=deno");
-    const client = new JWT({
-      email: GOOGLE_EMAIL,
-      key: GOOGLE_KEY,
-      scopes: ["https://www.googleapis.com/auth/calendar.events"],
-    });
-
-    const token = await client.getAccessToken();
-    
-    // 2. Clear date formatting
     const startDate = new Date(sale.selected_date);
-    // Adjust time based on period
     if (sale.selected_period === "Manhã") startDate.setHours(9, 0, 0);
     else if (sale.selected_period === "Tarde") startDate.setHours(14, 0, 0);
     else if (sale.selected_period === "Noite") startDate.setHours(19, 0, 0);
     else startDate.setHours(10, 0, 0);
 
     const endDate = new Date(startDate);
-    endDate.setHours(startDate.getHours() + 4); // Default 4 hours duration
+    endDate.setHours(startDate.getHours() + 4);
 
     const event = {
-      summary: `Reserva: ${sale.tour_title} - ${sale.customer_name}`,
-      description: `
-        Cliente: ${sale.customer_name}
-        Email: ${sale.customer_email}
-        Telefone: ${sale.customer_phone}
-        Pessoas: ${sale.quantity}
-        Tipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}
-        Total: R$ ${sale.total_price}
-        Status: Pago via Stripe
-      `.trim(),
-      start: {
-        dateTime: startDate.toISOString(),
-        timeZone: "America/Sao_Paulo",
-      },
-      end: {
-        dateTime: endDate.toISOString(),
-        timeZone: "America/Sao_Paulo",
-      },
-      colorId: "2", // Sage color
+      summary: `Reserva do Site Tocorime: ${sale.tour_title} - ${sale.customer_name}`,
+      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nTelefone: ${sale.customer_phone || 'Não informado'}\nPessoas: ${sale.quantity}\nTipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}\nPeríodo: ${sale.selected_period || 'Não definido'}\nTotal: R$ ${sale.total_price}\nData: ${sale.selected_date}\nStatus: Pago via Stripe`,
+      start: { dateTime: startDate.toISOString(), timeZone: "America/Sao_Paulo" },
+      end: { dateTime: endDate.toISOString(), timeZone: "America/Sao_Paulo" },
+      colorId: "2",
     };
 
     const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events`,
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token.token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(event),
@@ -104,6 +173,8 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
   }
 }
 
+// ---- Stripe Webhook Handler ----
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -119,14 +190,10 @@ serve(async (req) => {
       throw new Error("Missing environment variables");
     }
 
-    const stripe = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16",
-    });
+    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     const signature = req.headers.get("stripe-signature");
-    if (!signature) {
-      throw new Error("No signature");
-    }
+    if (!signature) throw new Error("No signature");
 
     const body = await req.text();
     let event;
@@ -150,7 +217,6 @@ serve(async (req) => {
         console.log(`Processing payment for sales: ${saleIds.join(", ")}`);
 
         for (const id of saleIds) {
-          // 1. Mark as paid
           const { data: sale, error: updateError } = await supabase
             .from("sales")
             .update({ is_paid: true })
@@ -163,10 +229,9 @@ serve(async (req) => {
             continue;
           }
 
-          console.log(`Sale ${id} marked as paid. Creating Calendar event...`);
-
-          // 2. Create Google Calendar Appointment
+          console.log(`Sale ${id} marked as paid. Creating Calendar event & sending WhatsApp alert...`);
           await createGoogleCalendarEvent(sale);
+          await sendWhatsAppAlert(sale, supabaseUrl);
         }
       }
     }

@@ -210,6 +210,7 @@ export type LovableSale = {
   is_private: boolean;
   is_paid: boolean;
   is_cancelled?: boolean;
+  is_archived?: boolean;
   created_at: string;
 };
 

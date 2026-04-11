@@ -14,22 +14,27 @@ const GallerySection = lazy(() => import("@/components/GallerySection").then(m =
 const BlogCarousel = lazy(() => import("@/components/BlogCarousel").then(m => ({ default: m.BlogCarousel })));
 const Footer = lazy(() => import("@/components/Footer").then(m => ({ default: m.Footer })));
 
-// Loading component for Suspense
 const SectionLoader = () => <div className="h-40 w-full flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
 
 const Index = () => {
   const { siteSettings } = useSiteData();
-  const siteTitle = siteSettings?.site_title || "Eco-Wanderlust | Passeios Inesquecíveis no Rio de Janeiro";
+  const siteTitle = siteSettings?.site_title || "Passeios Privativos Rio de Janeiro | Tocorime Rio";
+  const siteDescription = siteSettings?.site_description || "Descubra passeios privativos no Rio de Janeiro com guias cariocas especializados. Cultura, história e ecoturismo em roteiros personalizados. Reserve sua experiência única hoje!";
 
   return (
     <main>
       <Helmet>
         <title>{siteTitle}</title>
-        <meta name="description" content="Explore o Rio de Janeiro com a Eco-Wanderlust. Oferecemos passeios personalizados, trilhas e experiências únicas na Cidade Maravilhosa." />
+        <meta name="description" content={siteDescription} />
         <meta property="og:title" content={siteTitle} />
-        <meta property="og:description" content="Explore o Rio de Janeiro com a Eco-Wanderlust. Oferecemos passeios personalizados, trilhas e experiências únicas." />
+        <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://eco-wanderlust.com.br" />
+        <meta property="og:url" content="https://tocorimerio.com/" />
+        <meta property="og:site_name" content="Tocorime Rio" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta property="og:locale:alternate" content="es_ES" />
+        <link rel="canonical" href="https://tocorimerio.com/" />
       </Helmet>
       <Header />
       <HeroSection />

@@ -264,6 +264,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           id: string
+          is_archived: boolean | null
           is_cancelled: boolean | null
           is_paid: boolean | null
           is_private: boolean | null
@@ -281,6 +282,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           id?: string
+          is_archived?: boolean | null
           is_cancelled?: boolean | null
           is_paid?: boolean | null
           is_private?: boolean | null
@@ -298,6 +300,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           id?: string
+          is_archived?: boolean | null
           is_cancelled?: boolean | null
           is_paid?: boolean | null
           is_private?: boolean | null
@@ -601,6 +604,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_archive_sales: { Args: never; Returns: undefined }
       has_role:
         | {
             Args: {

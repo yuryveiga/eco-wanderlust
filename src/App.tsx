@@ -18,6 +18,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminResetPassword = lazy(() => import("./pages/AdminResetPassword"));
 const AdminLayout = lazy(() => import("./pages/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminTours = lazy(() => import("./pages/AdminTours"));
@@ -32,6 +33,7 @@ const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminSales = lazy(() => import("./pages/AdminSales"));
 const AdminSimulator = lazy(() => import("./pages/AdminSimulator"));
+const AdminCalendar = lazy(() => import("./pages/AdminCalendar"));
 const TourDetail = lazy(() => import("./pages/TourDetail").then(m => ({ default: m.TourDetail })));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -83,6 +85,7 @@ const App = () => {
                         <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
                         <Route path="/passeio/:id" element={<TourDetail />} />
                         <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/admin/reset-password" element={<AdminResetPassword />} />
                         <Route path="/admin" element={<AdminLayout />}>
                           <Route index element={<AdminDashboard />} />
                           <Route path="blog" element={<AdminBlog />} />
@@ -96,6 +99,7 @@ const App = () => {
                           <Route path="reviews" element={<AdminReviews />} />
                           <Route path="sales" element={<AdminSales />} />
                           <Route path="simulator" element={<AdminSimulator />} />
+                          <Route path="calendar" element={<AdminCalendar />} />
                           <Route path="pages" element={<AdminPages />} />
                         </Route>
                         <Route path="/:slug" element={<GenericPage />} />
@@ -109,6 +113,7 @@ const App = () => {
           </LocaleProvider>
         </AuthProvider>
       </ErrorBoundary>
+
     </QueryClientProvider>
   );
 };

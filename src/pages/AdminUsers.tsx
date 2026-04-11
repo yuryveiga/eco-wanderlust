@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, deleteLovable, LovableProfile } from "@/integrations/lovable/client";
-import { Plus, Trash2, Users, Shield, User } from "lucide-react";
+import { fetchLovable, insertLovable, deleteLovable, updateLovable, LovableProfile } from "@/integrations/lovable/client";
+import { Plus, Trash2, Users, Shield, User, KeyRound } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 
 const AdminUsers = () => {
@@ -16,6 +17,11 @@ const AdminUsers = () => {
   const [newRole, setNewRole] = useState("user");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
+
   const { toast } = useToast();
 
 
@@ -79,13 +85,33 @@ const AdminUsers = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground font-sans truncate">{profile.email}</h3>
-                  <p className="text-sm text-muted-foreground font-sans capitalize">{profile.role}</p>
+                  <select
+                    className="text-sm bg-transparent border border-border/50 rounded px-2 py-0.5 font-sans text-muted-foreground cursor-pointer hover:border-primary/50 transition-colors"
+                    value={profile.role}
+                    onChange={async (e) => {
+                      const newRole = e.target.value;
+                      const success = await updateLovable("profiles", profile.id, { role: newRole });
+                      if (success) {
+                        toast({ title: `Role alterada para ${newRole}` });
+                        loadProfiles();
+                      } else {
+                        toast({ title: "Erro ao alterar role", variant: "destructive" });
+                      }
+                    }}
+                  >
+                    <option value="user">Usuário</option>
+                    <option value="admin">Administrador</option>
+                  </select>
                 </div>
                 <div className="flex gap-2">
+                  <Button variant="outline" size="icon" title="Trocar senha" onClick={() => { setResetEmail(profile.email); setResetNewPassword(""); setResetDialogOpen(true); }}>
+                    <KeyRound className="w-4 h-4 text-primary" />
+                  </Button>
                   <Button variant="outline" size="icon" onClick={() => setItemToDelete(profile.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
                 </div>
+
               </div>
             ))}
           </div>
@@ -127,6 +153,39 @@ const AdminUsers = () => {
         title="Excluir Usuário"
         description="Tem certeza que deseja remover o acesso deste usuário? Ele não poderá mais acessar o painel administrativo."
       />
+
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Trocar Senha</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground font-sans">
+              Enviando link de redefinição de senha para: <strong>{resetEmail}</strong>
+            </p>
+            <Button
+              onClick={async () => {
+                setIsResetting(true);
+                const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+                  redirectTo: `${window.location.origin}/admin/reset-password`,
+                });
+                if (error) {
+                  toast({ title: "Erro", description: error.message, variant: "destructive" });
+                } else {
+                  toast({ title: "Link enviado!", description: `Email de redefinição enviado para ${resetEmail}.` });
+                  setResetDialogOpen(false);
+                }
+                setIsResetting(false);
+              }}
+              className="w-full"
+              disabled={isResetting}
+            >
+              {isResetting ? "Enviando..." : "Enviar link de redefinição por email"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

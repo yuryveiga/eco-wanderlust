@@ -13,8 +13,10 @@ import {
   MessageSquare, 
   DollarSign,
   Calculator,
-  Layout
+  Layout,
+  CalendarDays
 } from "lucide-react";
+
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,6 +46,7 @@ const menuGroups = [
     items: [
       { title: "Vendas", url: "/admin/sales", icon: DollarSign },
       { title: "Simulador", url: "/admin/simulator", icon: Calculator },
+      { title: "Calendário", url: "/admin/calendar", icon: CalendarDays },
       { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
     ]
   },
@@ -72,6 +75,7 @@ const menuGroups = [
     ]
   }
 ];
+
 
 export function AdminSidebar() {
   const { state } = useSidebar();

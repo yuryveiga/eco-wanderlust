@@ -43,9 +43,17 @@ export function HeroSection() {
       {heroBgs.map((bg, index) => (
         <div
           key={index}
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
-          style={{ backgroundImage: `url('${bg}')` }}
-        />
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <img
+            src={bg}
+            alt=""
+            className="w-full h-full object-cover"
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "low"}
+            decoding={index === 0 ? "sync" : "async"}
+          />
+        </div>
       ))}
       <div className="absolute inset-0 bg-black/40" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/20 to-transparent z-[5]" />
