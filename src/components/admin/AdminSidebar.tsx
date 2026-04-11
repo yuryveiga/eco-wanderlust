@@ -94,7 +94,7 @@ export function AdminSidebar() {
         {menuGroups.map((group) => (
           <SidebarGroup key={group.label}>
             {!collapsed && (
-              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70 mt-4 mb-2">
+              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70 mt-1 mb-1">
                 {group.label}
               </SidebarGroupLabel>
             )}
