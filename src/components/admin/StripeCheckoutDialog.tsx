@@ -79,7 +79,18 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
 
       if (error) throw error;
       if (data?.url) {
-        setGeneratedUrl(data.url);
+        // Shorten URL via TinyURL
+        try {
+          const shortRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(data.url)}`);
+          if (shortRes.ok) {
+            const shortUrl = await shortRes.text();
+            setGeneratedUrl(shortUrl);
+          } else {
+            setGeneratedUrl(data.url);
+          }
+        } catch {
+          setGeneratedUrl(data.url);
+        }
         toast({ title: "Link gerado e reserva salva!" });
       } else {
         throw new Error("Nenhum link retornado");
