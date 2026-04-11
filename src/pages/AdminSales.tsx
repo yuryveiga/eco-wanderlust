@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour } from "@/integrations/lovable/client";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
@@ -17,15 +18,49 @@ const AdminSales = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
   const { toast } = useToast();
+  const salesRef = useRef<LovableSale[]>([]);
+
+  const loadData = useCallback(async () => {
+    const [salesData, toursData] = await Promise.all([
+      fetchLovable<LovableSale>("sales"),
+      fetchLovable<LovableTour>("tours")
+    ]);
+    const sorted = salesData.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    setSales(sorted);
+    salesRef.current = sorted;
+    setTours(toursData);
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     loadData();
     const interval = setInterval(loadData, 5 * 60 * 1000);
     
-    // Real-time subscription
     const channel = supabase
       .channel('sales-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sales' }, (payload) => {
+        const newSale = payload.new as LovableSale;
+        sonnerToast.info("🛒 Nova reserva recebida!", {
+          description: `${newSale.customer_name} - ${newSale.tour_title || "Passeio"} (Pendente)`,
+          duration: 10000,
+        });
+        loadData();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'sales' }, (payload) => {
+        const updated = payload.new as LovableSale;
+        const old = salesRef.current.find(s => s.id === updated.id);
+        
+        if (updated.is_paid && old && !old.is_paid) {
+          sonnerToast.success("💰 Pagamento confirmado!", {
+            description: `${updated.customer_name} - ${updated.tour_title || "Passeio"} - R$ ${updated.total_price}`,
+            duration: 10000,
+          });
+        } else if (updated.is_cancelled && old && !old.is_cancelled) {
+          sonnerToast.error("❌ Reserva cancelada", {
+            description: `${updated.customer_name} - ${updated.tour_title || "Passeio"}`,
+            duration: 8000,
+          });
+        }
         loadData();
       })
       .subscribe();
@@ -34,17 +69,8 @@ const AdminSales = () => {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [loadData]);
 
-  const loadData = async () => {
-    const [salesData, toursData] = await Promise.all([
-      fetchLovable<LovableSale>("sales"),
-      fetchLovable<LovableTour>("tours")
-    ]);
-    setSales(salesData.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
-    setTours(toursData);
-    setIsLoading(false);
-  };
 
   const handleSave = async () => {
     if (!editing?.tour_id || !editing?.customer_name || !editing?.customer_email) {
