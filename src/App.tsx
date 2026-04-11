@@ -30,6 +30,7 @@ const AdminTheme = lazy(() => import("./pages/AdminTheme"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminSales = lazy(() => import("./pages/AdminSales"));
+const AdminSimulator = lazy(() => import("./pages/AdminSimulator"));
 const TourDetail = lazy(() => import("./pages/TourDetail").then(m => ({ default: m.TourDetail })));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -92,6 +93,7 @@ const App = () => {
                         <Route path="gallery" element={<AdminGallery />} />
                         <Route path="reviews" element={<AdminReviews />} />
                         <Route path="sales" element={<AdminSales />} />
+                        <Route path="simulator" element={<AdminSimulator />} />
                         <Route path="pages" element={<AdminPages />} />
                       </Route>
                       <Route path="/:slug" element={<GenericPage />} />
