@@ -1,59 +1,28 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { encode as b64encode, decode as b64decode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Base64url encode
+// Base64url encode from Uint8Array
 function base64url(data: Uint8Array): string {
-  let binary = "";
-  for (const byte of data) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return b64encode(data).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 function base64urlStr(str: string): string {
   return base64url(new TextEncoder().encode(str));
 }
 
-// Import PEM private key for RS256
-// Standard base64 decode using Deno's built-in
-function decodeBase64(b64: string): Uint8Array {
-  // Add padding if missing
-  const pad = b64.length % 4;
-  const padded = pad ? b64 + "=".repeat(4 - pad) : b64;
-  
-  // Replace URL-safe chars
-  const standard = padded.replace(/-/g, "+").replace(/_/g, "/");
-  
-  try {
-    const binString = atob(standard);
-    const bytes = new Uint8Array(binString.length);
-    for (let i = 0; i < binString.length; i++) {
-      bytes[i] = binString.charCodeAt(i);
-    }
-    return bytes;
-  } catch (e) {
-    console.error("Base64 decode failed. Input length:", b64.length, "First 20 chars:", b64.substring(0, 20));
-    throw e;
-  }
-}
-
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
-  console.log("PEM key starts with:", pem.substring(0, 40));
-  console.log("PEM key length:", pem.length);
-  
-  // Remove PEM headers/footers and all whitespace
   const pemContents = pem
     .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
     .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "")
     .replace(/[\r\n\s]/g, "");
   
-  console.log("PEM contents length after cleanup:", pemContents.length);
-  console.log("PEM first 20:", pemContents.substring(0, 20));
-  
-  const binaryDer = decodeBase64(pemContents);
+  const binaryDer = b64decode(pemContents);
   return crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
@@ -63,7 +32,6 @@ async function importPrivateKey(pem: string): Promise<CryptoKey> {
   );
 }
 
-// Create a signed JWT for Google APIs
 async function createGoogleJWT(email: string, key: string, scopes: string[]): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const header = base64urlStr(JSON.stringify({ alg: "RS256", typ: "JWT" }));
@@ -85,7 +53,6 @@ async function createGoogleJWT(email: string, key: string, scopes: string[]): Pr
   return `${signingInput}.${base64url(new Uint8Array(signature))}`;
 }
 
-// Exchange JWT for access token
 async function getAccessToken(email: string, key: string): Promise<string> {
   const jwt = await createGoogleJWT(email, key, [
     "https://www.googleapis.com/auth/calendar.events",
@@ -127,7 +94,9 @@ serve(async (req) => {
       throw new Error("Configurações do Google ausentes no servidor.");
     }
 
+    console.log("Getting access token for:", GOOGLE_EMAIL);
     const token = await getAccessToken(GOOGLE_EMAIL, GOOGLE_KEY);
+    console.log("Access token obtained successfully");
 
     const startDate = new Date(sale.selected_date);
     if (sale.selected_period === "Manhã") startDate.setHours(9, 0, 0);
@@ -139,7 +108,7 @@ serve(async (req) => {
 
     const event = {
       summary: `Reserva: ${sale.tour_title} - ${sale.customer_name}`,
-      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nStatus: Sincronizado Manualmente`,
+      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nTelefone: ${sale.customer_phone}\nPessoas: ${sale.quantity}\nTotal: R$ ${sale.total_price}\nStatus: Sincronizado`,
       start: { dateTime: startDate.toISOString(), timeZone: "America/Sao_Paulo" },
       end: { dateTime: endDate.toISOString(), timeZone: "America/Sao_Paulo" },
       colorId: "5",
@@ -159,6 +128,7 @@ serve(async (req) => {
 
     if (!response.ok) throw new Error(await response.text());
 
+    console.log("Calendar event created successfully for sale:", saleId);
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
