@@ -429,6 +429,7 @@ export type Database = {
         Row: {
           allows_open: boolean
           allows_private: boolean
+          carousel_images_json: Json | null
           category: string
           category_en: string | null
           category_es: string | null
@@ -477,6 +478,7 @@ export type Database = {
         Insert: {
           allows_open?: boolean
           allows_private?: boolean
+          carousel_images_json?: Json | null
           category?: string
           category_en?: string | null
           category_es?: string | null
@@ -525,6 +527,7 @@ export type Database = {
         Update: {
           allows_open?: boolean
           allows_private?: boolean
+          carousel_images_json?: Json | null
           category?: string
           category_en?: string | null
           category_es?: string | null

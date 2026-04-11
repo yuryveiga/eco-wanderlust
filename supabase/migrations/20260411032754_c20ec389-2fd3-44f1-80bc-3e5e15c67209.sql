@@ -1,0 +1,1 @@
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS carousel_images_json jsonb DEFAULT '[]'::jsonb;
