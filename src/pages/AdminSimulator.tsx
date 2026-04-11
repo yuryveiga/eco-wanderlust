@@ -56,24 +56,20 @@ const AdminSimulator = () => {
       
       toast({ title: "Passo 2/2", description: "Simulando confirmação de pagamento..." });
       
-      // Chamando a função diretamente ou via update para disparar o fluxo
-      const { error: updateError } = await supabase
-        .from("sales")
-        .update({ is_paid: true })
-        .eq("id", newSale.id);
-
       if (updateError) throw updateError;
 
-      // 3. Trigger manual do fluxo de agenda (já que o webhook processa isso)
-      // Como o fluxo completo depende da Edge Function, agora você pode ir no seu 
-      // painel de Vendas e ver que ela está paga. 
+      // 3. Trigger manual do fluxo de agenda
+      toast({ title: "Passo 3/3", description: "Enviando reserva para o Google Agenda..." });
       
-      // Para o Google Agenda disparar de verdade, o webhook REAL precisaria ser chamado 
-      // com a assinatura correta do Stripe. 
+      const { data: syncResult, error: syncError } = await supabase.functions.invoke("sync-calendar", {
+        body: { saleId: newSale.id }
+      });
+
+      if (syncError || syncResult?.error) throw new Error(syncError?.message || syncResult?.error);
       
       toast({ 
         title: "Sucesso!", 
-        description: "Reserva criada e paga. Verifique se o evento apareceu na sua agenda!", 
+        description: "Reserva criada, paga e enviada para a agenda!", 
       });
 
     } catch (error: any) {
