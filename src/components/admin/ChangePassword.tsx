@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export function ChangePassword() {
-  const { user, signIn } = useAuth();
+  const { updatePassword } = useAuth();
   const { toast } = useToast();
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState(false);
@@ -17,11 +16,6 @@ export function ChangePassword() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user?.email) {
-      toast({ title: "Erro", description: "Usuário não encontrado", variant: "destructive" });
-      return;
-    }
 
     if (newPassword.length < 6) {
       toast({ title: "Erro", description: "A senha deve ter pelo menos 6 caracteres", variant: "destructive" });
@@ -34,32 +28,15 @@ export function ChangePassword() {
     }
 
     setIsLoading(true);
-
-    try {
-      const response = await fetch("https://nature-gateway-global.lovable.app/api/auth/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.email,
-          currentPassword,
-          newPassword,
-        }),
-      });
-
-      if (response.ok) {
-        toast({ title: "Senha alterada!", description: "Sua senha foi atualizada com sucesso." });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        const errorData = await response.json();
-        toast({ title: "Erro", description: errorData.message || "Erro ao alterar senha", variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Erro", description: "Erro de conexão", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
+    const { error } = await updatePassword(newPassword);
+    if (error) {
+      toast({ title: "Erro", description: error, variant: "destructive" });
+    } else {
+      toast({ title: "Senha alterada!", description: "Sua senha foi atualizada com sucesso." });
+      setNewPassword("");
+      setConfirmPassword("");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -75,20 +52,6 @@ export function ChangePassword() {
       </div>
 
       <form onSubmit={handleChangePassword} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="currentPassword" className="font-sans">Senha Atual</Label>
-          <div className="relative">
-            <Input
-              id="currentPassword"
-              type={showPasswords ? "text" : "password"}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Digite a senha atual"
-              required
-            />
-          </div>
-        </div>
-
         <div className="space-y-2">
           <Label htmlFor="newPassword" className="font-sans">Nova Senha</Label>
           <Input
