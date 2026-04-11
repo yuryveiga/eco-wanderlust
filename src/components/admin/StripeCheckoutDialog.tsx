@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LovableTour } from "@/integrations/lovable/client";
+import { LovableTour, insertLovable } from "@/integrations/lovable/client";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Copy, ExternalLink } from "lucide-react";
@@ -49,6 +49,21 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
     setGeneratedUrl("");
 
     try {
+      // Save sale as pending
+      await insertLovable("sales", {
+        tour_id: tourId,
+        tour_title: selectedTour?.title || "",
+        tour_slug: selectedTour?.slug || "",
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        quantity,
+        total_price: total,
+        selected_date: selectedDate,
+        is_paid: false,
+        is_private: true,
+      });
+
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           items: [{
@@ -65,7 +80,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
       if (error) throw error;
       if (data?.url) {
         setGeneratedUrl(data.url);
-        toast({ title: "Link gerado com sucesso!" });
+        toast({ title: "Link gerado e reserva salva!" });
       } else {
         throw new Error("Nenhum link retornado");
       }
