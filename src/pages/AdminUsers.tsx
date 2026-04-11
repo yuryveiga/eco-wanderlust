@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, deleteLovable, LovableProfile } from "@/integrations/lovable/client";
-import { Plus, Trash2, Users, Shield, User } from "lucide-react";
+import { Plus, Trash2, Users, Shield, User, KeyRound } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminUsers = () => {
   const [profiles, setProfiles] = useState<LovableProfile[]>([]);
@@ -13,6 +14,10 @@ const AdminUsers = () => {
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("user");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -77,6 +82,9 @@ const AdminUsers = () => {
                   <p className="text-sm text-muted-foreground font-sans capitalize">{profile.role}</p>
                 </div>
                 <div className="flex gap-2">
+                  <Button variant="outline" size="icon" title="Trocar senha" onClick={() => { setResetEmail(profile.email); setResetNewPassword(""); setResetDialogOpen(true); }}>
+                    <KeyRound className="w-4 h-4 text-primary" />
+                  </Button>
                   <Button variant="outline" size="icon" onClick={() => handleDelete(profile.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
@@ -112,6 +120,38 @@ const AdminUsers = () => {
               Nota: O usuário deve utilizar este e-mail para acessar o painel.
             </p>
             <Button onClick={handleCreate} className="w-full mt-4">Salvar Usuário</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Trocar Senha</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground font-sans">
+              Enviando link de redefinição de senha para: <strong>{resetEmail}</strong>
+            </p>
+            <Button
+              onClick={async () => {
+                setIsResetting(true);
+                const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+                  redirectTo: `${window.location.origin}/admin/reset-password`,
+                });
+                if (error) {
+                  toast({ title: "Erro", description: error.message, variant: "destructive" });
+                } else {
+                  toast({ title: "Link enviado!", description: `Email de redefinição enviado para ${resetEmail}.` });
+                  setResetDialogOpen(false);
+                }
+                setIsResetting(false);
+              }}
+              className="w-full"
+              disabled={isResetting}
+            >
+              {isResetting ? "Enviando..." : "Enviar link de redefinição por email"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
