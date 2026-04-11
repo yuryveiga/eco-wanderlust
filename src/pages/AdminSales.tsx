@@ -93,6 +93,7 @@ const AdminSales = () => {
             duration: 10000,
           });
         } else if (updated.is_cancelled && old && !old.is_cancelled) {
+          playNotificationSound('cancel');
           sonnerToast.error("❌ Reserva cancelada", {
             description: `${updated.customer_name} - ${updated.tour_title || "Passeio"}`,
             duration: 8000,
