@@ -19,7 +19,7 @@ const BlogPost = () => {
   const { siteSettings } = useSiteData();
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
-  const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
+  const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Tocorime Rio";
   const { images } = useSiteData();
   const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
 
