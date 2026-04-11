@@ -104,6 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return { error: error.message };
     }
+    // Set loading so AdminLayout shows spinner while onAuthStateChange processes
+    setLoading(true);
     return { error: null };
   };
 
