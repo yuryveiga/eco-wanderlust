@@ -19,12 +19,21 @@ function base64urlStr(str: string): string {
   return base64url(new TextEncoder().encode(str));
 }
 
+function decodeBase64(b64: string): Uint8Array {
+  const binString = atob(b64);
+  const bytes = new Uint8Array(binString.length);
+  for (let i = 0; i < binString.length; i++) {
+    bytes[i] = binString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
   const pemContents = pem
-    .replace(/-----BEGIN PRIVATE KEY-----/g, "")
-    .replace(/-----END PRIVATE KEY-----/g, "")
-    .replace(/\s/g, "");
-  const binaryDer = Uint8Array.from(atob(pemContents), (c) => c.charCodeAt(0));
+    .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
+    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "")
+    .replace(/[\r\n\s]/g, "");
+  const binaryDer = decodeBase64(pemContents);
   return crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
