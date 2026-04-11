@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { encode as b64encode, decode as b64decode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,20 +8,37 @@ const corsHeaders = {
 
 // Base64url encode from Uint8Array
 function base64url(data: Uint8Array): string {
-  return b64encode(data).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  let binary = "";
+  for (const byte of data) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 function base64urlStr(str: string): string {
   return base64url(new TextEncoder().encode(str));
 }
 
+function base64ToUint8Array(b64: string): Uint8Array {
+  // Ensure only valid base64 characters remain
+  const cleaned = b64.replace(/[^A-Za-z0-9+/]/g, "");
+  // Add proper padding
+  const pad = cleaned.length % 4;
+  const padded = pad ? cleaned + "=".repeat(4 - pad) : cleaned;
+  const binString = atob(padded);
+  const bytes = new Uint8Array(binString.length);
+  for (let i = 0; i < binString.length; i++) {
+    bytes[i] = binString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
   const pemContents = pem
     .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
-    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "")
-    .replace(/[\r\n\s]/g, "");
+    .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "");
   
-  const binaryDer = b64decode(pemContents);
+  const binaryDer = base64ToUint8Array(pemContents);
+  console.log("Key decoded successfully, byte length:", binaryDer.length);
+  
   return crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
@@ -128,7 +144,7 @@ serve(async (req) => {
 
     if (!response.ok) throw new Error(await response.text());
 
-    console.log("Calendar event created successfully for sale:", saleId);
+    console.log("Calendar event created for sale:", saleId);
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
