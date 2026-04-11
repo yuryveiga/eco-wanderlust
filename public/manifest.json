@@ -2,7 +2,7 @@
   "name": "TocorimeRio Admin",
   "short_name": "Tocorime Admin",
   "description": "Admin TocorimeRio - Gestão de Vendas",
-  "start_url": "/admin/sales?utm_source=pwa",
+  "start_url": "/admin/calendar?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
