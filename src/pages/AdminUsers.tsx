@@ -14,6 +14,10 @@ const AdminUsers = () => {
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("user");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
