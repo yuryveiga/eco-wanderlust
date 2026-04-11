@@ -75,6 +75,7 @@ const AdminSales = () => {
       .channel('sales-changes')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sales' }, (payload) => {
         const newSale = payload.new as LovableSale;
+        playNotificationSound('new');
         sonnerToast.info("🛒 Nova reserva recebida!", {
           description: `${newSale.customer_name} - ${newSale.tour_title || "Passeio"} (Pendente)`,
           duration: 10000,
