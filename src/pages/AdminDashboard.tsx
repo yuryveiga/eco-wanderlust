@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Map, FileText, Image, Share2, Save, LayoutGrid, Globe, Sparkles, Loader2, DollarSign } from "lucide-react";
+import { Map, Globe, Sparkles, Loader2, DollarSign, Users, CalendarCheck, CalendarClock, Save, LayoutGrid, FileText, Image, Share2 } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
-import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting } from "@/integrations/lovable/client";
+import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting, LovableSale, LovableTour } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { translateText } from "@/utils/translate";
 
 const AdminDashboard = () => {
-  const [counts, setCounts] = useState({ tours: 0, pages: 0, images: 0, social: 0, sales: 0, salesPaid: 0 });
+  const [counts, setCounts] = useState({ tours: 0, peopleServed: 0, totalReservations: 0, futureReservations: 0, totalRevenue: 0, futureRevenue: 0 });
   const [settingsList, setSettingsList] = useState<LovableSiteSetting[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -20,21 +20,26 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [t, p, i, s, settingsData, salesData] = await Promise.all([
-        fetchLovable<{ id: string }>("tours"),
-        fetchLovable<{ id: string }>("pages"),
-        fetchLovable<{ id: string }>("site_images"),
-        fetchLovable<{ id: string }>("social_media"),
+      const [toursData, settingsData, salesData] = await Promise.all([
+        fetchLovable<LovableTour>("tours"),
         fetchLovable<LovableSiteSetting>("site_settings"),
-        fetchLovable<{ id: string }>("sales"),
+        fetchLovable<LovableSale>("sales"),
       ]);
+
+      const archived = salesData.filter(s => s.is_archived);
+      const peopleServed = archived.reduce((sum, s) => sum + (s.quantity || 0), 0);
+      const totalReservations = salesData.length;
+      const futurePaid = salesData.filter(s => s.is_paid && !s.is_archived && !s.is_cancelled);
+      const totalRevenue = salesData.filter(s => s.is_paid).reduce((sum, s) => sum + (s.total_price || 0), 0);
+      const futureRevenue = futurePaid.reduce((sum, s) => sum + (s.total_price || 0), 0);
+
       setCounts({
-        tours: t.length,
-        pages: p.length,
-        images: i.length,
-        social: s.length,
-        sales: salesData.length,
-        salesPaid: salesData.filter((sale: any) => sale.is_paid).length,
+        tours: toursData.length,
+        peopleServed,
+        totalReservations,
+        futureReservations: futurePaid.length,
+        totalRevenue,
+        futureRevenue,
       });
 
       setSettingsList(settingsData);
@@ -95,13 +100,15 @@ const AdminDashboard = () => {
     }
   };
 
+  const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
   const cards = [
-    { label: "Passeios", count: counts.tours, icon: Map, color: "bg-primary/10 text-primary" },
-    { label: "Páginas", count: counts.pages, icon: FileText, color: "bg-secondary/20 text-secondary" },
-    { label: "Imagens", count: counts.images, icon: Image, color: "bg-accent/20 text-accent-foreground" },
-    { label: "Redes Sociais", count: counts.social, icon: Share2, color: "bg-destructive/10 text-destructive" },
-    { label: "Vendas", count: counts.sales, icon: DollarSign, color: "bg-green-100 text-green-600" },
-    { label: "Pagas", count: counts.salesPaid, icon: DollarSign, color: "bg-green-500/10 text-green-600" },
+    { label: "Passeios", value: counts.tours.toString(), icon: Map, color: "bg-primary/10 text-primary" },
+    { label: "Pessoas Atendidas", value: counts.peopleServed.toString(), icon: Users, color: "bg-secondary/20 text-secondary" },
+    { label: "Reservas Feitas", value: counts.totalReservations.toString(), icon: CalendarCheck, color: "bg-accent/20 text-accent-foreground" },
+    { label: "Reservas Futuras", value: counts.futureReservations.toString(), icon: CalendarClock, color: "bg-destructive/10 text-destructive" },
+    { label: "Total Faturado", value: formatCurrency(counts.totalRevenue), icon: DollarSign, color: "bg-green-100 text-green-600" },
+    { label: "A Faturar", value: formatCurrency(counts.futureRevenue), icon: DollarSign, color: "bg-green-500/10 text-green-600" },
   ];
 
   return (
@@ -116,7 +123,7 @@ const AdminDashboard = () => {
                 <card.icon className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground font-sans">{card.count}</p>
+                <p className="text-2xl font-bold text-foreground font-sans">{card.value}</p>
                 <p className="text-sm text-muted-foreground font-sans">{card.label}</p>
               </div>
             </div>
