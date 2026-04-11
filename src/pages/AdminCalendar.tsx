@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchLovable, LovableSale } from "@/integrations/lovable/client";
 import { ChevronLeft, ChevronRight, CalendarDays, Users } from "lucide-react";
+import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const MONTHS = [
@@ -16,6 +17,7 @@ const AdminCalendar = () => {
   const [sales, setSales] = useState<LovableSale[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
 
   useEffect(() => {
     fetchLovable<LovableSale>("sales").then(setSales);
@@ -173,7 +175,8 @@ const AdminCalendar = () => {
                 {selectedSales.map(sale => (
                   <div
                     key={sale.id}
-                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                    onClick={() => setViewingSale(sale)}
+                    className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:shadow-md transition-shadow ${
                       sale.is_paid ? "bg-green-50 border-green-200" : "bg-yellow-50 border-yellow-200"
                     }`}
                   >
