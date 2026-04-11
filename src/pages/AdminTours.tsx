@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube, ExternalLink } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
