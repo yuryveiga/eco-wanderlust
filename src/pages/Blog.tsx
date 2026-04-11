@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
+import { Helmet } from "react-helmet-async";
 
 const Blog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
@@ -42,6 +43,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen flex flex-col pt-20">
+      <Helmet>
+        <title>Blog - Tocorime Rio | Dicas de Passeios no Rio de Janeiro</title>
+        <meta name="description" content="Dicas, roteiros e guias sobre passeios no Rio de Janeiro. Descubra trilhas, praias, gastronomia e experiências únicas com a Tocorime Rio." />
+        <link rel="canonical" href="https://tocorimerio.com/blog" />
+      </Helmet>
       <Header />
       
       <main className="flex-1 bg-muted/30 py-16">
