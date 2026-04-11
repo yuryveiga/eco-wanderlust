@@ -54,8 +54,13 @@ const AdminSimulator = () => {
       // Nota: Como não podemos gerar a assinatura do Stripe no front-end por segurança, 
       // vamos atualizar o status diretamente para simular o efeito do webhook.
       
-      toast({ title: "Passo 2/2", description: "Simulando confirmação de pagamento..." });
+      toast({ title: "Passo 2/3", description: "Simulando confirmação de pagamento..." });
       
+      const { error: updateError } = await supabase
+        .from("sales")
+        .update({ is_paid: true })
+        .eq("id", newSale.id);
+
       if (updateError) throw updateError;
 
       // 3. Trigger manual do fluxo de agenda
