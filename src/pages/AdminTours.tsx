@@ -316,7 +316,7 @@ const AdminTours = () => {
         </Button>
       </div>
 
-      <div className="flex gap-2 mb-6 shrink-0">
+      <div className="flex gap-2 mb-6 shrink-0 flex-wrap">
         <Button
           variant={categoryFilter === 'all' ? 'default' : 'outline'}
           size="sm"
@@ -341,6 +341,16 @@ const AdminTours = () => {
         >
           Trilha
         </Button>
+        {siteSettings['home_category_3'] && (
+          <Button
+            variant={categoryFilter === siteSettings['home_category_3'] ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setCategoryFilter(siteSettings['home_category_3'])}
+            className="rounded-full font-sans"
+          >
+            {siteSettings['home_category_3_label'] || siteSettings['home_category_3']}
+          </Button>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto pr-2 pb-8">
