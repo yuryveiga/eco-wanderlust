@@ -41,11 +41,12 @@ const AdminLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md bg-card rounded-2xl shadow-lg border border-border/50 p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
-            <LogIn className="w-8 h-8 text-primary-foreground" />
-          </div>
+          <img 
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png" 
+            alt="Tocorime Rio" 
+            className="w-20 h-20 mx-auto mb-4 object-contain"
+          />
           <h1 className="font-serif text-2xl font-bold text-foreground">Painel Admin</h1>
-          <p className="text-muted-foreground font-sans text-sm mt-1">Eco Wanderlust Admin</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
