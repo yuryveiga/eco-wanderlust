@@ -428,9 +428,9 @@ const AdminTours = () => {
                               <Label className="text-xs uppercase font-bold text-muted-foreground">Título (PT)</Label>
                               <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-12 font-serif text-lg" />
                             </div>
-                            <div className="space-y-2">
+                             <div className="space-y-2">
                               <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria</Label>
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 flex-wrap">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                   <input
                                     type="radio"
@@ -451,6 +451,18 @@ const AdminTours = () => {
                                   />
                                   <span className="font-bold">TRILHA</span>
                                 </label>
+                                {siteSettings['home_category_3'] && (
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      name="category"
+                                      checked={editing?.category === siteSettings['home_category_3']}
+                                      onChange={() => setEditing({ ...editing, category: siteSettings['home_category_3'] })}
+                                      className="w-5 h-5 text-primary"
+                                    />
+                                    <span className="font-bold">{siteSettings['home_category_3']}</span>
+                                  </label>
+                                )}
                               </div>
                             </div>
                           </div>
