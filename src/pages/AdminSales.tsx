@@ -290,7 +290,7 @@ const AdminSales = () => {
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Pendente</span>
                     )}
                   </td>
-                  <td className="p-4 text-right flex gap-1">
+                  <td className="p-4 text-right flex gap-1" onClick={(e) => e.stopPropagation()}>
                     <Button 
                       size="sm" 
                       variant={sale.is_paid ? "outline" : "default"}
