@@ -29,7 +29,7 @@ const AdminCalendar = () => {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-  const paidSales = useMemo(() => sales.filter(s => s.is_paid && !s.is_cancelled), [sales]);
+  const paidSales = useMemo(() => sales.filter(s => s.is_paid && !s.is_cancelled && !s.is_archived), [sales]);
 
   const salesByDate = useMemo(() => {
     const map: Record<string, LovableSale[]> = {};
@@ -43,7 +43,7 @@ const AdminCalendar = () => {
     return map;
   }, [paidSales]);
 
-  const pendingSales = useMemo(() => sales.filter(s => !s.is_paid && !s.is_cancelled), [sales]);
+  const pendingSales = useMemo(() => sales.filter(s => !s.is_paid && !s.is_cancelled && !s.is_archived), [sales]);
 
   const pendingByDate = useMemo(() => {
     const map: Record<string, LovableSale[]> = {};

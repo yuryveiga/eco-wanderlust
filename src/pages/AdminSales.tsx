@@ -18,7 +18,7 @@ const AdminSales = () => {
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled' | 'archived'>('all');
   const { toast } = useToast();
   const salesRef = useRef<LovableSale[]>([]);
 
@@ -62,6 +62,15 @@ const AdminSales = () => {
       fetchLovable<LovableSale>("sales"),
       fetchLovable<LovableTour>("tours")
     ]);
+    
+    // Auto-archive paid sales past their date
+    const today = new Date().toISOString().split('T')[0];
+    const toArchive = salesData.filter(s => s.is_paid && !s.is_archived && s.selected_date && s.selected_date < today);
+    for (const sale of toArchive) {
+      await updateLovable("sales", sale.id, { is_archived: true });
+      sale.is_archived = true;
+    }
+    
     const sorted = salesData.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     setSales(sorted);
     salesRef.current = sorted;
@@ -204,9 +213,11 @@ const AdminSales = () => {
   };
 
   const filteredSales = sales.filter(sale => {
+    if (filter === 'archived') return sale.is_archived;
+    if (sale.is_archived) return false; // hide archived from other tabs
     if (filter === 'all') return true;
-    if (filter === 'pending') return !sale.is_paid;
-    if (filter === 'paid') return sale.is_paid;
+    if (filter === 'pending') return !sale.is_paid && !sale.is_cancelled;
+    if (filter === 'paid') return sale.is_paid && !sale.is_cancelled;
     if (filter === 'cancelled') return sale.is_cancelled;
     return true;
   });
@@ -233,6 +244,7 @@ const AdminSales = () => {
           { key: 'pending', label: 'Pendentes' },
           { key: 'paid', label: 'Pagas' },
           { key: 'cancelled', label: 'Canceladas' },
+          { key: 'archived', label: 'Arquivadas' },
         ].map((f) => (
           <Button
             key={f.key}
