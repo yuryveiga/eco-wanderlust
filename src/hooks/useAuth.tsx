@@ -38,29 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const initAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!mounted) return;
-
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await checkAdminRole(session.user.id, session.user.email || "");
-        } else {
-          setIsAdmin(false);
-        }
-      } catch (error) {
-        console.error("Auth init error:", error);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
+    // Set up listener first — but do NOT await inside the callback
+    // to avoid deadlocking getSession()
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
 
         if (event === 'SIGNED_OUT') {
@@ -71,18 +52,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           setSession(session);
           setUser(session?.user ?? null);
+          // Defer the async role check to avoid blocking the auth callback
           if (session?.user) {
-            await checkAdminRole(session.user.id, session.user.email || "");
+            setTimeout(() => {
+              if (mounted) {
+                checkAdminRole(session.user.id, session.user.email || "").then(() => {
+                  if (mounted) setLoading(false);
+                });
+              }
+            }, 0);
+          } else {
+            setLoading(false);
           }
-          setLoading(false);
+        } else if (event === 'INITIAL_SESSION') {
+          setSession(session);
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            setTimeout(() => {
+              if (mounted) {
+                checkAdminRole(session.user.id, session.user.email || "").then(() => {
+                  if (mounted) setLoading(false);
+                });
+              }
+            }, 0);
+          } else {
+            if (mounted) setLoading(false);
+          }
         }
       }
     );
 
-    initAuth();
+    // Fallback: if no auth event fires within 3s, stop loading
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 3000);
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, []);
