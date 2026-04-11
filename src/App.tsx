@@ -17,6 +17,7 @@ import { BUILD_ID } from "./version";
 import Index from "./pages/Index";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminResetPassword = lazy(() => import("./pages/AdminResetPassword"));
 const AdminLayout = lazy(() => import("./pages/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminTours = lazy(() => import("./pages/AdminTours"));
@@ -82,6 +83,7 @@ const App = () => {
                       <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
                       <Route path="/passeio/:id" element={<TourDetail />} />
                       <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route path="/admin/reset-password" element={<AdminResetPassword />} />
                       <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         <Route path="blog" element={<AdminBlog />} />
