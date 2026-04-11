@@ -41,7 +41,7 @@ const Cart = () => {
       
       // Save sale to database and collect IDs
       for (const item of items) {
-        const { data, error } = await supabase.from("sales").insert({
+        const { data, error } = await (supabase.from("sales") as any).insert({
           tour_id: item.id,
           tour_title: item.title,
           tour_slug: item.slug,
@@ -57,7 +57,7 @@ const Cart = () => {
         }).select("id").single();
 
         if (error) throw error;
-        if (data?.id) saleIds.push(data.id);
+        if (data?.id) saleIds.push(data.id as string);
       }
 
       const response = await fetch(
