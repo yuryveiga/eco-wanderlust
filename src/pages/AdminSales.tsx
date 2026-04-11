@@ -447,6 +447,12 @@ const AdminSales = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <SaleDetailDialog
+        sale={viewingSale}
+        open={!!viewingSale}
+        onClose={() => setViewingSale(null)}
+      />
     </div>
   );
 };
