@@ -1,99 +1,107 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import { fetchLovable, insertLovable, LovableProfile } from "@/integrations/lovable/client";
-
-interface AuthUser {
-  id: string;
-  email: string;
-  role?: string;
-}
+import { supabase } from "@/integrations/supabase/client";
+import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  session: AuthUser | null;
-  user: AuthUser | null;
+  session: Session | null;
+  user: User | null;
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, role?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: string | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<AuthUser | null>(null);
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const checkAdminRole = async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("email", (await supabase.auth.getUser()).data.user?.email || "")
+        .maybeSingle();
+      setIsAdmin(data?.role === "admin");
+    } catch {
+      setIsAdmin(false);
+    }
+  };
+
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem("admin_user");
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          // Re-verify role from DB
-          const profiles = await fetchLovable<LovableProfile>("profiles");
-          const profile = profiles.find(p => p.email === parsedUser.email);
-          
-          if (profile) {
-            setUser({ ...parsedUser, role: profile.role });
-            setSession(parsedUser);
-            setIsAdmin(profile.role === "admin");
-          } else {
-            // If profile gone, clear session
-            localStorage.removeItem("admin_user");
-          }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          setTimeout(() => checkAdminRole(session.user.id), 0);
+        } else {
+          setIsAdmin(false);
         }
-      } catch (error) {
-        console.error("Auth init error:", error);
-      } finally {
         setLoading(false);
       }
-    };
+    );
 
-    initAuth();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        checkAdminRole(session.user.id);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    // In this simplified setup, we check if the user exists in profiles
-    // In a real app, Supabase Auth handles the password
-    try {
-      const profiles = await fetchLovable<LovableProfile>("profiles");
-      const profile = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-
-      if (profile) {
-        const authUser: AuthUser = { id: profile.id, email, role: profile.role };
-        localStorage.setItem("admin_user", JSON.stringify(authUser));
-        setUser(authUser);
-        setSession(authUser);
-        setIsAdmin(profile.role === "admin");
-        return { error: null };
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (error.message.includes("Invalid login")) {
+        return { error: "Email ou senha incorretos." };
       }
-
-      return { error: "Usuário não autorizado ou senha incorreta." };
-    } catch {
-      return { error: "Erro na autenticação." };
+      return { error: error.message };
     }
+    return { error: null };
   };
 
-  const signUp = async (email: string, password: string, role: string = "user") => {
-    try {
-      await insertLovable("profiles", { email, role });
-      return { error: null };
-    } catch (e) {
-      return { error: "Erro ao criar usuário." };
-    }
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) return { error: error.message };
+    return { error: null };
   };
 
   const signOut = async () => {
-    localStorage.removeItem("admin_user");
+    await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setIsAdmin(false);
+    localStorage.removeItem("admin_user");
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin/reset-password`,
+    });
+    if (error) return { error: error.message };
+    return { error: null };
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return { error: error.message };
+    return { error: null };
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, isAdmin, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, isAdmin, loading, signIn, signUp, signOut, resetPassword, updatePassword }}>
       {children}
     </AuthContext.Provider>
   );
