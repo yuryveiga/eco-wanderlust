@@ -117,9 +117,10 @@ const AdminGallery = () => {
       } else {
         throw new Error("Nenhuma imagem foi salva corretamente.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      toast({ title: "Erro", description: error.message || "Ocorreu um erro no upload da imagem.", variant: "destructive" });
+      const message = error instanceof Error ? error.message : "Ocorreu um erro no upload da imagem.";
+      toast({ title: "Erro", description: message, variant: "destructive" });
     } finally {
       setIsUploading(false);
     }
@@ -176,7 +177,9 @@ const AdminGallery = () => {
         const fileName = img.image_url.substring(img.image_url.lastIndexOf('/') + 1);
         await supabase.storage.from('site-images').remove([fileName]);
       }
-    } catch(e) {}
+      } catch(e) {
+        console.warn("Could not delete from storage:", e);
+      }
 
     const { error } = await supabase.from('site_images').delete().eq('id', img.id);
     if (!error) {

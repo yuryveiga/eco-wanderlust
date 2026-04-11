@@ -10,17 +10,16 @@ const GenericPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const loadPage = async () => {
+      setIsLoading(true);
+      const pages = await fetchLovable<LovablePage>("pages");
+      const found = pages.find((p) => p.href === `/${slug}`);
+      
+      setPage(found || null);
+      setIsLoading(false);
+    };
     loadPage();
   }, [slug]);
-
-  const loadPage = async () => {
-    setIsLoading(true);
-    const pages = await fetchLovable<LovablePage>("pages");
-    const found = pages.find((p) => p.href === `/${slug}`);
-    
-    setPage(found || null);
-    setIsLoading(false);
-  };
 
   if (isLoading) {
     return (

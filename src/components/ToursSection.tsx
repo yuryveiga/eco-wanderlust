@@ -29,9 +29,9 @@ type TourCardProps = {
 const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
 
-  const getTranslated = (field: string) => {
-    if (language === 'pt') return (tour as any)[field];
-    return (tour as any)[`${field}_${language}`] || (tour as any)[field];
+  const getTranslated = (field: keyof TourCardProps) => {
+    if (language === 'pt') return tour[field];
+    return (tour as Record<string, any>)[`${field}_${language}`] || tour[field];
   };
 
   const title = getTranslated('title');
@@ -188,7 +188,7 @@ export function ToursSection() {
             </div>
           ) : displayTours.length > 0 ? (
             <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
-              {displayTours.slice(0, count).map((tour) => <TourCard key={`${activeTab}-${tour.id}`} tour={tour as any} />)}
+              {displayTours.slice(0, count).map((tour) => <TourCard key={`${activeTab}-${tour.id}`} tour={tour as TourCardProps} />)}
             </div>
           ) : (
             <p className="text-center text-muted-foreground">{language === 'pt' ? 'Nenhum passeio disponível' : 'No tours available'}</p>

@@ -38,7 +38,7 @@ export function fileToBase64(file: File): Promise<string> {
 export async function fetchLovable<T>(table: string): Promise<T[]> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let query = supabase.from(table as any).select('*');
+    let query = supabase.from(table as never).select('*');
     
     if (table === 'tours' || table === 'pages' || table === 'social_media') {
       query = query.order('sort_order');
@@ -207,6 +207,7 @@ export type LovableSale = {
   selected_period: string;
   is_private: boolean;
   is_paid: boolean;
+  is_cancelled?: boolean;
   created_at: string;
 };
 

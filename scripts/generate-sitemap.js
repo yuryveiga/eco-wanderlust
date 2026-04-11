@@ -27,7 +27,10 @@ async function generateSitemap() {
       .select('id, slug, updated_at')
       .eq('is_active', true);
 
-    if (toursError) throw toursError;
+    if (toursError) {
+      console.warn('Could not fetch tours for sitemap (likely Invalid API Key):', toursError.message);
+      return; // Stop gracefully
+    }
 
     // Fetch Blog Posts
     const { data: posts, error: postsError } = await supabase
@@ -35,7 +38,10 @@ async function generateSitemap() {
       .select('slug, updated_at')
       .eq('is_published', true);
 
-    if (postsError) throw postsError;
+    if (postsError) {
+      console.warn('Could not fetch posts for sitemap (likely Invalid API Key):', postsError.message);
+      return; // Stop gracefully
+    }
 
     const staticPages = [
       { url: '/', priority: 1.0, changefreq: 'daily' },

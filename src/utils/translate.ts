@@ -19,9 +19,10 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
       return (data[0] as string[][]).map((s) => s[0]).join('');
     }
     return text;
-  } catch (error: any) {
-    console.error("Translation API error:", error?.message || error);
-    throw new Error(error?.message || "Translation failed");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Translation failed";
+    console.error("Translation API error:", message);
+    throw new Error(message);
   }
 }
 

@@ -10,7 +10,7 @@ const corsHeaders = {
 /**
  * Creates an event in Google Calendar using a Service Account
  */
-async function createGoogleCalendarEvent(sale: any) {
+async function createGoogleCalendarEvent(sale: Record<string, any>) {
   const GOOGLE_EMAIL = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL");
   const GOOGLE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY")?.replace(/\\n/g, "\n");
   const CALENDAR_ID = Deno.env.get("GOOGLE_CALENDAR_ID");
@@ -98,8 +98,9 @@ async function createGoogleCalendarEvent(sale: any) {
     }
 
     console.log(`Event created successfully for sale ${sale.id}`);
-  } catch (error) {
-    console.error("Error creating Google Calendar event:", error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error creating Google Calendar event:", message);
   }
 }
 
@@ -132,9 +133,10 @@ serve(async (req) => {
 
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      console.error(`Webhook signature verification failed: ${message}`);
+      return new Response(`Webhook Error: ${message}`, { status: 400 });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -173,10 +175,11 @@ serve(async (req) => {
       headers: { "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (error) {
-    console.error("Webhook error:", error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Webhook error:", message);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

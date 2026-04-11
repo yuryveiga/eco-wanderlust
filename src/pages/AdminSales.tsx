@@ -114,7 +114,7 @@ const AdminSales = () => {
   };
 
   const updateStatus = async (sale: LovableSale, status: 'paid' | 'pending' | 'cancelled') => {
-    const updates: any = {};
+    const updates: Partial<LovableSale> = {};
     if (status === 'paid') {
       updates.is_paid = true;
       updates.is_cancelled = false;
@@ -141,7 +141,7 @@ const AdminSales = () => {
     if (filter === 'all') return true;
     if (filter === 'pending') return !sale.is_paid;
     if (filter === 'paid') return sale.is_paid;
-    if (filter === 'cancelled') return (sale as any).is_cancelled;
+    if (filter === 'cancelled') return sale.is_cancelled;
     return true;
   });
 
@@ -216,7 +216,7 @@ const AdminSales = () => {
                   <td className="p-4 text-sm">{sale.quantity}</td>
                   <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price)}                  </td>
                   <td className="p-4 text-sm">
-                    {(sale as any).is_cancelled ? (
+                    {sale.is_cancelled ? (
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">Cancelado</span>
                     ) : sale.is_paid ? (
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">Pago</span>
@@ -235,16 +235,16 @@ const AdminSales = () => {
                     </Button>
                     <Button 
                       size="sm" 
-                      variant={!sale.is_paid && !(sale as any).is_cancelled ? "outline" : "default"}
-                      className={!sale.is_paid && !(sale as any).is_cancelled ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200" : "text-muted-foreground"}
+                      variant={!sale.is_paid && !sale.is_cancelled ? "outline" : "default"}
+                      className={!sale.is_paid && !sale.is_cancelled ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200" : "text-muted-foreground"}
                       onClick={() => updateStatus(sale, 'pending')}
                     >
                       ⏳
                     </Button>
                     <Button 
                       size="sm" 
-                      variant={(sale as any).is_cancelled ? "default" : "outline"}
-                      className={(sale as any).is_cancelled ? "bg-red-100 text-red-700 hover:bg-red-200" : "text-red-500"}
+                      variant={sale.is_cancelled ? "default" : "outline"}
+                      className={sale.is_cancelled ? "bg-red-100 text-red-700 hover:bg-red-200" : "text-red-500"}
                       onClick={() => updateStatus(sale, 'cancelled')}
                     >
                       ✕

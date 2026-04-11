@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, updateLovable, LovableSiteSetting } from "@/integrations/lovable/client";
-import { Save, RotateCcw, Palette, CreditCard, ExternalLink } from "lucide-react";
+import { Save, RotateCcw, Palette } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Helper to convert HEX to HSL numbers string (e.g. "145 45% 28%")
@@ -23,7 +23,8 @@ function hexToHslNumbers(hex: string): string {
 
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
 
   if (max !== min) {
     const d = max - min;
@@ -261,7 +262,7 @@ const AdminTheme = () => {
 
 export default AdminTheme;
 
-function ShieldCheck(props: any) {
+function ShieldCheck(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

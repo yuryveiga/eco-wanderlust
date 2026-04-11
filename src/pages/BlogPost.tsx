@@ -23,24 +23,23 @@ const BlogPost = () => {
   const { images } = useSiteData();
   const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
 
-  const loadPost = async () => {
-    setIsLoading(true);
-    const posts = await fetchLovable<LovableBlogPost>("blog_posts");
-    const found = posts.find((p) => p.slug === slug && p.is_published);
-    
-    setPost(found || null);
-    setIsLoading(false);
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
+    const loadPost = async () => {
+      setIsLoading(true);
+      const posts = await fetchLovable<LovableBlogPost>("blog_posts");
+      const found = posts.find((p) => p.slug === slug && p.is_published);
+      
+      setPost(found || null);
+      setIsLoading(false);
+    };
     loadPost();
   }, [slug]);
 
-  const getTranslated = (field: string) => {
+  const getTranslated = (field: keyof LovableBlogPost) => {
     if (!post) return "";
-    if (language === 'pt') return (post as any)[field];
-    return (post as any)[`${field}_${language}`] || (post as any)[field];
+    if (language === 'pt') return post[field];
+    return (post as Record<string, any>)[`${field}_${language}`] || post[field];
   };
 
   if (isLoading) {
