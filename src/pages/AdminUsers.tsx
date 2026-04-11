@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, deleteLovable, LovableProfile } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, deleteLovable, updateLovable, LovableProfile } from "@/integrations/lovable/client";
 import { Plus, Trash2, Users, Shield, User, KeyRound } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,7 +79,23 @@ const AdminUsers = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground font-sans truncate">{profile.email}</h3>
-                  <p className="text-sm text-muted-foreground font-sans capitalize">{profile.role}</p>
+                  <select
+                    className="text-sm bg-transparent border border-border/50 rounded px-2 py-0.5 font-sans text-muted-foreground cursor-pointer hover:border-primary/50 transition-colors"
+                    value={profile.role}
+                    onChange={async (e) => {
+                      const newRole = e.target.value;
+                      const success = await updateLovable("profiles", profile.id, { role: newRole });
+                      if (success) {
+                        toast({ title: `Role alterada para ${newRole}` });
+                        loadProfiles();
+                      } else {
+                        toast({ title: "Erro ao alterar role", variant: "destructive" });
+                      }
+                    }}
+                  >
+                    <option value="user">Usuário</option>
+                    <option value="admin">Administrador</option>
+                  </select>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="icon" title="Trocar senha" onClick={() => { setResetEmail(profile.email); setResetNewPassword(""); setResetDialogOpen(true); }}>
