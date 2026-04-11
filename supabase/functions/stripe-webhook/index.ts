@@ -229,8 +229,9 @@ serve(async (req) => {
             continue;
           }
 
-          console.log(`Sale ${id} marked as paid. Creating Calendar event...`);
+          console.log(`Sale ${id} marked as paid. Creating Calendar event & sending WhatsApp alert...`);
           await createGoogleCalendarEvent(sale);
+          await sendWhatsAppAlert(sale, supabaseUrl);
         }
       }
     }
