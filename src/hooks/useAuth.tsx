@@ -22,12 +22,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const checkAdminRole = async (userId: string) => {
+  const checkAdminRole = async (userId: string, email: string) => {
     try {
       const { data } = await supabase
         .from("profiles")
         .select("role")
-        .eq("email", (await supabase.auth.getUser()).data.user?.email || "")
+        .eq("email", email)
         .maybeSingle();
       setIsAdmin(data?.role === "admin");
     } catch {
@@ -40,8 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
         if (session?.user) {
-          setTimeout(() => checkAdminRole(session.user.id), 0);
+          await checkAdminRole(session.user.id, session.user.email || "");
         } else {
           setIsAdmin(false);
         }
@@ -49,17 +50,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
-        checkAdminRole(session.user.id);
+        await checkAdminRole(session.user.id, session.user.email || "");
       }
       setLoading(false);
-    });
+    };
+
+    initAuth();
 
     return () => subscription.unsubscribe();
   }, []);
+
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });

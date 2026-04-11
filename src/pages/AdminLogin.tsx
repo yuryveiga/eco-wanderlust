@@ -81,6 +81,17 @@ const AdminLogin = () => {
                   minLength={4}
                 />
               </div>
+              <div className="flex items-center space-x-2 py-2">
+                <input 
+                  type="checkbox" 
+                  id="remember" 
+                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                  defaultChecked
+                />
+                <label htmlFor="remember" className="text-sm text-muted-foreground font-sans cursor-pointer select-none">
+                  Permanecer conectado
+                </label>
+              </div>
               <Button type="submit" className="w-full font-sans" disabled={isLoading}>
                 {isLoading ? "Carregando..." : "Entrar"}
               </Button>
