@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableTour, LovableSiteImage, LovableSiteSetting } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, Image as ImageIcon, Star, Trash, Upload, Sparkles, Loader2, List, Info, HelpCircle, MapPin, Youtube, ExternalLink } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,13 +30,20 @@ const AdminTours = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const [activeInfoLang, setActiveInfoLang] = useState<'pt' | 'en' | 'es'>('pt');
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
+  const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadTours();
+    fetchLovable<LovableSiteSetting>("site_settings").then(data => {
+      const map: Record<string, string> = {};
+      data.forEach(s => { map[s.key] = s.value; });
+      setSiteSettings(map);
+    });
   }, []);
 
   useEffect(() => {
@@ -309,7 +316,7 @@ const AdminTours = () => {
         </Button>
       </div>
 
-      <div className="flex gap-2 mb-6 shrink-0">
+      <div className="flex gap-2 mb-6 shrink-0 flex-wrap">
         <Button
           variant={categoryFilter === 'all' ? 'default' : 'outline'}
           size="sm"
@@ -334,6 +341,16 @@ const AdminTours = () => {
         >
           Trilha
         </Button>
+        {siteSettings['home_category_3'] && (
+          <Button
+            variant={categoryFilter === siteSettings['home_category_3'] ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setCategoryFilter(siteSettings['home_category_3'])}
+            className="rounded-full font-sans"
+          >
+            {siteSettings['home_category_3_label'] || siteSettings['home_category_3']}
+          </Button>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto pr-2 pb-8">
@@ -404,6 +421,7 @@ const AdminTours = () => {
                     <TabsTrigger value="info" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Informações do Passeio</TabsTrigger>
                   )}
                   <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Imagens</TabsTrigger>
+                  <TabsTrigger value="carousel" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Galeria</TabsTrigger>
                   <TabsTrigger value="settings" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Preços e Config</TabsTrigger>
                 </TabsList>
               </DialogHeader>
@@ -421,9 +439,9 @@ const AdminTours = () => {
                               <Label className="text-xs uppercase font-bold text-muted-foreground">Título (PT)</Label>
                               <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-12 font-serif text-lg" />
                             </div>
-                            <div className="space-y-2">
+                             <div className="space-y-2">
                               <Label className="text-xs uppercase font-bold text-muted-foreground">Categoria</Label>
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 flex-wrap">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                   <input
                                     type="radio"
@@ -444,6 +462,18 @@ const AdminTours = () => {
                                   />
                                   <span className="font-bold">TRILHA</span>
                                 </label>
+                                {siteSettings['home_category_3'] && (
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      name="category"
+                                      checked={editing?.category === siteSettings['home_category_3']}
+                                      onChange={() => setEditing({ ...editing, category: siteSettings['home_category_3'] })}
+                                      className="w-5 h-5 text-primary"
+                                    />
+                                    <span className="font-bold">{siteSettings['home_category_3']}</span>
+                                  </label>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -669,7 +699,79 @@ const AdminTours = () => {
                     </div>
                   </TabsContent>
 
-                  {/* TAB SETTINGS */}
+                  {/* TAB CAROUSEL GALLERY */}
+                  <TabsContent value="carousel" className="m-0 space-y-6">
+                    <div className="p-10 border-4 border-dashed rounded-[40px] bg-muted/20 flex flex-col items-center justify-center gap-4 transition-all hover:bg-muted/30 text-center relative group">
+                      <ImageIcon className="w-10 h-10 text-primary" />
+                      <div>
+                        <h4 className="font-black text-xl">Galeria do Carrossel</h4>
+                        <p className="text-sm text-muted-foreground mt-2">Fotos que aparecerão no carrossel da página do passeio. Máximo de 10 fotos.</p>
+                        <p className="text-xs text-muted-foreground mt-1">{(editing.carousel_images_json || []).length}/10 fotos</p>
+                        <Input 
+                          type="file" 
+                          multiple 
+                          accept="image/*" 
+                          onChange={async (e) => {
+                            const files = e.target.files;
+                            if (!files || files.length === 0 || !editing) return;
+                            const current = editing.carousel_images_json || [];
+                            if (current.length + files.length > 10) {
+                              toast({ title: "Limite atingido", description: "Máximo de 10 fotos na galeria.", variant: "destructive" });
+                              return;
+                            }
+                            setIsUploadingCarousel(true);
+                            try {
+                              const newImages = [...current];
+                              for (const file of Array.from(files)) {
+                                const url = await uploadLovableFile(file);
+                                if (url) newImages.push(url);
+                              }
+                              setEditing({ ...editing, carousel_images_json: newImages.slice(0, 10) });
+                              toast({ title: "Fotos adicionadas!" });
+                            } catch {
+                              toast({ title: "Erro ao enviar fotos", variant: "destructive" });
+                            } finally {
+                              setIsUploadingCarousel(false);
+                            }
+                          }} 
+                          className="hidden" 
+                          id="carousel-files-upload" 
+                          disabled={isUploadingCarousel || (editing.carousel_images_json || []).length >= 10} 
+                        />
+                        <Label htmlFor="carousel-files-upload" className="absolute inset-0 cursor-pointer opacity-0" />
+                      </div>
+                      {isUploadingCarousel && <Loader2 className="w-6 h-6 animate-spin text-primary" />}
+                    </div>
+
+                    {(editing.carousel_images_json || []).length > 0 && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {editing.carousel_images_json?.map((url, index) => (
+                          <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-border group">
+                            <img src={url} alt={`Carousel ${index + 1}`} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Button 
+                                size="icon" 
+                                variant="ghost" 
+                                className="text-white" 
+                                onClick={() => {
+                                  const newArr = [...(editing.carousel_images_json || [])];
+                                  newArr.splice(index, 1);
+                                  setEditing({ ...editing, carousel_images_json: newArr });
+                                }}
+                              >
+                                <Trash2 className="w-6 h-6" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {(editing.carousel_images_json || []).length === 0 && (
+                      <p className="text-center text-muted-foreground text-sm py-8">Nenhuma foto adicionada. A galeria só aparecerá na página do passeio se tiver fotos.</p>
+                    )}
+                  </TabsContent>
+
                   <TabsContent value="settings" className="m-0 space-y-10">
                     {!editing.external_url ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -164,6 +164,7 @@ export type LovableTour = {
   meeting_point_address_es?: string;
   youtube_video_url?: string;
   external_url?: string;
+  carousel_images_json?: string[];
 };
 
 export type LovablePage = {
