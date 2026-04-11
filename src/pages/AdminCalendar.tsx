@@ -220,7 +220,7 @@ const AdminCalendar = () => {
         <CardContent>
           <div className="rounded-lg overflow-hidden border">
             <iframe
-              src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(GOOGLE_CALENDAR_EMBED_ID)}&ctz=America/Sao_Paulo&showTitle=0&showNav=1&showPrint=0&showTabs=1&showCalendars=0&mode=MONTH`}
+              src="https://calendar.google.com/calendar/embed?src=marius.e.dobbin%40gmail.com&ctz=America%2FSao_Paulo&showTitle=0&showNav=1&showPrint=0&showTabs=1&showCalendars=0&mode=MONTH"
               style={{ border: 0 }}
               width="100%"
               height="600"
