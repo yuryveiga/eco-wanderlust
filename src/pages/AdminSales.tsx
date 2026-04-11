@@ -62,6 +62,15 @@ const AdminSales = () => {
       fetchLovable<LovableSale>("sales"),
       fetchLovable<LovableTour>("tours")
     ]);
+    
+    // Auto-archive paid sales past their date
+    const today = new Date().toISOString().split('T')[0];
+    const toArchive = salesData.filter(s => s.is_paid && !s.is_archived && s.selected_date && s.selected_date < today);
+    for (const sale of toArchive) {
+      await updateLovable("sales", sale.id, { is_archived: true });
+      sale.is_archived = true;
+    }
+    
     const sorted = salesData.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     setSales(sorted);
     salesRef.current = sorted;
