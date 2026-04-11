@@ -18,22 +18,40 @@ function base64urlStr(str: string): string {
 }
 
 // Import PEM private key for RS256
-// Standard base64 decode (handles padding)
+// Standard base64 decode using Deno's built-in
 function decodeBase64(b64: string): Uint8Array {
-  const binString = atob(b64);
-  const bytes = new Uint8Array(binString.length);
-  for (let i = 0; i < binString.length; i++) {
-    bytes[i] = binString.charCodeAt(i);
+  // Add padding if missing
+  const pad = b64.length % 4;
+  const padded = pad ? b64 + "=".repeat(4 - pad) : b64;
+  
+  // Replace URL-safe chars
+  const standard = padded.replace(/-/g, "+").replace(/_/g, "/");
+  
+  try {
+    const binString = atob(standard);
+    const bytes = new Uint8Array(binString.length);
+    for (let i = 0; i < binString.length; i++) {
+      bytes[i] = binString.charCodeAt(i);
+    }
+    return bytes;
+  } catch (e) {
+    console.error("Base64 decode failed. Input length:", b64.length, "First 20 chars:", b64.substring(0, 20));
+    throw e;
   }
-  return bytes;
 }
 
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
+  console.log("PEM key starts with:", pem.substring(0, 40));
+  console.log("PEM key length:", pem.length);
+  
   // Remove PEM headers/footers and all whitespace
   const pemContents = pem
     .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/g, "")
     .replace(/-----END (?:RSA )?PRIVATE KEY-----/g, "")
     .replace(/[\r\n\s]/g, "");
+  
+  console.log("PEM contents length after cleanup:", pemContents.length);
+  console.log("PEM first 20:", pemContents.substring(0, 20));
   
   const binaryDer = decodeBase64(pemContents);
   return crypto.subtle.importKey(
