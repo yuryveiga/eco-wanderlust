@@ -48,19 +48,18 @@ const AdminDashboard = () => {
   const handleSaveSettings = async () => {
     setIsSaving(true);
     try {
-      const keys = ['home_tours_columns', 'home_tours_count'];
+      const keys = ['home_tours_columns', 'home_tours_count', 'home_category_1', 'home_category_1_label', 'home_category_1_label_en', 'home_category_1_label_es', 'home_category_2', 'home_category_2_label', 'home_category_2_label_en', 'home_category_2_label_es', 'home_category_3', 'home_category_3_label', 'home_category_3_label_en', 'home_category_3_label_es'];
       for (const key of keys) {
-        if (settings[key]) {
+        if (settings[key] !== undefined) {
           const settingRecord = settingsList.find(s => s.key === key);
           if (settingRecord?.id) {
-            await updateLovable("site_settings", settingRecord.id, { value: settings[key] });
-          } else {
+            await updateLovable("site_settings", settingRecord.id, { value: settings[key] || "" });
+          } else if (settings[key]) {
             await insertLovable("site_settings", { key, value: settings[key] });
           }
         }
       }
       toast({ title: "Configurações da Home salvas!" });
-      // Reload settings to get IDs
       const settingsData = await fetchLovable<LovableSiteSetting>("site_settings");
       setSettingsList(settingsData);
     } catch (err) {
