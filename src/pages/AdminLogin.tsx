@@ -78,14 +78,6 @@ const AdminLogin = () => {
           </Button>
         </form>
 
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-primary hover:underline font-sans"
-          >
-            {isSignUp ? "Já tem conta? Faça login" : "Primeiro acesso? Criar conta"}
-          </button>
-        </div>
       </div>
     </div>
   );
