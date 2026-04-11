@@ -12,6 +12,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { FloatingButtons } from "./components/FloatingButtons";
 import { ThemeApplier } from "./components/ThemeApplier";
 import { BUILD_ID } from "./version";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Pages
 import Index from "./pages/Index";
@@ -60,55 +61,56 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LocaleProvider>
-          <CartProvider>
-            <HelmetProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <ThemeApplier />
-                <FloatingButtons />
-                <BrowserRouter>
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/blog" element={<Blog />} />
-                      <Route path="/blog/:slug" element={<BlogPost />} />
-                      <Route path="/carrinho" element={<Cart />} />
-                      <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
-                      <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
-                      <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
-                      <Route path="/passeio/:id" element={<TourDetail />} />
-                      <Route path="/admin/login" element={<AdminLogin />} />
-                      <Route path="/admin" element={<AdminLayout />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="blog" element={<AdminBlog />} />
-                        <Route path="hero" element={<AdminHero />} />
-                        <Route path="theme" element={<AdminTheme />} />
-                        <Route path="users" element={<AdminUsers />} />
-                        <Route path="tours" element={<AdminTours />} />
-                        <Route path="images" element={<AdminImages />} />
-                        <Route path="social" element={<AdminSocial />} />
-                        <Route path="gallery" element={<AdminGallery />} />
-                        <Route path="reviews" element={<AdminReviews />} />
-                        <Route path="sales" element={<AdminSales />} />
-                        <Route path="simulator" element={<AdminSimulator />} />
-                        <Route path="pages" element={<AdminPages />} />
-                      </Route>
-                      <Route path="/:slug" element={<GenericPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-              </TooltipProvider>
-            </HelmetProvider>
-          </CartProvider>
-        </LocaleProvider>
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <LocaleProvider>
+            <CartProvider>
+              <HelmetProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <ThemeApplier />
+                  <FloatingButtons />
+                  <BrowserRouter>
+                    <Suspense fallback={<PageLoader />}>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:slug" element={<BlogPost />} />
+                        <Route path="/carrinho" element={<Cart />} />
+                        <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
+                        <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
+                        <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
+                        <Route path="/passeio/:id" element={<TourDetail />} />
+                        <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/admin" element={<AdminLayout />}>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="blog" element={<AdminBlog />} />
+                          <Route path="hero" element={<AdminHero />} />
+                          <Route path="theme" element={<AdminTheme />} />
+                          <Route path="users" element={<AdminUsers />} />
+                          <Route path="tours" element={<AdminTours />} />
+                          <Route path="images" element={<AdminImages />} />
+                          <Route path="social" element={<AdminSocial />} />
+                          <Route path="gallery" element={<AdminGallery />} />
+                          <Route path="reviews" element={<AdminReviews />} />
+                          <Route path="sales" element={<AdminSales />} />
+                          <Route path="simulator" element={<AdminSimulator />} />
+                          <Route path="pages" element={<AdminPages />} />
+                        </Route>
+                        <Route path="/:slug" element={<GenericPage />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </BrowserRouter>
+                </TooltipProvider>
+              </HelmetProvider>
+            </CartProvider>
+          </LocaleProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 };
 
 export default App;
-

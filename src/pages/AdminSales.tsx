@@ -8,6 +8,8 @@ import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale,
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 
 const AdminSales = () => {
   const [sales, setSales] = useState<LovableSale[]>([]);
@@ -16,7 +18,10 @@ const AdminSales = () => {
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const { toast } = useToast();
+
 
   useEffect(() => {
     loadData();
@@ -77,11 +82,12 @@ const AdminSales = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja excluir esta venda?")) return;
     await deleteLovable("sales", id);
     setSales(sales.filter(s => s.id !== id));
     toast({ title: "Venda removida" });
+    setItemToDelete(null);
   };
+
 
   const toggleSelect = (id: string) => {
     const newSelected = new Set(selectedIds);
@@ -103,15 +109,21 @@ const AdminSales = () => {
 
   const deleteSelected = async () => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`Excluir ${selectedIds.size} venda(s)?`)) return;
+    setIsBulkDeleteOpen(true);
+  };
+
+  const confirmDeleteSelected = async () => {
+    const idsToDelete = Array.from(selectedIds);
+    setIsBulkDeleteOpen(false);
     
-    for (const id of selectedIds) {
+    for (const id of idsToDelete) {
       await deleteLovable("sales", id);
     }
     setSales(sales.filter(s => !selectedIds.has(s.id)));
     setSelectedIds(new Set());
-    toast({ title: `${selectedIds.size} venda(s) removida(s)` });
+    toast({ title: `${idsToDelete.length} venda(s) removida(s)` });
   };
+
 
   const updateStatus = async (sale: LovableSale, status: 'paid' | 'pending' | 'cancelled') => {
     const updates: Partial<LovableSale> = {};
@@ -381,6 +393,21 @@ const AdminSales = () => {
           </div>
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Venda"
+        description="Tem certeza que deseja excluir o registro desta venda? Esta ação removerá permanentemente os dados do cliente e da reserva do nosso histórico."
+      />
+
+      <DeleteConfirmDialog 
+        open={isBulkDeleteOpen} 
+        onOpenChange={setIsBulkDeleteOpen} 
+        onConfirm={confirmDeleteSelected}
+        title={`Excluir ${selectedIds.size} Vendas`}
+        description={`Tem certeza que deseja excluir permanentemente as ${selectedIds.size} vendas selecionadas? Todos os registros serão removidos do histórico.`}
+      />
     </div>
   );
 };

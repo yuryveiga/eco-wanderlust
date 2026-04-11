@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableSiteImage } from "@/integrations/lovable/client";
 import { Trash2, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 
 const PRESET_KEYS = [
   { key: "logo", label: "Logo do Site" },
@@ -19,6 +21,8 @@ const AdminImages = () => {
   const [images, setImages] = useState<LovableSiteImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   
   const { toast } = useToast();
 
@@ -63,11 +67,12 @@ const AdminImages = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja remover esta imagem do site?")) return;
     await deleteLovable("site_images", id);
     toast({ title: "Imagem removida" });
+    setItemToDelete(null);
     await loadImages();
   };
+
 
   return (
     <div className="space-y-6">
@@ -94,12 +99,20 @@ const AdminImages = () => {
                 img={existingImage} 
                 isUploading={uploadingKey === preset.key}
                 onUpload={(file) => handleUpload(preset.key, preset.label, file)}
-                onDelete={() => existingImage?.id && handleDelete(existingImage.id)}
+                onDelete={() => existingImage?.id && setItemToDelete(existingImage.id)}
               />
             );
           })}
         </div>
       )}
+
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Remover Imagem Estrutural"
+        description="Tem certeza que deseja remover esta imagem? Isso pode impactar o design visual do site até que uma nova imagem seja definida."
+      />
     </div>
   );
 };

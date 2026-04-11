@@ -8,6 +8,8 @@ import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSocia
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 
 const PLATFORMS = [
   { value: "instagram", label: "Instagram" },
@@ -25,7 +27,9 @@ const AdminSocial = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableSocialMedia> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+
 
   useEffect(() => {
     fetchLovable<LovableSocialMedia>("social_media").then((data) => {
@@ -59,11 +63,12 @@ const AdminSocial = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja excluir esta rede social?")) return;
     await deleteLovable("social_media", id);
     setSocials(socials.filter((s) => s.id !== id));
     toast({ title: "Rede social removida" });
+    setItemToDelete(null);
   };
+
 
   return (
     <div>
@@ -110,7 +115,7 @@ const AdminSocial = () => {
                 <Button variant="outline" size="icon" onClick={() => { setEditing({ ...social }); setIsNew(false); }}>
                   <Pencil className="w-4 h-4" />
                 </Button>
-                <Button variant="outline" size="icon" onClick={() => handleDelete(social.id)}>
+                <Button variant="outline" size="icon" onClick={() => setItemToDelete(social.id)}>
                   <Trash2 className="w-4 h-4 text-destructive" />
                 </Button>
               </div>
@@ -159,6 +164,13 @@ const AdminSocial = () => {
           )}
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Rede Social"
+        description="Tem certeza que deseja remover este link das redes sociais exibidas no site?"
+      />
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 export async function uploadLovableFile(file: File): Promise<string | null> {
   try {
@@ -10,7 +12,7 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
       .upload(fileName, file);
 
     if (uploadError) {
-      alert(`ERRO DE BUCKET (Storage): ${uploadError.message}`);
+      toast.error(`ERRO DE BUCKET (Storage): ${uploadError.message}`);
       return null;
     }
 
@@ -21,7 +23,7 @@ export async function uploadLovableFile(file: File): Promise<string | null> {
     return publicUrl;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Erro desconhecido';
-    alert(`ERRO DE BUCKET: ${message}`);
+    toast.error(`ERRO DE BUCKET: ${message}`);
     return null;
   }
 }
@@ -51,7 +53,7 @@ export async function fetchLovable<T>(table: string): Promise<T[]> {
     return (data || []) as T[];
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Erro desconhecido';
-    alert(`Erro ao carregar ${table}: ` + message);
+    toast.error(`Erro ao carregar ${table}: ` + message);
     return [];
   }
 }
@@ -73,7 +75,7 @@ export async function insertLovable<T>(table: string, data: Partial<T>): Promise
     if (error) throw error;
     return result as T;
   } catch (error: unknown) {
-    alert(`Erro ao salvar no banco (${table}): \n\n` + JSON.stringify(error));
+    toast.error(`Erro ao salvar no banco (${table}): \n\n` + JSON.stringify(error));
     return null;
   }
 }
@@ -98,7 +100,7 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
     
     return true;
   } catch (error: unknown) {
-    alert(`Erro ao atualizar no banco (${table}): \n\n` + JSON.stringify(error));
+    toast.error(`Erro ao atualizar no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }
 }
@@ -114,7 +116,7 @@ export async function deleteLovable(table: string, id: string): Promise<boolean>
     if (error) throw error;
     return true;
   } catch (error: unknown) {
-    alert(`Erro ao excluir no banco (${table}): \n\n` + JSON.stringify(error));
+    toast.error(`Erro ao excluir no banco (${table}): \n\n` + JSON.stringify(error));
     return false;
   }
 }

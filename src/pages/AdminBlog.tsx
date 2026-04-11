@@ -9,6 +9,18 @@ import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovabl
 import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loader2, Star, FolderOpen } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import { translateText, translateHtml } from "@/utils/translate";
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -27,7 +39,10 @@ const AdminBlog = () => {
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const [pickerMode, setPickerMode] = useState<'cover' | 'editor'>('editor');
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isTranslateAllConfirmOpen, setIsTranslateAllConfirmOpen] = useState(false);
   const { toast } = useToast();
+
 
   const loadPosts = useCallback(async () => {
     console.log("loadPosts called");
@@ -87,11 +102,12 @@ const AdminBlog = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja excluir este post?")) return;
     await deleteLovable("blog_posts", id);
     setPosts(posts.filter((p) => p.id !== id));
     toast({ title: "Post removido" });
+    setItemToDelete(null);
   };
+
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -152,36 +168,11 @@ const AdminBlog = () => {
   const quillRef = useRef<any>(null);
 
   const imageHandler = useCallback(() => {
-    const choice = confirm("Escolher da galeria do site? (OK = Galeria, Cancelar = Upload)");
-    if (choice) {
-      setPickerMode('editor');
-      setShowGalleryPicker(true);
-    } else {
-      const input = document.createElement('input');
-      input.setAttribute('type', 'file');
-      input.setAttribute('accept', 'image/*');
-      input.click();
-
-      input.onchange = async () => {
-        const file = input.files ? input.files[0] : null;
-        if (!file) return;
-
-        toast({ title: "Enviando imagem..." });
-        try {
-          const url = await uploadLovableFile(file);
-          if (url) {
-            const quill = quillRef.current?.getEditor();
-            if (quill) {
-              const range = quill.getSelection(true);
-              quill.insertEmbed(range.index, 'image', url);
-            }
-          }
-        } catch (err) {
-          toast({ title: "Erro", description: "Falha ao enviar." });
-        }
-      };
-    }
+    const choice = true; // Forcing gallery for consistency/UI
+    setPickerMode('editor');
+    setShowGalleryPicker(true);
   }, [toast]);
+
 
   const insertImageFromGallery = (url: string) => {
     if (pickerMode === 'cover' && editing) {
@@ -274,36 +265,11 @@ const AdminBlog = () => {
         </Button>
         <Button 
           variant="outline" 
-          onClick={async () => {
-            if (!confirm("Traduzir TODOS os posts para inglês e espanhol?")) return;
-            setIsTranslatingAll(true);
-            let translated = 0;
-            for (const post of posts) {
-              try {
-                const [titleEn, titleEs, excerptEn, excerptEs] = await Promise.all([
-                  translateText(post.title || "", "en"),
-                  translateText(post.title || "", "es"),
-                  translateText(post.excerpt || "", "en"),
-                  translateText(post.excerpt || "", "es"),
-                ]);
-                await updateLovable("blog_posts", post.id, {
-                  title_en: titleEn,
-                  title_es: titleEs,
-                  excerpt_en: excerptEn,
-                  excerpt_es: excerptEs,
-                });
-                translated++;
-              } catch (e) {
-                console.error("Error translating post:", post.id, e);
-              }
-            }
-            setIsTranslatingAll(false);
-            toast({ title: `${translated} posts traduzidos!` });
-            loadPosts();
-          }}
+          onClick={() => setIsTranslateAllConfirmOpen(true)}
           disabled={isTranslatingAll}
           className="font-sans h-12 px-6 rounded-xl"
         >
+
           {isTranslatingAll ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
           Traduzir Todos
         </Button>
@@ -323,7 +289,7 @@ const AdminBlog = () => {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 gap-2">
                    <Button size="sm" variant="secondary" className="flex-1 font-bold h-9 bg-white/90" onClick={() => { setEditing({ ...post }); setIsNew(false); }}><Pencil className="w-4 h-4 mr-2" />Editar</Button>
-                   <Button size="icon" variant="destructive" className="h-9 w-9" onClick={() => handleDelete(post.id)}><Trash2 className="w-4 h-4" /></Button>
+                   <Button size="icon" variant="destructive" className="h-9 w-9" onClick={() => setItemToDelete(post.id)}><Trash2 className="w-4 h-4" /></Button>
                 </div>
               </div>
               <div className="p-5 flex-1 flex flex-col">
@@ -504,6 +470,60 @@ const AdminBlog = () => {
           </DialogContent>
         </Dialog>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Post"
+        description="Tem certeza que deseja excluir esta publicação? Todo o conteúdo textual e traduzido será removido permanentemente."
+      />
+
+      <AlertDialog open={isTranslateAllConfirmOpen} onOpenChange={setIsTranslateAllConfirmOpen}>
+        <AlertDialogContent className="font-sans">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif text-2xl">Tradução em Massa (Blog)</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja traduzir TODOS os posts para inglês e espanhol? Isso pode levar algum tempo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
+            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-primary rounded-xl"
+              onClick={async () => {
+                setIsTranslateAllConfirmOpen(false);
+                setIsTranslatingAll(true);
+                let translated = 0;
+                for (const post of posts) {
+                  try {
+                    const [titleEn, titleEs, excerptEn, excerptEs] = await Promise.all([
+                      translateText(post.title || "", "en"),
+                      translateText(post.title || "", "es"),
+                      translateText(post.excerpt || "", "en"),
+                      translateText(post.excerpt || "", "es"),
+                    ]);
+                    await updateLovable("blog_posts", post.id, {
+                      title_en: titleEn,
+                      title_es: titleEs,
+                      excerpt_en: excerptEn,
+                      excerpt_es: excerptEs,
+                    });
+                    translated++;
+                    await new Promise(r => setTimeout(r, 300));
+                  } catch (e) {
+                    console.error("Error translating post:", post.id, e);
+                  }
+                }
+                setIsTranslatingAll(false);
+                toast({ title: `${translated} posts traduzidos!` });
+                loadPosts();
+              }}
+            >
+              Iniciar Tradução
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

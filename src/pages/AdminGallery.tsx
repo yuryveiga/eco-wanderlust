@@ -6,6 +6,8 @@ import { Trash2, Images, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { uploadLovableFile } from "@/integrations/lovable/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 
 const CATEGORIES = [
   { value: "todas", label: "Todas as categorias" },
@@ -26,6 +28,9 @@ const AdminGallery = () => {
   const [images, setImages] = useState<SiteImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [itemToDelete, setItemToDelete] = useState<SiteImage | null>(null);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+
   
   // Form Upload state
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -146,9 +151,13 @@ const AdminGallery = () => {
 
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`Excluir ${selectedIds.size} foto(s)?`)) return;
+    setIsBulkDeleteOpen(true);
+  };
 
+  const confirmDeleteSelected = async () => {
+    setIsBulkDeleteOpen(false);
     const idsToDelete = Array.from(selectedIds);
+
     
     for (const img of images.filter(i => selectedIds.has(i.id))) {
       try {
@@ -170,20 +179,19 @@ const AdminGallery = () => {
   };
 
   const handleDelete = async (img: SiteImage) => {
-    if (!confirm("Deseja excluir esta foto?")) return;
-    
     try {
       if (img.image_url.includes('site-images')) {
         const fileName = img.image_url.substring(img.image_url.lastIndexOf('/') + 1);
         await supabase.storage.from('site-images').remove([fileName]);
       }
-      } catch(e) {
-        console.warn("Could not delete from storage:", e);
-      }
+    } catch(e) {
+      console.warn("Could not delete from storage:", e);
+    }
 
     const { error } = await supabase.from('site_images').delete().eq('id', img.id);
     if (!error) {
       toast({ title: "Foto removida" });
+      setItemToDelete(null);
       await loadImages();
     }
   };
@@ -343,7 +351,7 @@ const AdminGallery = () => {
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Button variant="destructive" size="icon" onClick={() => handleDelete(img)}>
+                    <Button variant="destructive" size="icon" onClick={(e) => { e.stopPropagation(); setItemToDelete(img); }}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -366,6 +374,21 @@ const AdminGallery = () => {
           </div>
         </>
       )}
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Foto"
+        description="Tem certeza que deseja remover esta foto permanentemente? Ela deixará de ser exibida na galeria pública."
+      />
+
+      <DeleteConfirmDialog 
+        open={isBulkDeleteOpen} 
+        onOpenChange={setIsBulkDeleteOpen} 
+        onConfirm={confirmDeleteSelected}
+        title={`Excluir ${selectedIds.size} Fotos`}
+        description={`Tem certeza que deseja excluir permanentemente as ${selectedIds.size} fotos selecionadas? Esta ação não pode ser desfeita.`}
+      />
     </div>
   );
 };

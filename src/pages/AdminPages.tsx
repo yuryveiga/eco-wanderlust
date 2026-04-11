@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovablePage } from "@/integrations/lovable/client";
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -27,7 +29,9 @@ const AdminPages = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovablePage> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+
 
   useEffect(() => {
     loadPages();
@@ -66,11 +70,12 @@ const AdminPages = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja excluir esta página?")) return;
     await deleteLovable("pages", id);
     setPages(pages.filter((p) => p.id !== id));
     toast({ title: "Página removida" });
+    setItemToDelete(null);
   };
+
 
   const imageHandler = () => {
     const input = document.createElement('input');
@@ -153,7 +158,7 @@ const AdminPages = () => {
                   <Button variant="outline" size="icon" onClick={() => { setEditing({ ...page }); setIsNew(false); }}>
                     <Pencil className="w-4 h-4" />
                   </Button>
-                  <Button variant="outline" size="icon" onClick={() => handleDelete(page.id)}>
+                  <Button variant="outline" size="icon" onClick={() => setItemToDelete(page.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
                 </div>
@@ -226,6 +231,13 @@ const AdminPages = () => {
           )}
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Página CMS"
+        description="Tem certeza que deseja excluir esta página personalizada? Esta ação removerá o link do menu e o conteúdo associado permanentemente."
+      />
     </div>
   );
 };

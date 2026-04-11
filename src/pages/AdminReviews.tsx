@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Star, Loader2 } from "lucide-react";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 import { toast } from "sonner";
 import { translateText } from "@/utils/translate";
 
@@ -49,7 +51,9 @@ export default function AdminReviews() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyReview);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
+
 
   const loadReviews = async () => {
     const { data } = await supabase.from("reviews").select("*").order("sort_order");
@@ -114,11 +118,12 @@ export default function AdminReviews() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover este review?")) return;
     await supabase.from("reviews").delete().eq("id", id);
     toast.success("Review removido");
+    setItemToDelete(null);
     loadReviews();
   };
+
 
   const handleTranslate = async () => {
     if (!form.title || !form.content) {
@@ -176,7 +181,7 @@ export default function AdminReviews() {
               </div>
               <div className="flex gap-2 flex-shrink-0">
                 <Button variant="ghost" size="icon" onClick={() => openEdit(r)}><Pencil className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(r.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => setItemToDelete(r.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </CardContent>
           </Card>
@@ -269,6 +274,13 @@ export default function AdminReviews() {
           </div>
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Review"
+        description="Tem certeza que deseja excluir permanentemente este depoimento? Ele não será mais exibido no site."
+      />
     </div>
   );
 }

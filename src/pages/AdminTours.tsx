@@ -11,6 +11,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
 import { Sunrise, Sun, Moon } from "lucide-react";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 type JsonFieldItem = {
   time?: string;
@@ -35,7 +47,10 @@ const AdminTours = () => {
   const [activeInfoLang, setActiveInfoLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
   const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isTranslateAllConfirmOpen, setIsTranslateAllConfirmOpen] = useState(false);
   const { toast } = useToast();
+
 
   useEffect(() => {
     loadTours();
@@ -102,11 +117,12 @@ const AdminTours = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja excluir este passeio?")) return;
     await deleteLovable("tours", id);
     setTours(tours.filter((t) => t.id !== id));
     toast({ title: "Passeio removido" });
+    setItemToDelete(null);
   };
+
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -261,56 +277,11 @@ const AdminTours = () => {
         </Button>
         <Button 
           variant="outline" 
-          onClick={async () => {
-            if (!confirm("Traduzir TODOS os passeios para inglês e espanhol? Isso pode levar alguns minutos.")) return;
-            setIsTranslatingAll(true);
-            let translatedCount = 0;
-            
-            toast({ 
-              title: "Processando tradução em massa", 
-              description: `Traduzindo ${tours.length} passeios. Por favor, aguarde...` 
-            });
-
-            for (const tour of tours) {
-              try {
-                const translatedData = await translateTourData(tour);
-                
-                await updateLovable("tours", tour.id, {
-                  title_en: translatedData.title_en,
-                  title_es: translatedData.title_es,
-                  category_en: translatedData.category_en,
-                  category_es: translatedData.category_es,
-                  short_description_en: translatedData.short_description_en,
-                  short_description_es: translatedData.short_description_es,
-                  difficulty_en: translatedData.difficulty_en,
-                  difficulty_es: translatedData.difficulty_es,
-                  meeting_point_address_en: translatedData.meeting_point_address_en,
-                  meeting_point_address_es: translatedData.meeting_point_address_es,
-                  itinerary_json_en: translatedData.itinerary_json_en,
-                  itinerary_json_es: translatedData.itinerary_json_es,
-                  included_json_en: translatedData.included_json_en,
-                  included_json_es: translatedData.included_json_es,
-                  highlights_json_en: translatedData.highlights_json_en,
-                  highlights_json_es: translatedData.highlights_json_es,
-                  faq_json_en: translatedData.faq_json_en,
-                  faq_json_es: translatedData.faq_json_es,
-                });
-                translatedCount++;
-                
-                // Small delay to be gentle with the translation API
-                await new Promise(r => setTimeout(r, 300));
-              } catch (e) {
-                console.error("Error translating tour:", tour.id, e);
-              }
-            }
-            
-            setIsTranslatingAll(false);
-            toast({ title: "Concluído!", description: `${translatedCount} passeios foram traduzidos.` });
-            loadTours();
-          }}
+          onClick={() => setIsTranslateAllConfirmOpen(true)}
           disabled={isTranslatingAll}
           className="font-sans"
         >
+
           {isTranslatingAll ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
           Traduzir Todos
         </Button>
@@ -385,7 +356,7 @@ const AdminTours = () => {
                     }}>
                       <Pencil className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="destructive" className="h-9 w-9 shadow-lg" onClick={() => handleDelete(tour.id)}>
+                    <Button size="icon" variant="destructive" className="h-9 w-9 shadow-lg" onClick={() => setItemToDelete(tour.id)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -855,6 +826,77 @@ const AdminTours = () => {
           )}
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Passeio"
+        description="Tem certeza que deseja excluir este passeio? Todas as informações e fotos associadas serão removidas do catálogo."
+      />
+
+      <AlertDialog open={isTranslateAllConfirmOpen} onOpenChange={setIsTranslateAllConfirmOpen}>
+        <AlertDialogContent className="font-sans">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif text-2xl">Tradução em Massa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja traduzir TODOS os passeios para inglês e espanhol? Isso pode levar alguns minutos e utilizará créditos de tradução.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
+            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-primary rounded-xl"
+              onClick={async () => {
+                setIsTranslateAllConfirmOpen(false);
+                setIsTranslatingAll(true);
+                let translatedCount = 0;
+                
+                toast({ 
+                  title: "Processando tradução em massa", 
+                  description: `Traduzindo ${tours.length} passeios. Por favor, aguarde...` 
+                });
+
+                for (const tour of tours) {
+                  try {
+                    const translatedData = await translateTourData(tour);
+                    
+                    await updateLovable("tours", tour.id, {
+                      title_en: translatedData.title_en,
+                      title_es: translatedData.title_es,
+                      category_en: translatedData.category_en,
+                      category_es: translatedData.category_es,
+                      short_description_en: translatedData.short_description_en,
+                      short_description_es: translatedData.short_description_es,
+                      difficulty_en: translatedData.difficulty_en,
+                      difficulty_es: translatedData.difficulty_es,
+                      meeting_point_address_en: translatedData.meeting_point_address_en,
+                      meeting_point_address_es: translatedData.meeting_point_address_es,
+                      itinerary_json_en: translatedData.itinerary_json_en,
+                      itinerary_json_es: translatedData.itinerary_json_es,
+                      included_json_en: translatedData.included_json_en,
+                      included_json_es: translatedData.included_json_es,
+                      highlights_json_en: translatedData.highlights_json_en,
+                      highlights_json_es: translatedData.highlights_json_es,
+                      faq_json_en: translatedData.faq_json_en,
+                      faq_json_es: translatedData.faq_json_es,
+                    });
+                    translatedCount++;
+                    await new Promise(r => setTimeout(r, 300));
+                  } catch (e) {
+                    console.error("Error translating tour:", tour.id, e);
+                  }
+                }
+                
+                setIsTranslatingAll(false);
+                toast({ title: "Concluído!", description: `${translatedCount} passeios foram traduzidos.` });
+                loadTours();
+              }}
+            >
+              Iniciar Tradução
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

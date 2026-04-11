@@ -6,6 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, deleteLovable, LovableProfile } from "@/integrations/lovable/client";
 import { Plus, Trash2, Users, Shield, User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+
 
 const AdminUsers = () => {
   const [profiles, setProfiles] = useState<LovableProfile[]>([]);
@@ -13,7 +15,9 @@ const AdminUsers = () => {
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("user");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+
 
   useEffect(() => {
     loadProfiles();
@@ -39,11 +43,12 @@ const AdminUsers = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover este usuário?")) return;
     await deleteLovable("profiles", id);
     loadProfiles();
     toast({ title: "Usuário removido" });
+    setItemToDelete(null);
   };
+
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -77,7 +82,7 @@ const AdminUsers = () => {
                   <p className="text-sm text-muted-foreground font-sans capitalize">{profile.role}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon" onClick={() => handleDelete(profile.id)}>
+                  <Button variant="outline" size="icon" onClick={() => setItemToDelete(profile.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
                 </div>
@@ -115,6 +120,13 @@ const AdminUsers = () => {
           </div>
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog 
+        open={!!itemToDelete} 
+        onOpenChange={(open) => !open && setItemToDelete(null)} 
+        onConfirm={() => itemToDelete && handleDelete(itemToDelete)}
+        title="Excluir Usuário"
+        description="Tem certeza que deseja remover o acesso deste usuário? Ele não poderá mais acessar o painel administrativo."
+      />
     </div>
   );
 };

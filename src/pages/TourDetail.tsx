@@ -200,6 +200,21 @@ export function TourDetail() {
       <Helmet>
         <title>{translatedTitle} | {siteTitle}</title>
         <meta name="description" content={translatedShortDesc || siteSettings?.site_description} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={`${translatedTitle} | ${siteTitle}`} />
+        <meta property="og:description" content={translatedShortDesc || siteSettings?.site_description} />
+        <meta property="og:image" content={tour.image_url} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={window.location.href} />
+        <meta name="twitter:title" content={`${translatedTitle} | ${siteTitle}`} />
+        <meta name="twitter:description" content={translatedShortDesc || siteSettings?.site_description} />
+        <meta name="twitter:image" content={tour.image_url} />
+
         <link rel="canonical" href={window.location.href} />
         <link rel="alternate" hrefLang="pt" href={`${window.location.origin}/pt/passeio/${tour.slug || tour.id}`} />
         <link rel="alternate" hrefLang="en" href={`${window.location.origin}/en/passeio/${tour.slug || tour.id}`} />

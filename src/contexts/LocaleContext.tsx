@@ -540,8 +540,8 @@ const translations = {
 // Câmbio aproximado para os cálculos locais baseados em Real (BRL)
 const rates = {
   BRL: 1,
-  USD: 5.20,
-  EUR: 5.60,
+  USD: 5.65,
+  EUR: 6.10,
 };
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);

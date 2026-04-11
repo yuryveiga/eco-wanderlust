@@ -130,8 +130,22 @@ const BlogPost = () => {
       <Helmet>
         <title>{title} | {siteTitle}</title>
         <meta name="description" content={excerpt || title} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={window.location.href} />
         <meta property="og:title" content={`${title} | ${siteTitle}`} />
+        <meta property="og:description" content={excerpt || title} />
         <meta property="og:image" content={post.image_url || fallbackImage} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={window.location.href} />
+        <meta name="twitter:title" content={`${title} | ${siteTitle}`} />
+        <meta name="twitter:description" content={excerpt || title} />
+        <meta name="twitter:image" content={post.image_url || fallbackImage} />
+
+        <link rel="canonical" href={window.location.href} />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
       </Helmet>
       
