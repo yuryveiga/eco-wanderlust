@@ -9,6 +9,7 @@ import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale,
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
 
 const AdminSales = () => {
   const [sales, setSales] = useState<LovableSale[]>([]);
@@ -16,6 +17,7 @@ const AdminSales = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled'>('all');
   const { toast } = useToast();
   const salesRef = useRef<LovableSale[]>([]);
@@ -264,9 +266,9 @@ const AdminSales = () => {
             </thead>
             <tbody>
               {filteredSales.map((sale) => (
-                <tr key={sale.id} className={`border-t hover:bg-muted/30 ${selectedIds.has(sale.id) ? 'bg-primary/5' : ''}`}>
+                <tr key={sale.id} className={`border-t hover:bg-muted/30 cursor-pointer ${selectedIds.has(sale.id) ? 'bg-primary/5' : ''}`} onClick={() => setViewingSale(sale)}>
                   <td className="p-4">
-                    <button onClick={() => toggleSelect(sale.id)}>
+                    <button onClick={(e) => { e.stopPropagation(); toggleSelect(sale.id); }}>
                       {selectedIds.has(sale.id) ? <CheckSquare className="w-5 h-5 text-primary" /> : <Square className="w-5 h-5 text-muted-foreground" />}
                     </button>
                   </td>
@@ -288,7 +290,7 @@ const AdminSales = () => {
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Pendente</span>
                     )}
                   </td>
-                  <td className="p-4 text-right flex gap-1">
+                  <td className="p-4 text-right flex gap-1" onClick={(e) => e.stopPropagation()}>
                     <Button 
                       size="sm" 
                       variant={sale.is_paid ? "outline" : "default"}
@@ -445,6 +447,12 @@ const AdminSales = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <SaleDetailDialog
+        sale={viewingSale}
+        open={!!viewingSale}
+        onClose={() => setViewingSale(null)}
+      />
     </div>
   );
 };
