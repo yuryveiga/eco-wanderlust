@@ -1,4 +1,4 @@
-import { Map, FileText, Image, Share2, LayoutDashboard, LogOut, Images, PenTool, LayoutTemplate, Palette, Users, MessageSquare, DollarSign } from "lucide-react";
+import { Map, FileText, Image, Share2, LayoutDashboard, LogOut, Images, PenTool, LayoutTemplate, Palette, Users, MessageSquare, DollarSign, CalendarDays } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
