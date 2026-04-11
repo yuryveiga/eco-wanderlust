@@ -105,8 +105,8 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
     endDate.setHours(startDate.getHours() + 4);
 
     const event = {
-      summary: `Reserva: ${sale.tour_title} - ${sale.customer_name}`,
-      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nTelefone: ${sale.customer_phone}\nPessoas: ${sale.quantity}\nTipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}\nTotal: R$ ${sale.total_price}\nStatus: Pago via Stripe`,
+      summary: `Reserva do Site Tocorime: ${sale.tour_title} - ${sale.customer_name}`,
+      description: `Cliente: ${sale.customer_name}\nEmail: ${sale.customer_email}\nTelefone: ${sale.customer_phone || 'Não informado'}\nPessoas: ${sale.quantity}\nTipo: ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}\nPeríodo: ${sale.selected_period || 'Não definido'}\nTotal: R$ ${sale.total_price}\nData: ${sale.selected_date}\nStatus: Pago via Stripe`,
       start: { dateTime: startDate.toISOString(), timeZone: "America/Sao_Paulo" },
       end: { dateTime: endDate.toISOString(), timeZone: "America/Sao_Paulo" },
       colorId: "2",
