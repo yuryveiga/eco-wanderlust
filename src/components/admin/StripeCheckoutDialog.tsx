@@ -50,7 +50,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
 
     try {
       // Save sale as pending
-      await insertLovable("sales", {
+      const savedSale = await insertLovable("sales", {
         tour_id: tourId,
         tour_title: selectedTour?.title || "",
         tour_slug: selectedTour?.slug || "",
@@ -64,6 +64,8 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
         is_private: true,
       });
 
+      const saleId = (savedSale as any)?.id;
+
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           items: [{
@@ -73,7 +75,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
             date: selectedDate,
             period: "",
           }],
-          sale_ids: [],
+          sale_ids: saleId ? [saleId] : [],
         },
       });
 
