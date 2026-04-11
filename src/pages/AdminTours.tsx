@@ -30,9 +30,11 @@ const AdminTours = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'CITY TOUR' | 'TRILHA'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const [activeInfoLang, setActiveInfoLang] = useState<'pt' | 'en' | 'es'>('pt');
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
+  const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
