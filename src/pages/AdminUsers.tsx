@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLovable, insertLovable, deleteLovable, LovableProfile } from "@/integrations/lovable/client";
+import { fetchLovable, insertLovable, deleteLovable, updateLovable, LovableProfile } from "@/integrations/lovable/client";
 import { Plus, Trash2, Users, Shield, User, KeyRound } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
