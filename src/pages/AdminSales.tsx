@@ -20,6 +20,41 @@ const AdminSales = () => {
   const { toast } = useToast();
   const salesRef = useRef<LovableSale[]>([]);
 
+  const playNotificationSound = useCallback((type: 'new' | 'paid' | 'cancel') => {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.value = 0.3;
+
+      if (type === 'new') {
+        osc.frequency.value = 600;
+        osc.type = 'sine';
+        osc.start();
+        setTimeout(() => { osc.frequency.value = 800; }, 150);
+        setTimeout(() => { osc.frequency.value = 1000; }, 300);
+        setTimeout(() => { osc.stop(); ctx.close(); }, 500);
+      } else if (type === 'paid') {
+        osc.frequency.value = 523;
+        osc.type = 'sine';
+        osc.start();
+        setTimeout(() => { osc.frequency.value = 659; }, 150);
+        setTimeout(() => { osc.frequency.value = 784; }, 300);
+        setTimeout(() => { osc.frequency.value = 1047; }, 450);
+        setTimeout(() => { osc.stop(); ctx.close(); }, 650);
+      } else {
+        osc.frequency.value = 400;
+        osc.type = 'triangle';
+        osc.start();
+        setTimeout(() => { osc.frequency.value = 300; }, 200);
+        setTimeout(() => { osc.stop(); ctx.close(); }, 400);
+      }
+    } catch (e) {
+      console.log('Audio not available');
+    }
+  }, []);
   const loadData = useCallback(async () => {
     const [salesData, toursData] = await Promise.all([
       fetchLovable<LovableSale>("sales"),
