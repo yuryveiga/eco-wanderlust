@@ -7,9 +7,70 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-/**
- * Creates an event in Google Calendar using a Service Account
- */
+// ---- Google Calendar JWT Auth (Deno-compatible) ----
+
+function base64url(data: Uint8Array): string {
+  let binary = "";
+  for (const byte of data) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64urlStr(str: string): string {
+  return base64url(new TextEncoder().encode(str));
+}
+
+async function importPrivateKey(pem: string): Promise<CryptoKey> {
+  const pemContents = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/g, "")
+    .replace(/-----END PRIVATE KEY-----/g, "")
+    .replace(/\s/g, "");
+  const binaryDer = Uint8Array.from(atob(pemContents), (c) => c.charCodeAt(0));
+  return crypto.subtle.importKey(
+    "pkcs8",
+    binaryDer,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+}
+
+async function createGoogleJWT(email: string, key: string, scopes: string[]): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const header = base64urlStr(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const payload = base64urlStr(JSON.stringify({
+    iss: email,
+    sub: email,
+    aud: "https://oauth2.googleapis.com/token",
+    iat: now,
+    exp: now + 3600,
+    scope: scopes.join(" "),
+  }));
+  const signingInput = `${header}.${payload}`;
+  const privateKey = await importPrivateKey(key);
+  const signature = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    privateKey,
+    new TextEncoder().encode(signingInput)
+  );
+  return `${signingInput}.${base64url(new Uint8Array(signature))}`;
+}
+
+async function getAccessToken(email: string, key: string): Promise<string> {
+  const jwt = await createGoogleJWT(email, key, [
+    "https://www.googleapis.com/auth/calendar.events",
+  ]);
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+  if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
+  const data = await res.json();
+  return data.access_token;
+}
+
+// ---- Google Calendar Event Creation ----
+
 async function createGoogleCalendarEvent(sale: Record<string, any>) {
   const GOOGLE_EMAIL = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL");
   const GOOGLE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY")?.replace(/\\n/g, "\n");
@@ -21,42 +82,16 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
   }
 
   try {
-    // 1. Get Access Token using JWT
-    const now = Math.floor(Date.now() / 1000);
-    const header = { alg: "RS256", typ: "JWT" };
-    const payload = {
-      iss: GOOGLE_EMAIL,
-      sub: GOOGLE_EMAIL,
-      aud: "https://oauth2.googleapis.com/token",
-      iat: now,
-      exp: now + 3600,
-      scope: "https://www.googleapis.com/auth/calendar.events",
-    };
+    const token = await getAccessToken(GOOGLE_EMAIL, GOOGLE_KEY);
 
-    // We use a helper or manual signing here. 
-    // For simplicity in this demo environment, we'll assume the user will configure a bridge 
-    // or we can use a library if available. 
-    // However, to be "ready" as requested, I'll implement the logic using a standard library.
-    
-    const { JWT } = await import("https://esm.sh/google-auth-library@9?target=deno");
-    const client = new JWT({
-      email: GOOGLE_EMAIL,
-      key: GOOGLE_KEY,
-      scopes: ["https://www.googleapis.com/auth/calendar.events"],
-    });
-
-    const token = await client.getAccessToken();
-    
-    // 2. Clear date formatting
     const startDate = new Date(sale.selected_date);
-    // Adjust time based on period
     if (sale.selected_period === "Manhã") startDate.setHours(9, 0, 0);
     else if (sale.selected_period === "Tarde") startDate.setHours(14, 0, 0);
     else if (sale.selected_period === "Noite") startDate.setHours(19, 0, 0);
     else startDate.setHours(10, 0, 0);
 
     const endDate = new Date(startDate);
-    endDate.setHours(startDate.getHours() + 4); // Default 4 hours duration
+    endDate.setHours(startDate.getHours() + 4);
 
     const event = {
       summary: `Reserva: ${sale.tour_title} - ${sale.customer_name}`,
@@ -77,15 +112,15 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
         dateTime: endDate.toISOString(),
         timeZone: "America/Sao_Paulo",
       },
-      colorId: "2", // Sage color
+      colorId: "2",
     };
 
     const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events`,
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token.token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(event),
@@ -103,6 +138,8 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
     console.error("Error creating Google Calendar event:", message);
   }
 }
+
+// ---- Stripe Webhook Handler ----
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -150,7 +187,6 @@ serve(async (req) => {
         console.log(`Processing payment for sales: ${saleIds.join(", ")}`);
 
         for (const id of saleIds) {
-          // 1. Mark as paid
           const { data: sale, error: updateError } = await supabase
             .from("sales")
             .update({ is_paid: true })
@@ -164,8 +200,6 @@ serve(async (req) => {
           }
 
           console.log(`Sale ${id} marked as paid. Creating Calendar event...`);
-
-          // 2. Create Google Calendar Appointment
           await createGoogleCalendarEvent(sale);
         }
       }
