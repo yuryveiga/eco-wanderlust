@@ -7,9 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour } from "@/integrations/lovable/client";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare, CreditCard } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
+import StripeCheckoutDialog from "@/components/admin/StripeCheckoutDialog";
 
 const AdminSales = () => {
   const [sales, setSales] = useState<LovableSale[]>([]);
@@ -18,6 +19,7 @@ const AdminSales = () => {
   const [editing, setEditing] = useState<Partial<LovableSale> | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
+  const [stripeDialogOpen, setStripeDialogOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'paid' | 'cancelled' | 'archived'>('all');
   const { toast } = useToast();
   const salesRef = useRef<LovableSale[]>([]);
@@ -230,11 +232,16 @@ const AdminSales = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-3xl font-bold text-foreground">Vendas</h1>
-        {selectedIds.size > 0 && (
-          <Button variant="destructive" onClick={deleteSelected}>
-            <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
+        <div className="flex gap-2">
+          <Button onClick={() => setStripeDialogOpen(true)} variant="outline" className="border-primary text-primary hover:bg-primary/10">
+            <CreditCard className="w-4 h-4 mr-2" /> Criar link do Stripe
           </Button>
-        )}
+          {selectedIds.size > 0 && (
+            <Button variant="destructive" onClick={deleteSelected}>
+              <Trash2 className="w-4 h-4 mr-2" />Excluir ({selectedIds.size})
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Filters */}
