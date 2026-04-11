@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,13 +97,16 @@ const AdminLogin = () => {
                 {isLoading ? "Carregando..." : "Entrar"}
               </Button>
             </form>
-            <div className="mt-4 text-center">
+            <div className="mt-4 flex items-center justify-between">
               <button
                 onClick={() => setShowForgot(true)}
                 className="text-sm text-primary hover:underline font-sans"
               >
                 Esqueci minha senha
               </button>
+              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground font-sans inline-flex items-center gap-1">
+                <ArrowLeft className="w-3 h-3" /> Voltar para Home
+              </Link>
             </div>
           </>
         ) : (
