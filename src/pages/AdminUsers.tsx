@@ -123,6 +123,38 @@ const AdminUsers = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Trocar Senha</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground font-sans">
+              Enviando link de redefinição de senha para: <strong>{resetEmail}</strong>
+            </p>
+            <Button
+              onClick={async () => {
+                setIsResetting(true);
+                const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+                  redirectTo: `${window.location.origin}/admin/reset-password`,
+                });
+                if (error) {
+                  toast({ title: "Erro", description: error.message, variant: "destructive" });
+                } else {
+                  toast({ title: "Link enviado!", description: `Email de redefinição enviado para ${resetEmail}.` });
+                  setResetDialogOpen(false);
+                }
+                setIsResetting(false);
+              }}
+              className="w-full"
+              disabled={isResetting}
+            >
+              {isResetting ? "Enviando..." : "Enviar link de redefinição por email"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
