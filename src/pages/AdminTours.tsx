@@ -504,7 +504,7 @@ const AdminTours = () => {
                            <div className="space-y-2">
                               <Label className="text-[10px] uppercase font-bold text-muted-foreground">Endereço Completo / Local ({activeInfoLang.toUpperCase()})</Label>
                               <Input 
-                                 value={(activeInfoLang === 'pt' ? editing.meeting_point_address : editing[`meeting_point_address_${activeInfoLang}` as keyof LovableTour]) ?? ""} 
+                                 value={String((activeInfoLang === 'pt' ? editing.meeting_point_address : editing[`meeting_point_address_${activeInfoLang}` as keyof LovableTour]) ?? "")} 
                                  onChange={(e) => setEditing({ ...editing, [activeInfoLang === 'pt' ? 'meeting_point_address' : `meeting_point_address_${activeInfoLang}`]: e.target.value })} 
                                  placeholder="Rua Visconde de Pirajá, 123, Ipanema" 
                                  className="h-12"
