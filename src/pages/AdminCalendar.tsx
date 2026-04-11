@@ -234,6 +234,12 @@ const AdminCalendar = () => {
           </p>
         </CardContent>
       </Card>
+
+      <SaleDetailDialog
+        sale={viewingSale}
+        open={!!viewingSale}
+        onClose={() => setViewingSale(null)}
+      />
     </div>
   );
 };
