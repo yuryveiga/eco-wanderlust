@@ -387,36 +387,40 @@ export function TourDetail() {
                  </div>
                )}
 
-               {/* Tour Photo Gallery Carousel */}
-               {images.length > 1 && (
-                 <div className="space-y-6">
-                   <h2 className="text-2xl font-serif font-bold flex items-center gap-3">
-                     <div className="w-2 h-8 bg-primary rounded-full" />
-                     {t("galeria_fotos") || "Galeria de Fotos"}
-                   </h2>
-                   <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-                     <CarouselContent className="-ml-4">
-                       {images.map((img, i) => (
-                         <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/3">
-                           <div 
-                             className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm"
-                             onClick={() => openLightbox(i)}
-                           >
-                             <img 
-                               src={getOptimizedImage(img, 600)} 
-                               alt={`${translatedTitle} ${i + 1}`} 
-                               className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
-                               loading="lazy"
-                             />
-                           </div>
-                         </CarouselItem>
-                       ))}
-                     </CarouselContent>
-                     <CarouselPrevious className="-left-4 bg-card shadow-lg" />
-                     <CarouselNext className="-right-4 bg-card shadow-lg" />
-                   </Carousel>
-                 </div>
-               )}
+               {/* Tour Photo Gallery Carousel - uses carousel_images_json */}
+               {(() => {
+                 const carouselImgs = (tour as any)?.carousel_images_json as string[] || [];
+                 if (carouselImgs.length === 0) return null;
+                 return (
+                   <div className="space-y-6">
+                     <h2 className="text-2xl font-serif font-bold flex items-center gap-3">
+                       <div className="w-2 h-8 bg-primary rounded-full" />
+                       {t("galeria_fotos") || "Galeria de Fotos"}
+                     </h2>
+                     <Carousel opts={{ loop: true, align: "start" }} className="w-full">
+                       <CarouselContent className="-ml-4">
+                         {carouselImgs.map((img: string, i: number) => (
+                           <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/3">
+                             <div 
+                               className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm"
+                               onClick={() => openLightbox(i)}
+                             >
+                               <img 
+                                 src={getOptimizedImage(img, 600)} 
+                                 alt={`${translatedTitle} ${i + 1}`} 
+                                 className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
+                                 loading="lazy"
+                               />
+                             </div>
+                           </CarouselItem>
+                         ))}
+                       </CarouselContent>
+                       <CarouselPrevious className="-left-4 bg-card shadow-lg" />
+                       <CarouselNext className="-right-4 bg-card shadow-lg" />
+                     </Carousel>
+                   </div>
+                 );
+               })()}
 
                {/* YouTube Video */}
                {tour.youtube_video_url && (
