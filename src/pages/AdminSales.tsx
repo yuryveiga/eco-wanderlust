@@ -87,6 +87,7 @@ const AdminSales = () => {
         const old = salesRef.current.find(s => s.id === updated.id);
         
         if (updated.is_paid && old && !old.is_paid) {
+          playNotificationSound('paid');
           sonnerToast.success("💰 Pagamento confirmado!", {
             description: `${updated.customer_name} - ${updated.tour_title || "Passeio"} - R$ ${updated.total_price}`,
             duration: 10000,
