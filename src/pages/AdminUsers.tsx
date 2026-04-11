@@ -82,6 +82,9 @@ const AdminUsers = () => {
                   <p className="text-sm text-muted-foreground font-sans capitalize">{profile.role}</p>
                 </div>
                 <div className="flex gap-2">
+                  <Button variant="outline" size="icon" title="Trocar senha" onClick={() => { setResetEmail(profile.email); setResetNewPassword(""); setResetDialogOpen(true); }}>
+                    <KeyRound className="w-4 h-4 text-primary" />
+                  </Button>
                   <Button variant="outline" size="icon" onClick={() => handleDelete(profile.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
