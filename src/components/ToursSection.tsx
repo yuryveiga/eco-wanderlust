@@ -24,6 +24,8 @@ type TourCardProps = {
   category_en?: string;
   category_es?: string;
   external_url?: string;
+  pricing_model?: 'fixed' | 'dynamic';
+  price_1_person?: number;
 };
 
 const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
@@ -75,9 +77,11 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         )}
         <div className="flex items-center justify-between">
           <div>
-            {tour.price > 0 && (
+            {(tour.price > 0 || (tour.pricing_model === 'dynamic' && tour.price_1_person && tour.price_1_person > 0)) && (
               <>
-                <span className="text-2xl font-bold text-primary font-sans">{formatPrice(tour.price)}</span>
+                <span className="text-2xl font-bold text-primary font-sans">
+                  {formatPrice(tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price)}
+                </span>
                 <span className="text-muted-foreground text-sm font-sans"> / {t("por_pessoa")}</span>
               </>
             )}

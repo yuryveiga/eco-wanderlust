@@ -745,22 +745,97 @@ const AdminTours = () => {
 
                   <TabsContent value="settings" className="m-0 space-y-10">
                     {!editing.external_url ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div className="space-y-3">
-                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Valor por Pessoa (R$)</Label>
-                        <Input type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="h-14 font-black text-2xl rounded-2xl" />
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-8 bg-muted/20 p-6 rounded-3xl border">
+                        <div className="space-y-1">
+                          <Label className="font-black text-xs uppercase tracking-widest text-primary">Modelo de Precificação</Label>
+                          <p className="text-[10px] text-muted-foreground">Escolha entre valor fixo por pessoa ou faixas por grupo.</p>
+                        </div>
+                        <div className="flex bg-background p-1 rounded-xl border">
+                          <button
+                            onClick={() => setEditing({ ...editing, pricing_model: 'fixed' })}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model !== 'dynamic' ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
+                          >
+                            VALOR FIXO
+                          </button>
+                          <button
+                            onClick={() => setEditing({ ...editing, pricing_model: 'dynamic' })}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model === 'dynamic' ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
+                          >
+                            VALOR DINÂMICO
+                          </button>
+                        </div>
                       </div>
-                      <div className="space-y-3">
-                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Tempo Estimado</Label>
-                        <Input value={editing.duration ?? ""} onChange={(e) => setEditing({ ...editing, duration: e.target.value })} className="h-14 rounded-2xl" />
+
+                      {editing.pricing_model === 'dynamic' ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-primary/5 p-6 rounded-3xl border border-primary/10">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground">Valor 1 Pessoa (R$)</Label>
+                            <Input type="number" value={editing.price_1_person ?? 0} onChange={(e) => setEditing({ ...editing, price_1_person: Number(e.target.value) })} className="h-12 font-bold" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground">Valor 2 Pessoas (R$)</Label>
+                            <Input type="number" value={editing.price_2_people ?? 0} onChange={(e) => setEditing({ ...editing, price_2_people: Number(e.target.value) })} className="h-12 font-bold" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground">Valor 3 a 6 Pessoas (R$)</Label>
+                            <Input type="number" value={editing.price_3_6_people ?? 0} onChange={(e) => setEditing({ ...editing, price_3_6_people: Number(e.target.value) })} className="h-12 font-bold" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground">Valor 7 a 19 Pessoas (R$)</Label>
+                            <Input type="number" value={editing.price_7_19_people ?? 0} onChange={(e) => setEditing({ ...editing, price_7_19_people: Number(e.target.value) })} className="h-12 font-bold" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                          <div className="space-y-3">
+                            <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Valor Fixo por Pessoa (R$)</Label>
+                            <Input type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="h-14 font-black text-2xl rounded-2xl" />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-3">
+                          <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Tempo Estimado</Label>
+                          <Input value={editing.duration ?? ""} onChange={(e) => setEditing({ ...editing, duration: e.target.value })} className="h-14 rounded-2xl" />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Nivel de Dificuldade</Label>
+                          <Input value={editing.difficulty ?? ""} onChange={(e) => setEditing({ ...editing, difficulty: e.target.value })} placeholder="ex: Leve, Moderada..." className="h-14 rounded-2xl font-bold text-primary" />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Vagas do Grupo (Máximo)</Label>
+                          <Input type="number" value={editing.max_group_size ?? 1} onChange={(e) => setEditing({ ...editing, max_group_size: Number(e.target.value) })} className="h-14 rounded-2xl" />
+                        </div>
                       </div>
-                      <div className="space-y-3">
-                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Nivel de Dificuldade</Label>
-                        <Input value={editing.difficulty ?? ""} onChange={(e) => setEditing({ ...editing, difficulty: e.target.value })} placeholder="ex: Leve, Moderada..." className="h-14 rounded-2xl font-bold text-primary" />
-                      </div>
-                      <div className="space-y-3">
-                        <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Vagas do Grupo</Label>
-                        <Input type="number" value={editing.max_group_size ?? 1} onChange={(e) => setEditing({ ...editing, max_group_size: Number(e.target.value) })} className="h-14 rounded-2xl" />
+
+                      <div className="space-y-4 pt-6 border-t font-sans">
+                        <Label className="font-black text-xs uppercase tracking-widest text-primary">Dias Disponíveis na Semana</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { l: 'Dom', v: '0' }, { l: 'Seg', v: '1' }, { l: 'Ter', v: '2' }, 
+                            { l: 'Qua', v: '3' }, { l: 'Qui', v: '4' }, { l: 'Sex', v: '5' }, { l: 'Sáb', v: '6' }
+                          ].map(day => {
+                            const isSelected = editing.available_days?.includes(day.v);
+                            return (
+                              <button
+                                key={day.v}
+                                onClick={() => {
+                                  const current = editing.available_days || [];
+                                  const next = isSelected 
+                                    ? current.filter(d => d !== day.v) 
+                                    : [...current, day.v];
+                                  setEditing({ ...editing, available_days: next });
+                                }}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${isSelected ? 'bg-primary border-primary text-white shadow-lg scale-105' : 'bg-background border-border text-muted-foreground hover:border-primary/50'}`}
+                              >
+                                {day.l}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">Apenas os dias selecionados acima poderão ser reservados no calendário pelo cliente.</p>
                       </div>
                     </div>
                     ) : (
@@ -780,10 +855,6 @@ const AdminTours = () => {
                                 <Label className="font-bold">Permitir Privado</Label>
                                 <Switch checked={editing.allows_private ?? true} onCheckedChange={(v) => setEditing({ ...editing, allows_private: v })} />
                             </div>
-                            <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between opacity-50">
-                                <Label className="font-bold">Grupo Aberto (inativo)</Label>
-                                <Switch checked={false} disabled />
-                            </div>
                           </>
                         )}
                         <div className="bg-muted/30 p-6 rounded-3xl border flex items-center justify-between">
@@ -792,24 +863,6 @@ const AdminTours = () => {
                         </div>
                     </div>
 
-                     {!editing.external_url && (
-                    <div className="space-y-6 pt-10 border-t pb-10">
-                       <Label className="font-black text-xs uppercase tracking-widest text-primary block mb-6">Turnos</Label>
-                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
-                             <div className="flex items-center gap-3"><Sunrise className="w-5" /><Label className="font-bold">Manhã</Label></div>
-                             <Switch checked={editing.has_morning ?? true} onCheckedChange={(v) => setEditing({ ...editing, has_morning: v })} />
-                          </div>
-                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
-                             <div className="flex items-center gap-3"><Sun className="w-5" /><Label className="font-bold">Tarde</Label></div>
-                             <Switch checked={editing.has_afternoon ?? false} onCheckedChange={(v) => setEditing({ ...editing, has_afternoon: v })} />
-                          </div>
-                          <div className="flex items-center justify-between bg-muted/40 p-4 rounded-2xl">
-                             <div className="flex items-center gap-3"><Moon className="w-5" /><Label className="font-bold">Noite</Label></div>
-                             <Switch checked={editing.has_night ?? false} onCheckedChange={(v) => setEditing({ ...editing, has_night: v })} />
-                          </div>
-                       </div>
-                    </div>
                      )}
                   </TabsContent>
                 </div>

@@ -167,6 +167,12 @@ export type LovableTour = {
   youtube_video_url?: string;
   external_url?: string;
   carousel_images_json?: string[];
+  pricing_model?: 'fixed' | 'dynamic';
+  price_1_person?: number;
+  price_2_people?: number;
+  price_3_6_people?: number;
+  price_7_19_people?: number;
+  available_days?: string[];
 };
 
 export type LovablePage = {

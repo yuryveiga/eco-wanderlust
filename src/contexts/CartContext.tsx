@@ -10,6 +10,11 @@ export interface CartItem {
   period: string;
   isPrivate: boolean;
   quantity: number;
+  pricing_model?: 'fixed' | 'dynamic';
+  price_1_person?: number;
+  price_2_people?: number;
+  price_3_6_people?: number;
+  price_7_19_people?: number;
 }
 
 interface CartContextType {
@@ -55,11 +60,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateQuantity = (id: string, date: string, period: string, quantity: number) => {
-    setItems(prev => prev.map(i => 
-      i.id === id && i.date === date && i.period === period 
-        ? { ...i, quantity } 
-        : i
-    ));
+    setItems(prev => prev.map(i => {
+      if (i.id === id && i.date === date && i.period === period) {
+        let newPrice = i.price;
+        if (i.pricing_model === 'dynamic') {
+          if (quantity === 1) newPrice = i.price_1_person || 0;
+          else if (quantity === 2) newPrice = i.price_2_people || 0;
+          else if (quantity >= 3 && quantity <= 6) newPrice = i.price_3_6_people || 0;
+          else if (quantity >= 7) newPrice = i.price_7_19_people || 0;
+        }
+        return { ...i, quantity, price: newPrice };
+      }
+      return i;
+    }));
   };
 
   const clearCart = () => setItems([]);
