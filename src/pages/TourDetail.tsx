@@ -506,7 +506,10 @@ export function TourDetail() {
 
                    <div className="space-y-6">
                      <div className="space-y-3">
-                        <label className="text-xs font-black uppercase text-muted-foreground">{t("quantas_pessoas")}</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-black uppercase text-muted-foreground">{t("quantas_pessoas")}</label>
+                          <span className="text-xs font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
+                        </div>
                         <div className="flex items-center justify-between p-2 bg-muted/50 rounded-2xl border">
                           <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-4 h-4" /></Button>
                           <span className="font-black text-xl">{quantity}</span>
