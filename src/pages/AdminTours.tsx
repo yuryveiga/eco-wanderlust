@@ -862,8 +862,6 @@ const AdminTours = () => {
                             <Switch checked={editing.is_featured ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_featured: v })} />
                         </div>
                     </div>
-
-                     )}
                   </TabsContent>
                 </div>
                 
