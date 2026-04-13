@@ -14,8 +14,10 @@ const AdminUsers = () => {
   const [profiles, setProfiles] = useState<LovableProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("user");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -36,15 +38,39 @@ const AdminUsers = () => {
   };
 
   const handleCreate = async () => {
-    if (!newEmail) return;
+    if (!newEmail || !newPassword) {
+      toast({ title: "Email e senha são obrigatórios", variant: "destructive" });
+      return;
+    }
+    
+    setIsCreating(true);
     try {
-      await insertLovable("profiles", { email: newEmail, role: newRole });
-      toast({ title: "Usuário cadastrado!" });
+      const { data, error } = await supabase.functions.invoke("admin-management", {
+        body: { 
+          action: "create_user", 
+          email: newEmail, 
+          password: newPassword,
+          role: newRole 
+        }
+      });
+
+      if (error || data.error) {
+        throw new Error(error?.message || data?.error || "Erro ao criar usuário");
+      }
+
+      toast({ title: "Usuário cadastrado com sucesso!" });
       setNewEmail("");
+      setNewPassword("");
       setIsDialogOpen(false);
       loadProfiles();
-    } catch {
-      toast({ title: "Erro ao criar", variant: "destructive" });
+    } catch (error: any) {
+      toast({ 
+        title: "Erro ao criar", 
+        description: error.message, 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -129,6 +155,10 @@ const AdminUsers = () => {
               <Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="email@exemplo.com" />
             </div>
             <div className="space-y-2">
+              <Label>Senha Inicial</Label>
+              <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" />
+            </div>
+            <div className="space-y-2">
               <Label>Nível de Acesso (Role)</Label>
               <select 
                 className="w-full bg-background border rounded-md p-2 font-sans"
@@ -140,9 +170,11 @@ const AdminUsers = () => {
               </select>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Nota: O usuário deve utilizar este e-mail para acessar o painel.
+              Nota: O usuário deve utilizar este e-mail e senha para acessar o painel.
             </p>
-            <Button onClick={handleCreate} className="w-full mt-4">Salvar Usuário</Button>
+            <Button onClick={handleCreate} className="w-full mt-4" disabled={isCreating}>
+              {isCreating ? "Cadastrando..." : "Salvar Usuário"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -160,28 +192,76 @@ const AdminUsers = () => {
             <DialogTitle className="font-serif">Trocar Senha</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground font-sans">
-              Enviando link de redefinição de senha para: <strong>{resetEmail}</strong>
-            </p>
-            <Button
-              onClick={async () => {
-                setIsResetting(true);
-                const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-                  redirectTo: `${window.location.origin}/admin/reset-password`,
-                });
-                if (error) {
-                  toast({ title: "Erro", description: error.message, variant: "destructive" });
-                } else {
-                  toast({ title: "Link enviado!", description: `Email de redefinição enviado para ${resetEmail}.` });
-                  setResetDialogOpen(false);
-                }
-                setIsResetting(false);
-              }}
-              className="w-full"
-              disabled={isResetting}
-            >
-              {isResetting ? "Enviando..." : "Enviar link de redefinição por email"}
-            </Button>
+            <div className="space-y-2">
+              <Label>Nova Senha para {resetEmail}</Label>
+              <Input 
+                type="password" 
+                value={resetNewPassword} 
+                onChange={(e) => setResetNewPassword(e.target.value)} 
+                placeholder="Digite a nova senha" 
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                onClick={async () => {
+                  if (!resetNewPassword || resetNewPassword.length < 6) {
+                    toast({ title: "Senha inválida", description: "A senha deve ter pelo menos 6 caracteres.", variant: "destructive" });
+                    return;
+                  }
+                  setIsResetting(true);
+                  try {
+                    const { data, error } = await supabase.functions.invoke("admin-management", {
+                      body: { 
+                        action: "update_password", 
+                        email: resetEmail, 
+                        password: resetNewPassword 
+                      }
+                    });
+
+                    if (error || data.error) throw new Error(error?.message || data?.error || "Erro ao atualizar senha");
+
+                    toast({ title: "Senha alterada!", description: `A senha de ${resetEmail} foi imposta com sucesso.` });
+                    setResetDialogOpen(false);
+                    setResetNewPassword("");
+                  } catch (error: any) {
+                    toast({ title: "Erro", description: error.message, variant: "destructive" });
+                  } finally {
+                    setIsResetting(false);
+                  }
+                }}
+                className="w-full"
+                disabled={isResetting}
+              >
+                {isResetting ? "Salvando..." : "Impor Nova Senha Agora"}
+              </Button>
+
+              <div className="relative py-2">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou</span></div>
+              </div>
+
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  setIsResetting(true);
+                  const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+                    redirectTo: `${window.location.origin}/admin/reset-password`,
+                  });
+                  if (error) {
+                    toast({ title: "Erro", description: error.message, variant: "destructive" });
+                  } else {
+                    toast({ title: "Link enviado!", description: `Email de redefinição enviado para ${resetEmail}.` });
+                    setResetDialogOpen(false);
+                  }
+                  setIsResetting(false);
+                }}
+                className="w-full"
+                disabled={isResetting}
+              >
+                Enviar link de redefinição por email
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
