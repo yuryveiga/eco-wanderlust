@@ -18,7 +18,11 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Maximize2, X } from "lucide-react";
+import { Maximize2, X, Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format, parseISO, isPast, isToday } from "date-fns";
+import { ptBR, enUS, es } from "date-fns/locale";
 
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
@@ -523,7 +527,53 @@ export function TourDetail() {
 
                      <div className="space-y-3">
                         <label className="text-xs font-black uppercase text-muted-foreground">{t("data_viagem")}</label>
-                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full p-4 rounded-2xl border bg-background font-bold text-sm focus:ring-2 ring-primary outline-none transition-all" />
+                         <Popover>
+                           <PopoverTrigger asChild>
+                             <Button
+                               variant="outline"
+                               className={`w-full h-14 rounded-2xl border bg-background font-bold text-sm justify-start gap-3 px-4 shadow-none hover:bg-muted/30 transition-colors ${!selectedDate && "text-muted-foreground"}`}
+                             >
+                               <CalendarIcon className="w-5 h-5 text-primary" />
+                               {selectedDate ? format(parseISO(selectedDate), "PPP", { locale: language === 'pt' ? ptBR : language === 'es' ? es : enUS }) : t("selecione_data")}
+                             </Button>
+                           </PopoverTrigger>
+                           <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden shadow-2xl border-primary/10" align="start">
+                             <CalendarUI
+                               mode="single"
+                               selected={selectedDate ? parseISO(selectedDate) : undefined}
+                               onSelect={(date) => {
+                                 if (date) {
+                                   setSelectedDate(format(date, "yyyy-MM-dd"));
+                                 }
+                               }}
+                               disabled={(date) => {
+                                 // Disable past dates
+                                 if (isPast(date) && !isToday(date)) return true;
+                                 
+                                 // Disable days not in available_days (if configured)
+                                 if (tour?.available_days && tour.available_days.length > 0) {
+                                   const dayOfWeek = date.getDay().toString();
+                                   return !tour.available_days.includes(dayOfWeek);
+                                 }
+                                 return false;
+                               }}
+                               initialFocus
+                               className="font-sans"
+                             />
+                           </PopoverContent>
+                         </Popover>
+                         
+                         {tour?.available_days && tour.available_days.length > 0 && (
+                           <p className="text-[10px] text-muted-foreground px-1 font-medium">
+                             {t("disponivel_em") || "Disponível aos:"} {
+                               [...tour.available_days]
+                                 .sort()
+                                 .map(d => [t("dom"), t("seg"), t("ter"), t("qua"), t("qui"), t("sex"), t("sab")][parseInt(d)])
+                                 .join(", ")
+                             }
+                           </p>
+                         )}
+
                      </div>
 
                      {weather && (
