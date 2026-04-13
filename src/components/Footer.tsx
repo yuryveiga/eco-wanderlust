@@ -48,6 +48,11 @@ export function Footer() {
   
   const contactEmail = emailSocial?.url || "";
   const contactPhone = phoneSocial?.url || whatsappSocial?.url || "";
+  
+  const cleanPhone = contactPhone.replace(/[^\d+]/g, "");
+  const waLink = contactPhone.startsWith('http') 
+    ? contactPhone 
+    : (whatsappSocial ? `https://wa.me/${cleanPhone.replace('+', '')}` : `tel:${cleanPhone}`);
 
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
 
@@ -95,7 +100,9 @@ export function Footer() {
               {contactPhone && (
                 <li className="flex items-center gap-2 text-[hsl(140,10%,96%)]/80 text-sm">
                   <Phone className="w-4 h-4 text-[hsl(145,40%,40%)]" />
-                  <a href={contactPhone.startsWith('http') ? contactPhone : `tel:${contactPhone.replace(/[^\d]/g, '')}`} className="hover:text-[hsl(145,40%,40%)] transition-colors">{contactPhone.replace(/https?:\/\//, '')}</a>
+                  <a href={waLink} target="_blank" rel="noopener noreferrer" className="hover:text-[hsl(145,40%,40%)] transition-colors">
+                    {contactPhone.replace(/https?:\/\/(wa\.me\/)?/, '')}
+                  </a>
                 </li>
               )}
               {!contactEmail && !contactPhone && (

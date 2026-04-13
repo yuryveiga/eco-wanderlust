@@ -20,8 +20,10 @@ export function ContactSection() {
   
   const contactEmail = emailSocial?.url || "";
   const contactPhone = whatsappSocial?.url || "";
-  const cleanPhone = contactPhone ? contactPhone.replace(/[^\d]/g, "") : "";
-  const waLink = cleanPhone ? (contactPhone.startsWith('http') ? contactPhone : `https://wa.me/${cleanPhone}`) : "";
+  const cleanPhone = contactPhone.replace(/[^\d+]/g, "");
+  const waLink = contactPhone.startsWith('http') 
+    ? contactPhone 
+    : `https://wa.me/${cleanPhone.replace('+', '')}`;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

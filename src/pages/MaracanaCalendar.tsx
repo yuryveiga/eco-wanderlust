@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { MapPin, ArrowRight, Bus, Ticket, UserCheck, Clock, Camera, Users, ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { useSiteData } from "@/hooks/useSiteData";
 
 const localeMap: Record<string, any> = { pt: ptBR, en: enUS, es };
 
@@ -24,6 +25,7 @@ const weekDaysByLang: Record<string, string[]> = {
 const MaracanaCalendar = () => {
   const { language, t, formatPrice } = useLocale();
   const { data: matches, isLoading } = useMatches();
+  const { socialMedia } = useSiteData();
   const locale = localeMap[language] || enUS;
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -289,15 +291,26 @@ const MaracanaCalendar = () => {
                 <p className="text-sm font-medium mb-4 text-muted-foreground uppercase tracking-widest">
                   {language === 'pt' ? 'Dúvidas? Fale conosco' : 'Questions? Talk to us'}
                 </p>
-                <a 
-                  href="https://wa.me/5521995624596" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20ba59] text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg hover:scale-105"
-                >
-                  <ArrowRight className="h-5 w-5" />
-                  WHATSAPP DIRECT
-                </a>
+                {(() => {
+                  const whatsapp = socialMedia.find(s => s.platform.toLowerCase().includes('whatsapp'));
+                  const contactUrl = whatsapp?.url || "https://wa.me/5521995624596";
+                  const cleanNumber = contactUrl.replace(/[^\d+]/g, "");
+                  const waLink = contactUrl.startsWith('http') 
+                    ? contactUrl 
+                    : `https://wa.me/${cleanNumber.replace('+', '')}`;
+                  
+                  return (
+                    <a 
+                      href={waLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20ba59] text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg hover:scale-105"
+                    >
+                      <ArrowRight className="h-5 w-5" />
+                      WHATSAPP DIRECT
+                    </a>
+                  );
+                })()}
               </div>
             </div>
           </motion.div>
