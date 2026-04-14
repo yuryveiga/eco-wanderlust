@@ -11,6 +11,7 @@ import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
 import { TourCard, TourCardProps } from "@/components/ToursSection";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import "react-quill-new/dist/quill.snow.css";
 
 const BlogPost = () => {
@@ -284,16 +285,33 @@ const BlogPost = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(() => {
-                const recommended = tours
-                  .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
-                  .slice(0, 3);
-                  
-                return recommended.map((tour) => (
-                  <TourCard key={tour.id} tour={tour as TourCardProps} />
-                ));
-              })()}
+            <div className="px-4 md:px-12">
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-4">
+                  {(() => {
+                    const sortedTours = tours
+                      .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+                      
+                    return sortedTours.map((tour) => (
+                      <CarouselItem key={tour.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
+                        <div className="p-1">
+                          <TourCard tour={tour as TourCardProps} />
+                        </div>
+                      </CarouselItem>
+                    ));
+                  })()}
+                </CarouselContent>
+                <div className="hidden md:block">
+                  <CarouselPrevious className="-left-12 lg:-left-16 w-12 h-12 bg-white/80 hover:bg-white shadow-lg border-primary/20" />
+                  <CarouselNext className="-right-12 lg:-right-16 w-12 h-12 bg-white/80 hover:bg-white shadow-lg border-primary/20" />
+                </div>
+              </Carousel>
             </div>
             
             <div className="mt-12 text-center">
