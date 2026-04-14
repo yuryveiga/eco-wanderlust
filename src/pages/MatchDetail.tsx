@@ -1,0 +1,362 @@
+import { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { 
+  Clock, Users, MapPin, Calendar, Check, ChevronLeft, 
+  ArrowRight, ShieldCheck, Bus, Ticket, Camera, Info,
+  Smartphone, CreditCard, ChevronDown, ChevronUp, Plus, Minus
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { createClient } from "@supabase/supabase-js";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { useLocale } from "@/contexts/LocaleContext";
+import { toast } from "sonner";
+import { format, parseISO } from "date-fns";
+import { ptBR, enUS, es } from "date-fns/locale";
+import { getMatchDateInRio, getMatchHour } from "@/lib/dateUtils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase as localSupabase } from "@/integrations/supabase/client";
+
+// Partner Project Config
+const MARACANA_PROJECT_URL = "https://mwxbskzggzznxvkwgrnz.supabase.co";
+const MARACANA_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13eGJza3pnZ3p6bnh2a3dncm56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNjE5OTUsImV4cCI6MjA4ODkzNzk5NX0.EFfaaN79uifOMgFdIZlQ5C8c-HQH-YodNGWf0MEcf9o";
+const partnerSupabase = createClient(MARACANA_PROJECT_URL, MARACANA_ANON_KEY);
+
+export default function MatchDetail() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { language, t, formatPrice } = useLocale();
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
+  const [quantity, setQuantity] = useState(1);
+
+  const { data: match, isLoading } = useQuery({
+    queryKey: ["partner-match", id],
+    queryFn: async () => {
+      if (!id) return null;
+      
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+      let query = partnerSupabase.from("matches").select("*");
+      
+      if (isUuid) {
+        query = query.eq("id", id);
+      } else {
+        query = query.eq("slug", id);
+      }
+      
+      const { data, error } = await query.single();
+      if (error) {
+         // Fallback mock for demo if not found in real DB
+         if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia") {
+            return {
+               id: "mock-match-1",
+               home_team: "Flamengo",
+               away_team: "Bahia",
+               match_date: new Date(Date.now() + 86400000 * 2).toISOString(),
+               venue: "Maracanã",
+               stadium: "Estádio Jornalista Mário Filho",
+               price: 490,
+               available_spots: 15,
+               sold_count: 5,
+               status: "available",
+               slug: id,
+               high_demand: true
+            };
+         }
+         throw error;
+      };
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  const handleCheckout = async () => {
+    if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
+      toast.error(language === 'pt' ? "Preencha todos os campos" : "Please fill all fields");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      // 1. Create sale record in TOCORIME database first
+      const { data: saleData, error: saleError } = await (localSupabase.from("sales") as any).insert({
+        tour_id: match.id,
+        tour_title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
+        tour_slug: match.slug,
+        customer_name: customerInfo.name,
+        customer_email: customerInfo.email,
+        customer_phone: customerInfo.whatsapp,
+        quantity: quantity,
+        total_price: match.price * quantity,
+        selected_date: format(new Date(match.match_date), "yyyy-MM-dd"),
+        selected_period: "match_time",
+        is_paid: false,
+        provider: "matchday" // Track that this is a partner sale
+      }).select("id").single();
+
+      if (saleError) throw saleError;
+
+      // 2. Call checkout function with PARTNER flavor
+      const response = await fetch(
+        "https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/create-checkout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            items: [{
+              title: `${match.home_team} x ${match.away_team}`,
+              price: match.price,
+              quantity: quantity,
+              date: format(new Date(match.match_date), "dd/MM/yyyy"),
+              period: getMatchHour(match.match_date),
+            }],
+            sale_ids: [saleData.id],
+            customer: customerInfo,
+            currency: "brl",
+            usePartnerStripe: true // FLAG PARA USAR O STRIPE DO SÓCIO
+          }),
+        }
+      );
+      
+      const sessionData = await response.json();
+      if (sessionData.url) {
+        window.location.href = sessionData.url;
+      } else {
+        throw new Error(sessionData.error || "Payment error");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(language === 'pt' ? "Erro ao processar pagamento" : "Error processing payment");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
+  if (!match) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">Jogo não encontrado</h1><Link to="/maracanacalendar"><Button className="mt-4">Voltar ao Calendário</Button></Link></div>;
+
+  const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
+  const matchDateRio = getMatchDateInRio(match.match_date);
+
+  const itinerary = [
+    {
+      icon: <Bus className="h-5 w-5" />,
+      title: t('busca_hotel'),
+      description: t('busca_hotel_desc'),
+    },
+    {
+      icon: <Ticket className="h-5 w-5" />,
+      title: t('entrada_expressa'),
+      description: t('entrada_expressa_desc'),
+    },
+    {
+      icon: <Camera className="h-5 w-5" />,
+      title: t('experiencia_imersiva'),
+      description: t('experiencia_imersiva_desc'),
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{match.home_team} x {match.away_team} | Maracanã Matchday Experience</title>
+        <meta name="description" content={`Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`} />
+      </Helmet>
+      
+      <Header />
+      
+      <main className="pt-24 pb-20">
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+           <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group">
+              <img 
+                src="/maracana-hero.jpg" 
+                alt="Maracanã Stadium" 
+                className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+              
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                 <div className="bg-primary/90 text-white text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-[0.3em] mb-6 animate-bounce">
+                    {t('experiencia_oficial')}
+                 </div>
+                 <h1 className="text-4xl md:text-7xl font-serif font-black text-white mb-4 tracking-tighter sm:flex items-center gap-6">
+                    <span>{match.home_team}</span>
+                    <span className="text-primary italic">X</span>
+                    <span>{match.away_team}</span>
+                 </h1>
+                 <p className="text-white/80 text-lg md:text-xl font-medium max-w-2xl">
+                    {format(matchDateRio, "PPPP", { locale: dateLocale })} • {getMatchHour(match.match_date)}
+                 </p>
+                 <div className="mt-8 flex items-center gap-4 text-white/60 text-sm font-bold uppercase tracking-widest">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    {match.venue || "Maracanã Stadium"}
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              
+              {/* Main Content */}
+              <div className="lg:col-span-2 space-y-16">
+                 <section className="space-y-6">
+                    <h2 className="text-3xl font-serif font-black flex items-center gap-4">
+                       <div className="w-2 h-10 bg-primary rounded-full" />
+                       {t('o_que_incluso')}
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                       <div className="p-6 rounded-3xl bg-secondary/30 border border-border/50 flex flex-col items-center text-center group hover:bg-primary/5 transition-colors">
+                          <Bus className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                          <h3 className="font-bold text-lg mb-2">{t('feat_transporte')}</h3>
+                          <p className="text-sm text-muted-foreground">{t('transporte_desc')}</p>
+                       </div>
+                       <div className="p-6 rounded-3xl bg-secondary/30 border border-border/50 flex flex-col items-center text-center group hover:bg-primary/5 transition-colors">
+                          <Ticket className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                          <h3 className="font-bold text-lg mb-2">{t('ingresso')}</h3>
+                          <p className="text-sm text-muted-foreground">{t('ingresso_setor')}</p>
+                       </div>
+                       <div className="p-6 rounded-3xl bg-secondary/30 border border-border/50 flex flex-col items-center text-center group hover:bg-primary/5 transition-colors">
+                          <Users className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                          <h3 className="font-bold text-lg mb-4">{t('guias_espec')}</h3>
+                          <p className="text-sm text-muted-foreground">{t('guia_desc')}</p>
+                       </div>
+                    </div>
+                 </section>
+
+                 <section className="space-y-10">
+                    <h2 className="text-3xl font-serif font-black flex items-center gap-4">
+                       <div className="w-2 h-10 bg-primary rounded-full" />
+                       {t('itinerario_jogo')}
+                    </h2>
+                    <div className="relative pl-8 space-y-12">
+                       <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary to-transparent" />
+                       {itinerary.map((step, i) => (
+                          <div key={i} className="relative">
+                             <div className="absolute -left-[29px] top-1 w-5 h-5 rounded-full bg-primary border-4 border-background ring-2 ring-primary/20 shadow-lg" />
+                             <div>
+                                <h4 className="font-bold text-xl mb-2">{step.title}</h4>
+                                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                             </div>
+                          </div>
+                       ))}
+                    </div>
+                 </section>
+              </div>
+
+              {/* Sidebar / Checkout */}
+              <div className="lg:col-span-1">
+                 <div className="sticky top-28 space-y-6">
+                    <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl overflow-hidden relative group">
+                       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+                       
+                       <div className="relative">
+                          <div className="flex justify-between items-start mb-8">
+                             <div>
+                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2">{t('valor_por_pessoa')}</span>
+                                <span className="text-5xl font-black text-primary">{formatPrice(match.price)}</span>
+                             </div>
+                             {match.high_demand && (
+                                <div className="bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded-full animate-pulse shadow-lg">
+                                   {t('alta_demanda')}
+                                </div>
+                             )}
+                          </div>
+
+                          <div className="space-y-6">
+                             <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('quantas_pessoas')}</label>
+                                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-2xl border">
+                                   <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="h-4 w-4" /></Button>
+                                   <span className="font-black text-xl">{quantity}</span>
+                                   <Button variant="ghost" size="icon" onClick={() => setQuantity(q => q+1)}><Plus className="h-4 w-4" /></Button>
+                                </div>
+                             </div>
+
+                             <div className="pt-6 border-t border-dashed border-border flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
+                                <span className="text-2xl font-black text-foreground">{formatPrice(match.price * quantity)}</span>
+                             </div>
+
+                             <Button 
+                                onClick={() => setIsBookingModalOpen(true)}
+                                size="lg" 
+                                className="w-full h-18 rounded-2xl font-black text-lg gap-4 shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all bg-primary hover:bg-primary/90"
+                             >
+                                <Ticket className="h-6 w-6" />
+                                {t('reservar_agora')}
+                                <ArrowRight className="h-5 w-5" />
+                             </Button>
+                          </div>
+
+                          <div className="mt-8 flex items-center gap-3 p-4 bg-muted/20 rounded-2xl border border-dashed text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                             <ShieldCheck className="h-6 w-6 text-green-600 shrink-0" />
+                             {t('venda_segura_sep')}
+                          </div>
+                       </div>
+                    </div>
+
+                    <div className="p-6 bg-secondary/20 rounded-2xl border flex items-center gap-4 group">
+                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
+                       </div>
+                       <div className="text-xs">
+                          <p className="font-bold text-foreground">{t('politica_cancelamento')}</p>
+                          <p className="text-muted-foreground">{t('politica_cancelamento_desc')}</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      {/* Booking Modal */}
+      <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-[2rem] p-8">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-3xl font-serif font-black text-foreground">{t('dados_reserva')}</DialogTitle>
+            <DialogDescription className="text-muted-foreground font-medium">
+               {t('dados_reserva_desc')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-8">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('nome_completo')}</Label>
+              <Input id="name" placeholder={t('seu_nome')} value={customerInfo.name} onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} className="h-12 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="whatsapp" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('wa_ddd')}</Label>
+              <Input id="whatsapp" placeholder="Ex: 21999999999" value={customerInfo.whatsapp} onChange={e => setCustomerInfo({...customerInfo, whatsapp: e.target.value})} className="h-12 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('email')}</Label>
+              <Input id="email" type="email" placeholder={t('seu_email')} value={customerInfo.email} onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})} className="h-12 rounded-xl" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+               className="w-full h-16 rounded-2xl font-black text-lg gap-2 shadow-xl shadow-primary/20 transition-all hover:scale-105" 
+               onClick={handleCheckout}
+               disabled={isProcessing}
+            >
+               {isProcessing ? t('processando') : t('ir_pagamento')}
+               {!isProcessing && <CreditCard className="ml-2 h-5 w-5" />}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

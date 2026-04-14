@@ -199,11 +199,25 @@ serve(async (req) => {
     let event;
 
     try {
+      // Try with primary secret first
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      console.error(`Webhook signature verification failed: ${message}`);
-      return new Response(`Webhook Error: ${message}`, { status: 400 });
+      // Fallback: try with partner secret if configured
+      const partnerWebhookSecret = Deno.env.get("PARTNER_STRIPE_WEBHOOK_SECRET");
+      if (partnerWebhookSecret) {
+        try {
+          console.log("Trying partner webhook secret validation...");
+          event = stripe.webhooks.constructEvent(body, signature, partnerWebhookSecret);
+        } catch (partnerErr: unknown) {
+          const message = partnerErr instanceof Error ? partnerErr.message : "Unknown error";
+          console.error(`Both webhook secret validations failed: ${message}`);
+          return new Response(`Webhook Error: ${message}`, { status: 400 });
+        }
+      } else {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        console.error(`Webhook signature verification failed: ${message}`);
+        return new Response(`Webhook Error: ${message}`, { status: 400 });
+      }
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);

@@ -165,7 +165,11 @@ const MaracanaCalendar = () => {
                       const isLastChance = hoursUntilMatch <= 48 && hoursUntilMatch > 0;
                       
                       return (
-                        <div key={match.id} className={`p-2 rounded-lg text-xs leading-tight border transition-all shadow-sm ${match.high_demand ? 'bg-orange-500/10 border-orange-500/30' : 'bg-primary/10 border-primary/30'}`}>
+                        <Link 
+                          key={match.id} 
+                          to={`/match/${match.slug || match.id}`}
+                          className={`block p-2 rounded-lg text-xs leading-tight border transition-all shadow-sm hover:scale-[1.02] active:scale-95 ${match.high_demand ? 'bg-orange-500/10 border-orange-500/30' : 'bg-primary/10 border-primary/30'}`}
+                        >
                           {isLastChance && (
                             <span className="block text-[8px] font-black text-destructive uppercase animate-pulse mb-1">
                               LAST CHANCE
@@ -183,7 +187,7 @@ const MaracanaCalendar = () => {
                               {displaySpots} {language === 'pt' ? 'vagas' : 'left'}
                             </span>
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>

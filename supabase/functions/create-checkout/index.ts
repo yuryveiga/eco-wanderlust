@@ -12,16 +12,27 @@ serve(async (req) => {
   }
 
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const { items, sale_ids, customer, currency = "brl", usePartnerStripe = false } = await req.json();
+
+    // Select Stripe Key
+    let stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (usePartnerStripe) {
+      const partnerKey = Deno.env.get("PARTNER_STRIPE_SECRET_KEY");
+      if (partnerKey) {
+        stripeKey = partnerKey;
+        console.log("Using Partner Stripe Key for match booking");
+      } else {
+        console.warn("PARTNER_STRIPE_SECRET_KEY not found, falling back to default");
+      }
+    }
+
     if (!stripeKey) {
-      throw new Error("STRIPE_SECRET_KEY not configured");
+      throw new Error("Stripe API key not configured");
     }
 
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
-
-    const { items, sale_ids, currency = "brl" } = await req.json();
 
     if (!items || items.length === 0) {
       return new Response(
@@ -30,7 +41,7 @@ serve(async (req) => {
       );
     }
 
-    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "https://eco-wanderlust.com.br";
+    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "https://tocorimerio.lovable.app";
 
     const lineItems = items.map((item: any) => ({
       price_data: {
@@ -44,14 +55,23 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
+    // Metadata for attribution
+    const metadata: any = {
+      sale_ids: JSON.stringify(sale_ids || []),
+      source_platform: "Tocorime Rio",
+      attribution_origin: "https://tocorime.com.br",
+    };
+
+    if (customer?.email) metadata.customer_email = customer.email;
+    if (customer?.whatsapp) metadata.customer_phone = customer.whatsapp;
+
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
       mode: "payment",
       success_url: `${origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(sale_ids))}`,
       cancel_url: `${origin}/carrinho?canceled=true`,
-      metadata: {
-        sale_ids: JSON.stringify(sale_ids || []),
-      },
+      customer_email: customer?.email,
+      metadata: metadata,
     });
 
     return new Response(
