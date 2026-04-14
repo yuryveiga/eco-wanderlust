@@ -438,6 +438,7 @@ export type Database = {
           category_en: string | null
           category_es: string | null
           created_at: string
+          custom_options_json: Json | null
           difficulty: string | null
           difficulty_en: string | null
           difficulty_es: string | null
@@ -482,6 +483,7 @@ export type Database = {
           title_en: string | null
           title_es: string | null
           updated_at: string
+          use_custom_options: boolean
           youtube_video_url: string | null
         }
         Insert: {
@@ -493,6 +495,7 @@ export type Database = {
           category_en?: string | null
           category_es?: string | null
           created_at?: string
+          custom_options_json?: Json | null
           difficulty?: string | null
           difficulty_en?: string | null
           difficulty_es?: string | null
@@ -537,6 +540,7 @@ export type Database = {
           title_en?: string | null
           title_es?: string | null
           updated_at?: string
+          use_custom_options?: boolean
           youtube_video_url?: string | null
         }
         Update: {
@@ -548,6 +552,7 @@ export type Database = {
           category_en?: string | null
           category_es?: string | null
           created_at?: string
+          custom_options_json?: Json | null
           difficulty?: string | null
           difficulty_en?: string | null
           difficulty_es?: string | null
@@ -592,6 +597,7 @@ export type Database = {
           title_en?: string | null
           title_es?: string | null
           updated_at?: string
+          use_custom_options?: boolean
           youtube_video_url?: string | null
         }
         Relationships: []
