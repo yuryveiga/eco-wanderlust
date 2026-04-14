@@ -121,7 +121,7 @@ async function sendWhatsAppAlert(sale: Record<string, any>, supabaseUrl: string)
 
 async function sendEmailAlert(sale: Record<string, any>, supabaseUrl: string, isCustomer = false) {
   try {
-    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "marius.e.dobbin@gmail.com";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "marius.e.dobbin@gmail.com, veiga.yury@gmail.com";
     const to = isCustomer ? sale.customer_email : adminEmail;
     
     const res = await fetch(`${supabaseUrl}/functions/v1/send-alert-email`, {
