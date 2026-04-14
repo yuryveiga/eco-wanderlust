@@ -6,14 +6,11 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 
 export function GallerySection() {
-  const { images } = useSiteData();
+  const { gallery } = useSiteData();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { t } = useLocale();
 
-  const galleryImages = Object.entries(images)
-    .filter(([key]) => !['logo', 'hero_bg'].includes(key))
-    .map(([key, url]) => ({ key, url }))
-    .filter((img, index, self) => self.findIndex(i => i.url === img.url) === index);
+  const galleryImages = gallery;
 
   if (galleryImages.length === 0) {
     return (
@@ -72,7 +69,7 @@ export function GallerySection() {
                   <div className="p-1">
                     <button
                       onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-square rounded-xl overflow-hidden group bg-card border"
+                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden group bg-card border"
                     >
                       <img
                         src={getOptimizedImage(img.url, 400)}

@@ -33,10 +33,15 @@ export function useSiteData() {
         localStorage.setItem('site_settings', JSON.stringify(settingsMap));
       }
 
+      const galleryImages = imagesData
+        .filter(img => img.key?.startsWith('gallery'))
+        .map(img => ({ id: img.id, url: img.image_url, key: img.key }));
+
       return {
         tours: activeTours.length > 0 ? activeTours : fallbackTours,
         pages: pagesData.filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order),
         images: imagesMap,
+        gallery: galleryImages,
         socialMedia: socialData.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order),
         siteSettings: settingsMap,
       };
@@ -57,6 +62,7 @@ export function useSiteData() {
     tours: data?.tours || fallbackTours,
     pages: data?.pages || [],
     images: data?.images || {},
+    gallery: data?.gallery || [],
     socialMedia: data?.socialMedia || [],
     siteSettings: data?.siteSettings || cachedSettings,
     isLoading,

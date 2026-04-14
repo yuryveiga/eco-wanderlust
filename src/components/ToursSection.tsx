@@ -6,7 +6,7 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 
-type TourCardProps = {
+export type TourCardProps = {
   id: string;
   title: string;
   short_description: string;
@@ -33,7 +33,7 @@ type TourCardProps = {
   custom_options_json?: any;
 };
 
-const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
+export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
 
   const getTranslated = (field: keyof TourCardProps) => {

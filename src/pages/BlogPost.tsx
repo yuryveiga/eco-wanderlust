@@ -9,6 +9,7 @@ import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
+import { TourCard, TourCardProps } from "@/components/ToursSection";
 import "react-quill-new/dist/quill.snow.css";
 
 const BlogPost = () => {
@@ -267,6 +268,44 @@ const BlogPost = () => {
             </div>
           </div>
         )}
+        {/* RECOMMENDED TOURS SHOWCASE */}
+        <section className="py-20 lg:py-24 bg-muted/30 border-t border-border/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4">
+                {language === 'pt' ? 'Que tal viver essa experiência no Rio de Janeiro?' : 
+                 language === 'es' ? '¿Qué tal vivir esta experiencia en Río?' : 
+                 'How about living this experience in Rio?'}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
+                {language === 'pt' ? 'Confira nossos passeios mais bem avaliados e reserve sua próxima aventura.' : 
+                 language === 'es' ? 'Echa un vistazo a nuestros tours melhor valorados e reserva tu próxima aventura.' : 
+                 'Check out our top-rated tours and book your next adventure.'}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {(() => {
+                const { tours } = useSiteData();
+                const recommended = tours
+                  .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
+                  .slice(0, 3);
+                  
+                return recommended.map((tour) => (
+                  <TourCard key={tour.id} tour={tour as TourCardProps} />
+                ));
+              })()}
+            </div>
+            
+            <div className="mt-12 text-center">
+              <Link to="/#tours">
+                <Button size="lg" className="rounded-full px-10 font-bold h-14 text-sm uppercase tracking-widest shadow-xl shadow-primary/20">
+                  {t("ver_todos_passeios") || (language === 'pt' ? 'Ver Todos os Passeios' : 'View All Tours')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
