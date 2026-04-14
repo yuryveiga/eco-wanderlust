@@ -24,8 +24,11 @@ type TourCardProps = {
   category_en?: string;
   category_es?: string;
   external_url?: string;
-  pricing_model?: 'fixed' | 'dynamic';
+  pricing_model?: 'fixed' | 'dynamic' | 'group';
   price_1_person?: number;
+  price_2_people?: number;
+  price_3_6_people?: number;
+  price_7_19_people?: number;
 };
 
 const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
@@ -77,12 +80,25 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         )}
         <div className="flex items-center justify-between">
           <div>
-            {(tour.price > 0 || (tour.pricing_model === 'dynamic' && tour.price_1_person && tour.price_1_person > 0)) && (
+            {(tour.price > 0 || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
-                  {formatPrice(tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price)}
+                  {(() => {
+                    if (tour.pricing_model === 'dynamic') {
+                      const prices = [
+                        tour.price_1_person,
+                        tour.price_2_people,
+                        tour.price_3_6_people,
+                        tour.price_7_19_people
+                      ].filter(p => p && p > 0) as number[];
+                      return formatPrice(prices.length > 0 ? Math.min(...prices) : 0);
+                    }
+                    return formatPrice(tour.price);
+                  })()}
                 </span>
-                <span className="text-muted-foreground text-sm font-sans"> / {t("por_pessoa")}</span>
+                <span className="text-muted-foreground text-sm font-sans">
+                  {" "}{tour.pricing_model === 'group' ? t("por_grupo") : tour.pricing_model === 'dynamic' ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
+                </span>
               </>
             )}
           </div>
