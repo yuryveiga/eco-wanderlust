@@ -35,6 +35,8 @@ export function TourDetail() {
   const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [weather, setWeather] = useState<{ temp: number; condition: string; humidity: number; wind: number } | null>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
 
@@ -126,7 +128,8 @@ export function TourDetail() {
     if (imgs.length === 0 && tour?.image_url) imgs = [tour.image_url];
     return imgs.filter(url => url && typeof url === 'string');
   }, [tour]);
-
+  const currentUnitPrice = useMemo(() => {
+    if (!tour) return 0;
     let basePrice = 0;
     if (tour.pricing_model === 'dynamic') {
       if (quantity === 1) basePrice = tour.price_1_person || 0;
