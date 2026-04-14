@@ -156,22 +156,28 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-primary/70" />
-                          <div className="flex items-center gap-2">
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.date, item.period, Math.max(1, item.quantity - 1))}
-                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
-                              disabled={item.quantity <= 1}
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="font-medium w-8 text-center">{item.quantity}</span>
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.date, item.period, item.quantity + 1)}
-                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
+                            <div className="relative flex items-center gap-2">
+                              <button 
+                                onClick={() => updateQuantity(item.id, item.date, item.period, Math.max(1, item.quantity - 1))}
+                                className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
+                                disabled={item.quantity <= 1}
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="font-medium w-8 text-center">{item.quantity}</span>
+                              <button 
+                                onClick={() => updateQuantity(item.id, item.date, item.period, item.quantity + 1)}
+                                className={`w-6 h-6 rounded-full bg-muted flex items-center justify-center transition-all ${item.max_group_size && item.quantity >= item.max_group_size ? 'opacity-30 cursor-not-allowed' : 'hover:bg-muted/80'}`}
+                                disabled={item.max_group_size ? item.quantity >= item.max_group_size : false}
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                              {item.max_group_size && item.quantity >= item.max_group_size && (
+                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full whitespace-nowrap animate-bounce shadow-lg">
+                                  {language === 'pt' ? 'LIMITE ATINGIDO' : 'LIMIT REACHED'}
+                                </span>
+                              )}
+                            </div>
                           <span className="text-muted-foreground text-xs">{item.quantity > 1 ? (language === 'pt' ? 'pessoas' : 'people') : (language === 'pt' ? 'pessoa' : 'person')}</span>
                         </div>
                       </div>

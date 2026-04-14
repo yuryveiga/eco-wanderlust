@@ -16,6 +16,7 @@ export interface CartItem {
   price_3_6_people?: number;
   price_7_19_people?: number;
   group_price?: number;
+  max_group_size?: number;
   selected_option?: { title: string; extra_price: number };
 }
 
@@ -52,7 +53,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
 
       if (existing) {
-        return prev.map(i => i === existing ? { ...i, quantity: i.quantity + 1 } : i);
+        const newQuantity = existing.max_group_size 
+          ? Math.min(existing.max_group_size, existing.quantity + 1)
+          : existing.quantity + 1;
+        return prev.map(i => i === existing ? { ...i, quantity: newQuantity } : i);
       }
       return [...prev, newItem];
     });
@@ -65,14 +69,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateQuantity = (id: string, date: string, period: string, quantity: number) => {
     setItems(prev => prev.map(i => {
       if (i.id === id && i.date === date && i.period === period) {
+        const maxLimit = i.max_group_size || 999;
+        const validQuantity = Math.min(maxLimit, Math.max(1, quantity));
+        
         let newPrice = i.price;
         if (i.pricing_model === 'dynamic') {
-          if (quantity === 1) newPrice = i.price_1_person || 0;
-          else if (quantity === 2) newPrice = i.price_2_people || 0;
-          else if (quantity >= 3 && quantity <= 6) newPrice = i.price_3_6_people || 0;
-          else if (quantity >= 7) newPrice = i.price_7_19_people || 0;
+          if (validQuantity === 1) newPrice = i.price_1_person || 0;
+          else if (validQuantity === 2) newPrice = i.price_2_people || 0;
+          else if (validQuantity >= 3 && validQuantity <= 6) newPrice = i.price_3_6_people || 0;
+          else if (validQuantity >= 7) newPrice = i.price_7_19_people || 0;
         } else if (i.pricing_model === 'group' && i.group_price) {
-          newPrice = i.group_price / (quantity || 1);
+          newPrice = i.group_price / (validQuantity || 1);
         } else if (i.pricing_model === 'custom') {
           newPrice = 0;
         }
@@ -82,7 +89,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           newPrice += i.selected_option.extra_price;
         }
 
-        return { ...i, quantity, price: newPrice };
+        return { ...i, quantity: validQuantity, price: newPrice };
       }
       return i;
     }));

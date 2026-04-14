@@ -218,6 +218,7 @@ export function TourDetail() {
       price_3_6_people: tour.price_3_6_people,
       price_7_19_people: tour.price_7_19_people,
       group_price: tour.pricing_model === 'group' ? tour.price : undefined,
+      max_group_size: tour.max_group_size,
       selected_option: tour.use_custom_options && tour.custom_options_json?.[selectedOptionIdx] ? {
         title: tour.custom_options_json[selectedOptionIdx].title,
         extra_price: tour.custom_options_json[selectedOptionIdx].price
@@ -644,7 +645,15 @@ export function TourDetail() {
                         <div className="flex items-center justify-between p-2 bg-muted/50 rounded-2xl border">
                           <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-4 h-4" /></Button>
                           <span className="font-black text-xl">{quantity}</span>
-                          <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}><Plus className="w-4 h-4" /></Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}
+                            disabled={quantity >= (tour.max_group_size || 10)}
+                            className={quantity >= (tour.max_group_size || 10) ? 'opacity-30 cursor-not-allowed' : ''}
+                          >
+                            <Plus className="w-4 h-4" />
+                          </Button>
                         </div>
                         <div className="flex items-center justify-between pt-2 px-1">
                            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("valor_total")}</span>
