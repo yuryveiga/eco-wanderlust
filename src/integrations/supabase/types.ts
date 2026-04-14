@@ -432,6 +432,7 @@ export type Database = {
         Row: {
           allows_open: boolean
           allows_private: boolean
+          available_days: Json | null
           carousel_images_json: Json | null
           category: string
           category_en: string | null
@@ -467,6 +468,11 @@ export type Database = {
           meeting_point_address_en: string | null
           meeting_point_address_es: string | null
           price: number
+          price_1_person: number | null
+          price_2_people: number | null
+          price_3_6_people: number | null
+          price_7_19_people: number | null
+          pricing_model: string | null
           short_description: string
           short_description_en: string | null
           short_description_es: string | null
@@ -481,6 +487,7 @@ export type Database = {
         Insert: {
           allows_open?: boolean
           allows_private?: boolean
+          available_days?: Json | null
           carousel_images_json?: Json | null
           category?: string
           category_en?: string | null
@@ -516,6 +523,11 @@ export type Database = {
           meeting_point_address_en?: string | null
           meeting_point_address_es?: string | null
           price?: number
+          price_1_person?: number | null
+          price_2_people?: number | null
+          price_3_6_people?: number | null
+          price_7_19_people?: number | null
+          pricing_model?: string | null
           short_description?: string
           short_description_en?: string | null
           short_description_es?: string | null
@@ -530,6 +542,7 @@ export type Database = {
         Update: {
           allows_open?: boolean
           allows_private?: boolean
+          available_days?: Json | null
           carousel_images_json?: Json | null
           category?: string
           category_en?: string | null
@@ -565,6 +578,11 @@ export type Database = {
           meeting_point_address_en?: string | null
           meeting_point_address_es?: string | null
           price?: number
+          price_1_person?: number | null
+          price_2_people?: number | null
+          price_3_6_people?: number | null
+          price_7_19_people?: number | null
+          pricing_model?: string | null
           short_description?: string
           short_description_en?: string | null
           short_description_es?: string | null
