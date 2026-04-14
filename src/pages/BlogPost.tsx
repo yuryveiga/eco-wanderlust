@@ -10,6 +10,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
 import { TourCard, TourCardProps } from "@/components/ToursSection";
+import { Button } from "@/components/ui/button";
 import "react-quill-new/dist/quill.snow.css";
 
 const BlogPost = () => {
