@@ -219,6 +219,7 @@ export type LovableSale = {
   is_paid: boolean;
   is_cancelled?: boolean;
   is_archived?: boolean;
+  passengers_json?: { name: string; dob: string }[];
   created_at: string;
 };
 

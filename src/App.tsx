@@ -40,6 +40,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Cart = lazy(() => import("./pages/Cart"));
 const MaracanaCalendar = lazy(() => import("./pages/MaracanaCalendar"));
 const GenericPage = lazy(() => import("./pages/GenericPage"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,7 @@ const App = () => {
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:slug" element={<BlogPost />} />
                         <Route path="/carrinho" element={<Cart />} />
+                        <Route path="/confirmacao" element={<CheckoutSuccess />} />
                         <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
                         <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
                         <Route path="/maracanacalendar" element={<MaracanaCalendar />} />

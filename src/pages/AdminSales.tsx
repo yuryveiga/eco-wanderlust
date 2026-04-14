@@ -311,7 +311,16 @@ const AdminSales = () => {
                     <div className="text-muted-foreground text-xs">{sale.customer_email}</div>
                     <div className="text-muted-foreground text-xs">{sale.customer_phone}</div>
                   </td>
-                  <td className="p-4 text-sm">{sale.quantity}</td>
+                  <td className="p-4 text-sm">
+                    <div className="flex items-center gap-1">
+                      {sale.quantity}
+                      {sale.passengers_json && sale.passengers_json.length > 0 && (
+                        <div className="bg-primary/10 text-primary p-1 rounded-md" title="Dados dos passageiros preenchidos">
+                          <Users className="w-3 h-3" />
+                        </div>
+                      )}
+                    </div>
+                  </td>
                   <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price)}                  </td>
                   <td className="p-4 text-sm">
                     {sale.is_cancelled ? (

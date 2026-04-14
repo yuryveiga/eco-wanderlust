@@ -47,7 +47,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
       mode: "payment",
-      success_url: `${origin}/?success=true`,
+      success_url: `${origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(sale_ids))}`,
       cancel_url: `${origin}/carrinho?canceled=true`,
       metadata: {
         sale_ids: JSON.stringify(sale_ids || []),

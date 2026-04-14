@@ -124,6 +124,24 @@ const SaleDetailDialog = ({ sale, open, onClose }: SaleDetailDialogProps) => {
             </div>
           </div>
 
+          {/* Passageiros */}
+          {sale.passengers_json && sale.passengers_json.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-3">Passageiros</h4>
+              <div className="bg-primary/5 rounded-xl p-4 border border-primary/10 space-y-3">
+                {sale.passengers_json.map((p, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-sm border-b border-primary/10 last:border-0 pb-2 last:pb-0">
+                    <div className="flex items-center gap-2">
+                       <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">{idx + 1}</span>
+                       <span className="font-medium">{p.name}</span>
+                    </div>
+                    <span className="text-muted-foreground text-xs">{p.dob ? formatDate(p.dob) : ""}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Ações */}
           <div className="flex gap-3 pt-2">
             {whatsappUrl && (
