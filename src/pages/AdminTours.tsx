@@ -739,15 +739,41 @@ const AdminTours = () => {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
-                      {editing.images_json?.map((url, index) => (
-                        <div key={index} className={`relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary" : "border-transparent"}`}>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:g                        <div key={index} className={`group relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary shadow-lg scale-[0.98]" : "border-transparent"}`}>
                           <img src={url} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                            <Button size="icon" variant="ghost" className="text-white" onClick={() => setMainImage(url)}><Star className={`w-6 h-6 ${editing.image_url === url ? "fill-white" : ""}`} /></Button>
-                            <Button size="icon" variant="ghost" className="text-white" onClick={() => removeImage(index)}><Trash2 className="w-6 h-6" /></Button>
+                          
+                          {/* Main Image Badge */}
+                          {editing.image_url === url && (
+                            <div className="absolute top-3 left-3 bg-primary text-white text-[10px] font-black px-2 py-1 rounded-full shadow-lg z-10 flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-white" /> CAPA
+                            </div>
+                          )}
+
+                          {/* Hover Overlay with Icons in Corners */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+                            <div className="flex justify-between items-start w-full">
+                              <Button 
+                                size="icon" 
+                                variant={editing.image_url === url ? "default" : "secondary"} 
+                                className={`h-8 w-8 rounded-full shadow-xl ${editing.image_url === url ? "bg-amber-500 hover:bg-amber-600" : "bg-white/90"}`} 
+                                onClick={() => setMainImage(url)}
+                                title="Definir como Capa"
+                              >
+                                <Star className={`w-4 h-4 ${editing.image_url === url ? "fill-white" : "text-amber-500"}`} />
+                              </Button>
+                              <Button 
+                                size="icon" 
+                                variant="destructive" 
+                                className="h-8 w-8 rounded-full shadow-xl" 
+                                onClick={() => removeImage(index)}
+                                title="Excluir Imagem"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
+     </div>
                       ))}
                     </div>
                   </TabsContent>
@@ -799,20 +825,21 @@ const AdminTours = () => {
                     {(editing.carousel_images_json || []).length > 0 && (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {editing.carousel_images_json?.map((url, index) => (
-                          <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-border group">
+                          <div key={index} className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-border shadow-sm hover:shadow-md transition-all">
                             <img src={url} alt={`Carousel ${index + 1}`} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end p-2 text-white">
                               <Button 
                                 size="icon" 
-                                variant="ghost" 
-                                className="text-white" 
+                                variant="destructive" 
+                                className="h-8 w-8 rounded-full shadow-lg" 
                                 onClick={() => {
                                   const newArr = [...(editing.carousel_images_json || [])];
                                   newArr.splice(index, 1);
                                   setEditing({ ...editing, carousel_images_json: newArr });
                                 }}
+                                title="Excluir da Galeria"
                               >
-                                <Trash2 className="w-6 h-6" />
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
