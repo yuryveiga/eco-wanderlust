@@ -84,6 +84,7 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
                   {(() => {
+                    let minBase = 0;
                     if (tour.pricing_model === 'dynamic') {
                       minBase = tour.price_1_person || 0;
                     } else if (tour.pricing_model === 'group') {
