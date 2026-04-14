@@ -14,7 +14,8 @@ import {
   DollarSign,
   Calculator,
   Layout,
-  CalendarDays
+  CalendarDays,
+  Zap
 } from "lucide-react";
 
 import { NavLink } from "@/components/NavLink";
