@@ -1,15 +1,20 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { compressImage } from "@/utils/imageCompression";
 
 
 export async function uploadLovableFile(file: File): Promise<string | null> {
   try {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+    // Compress and convert to WebP before upload
+    const optimizedFile = await compressImage(file);
+    
+    // Update filename to use .webp extension
+    const originalName = optimizedFile.name;
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.webp`;
     
     const { error: uploadError } = await supabase.storage
       .from('site-images')
-      .upload(fileName, file);
+      .upload(fileName, optimizedFile);
 
     if (uploadError) {
       toast.error(`ERRO DE BUCKET (Storage): ${uploadError.message}`);

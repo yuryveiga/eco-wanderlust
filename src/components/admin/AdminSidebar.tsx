@@ -65,6 +65,7 @@ const menuGroups = [
       { title: "Estilo do Hero", url: "/admin/hero", icon: LayoutTemplate },
       { title: "Cores do Site", url: "/admin/theme", icon: Palette },
       { title: "Imagens do Site", url: "/admin/images", icon: Image },
+      { title: "Otimizador", url: "/admin/optimizer", icon: Zap },
       { title: "Redes Sociais", url: "/admin/social", icon: Share2 },
     ]
   },
