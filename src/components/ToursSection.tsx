@@ -89,7 +89,7 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
                       const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
                       minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
                     } else if (tour.pricing_model === 'group') {
-                      minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                      minBase = (tour.price || 0);
                     } else {
                       minBase = tour.price || 0;
                     }

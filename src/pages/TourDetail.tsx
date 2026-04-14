@@ -298,7 +298,7 @@ export function TourDetail() {
                     const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
                     minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
                   } else if (tour.pricing_model === 'group') {
-                    minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                    minBase = (tour.price || 0);
                   } else {
                     minBase = tour.price || 0;
                   }
@@ -611,7 +611,7 @@ export function TourDetail() {
                              const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
                              minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
                            } else if (tour.pricing_model === 'group') {
-                             minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                             minBase = (tour.price || 0);
                            } else {
                              minBase = tour.price || 0;
                            }
@@ -633,7 +633,9 @@ export function TourDetail() {
                      <div className="space-y-3">
                         <div className="flex items-center justify-between mb-1">
                           <label className="text-xs font-black uppercase text-muted-foreground">{t("quantas_pessoas")}</label>
-                          <span className="text-xs font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
+                          {tour.pricing_model !== 'group' && (
+                            <span className="text-xs font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
+                          )}
                         </div>
                         <div className="flex items-center justify-between p-2 bg-muted/50 rounded-2xl border">
                           <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-4 h-4" /></Button>
