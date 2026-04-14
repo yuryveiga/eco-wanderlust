@@ -739,7 +739,9 @@ const AdminTours = () => {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:g                        <div key={index} className={`group relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary shadow-lg scale-[0.98]" : "border-transparent"}`}>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
+                      {editing.images_json?.map((url, index) => (
+                        <div key={index} className={`group relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary shadow-lg scale-[0.98]" : "border-transparent"}`}>
                           <img src={url} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
                           
                           {/* Main Image Badge */}
@@ -773,7 +775,6 @@ const AdminTours = () => {
                             </div>
                           </div>
                         </div>
-     </div>
                       ))}
                     </div>
                   </TabsContent>
