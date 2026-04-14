@@ -83,18 +83,10 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
             {(tour.price > 0 || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
-                  {(() => {
-                    if (tour.pricing_model === 'dynamic') {
-                      const prices = [
-                        tour.price_1_person,
-                        tour.price_2_people,
-                        tour.price_3_6_people,
-                        tour.price_7_19_people
-                      ].filter(p => p && p > 0) as number[];
-                      return formatPrice(prices.length > 0 ? Math.min(...prices) : 0);
-                    }
-                    return formatPrice(tour.price);
-                  })()}
+                  {tour.pricing_model === 'dynamic' 
+                    ? formatPrice(tour.price_1_person || 0) 
+                    : formatPrice(tour.price)
+                  }
                 </span>
                 <span className="text-muted-foreground text-sm font-sans">
                   {" "}{tour.pricing_model === 'group' ? t("por_grupo") : tour.pricing_model === 'dynamic' ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
