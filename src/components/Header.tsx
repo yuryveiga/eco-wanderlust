@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube, Globe, DollarSign, ShoppingCart } from "lucide-react";
+import { Menu, X, Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube, Globe, DollarSign, ShoppingCart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
@@ -111,15 +117,50 @@ export function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center space-x-2 mr-2 border-r pr-4">
-              <select className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer hover:text-primary transition-colors" value={language} onChange={e => setLanguage(e.target.value as any)}>
-                <option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option>
-              </select>
+            <div className="flex items-center space-x-1 mr-2 border-r pr-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5">
+                    <span>{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : '🇪🇸'}</span>
+                    <span className="uppercase">{language}</span>
+                    <ChevronDown className="w-3 h-3 opacity-50" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[120px] rounded-xl p-1 shadow-2xl border-primary/10">
+                  <DropdownMenuItem onClick={() => setLanguage('pt')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>🇧🇷</span> Português
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('en')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>🇺🇸</span> English
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('es')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>🇪🇸</span> Español
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <div className="flex items-center space-x-2 border-r pr-4">
-              <select className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer hover:text-primary transition-colors" value={currency} onChange={e => setCurrency(e.target.value as any)}>
-                <option value="BRL">R$</option><option value="USD">$</option><option value="EUR">€</option>
-              </select>
+
+            <div className="flex items-center space-x-1 border-r pr-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5">
+                    <span>{currency === 'BRL' ? 'R$' : currency === 'USD' ? '$' : '€'}</span>
+                    <span className="uppercase">{currency}</span>
+                    <ChevronDown className="w-3 h-3 opacity-50" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[120px] rounded-xl p-1 shadow-2xl border-primary/10">
+                  <DropdownMenuItem onClick={() => setCurrency('BRL')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>R$</span> BRL
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setCurrency('USD')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>$</span> USD
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setCurrency('EUR')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                    <span>€</span> EUR
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Link to="/carrinho" className="relative group">
@@ -152,14 +193,47 @@ export function Header() {
                 )}
               </div>
             </Link>
-            <div className="flex items-center border border-border rounded-full px-2 py-1 bg-muted/30">
-              <select className="bg-transparent border-none text-[10px] font-bold px-1 py-0 outline-none w-8 appearance-none" value={language} onChange={e => setLanguage(e.target.value as any)}>
-                <option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option>
-              </select>
-              <span className="text-[10px] text-muted-foreground mx-1">|</span>
-              <select className="bg-transparent border-none text-[10px] font-bold px-1 py-0 outline-none w-8 appearance-none" value={currency} onChange={e => setCurrency(e.target.value as any)}>
-                <option value="BRL">R$</option><option value="USD">$</option><option value="EUR">€</option>
-              </select>
+            <div className="flex items-center border border-border rounded-full px-1 py-0.5 bg-muted/30">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none">
+                    <span>{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : '🇪🇸'}</span>
+                    <span className="uppercase">{language}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[110px] rounded-xl p-1 shadow-xl border-primary/10">
+                  <DropdownMenuItem onClick={() => setLanguage('pt')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>🇧🇷</span> PT
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('en')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>🇺🇸</span> EN
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('es')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>🇪🇸</span> ES
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <span className="text-[10px] text-muted-foreground/30 font-thin italic">|</span>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none">
+                    <span>{currency === 'BRL' ? 'R$' : currency === 'USD' ? '$' : '€'}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[110px] rounded-xl p-1 shadow-xl border-primary/10">
+                  <DropdownMenuItem onClick={() => setCurrency('BRL')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>R$</span> BRL
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setCurrency('USD')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>$</span> USD
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setCurrency('EUR')} className="gap-2 font-bold text-[10px] rounded-lg cursor-pointer">
+                    <span>€</span> EUR
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <button className="p-2 transition-transform active:scale-95" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
