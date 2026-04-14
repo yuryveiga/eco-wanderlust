@@ -40,6 +40,7 @@ const AdminBlog = () => {
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
   const [pickerMode, setPickerMode] = useState<'cover' | 'editor'>('editor');
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [galleryItemToDelete, setGalleryItemToDelete] = useState<string | null>(null);
   const [isTranslateAllConfirmOpen, setIsTranslateAllConfirmOpen] = useState(false);
   const { toast } = useToast();
 
@@ -189,6 +190,25 @@ const AdminBlog = () => {
     }
     setShowGalleryPicker(false);
     toast({ title: "Imagem inserida no post!" });
+  };
+
+  const deleteGalleryImage = async (id: string) => {
+    try {
+      const img = galleryImages.find(i => i.id === id);
+      const isCurrentCover = img && editing?.image_url === img.image_url;
+      
+      await deleteLovable("site_images", id);
+      
+      if (isCurrentCover && editing) {
+        setEditing({ ...editing, image_url: "" });
+      }
+      
+      setGalleryImages(prev => prev.filter(i => i.id !== id));
+      toast({ title: "Imagem removida da galeria!" });
+      setGalleryItemToDelete(null);
+    } catch (err) {
+      toast({ title: "Erro ao excluir", description: "Tente novamente.", variant: "destructive" });
+    }
   };
 
   const modules = useMemo(() => ({
@@ -427,18 +447,42 @@ const AdminBlog = () => {
                     ) : (
                       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
                         {galleryImages.map((img) => (
-                          <button
+                          <div
                             key={img.id}
-                            onClick={() => setEditing({ ...editing, image_url: img.image_url })}
-                            className={`relative aspect-square rounded-xl overflow-hidden border-4 transition-all ${editing.image_url === img.image_url ? "border-primary ring-4 ring-primary/20" : "border-transparent hover:border-primary/50"}`}
+                            className={`group relative aspect-square rounded-xl overflow-hidden border-4 transition-all ${editing.image_url === img.image_url ? "border-primary ring-4 ring-primary/20 shadow-lg" : "border-transparent"}`}
                           >
                             <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
+                            
+                            {/* Icons Overlay */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                               <div className="flex justify-between items-start w-full gap-1">
+                                  <Button 
+                                    size="icon" 
+                                    variant={editing.image_url === img.image_url ? "default" : "secondary"} 
+                                    className={`h-7 w-7 rounded-full shadow-lg ${editing.image_url === img.image_url ? "bg-amber-500 hover:bg-amber-600" : "bg-white/90"}`} 
+                                    onClick={() => setEditing({ ...editing, image_url: img.image_url })}
+                                    title="Definir como Capa"
+                                  >
+                                    <Star className={`w-3.5 h-3.5 ${editing.image_url === img.image_url ? "fill-white" : "text-amber-500"}`} />
+                                  </Button>
+                                  <Button 
+                                    size="icon" 
+                                    variant="destructive" 
+                                    className="h-7 w-7 rounded-full shadow-lg" 
+                                    onClick={(e) => { e.stopPropagation(); setGalleryItemToDelete(img.id); }}
+                                    title="Excluir Imagem"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                               </div>
+                            </div>
+
                             {editing.image_url === img.image_url && (
-                              <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1">
-                                <Star className="w-4 h-4 fill-white" />
+                              <div className="absolute top-2 left-2 bg-primary text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                                <Star className="w-2 h-2 fill-white" /> CAPA
                               </div>
                             )}
-                          </button>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -456,19 +500,44 @@ const AdminBlog = () => {
             </DialogHeader>
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 overflow-y-auto max-h-[60vh] p-4">
               {galleryImages.map((img) => (
-                <button
+                <div
                   key={img.id}
-                  onClick={() => {
-                    insertImageFromGallery(img.image_url);
-                  }}
-                  className="relative aspect-square rounded-lg overflow-hidden border-2 hover:border-primary transition-all"
+                  className="group relative aspect-square rounded-lg overflow-hidden border-2 border-transparent transition-all"
                 >
                   <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
-                </button>
+                  
+                  {/* Icons Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-2 p-2">
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="h-7 px-3 text-[10px] font-bold bg-white/90 w-full" 
+                        onClick={() => insertImageFromGallery(img.image_url)}
+                      >
+                        Inserir
+                      </Button>
+                      <Button 
+                        size="icon" 
+                        variant="destructive" 
+                        className="h-7 w-7 rounded-full shadow-lg absolute top-1 right-1" 
+                        onClick={(e) => { e.stopPropagation(); setGalleryItemToDelete(img.id); }}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                  </div>
+                </div>
               ))}
             </div>
           </DialogContent>
         </Dialog>
+        
+        <DeleteConfirmDialog 
+          open={!!galleryItemToDelete} 
+          onOpenChange={(open) => !open && setGalleryItemToDelete(null)} 
+          onConfirm={() => galleryItemToDelete && deleteGalleryImage(galleryItemToDelete)}
+          title="Excluir da Galeria"
+          description="Tem certeza que deseja excluir esta imagem? Ela será removida de toda a galeria do site e de quaisquer outros posts onde estiver sendo usada."
+        />
       </Dialog>
       <DeleteConfirmDialog 
         open={!!itemToDelete} 

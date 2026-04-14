@@ -1,12 +1,11 @@
-/**
- * Simple utility for automatic translation using public APIs
- */
+import { protect, restore } from "./translationProtector";
 
 export async function translateText(text: string, targetLang: 'en' | 'es', sourceLang: string = 'pt'): Promise<string> {
   if (!text || text.trim() === "") return "";
   
   try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+    const { protectedText, replacements } = protect(text);
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(protectedText)}`;
     const response = await fetch(url);
     
     if (!response.ok) {
@@ -16,7 +15,8 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
     const data = await response.json();
     
     if (data && data[0]) {
-      return (data[0] as string[][]).map((s) => s[0]).join('');
+      const translated = (data[0] as string[][]).map((s) => s[0]).join('');
+      return restore(translated, replacements);
     }
     return text;
   } catch (error: unknown) {
