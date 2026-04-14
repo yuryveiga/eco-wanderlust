@@ -248,6 +248,18 @@ const AdminTours = () => {
     }
   };
 
+  const getPedraDaGaveaDefaults = () => {
+    const pedra = tours.find(t => t.title.toLowerCase().includes("pedra da gávea"));
+    if (pedra) {
+      return {
+        faq_json: pedra.faq_json || [],
+        faq_json_en: pedra.faq_json_en || [],
+        faq_json_es: pedra.faq_json_es || []
+      };
+    }
+    return { faq_json: [], faq_json_en: [], faq_json_es: [] };
+  };
+
   const updateJsonField = (field: keyof LovableTour, index: number, subField: string, value: string) => {
     if (!editing) return;
     const arr = [...((editing[field] as any[]) || [])];
@@ -272,7 +284,26 @@ const AdminTours = () => {
     <div className="flex flex-col h-full overflow-hidden font-sans">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h1 className="font-serif text-3xl font-bold text-foreground">Gerenciar Passeios</h1>
-        <Button onClick={() => { setEditing({ title: "", price: 0, duration: "", max_group_size: 1, images_json: [], is_active: true, itinerary_json: [], included_json: [], highlights_json: [], faq_json: [], difficulty: "Leve", youtube_video_url: "", category: "CITY TOUR" }); setIsNew(true); }} className="font-sans">
+        <Button onClick={() => { 
+          const defaults = getPedraDaGaveaDefaults();
+          setEditing({ 
+            title: "", 
+            price: 0, 
+            duration: "", 
+            max_group_size: 1, 
+            images_json: [], 
+            is_active: true, 
+            itinerary_json: [], 
+            included_json: [], 
+            highlights_json: [], 
+            ...defaults,
+            difficulty: "Leve", 
+            youtube_video_url: "", 
+            category: "CITY TOUR",
+            pricing_model: 'fixed'
+          }); 
+          setIsNew(true); 
+        }} className="font-sans">
           <Plus className="w-4 h-4 mr-2" />Novo Passeio
         </Button>
         <Button 
@@ -598,6 +629,23 @@ const AdminTours = () => {
                                  <Button size="sm" variant={activeInfoLang === 'en' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('en')} className="text-[10px] h-6 px-2">EN</Button>
                                  <Button size="sm" variant={activeInfoLang === 'es' ? 'default' : 'outline'} onClick={() => setActiveInfoLang('es')} className="text-[10px] h-6 px-2">ES</Button>
                               </div>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => {
+                                  const defaults = getPedraDaGaveaDefaults();
+                                  setEditing({ 
+                                    ...editing, 
+                                    faq_json: defaults.faq_json,
+                                    faq_json_en: defaults.faq_json_en,
+                                    faq_json_es: defaults.faq_json_es
+                                  });
+                                  toast({ title: "FAQs da Pedra da Gávea carregadas!" });
+                                }} 
+                                className="font-bold text-[10px] h-8 text-primary border-primary/20 hover:bg-primary/5"
+                              >
+                                ⚡ Importar Pedra Gávea
+                              </Button>
                               <Button size="sm" variant="ghost" onClick={() => addJsonItem(activeInfoLang === 'pt' ? 'faq_json' : `faq_json_${activeInfoLang}` as keyof LovableTour, { q: '', a: '' })} className="font-bold text-xs h-8">+ Nova Pergunta</Button>
                            </div>
                         </div>
@@ -754,7 +802,7 @@ const AdminTours = () => {
                         <div className="flex bg-background p-1 rounded-xl border">
                           <button
                             onClick={() => setEditing({ ...editing, pricing_model: 'fixed' })}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model !== 'dynamic' ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model === 'fixed' || !editing.pricing_model ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
                           >
                             VALOR FIXO
                           </button>
@@ -763,6 +811,12 @@ const AdminTours = () => {
                             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model === 'dynamic' ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
                           >
                             VALOR DINÂMICO
+                          </button>
+                          <button
+                            onClick={() => setEditing({ ...editing, pricing_model: 'group' })}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${editing.pricing_model === 'group' ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-muted'}`}
+                          >
+                            VALOR POR GRUPO
                           </button>
                         </div>
                       </div>
@@ -785,6 +839,14 @@ const AdminTours = () => {
                             <Label className="text-[10px] font-black uppercase text-muted-foreground">Valor 7 a 19 Pessoas (R$)</Label>
                             <Input type="number" value={editing.price_7_19_people ?? 0} onChange={(e) => setEditing({ ...editing, price_7_19_people: Number(e.target.value) })} className="h-12 font-bold" />
                           </div>
+                        </div>
+                      ) : editing.pricing_model === 'group' ? (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                           <div className="space-y-3">
+                             <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground">Valor Total do Grupo (R$)</Label>
+                             <Input type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="h-14 font-black text-2xl rounded-2xl" />
+                             <p className="text-[10px] text-muted-foreground italic">Este valor será fixo independente do número de pessoas (até o limite do grupo).</p>
+                           </div>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

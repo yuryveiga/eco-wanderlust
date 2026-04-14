@@ -130,13 +130,17 @@ export function TourDetail() {
 
   const currentUnitPrice = useMemo(() => {
     if (!tour) return 0;
-    if (tour.pricing_model !== 'dynamic') return tour.price || 0;
+    if (tour.pricing_model === 'dynamic') {
+      if (quantity === 1) return tour.price_1_person || 0;
+      if (quantity === 2) return tour.price_2_people || 0;
+      if (quantity >= 3 && quantity <= 6) return tour.price_3_6_people || 0;
+      if (quantity >= 7) return tour.price_7_19_people || 0;
+      return tour.price || 0;
+    }
     
-    // Dynamic pricing logic
-    if (quantity === 1) return tour.price_1_person || 0;
-    if (quantity === 2) return tour.price_2_people || 0;
-    if (quantity >= 3 && quantity <= 6) return tour.price_3_6_people || 0;
-    if (quantity >= 7) return tour.price_7_19_people || 0;
+    if (tour.pricing_model === 'group') {
+      return (tour.price || 0) / (quantity || 1);
+    }
     
     return tour.price || 0;
   }, [tour, quantity]);
@@ -204,7 +208,8 @@ export function TourDetail() {
       price_1_person: tour.price_1_person,
       price_2_people: tour.price_2_people,
       price_3_6_people: tour.price_3_6_people,
-      price_7_19_people: tour.price_7_19_people
+      price_7_19_people: tour.price_7_19_people,
+      group_price: tour.pricing_model === 'group' ? tour.price : undefined
     });
 
     toast.success(t("passeio_adicionado"), {
@@ -277,11 +282,15 @@ export function TourDetail() {
           </div>
           <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
             <div className="text-right">
-              <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">{t("a_partir_de")}</span>
-              <span className="text-4xl font-black text-primary">
-                {formatPrice(tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price)}
+              <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">
+                {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
               </span>
-              <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">{t("por_pessoa")}</span>
+              <span className="text-4xl font-black text-primary">
+                {formatPrice(tour.pricing_model === 'group' ? tour.price : (tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price))}
+              </span>
+              <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
+                {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}
+              </span>
             </div>
           </div>
         </div>
@@ -499,12 +508,16 @@ export function TourDetail() {
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                    
                    <div className="text-center mb-8">
-                     <span className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em]">{t("a_partir_de")}</span>
+                     <span className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em]">
+                       {tour.pricing_model === 'group' ? t("valor_grupo") : t("a_partir_de")}
+                     </span>
                      <div className="flex items-center justify-center gap-2 mt-1">
                        <span className="text-5xl font-black text-primary">
-                         {formatPrice(tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price)}
+                         {formatPrice(tour.pricing_model === 'group' ? tour.price : (tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price))}
                        </span>
-                        <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">{t("por_pessoa")}</span>
+                        <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">
+                          {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : t("por_pessoa")}
+                        </span>
                      </div>
                    </div>
 

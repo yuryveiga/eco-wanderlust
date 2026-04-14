@@ -10,11 +10,12 @@ export interface CartItem {
   period: string;
   isPrivate: boolean;
   quantity: number;
-  pricing_model?: 'fixed' | 'dynamic';
+  pricing_model?: 'fixed' | 'dynamic' | 'group';
   price_1_person?: number;
   price_2_people?: number;
   price_3_6_people?: number;
   price_7_19_people?: number;
+  group_price?: number;
 }
 
 interface CartContextType {
@@ -68,6 +69,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           else if (quantity === 2) newPrice = i.price_2_people || 0;
           else if (quantity >= 3 && quantity <= 6) newPrice = i.price_3_6_people || 0;
           else if (quantity >= 7) newPrice = i.price_7_19_people || 0;
+        } else if (i.pricing_model === 'group' && i.group_price) {
+          newPrice = i.group_price / (quantity || 1);
         }
         return { ...i, quantity, price: newPrice };
       }
