@@ -29,6 +29,8 @@ type TourCardProps = {
   price_2_people?: number;
   price_3_6_people?: number;
   price_7_19_people?: number;
+  use_custom_options?: boolean;
+  custom_options_json?: any;
 };
 
 const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
