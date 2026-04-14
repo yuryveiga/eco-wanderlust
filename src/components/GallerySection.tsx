@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -10,7 +10,9 @@ export function GallerySection() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { t } = useLocale();
 
-  const galleryImages = gallery;
+  const galleryImages = useMemo(() => {
+    return [...gallery].sort(() => Math.random() - 0.5);
+  }, [gallery]);
 
   if (galleryImages.length === 0) {
     return (
