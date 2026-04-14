@@ -458,6 +458,7 @@ const AdminTours = () => {
                   )}
                   <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Imagens</TabsTrigger>
                   <TabsTrigger value="carousel" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Galeria</TabsTrigger>
+                  <TabsTrigger value="custom" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Personalizado</TabsTrigger>
                   <TabsTrigger value="settings" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Preços e Config</TabsTrigger>
                 </TabsList>
               </DialogHeader>
