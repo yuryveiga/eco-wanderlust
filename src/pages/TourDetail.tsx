@@ -116,6 +116,33 @@ export function TourDetail() {
     }
   } : null;
 
+  const breadcrumbsLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": t("inicio"),
+        "item": "https://tocorimerio.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": t("passeios"),
+        "item": "https://tocorimerio.com/passeios"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": translatedTitle,
+        "item": `https://tocorimerio.com/passeio/${tour?.slug || tour?.id}`
+      }
+    ]
+  };
+
+  const canonicalUrl = `https://tocorimerio.com/passeio/${tour?.slug || tour?.id}`;
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const handleScroll = () => {
@@ -278,11 +305,10 @@ export function TourDetail() {
         <meta name="twitter:description" content={translatedShortDesc || siteSettings?.site_description} />
         <meta name="twitter:image" content={tour.image_url} />
 
-        <link rel="canonical" href={window.location.href} />
-        <link rel="alternate" hrefLang="pt" href={`${window.location.origin}/pt/passeio/${tour.slug || tour.id}`} />
-        <link rel="alternate" hrefLang="en" href={`${window.location.origin}/en/passeio/${tour.slug || tour.id}`} />
-        <link rel="alternate" hrefLang="es" href={`${window.location.origin}/es/passeio/${tour.slug || tour.id}`} />
+        <link rel="canonical" href={canonicalUrl} />
+        {/* Note: In a SPA without language prefixes in URL, hreflang is less effective but we keep it pointing to standard URL or param-based if we add it later */}
         {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
+        <script type="application/ld+json">{JSON.stringify(breadcrumbsLd)}</script>
       </Helmet>
       
       <Header />

@@ -138,6 +138,51 @@ const BlogPost = () => {
         <meta property="og:description" content={excerpt || title} />
         <meta property="og:image" content={post.image_url || fallbackImage} />
 
+        <link rel="canonical" href={`https://tocorimerio.com/blog/${post.slug}`} />
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": title,
+            "description": excerpt || title,
+            "image": post.image_url || fallbackImage,
+            "datePublished": post.created_at,
+            "dateModified": post.updated_at || post.created_at,
+            "author": {
+              "@type": "Person",
+              "name": "Tocorime Rio"
+            }
+          })}
+        </script>
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": t("inicio"),
+                "item": "https://tocorimerio.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Blog",
+                "item": "https://tocorimerio.com/blog"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": title,
+                "item": `https://tocorimerio.com/blog/${post.slug}`
+              }
+            ]
+          })}
+        </script>
+
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={window.location.href} />
