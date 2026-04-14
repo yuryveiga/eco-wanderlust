@@ -10,27 +10,88 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { to, customerName, customerEmail, customerPhone, items, total } = await req.json()
+    const { to, customerName, customerEmail, customerPhone, items, total, isCustomerCopy = false } = await req.json()
 
     if (!to) {
       return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400, headers: corsHeaders })
     }
 
-    const itemsHtml = items.map((item: any) => 
-      `<li>${item.tour} - ${item.quantity} pessoa(s) - R$ ${item.price.toFixed(2)} - Data: ${item.date}</li>`
-    ).join('')
-
+    const headerTitle = isCustomerCopy ? 'Reserva Confirmada ✨' : 'Nova Reserva Recebida 🔔';
+    const subject = isCustomerCopy ? 'Sua reserva na Tocorime Rio está confirmada!' : '🔔 Nova Reserva Recebida!';
+    
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #2A9D8F;">Nova Reserva!</h2>
-        <p><strong>Cliente:</strong> ${customerName}</p>
-        <p><strong>Email:</strong> ${customerEmail}</p>
-        <p><strong>WhatsApp:</strong> ${customerPhone}</p>
-        <h3>Itens:</h3>
-        <ul>${itemsHtml}</ul>
-        <p><strong>Total:</strong> R$ ${total.toFixed(2)}</p>
-        <p style="color: #666; font-size: 12px;">Enviado automaticamente pelo sistema de reservas</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 20px auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+          .header { background: #2A9D8F; color: white; padding: 30px; text-align: center; }
+          .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
+          .content { padding: 30px; }
+          .section { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+          .section-title { font-weight: bold; font-size: 14px; color: #2A9D8F; text-transform: uppercase; margin-bottom: 10px; display: block; }
+          .customer-info p { margin: 5px 0; font-size: 16px; }
+          .tour-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+          .tour-title { font-weight: bold; font-size: 18px; color: #264653; display: block; }
+          .tour-details { font-size: 14px; color: #666; }
+          .total-box { background: #264653; color: white; padding: 20px; border-radius: 8px; text-align: right; }
+          .total-label { font-size: 14px; opacity: 0.8; }
+          .total-value { font-size: 24px; font-weight: bold; display: block; }
+          .footer { background: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #999; }
+          .cta-button { display: inline-block; padding: 12px 24px; background-color: #2A9D8F; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Tocorime Rio</h1>
+            <p>${headerTitle}</p>
+          </div>
+          <div class="content">
+            <p>Olá, <strong>${customerName}</strong>,</p>
+            <p>${isCustomerCopy ? 'Temos o prazer de informar que sua reserva foi confirmada com sucesso! Estamos ansiosos para recebê-lo.' : 'Uma nova venda foi realizada através do site.'}</p>
+            
+            <div class="section">
+              <span class="section-title">Dados da Reserva</span>
+              <div class="customer-info">
+                <p><strong>Nome:</strong> ${customerName}</p>
+                <p><strong>E-mail:</strong> ${customerEmail}</p>
+                <p><strong>WhatsApp:</strong> ${customerPhone || 'Não informado'}</p>
+              </div>
+            </div>
+
+            <div class="section">
+              <span class="section-title">Itens</span>
+              ${items.map((item: any) => `
+                <div class="tour-item">
+                  <span class="tour-title">${item.tour}</span>
+                  <div class="tour-details">
+                    <span>${item.quantity} pessoa(s) • Data: ${item.date}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="total-box">
+              <span class="total-label">Valor Pago</span>
+              <span class="total-value">R$ ${total.toFixed(2)}</span>
+            </div>
+
+            ${isCustomerCopy ? `
+              <div style="text-align: center;">
+                <p>Dúvidas? Entre em contato pelo nosso WhatsApp.</p>
+                <a href="https://wa.me/5521970702523" class="cta-button">Falar conosco</a>
+              </div>
+            ` : ''}
+          </div>
+          <div class="footer">
+            <p>Este é um e-mail automático enviado pelo sistema de reservas Tocorime Rio.</p>
+            <p>&copy; ${new Date().getFullYear()} Tocorime Rio. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </body>
+      </html>
     `
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -42,7 +103,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         from: 'Tocorime Rio <onboarding@resend.dev>',
         to: to,
-        subject: '🔔 Nova Reserva Recebida!',
+        subject: subject,
         html: htmlContent
       })
     })

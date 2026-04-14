@@ -15,11 +15,14 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Message and phone are required" }), { status: 400, headers: corsHeaders });
     }
 
-    // First, get JWT token from WhatsApp server
+    // Use environment variables for WhatsApp credentials
+    const username = Deno.env.get("WHATSAPP_USER") || "yury";
+    const password = Deno.env.get("WHATSAPP_PASS") || "1234";
+
     const loginResponse = await fetch("https://zap-google-back-production.up.railway.app/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "yury", password: "1234" })
+      body: JSON.stringify({ username, password })
     });
 
     if (!loginResponse.ok) {
