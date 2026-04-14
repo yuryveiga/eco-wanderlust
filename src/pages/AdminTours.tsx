@@ -458,6 +458,7 @@ const AdminTours = () => {
                   )}
                   <TabsTrigger value="gallery" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Imagens</TabsTrigger>
                   <TabsTrigger value="carousel" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Galeria</TabsTrigger>
+                  <TabsTrigger value="custom" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Personalizado</TabsTrigger>
                   <TabsTrigger value="settings" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-bold">Preços e Config</TabsTrigger>
                 </TabsList>
               </DialogHeader>
@@ -850,6 +851,167 @@ const AdminTours = () => {
 
                     {(editing.carousel_images_json || []).length === 0 && (
                       <p className="text-center text-muted-foreground text-sm py-8">Nenhuma foto adicionada. A galeria só aparecerá na página do passeio se tiver fotos.</p>
+                    )}
+                  </TabsContent>
+
+                  {/* TAB CUSTOM OPTIONS */}
+                  <TabsContent value="custom" className="m-0 space-y-6">
+                    <div className="bg-muted/20 p-6 rounded-3xl border flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="font-black text-xs uppercase tracking-widest text-primary">Utilizar Personalizado</Label>
+                        <p className="text-[10px] text-muted-foreground">Ative para exibir opções personalizadas abaixo de "Sobre o Passeio" na página do tour. Os valores são por pessoa.</p>
+                      </div>
+                      <Switch 
+                        checked={editing.use_custom_options ?? false} 
+                        onCheckedChange={(v) => setEditing({ ...editing, use_custom_options: v })} 
+                      />
+                    </div>
+
+                    {editing.use_custom_options && (
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <Label className="font-black text-xs uppercase tracking-widest text-primary">Opções Personalizadas</Label>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => {
+                              const current = editing.custom_options_json || [];
+                              setEditing({ 
+                                ...editing, 
+                                custom_options_json: [...current, { title: '', price: 0, positive_notices: [''], negative_notices: [''] }] 
+                              });
+                            }}
+                            className="font-bold text-xs"
+                          >
+                            + Adicionar Opção
+                          </Button>
+                        </div>
+
+                        {(editing.custom_options_json || []).map((option, optIdx) => (
+                          <div key={optIdx} className="bg-card p-6 rounded-3xl border border-border/50 shadow-sm space-y-5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Opção {optIdx + 1}</span>
+                              <Button 
+                                size="icon" 
+                                variant="ghost" 
+                                className="text-red-500 h-8 w-8"
+                                onClick={() => {
+                                  const newArr = [...(editing.custom_options_json || [])];
+                                  newArr.splice(optIdx, 1);
+                                  setEditing({ ...editing, custom_options_json: newArr });
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="md:col-span-2 space-y-2">
+                                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Título</Label>
+                                <Input 
+                                  value={option.title} 
+                                  onChange={(e) => {
+                                    const newArr = [...(editing.custom_options_json || [])];
+                                    newArr[optIdx] = { ...newArr[optIdx], title: e.target.value };
+                                    setEditing({ ...editing, custom_options_json: newArr });
+                                  }}
+                                  placeholder="Ex: Rock Climbing - Via Coringa (Intermediate Level)"
+                                  className="h-12"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Preço por Pessoa (R$)</Label>
+                                <Input 
+                                  type="number" 
+                                  value={option.price} 
+                                  onChange={(e) => {
+                                    const newArr = [...(editing.custom_options_json || [])];
+                                    newArr[optIdx] = { ...newArr[optIdx], price: Number(e.target.value) };
+                                    setEditing({ ...editing, custom_options_json: newArr });
+                                  }}
+                                  className="h-12 font-bold"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Positive notices */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <Label className="text-[10px] uppercase font-bold text-green-600">Avisos Positivos (inclusos)</Label>
+                                <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => {
+                                  const newArr = [...(editing.custom_options_json || [])];
+                                  newArr[optIdx] = { ...newArr[optIdx], positive_notices: [...(newArr[optIdx].positive_notices || []), ''] };
+                                  setEditing({ ...editing, custom_options_json: newArr });
+                                }}>+ Adicionar</Button>
+                              </div>
+                              {(option.positive_notices || []).map((notice, nIdx) => (
+                                <div key={nIdx} className="flex gap-2 items-center">
+                                  <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+                                  <Input 
+                                    value={notice} 
+                                    onChange={(e) => {
+                                      const newArr = [...(editing.custom_options_json || [])];
+                                      const notices = [...(newArr[optIdx].positive_notices || [])];
+                                      notices[nIdx] = e.target.value;
+                                      newArr[optIdx] = { ...newArr[optIdx], positive_notices: notices };
+                                      setEditing({ ...editing, custom_options_json: newArr });
+                                    }}
+                                    placeholder="Ex: Can be booked for up to 5 per booking"
+                                    className="h-9"
+                                  />
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0" onClick={() => {
+                                    const newArr = [...(editing.custom_options_json || [])];
+                                    const notices = [...(newArr[optIdx].positive_notices || [])];
+                                    notices.splice(nIdx, 1);
+                                    newArr[optIdx] = { ...newArr[optIdx], positive_notices: notices };
+                                    setEditing({ ...editing, custom_options_json: newArr });
+                                  }}><Trash2 className="w-3 h-3" /></Button>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Negative notices */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <Label className="text-[10px] uppercase font-bold text-red-500">Avisos Negativos (restrições)</Label>
+                                <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => {
+                                  const newArr = [...(editing.custom_options_json || [])];
+                                  newArr[optIdx] = { ...newArr[optIdx], negative_notices: [...(newArr[optIdx].negative_notices || []), ''] };
+                                  setEditing({ ...editing, custom_options_json: newArr });
+                                }}>+ Adicionar</Button>
+                              </div>
+                              {(option.negative_notices || []).map((notice, nIdx) => (
+                                <div key={nIdx} className="flex gap-2 items-center">
+                                  <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                                  <Input 
+                                    value={notice} 
+                                    onChange={(e) => {
+                                      const newArr = [...(editing.custom_options_json || [])];
+                                      const notices = [...(newArr[optIdx].negative_notices || [])];
+                                      notices[nIdx] = e.target.value;
+                                      newArr[optIdx] = { ...newArr[optIdx], negative_notices: notices };
+                                      setEditing({ ...editing, custom_options_json: newArr });
+                                    }}
+                                    placeholder="Ex: Non-refundable"
+                                    className="h-9"
+                                  />
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0" onClick={() => {
+                                    const newArr = [...(editing.custom_options_json || [])];
+                                    const notices = [...(newArr[optIdx].negative_notices || [])];
+                                    notices.splice(nIdx, 1);
+                                    newArr[optIdx] = { ...newArr[optIdx], negative_notices: notices };
+                                    setEditing({ ...editing, custom_options_json: newArr });
+                                  }}><Trash2 className="w-3 h-3" /></Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+
+                        {(editing.custom_options_json || []).length === 0 && (
+                          <p className="text-center text-muted-foreground text-sm py-8">Nenhuma opção adicionada. Clique em "+ Adicionar Opção" para criar.</p>
+                        )}
+                      </div>
                     )}
                   </TabsContent>
 

@@ -173,6 +173,8 @@ export type LovableTour = {
   price_3_6_people?: number;
   price_7_19_people?: number;
   available_days?: string[];
+  use_custom_options?: boolean;
+  custom_options_json?: { title: string; price: number; positive_notices: string[]; negative_notices: string[] }[];
 };
 
 export type LovablePage = {
