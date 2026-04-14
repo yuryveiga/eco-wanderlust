@@ -434,7 +434,18 @@ const AdminTours = () => {
                   <h3 className="font-serif font-bold text-xl leading-tight mb-3 line-clamp-2">{tour.title}</h3>
                   <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
                     <div className="flex flex-col">
-                      <span className="text-primary font-black font-sans text-lg">R$ {tour.price}</span>
+                      <span className="text-primary font-black font-sans text-lg">
+                        {(() => {
+                          if (tour.pricing_model === 'dynamic') {
+                            return `R$ ${tour.price_1_person || 0} (1p)`;
+                          } else if (tour.pricing_model === 'group') {
+                            return `R$ ${tour.price || 0} (Gr)`;
+                          } else if (tour.pricing_model === 'custom') {
+                            return `Pers.`;
+                          }
+                          return `R$ ${tour.price || 0}`;
+                        })()}
+                      </span>
                       {!tour.is_active && <span className="text-[10px] text-red-500 font-bold uppercase tracking-tighter">Inativo</span>}
                     </div>
                     <span className="text-xs text-muted-foreground font-sans font-medium uppercase tracking-wider">{tour.duration}</span>
