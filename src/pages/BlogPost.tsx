@@ -17,11 +17,10 @@ const BlogPost = () => {
   const [post, setPost] = useState<LovableBlogPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
-  const { siteSettings } = useSiteData();
+  const { siteSettings, images, tours } = useSiteData();
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Tocorime Rio";
-  const { images } = useSiteData();
   const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
 
   useEffect(() => {
@@ -286,7 +285,6 @@ const BlogPost = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {(() => {
-                const { tours } = useSiteData();
                 const recommended = tours
                   .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
                   .slice(0, 3);
