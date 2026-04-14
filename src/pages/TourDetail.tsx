@@ -35,9 +35,8 @@ export function TourDetail() {
   const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [weather, setWeather] = useState<{ temp: number; condition: string; humidity: number; wind: number } | null>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
 
   const tour = tours.find((t) => t.id === id || t.slug === id);
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
@@ -128,22 +127,26 @@ export function TourDetail() {
     return imgs.filter(url => url && typeof url === 'string');
   }, [tour]);
 
-  const currentUnitPrice = useMemo(() => {
-    if (!tour) return 0;
+    let basePrice = 0;
     if (tour.pricing_model === 'dynamic') {
-      if (quantity === 1) return tour.price_1_person || 0;
-      if (quantity === 2) return tour.price_2_people || 0;
-      if (quantity >= 3 && quantity <= 6) return tour.price_3_6_people || 0;
-      if (quantity >= 7) return tour.price_7_19_people || 0;
-      return tour.price || 0;
+      if (quantity === 1) basePrice = tour.price_1_person || 0;
+      else if (quantity === 2) basePrice = tour.price_2_people || 0;
+      else if (quantity >= 3 && quantity <= 6) basePrice = tour.price_3_6_people || 0;
+      else if (quantity >= 7) basePrice = tour.price_7_19_people || 0;
+      else basePrice = tour.price || 0;
+    } else if (tour.pricing_model === 'group') {
+      basePrice = (tour.price || 0) / (quantity || 1);
+    } else {
+      basePrice = tour.price || 0;
+    }
+
+    // Add custom option price if active
+    if (tour.use_custom_options && tour.custom_options_json && tour.custom_options_json[selectedOptionIdx]) {
+      basePrice += tour.custom_options_json[selectedOptionIdx].price || 0;
     }
     
-    if (tour.pricing_model === 'group') {
-      return (tour.price || 0) / (quantity || 1);
-    }
-    
-    return tour.price || 0;
-  }, [tour, quantity]);
+    return basePrice;
+  }, [tour, quantity, selectedOptionIdx]);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -209,7 +212,11 @@ export function TourDetail() {
       price_2_people: tour.price_2_people,
       price_3_6_people: tour.price_3_6_people,
       price_7_19_people: tour.price_7_19_people,
-      group_price: tour.pricing_model === 'group' ? tour.price : undefined
+      group_price: tour.pricing_model === 'group' ? tour.price : undefined,
+      selected_option: tour.use_custom_options && tour.custom_options_json?.[selectedOptionIdx] ? {
+        title: tour.custom_options_json[selectedOptionIdx].title,
+        extra_price: tour.custom_options_json[selectedOptionIdx].price
+      } : undefined
     });
 
     toast.success(t("passeio_adicionado"), {
@@ -389,7 +396,82 @@ export function TourDetail() {
                   {t("sobre_o_passeio")}
                 </h2>
                 <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">{translatedShortDesc}</p>
-             </div>
+              </div>
+
+               {/* Custom Options Selection */}
+               {tour.use_custom_options && tour.custom_options_json && tour.custom_options_json.length > 0 && (
+                 <div className="space-y-8">
+                   <h2 className="text-3xl font-serif font-black flex items-center gap-4 text-foreground">
+                     <div className="w-2 h-10 bg-primary rounded-full" />
+                     {t("opcoes_reserva")}
+                   </h2>
+                   
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     {tour.custom_options_json.map((option, idx) => (
+                       <div 
+                         key={idx}
+                         onClick={() => setSelectedOptionIdx(idx)}
+                         className={`relative p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer group flex flex-col justify-between h-full ${
+                           selectedOptionIdx === idx 
+                             ? "border-primary bg-primary/5 shadow-xl scale-[1.02] ring-4 ring-primary/5" 
+                             : "border-border bg-card hover:border-primary/30 hover:bg-muted/30"
+                         }`}
+                       >
+                         {selectedOptionIdx === idx && (
+                           <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                             <Check className="w-5 h-5 font-bold" />
+                           </div>
+                         )}
+
+                         <div className="space-y-4">
+                           <div className="space-y-1">
+                             <h3 className={`text-xl font-black transition-colors ${selectedOptionIdx === idx ? 'text-primary' : 'text-foreground'}`}>
+                               {option.title}
+                             </h3>
+                             {option.price > 0 && (
+                               <p className="text-primary font-black text-sm">
+                                 +{formatPrice(option.price)} / {t("pessoa")}
+                               </p>
+                             )}
+                           </div>
+
+                           <div className="space-y-4 pt-4 border-t border-primary/10">
+                             {/* Positives */}
+                             {(option.positive_notices || []).length > 0 && (
+                               <div className="space-y-2">
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-green-600 block">{t("inclui")}</span>
+                                 <ul className="space-y-2">
+                                   {option.positive_notices.map((n, i) => (
+                                     <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
+                                       <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                                       <span>{n}</span>
+                                     </li>
+                                   ))}
+                                 </ul>
+                               </div>
+                             )}
+
+                             {/* Negatives */}
+                             {(option.negative_notices || []).length > 0 && (
+                               <div className="space-y-2">
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-red-600 block">{t("nao_inclui")}</span>
+                                 <ul className="space-y-2">
+                                   {option.negative_notices.map((n, i) => (
+                                     <li key={i} className="flex items-start gap-2 text-sm text-foreground/60 italic">
+                                       <X className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                                       <span>{n}</span>
+                                     </li>
+                                   ))}
+                                 </ul>
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
 
                {/* Highlights */}
                {highlights.length > 0 && (

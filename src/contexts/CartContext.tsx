@@ -16,6 +16,7 @@ export interface CartItem {
   price_3_6_people?: number;
   price_7_19_people?: number;
   group_price?: number;
+  selected_option?: { title: string; extra_price: number };
 }
 
 interface CartContextType {
@@ -46,7 +47,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         i.id === newItem.id && 
         i.date === newItem.date && 
         i.period === newItem.period &&
-        i.isPrivate === newItem.isPrivate
+        i.isPrivate === newItem.isPrivate &&
+        i.selected_option?.title === newItem.selected_option?.title
       );
 
       if (existing) {
@@ -72,6 +74,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else if (i.pricing_model === 'group' && i.group_price) {
           newPrice = i.group_price / (quantity || 1);
         }
+        
+        // Add extra price from selected option if it exists
+        if (i.selected_option?.extra_price) {
+          newPrice += i.selected_option.extra_price;
+        }
+
         return { ...i, quantity, price: newPrice };
       }
       return i;

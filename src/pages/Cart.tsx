@@ -131,9 +131,16 @@ const Cart = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <Link to={`/passeio/${item.slug || item.id}`} className="font-serif text-xl font-bold mb-2 group-hover:text-primary transition-colors block">
+                      <Link to={`/passeio/${item.slug || item.id}`} className="font-serif text-xl font-bold mb-1 group-hover:text-primary transition-colors block">
                         {item.title}
                       </Link>
+                      {item.selected_option && (
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest border border-primary/20">
+                            {item.selected_option.title}
+                          </span>
+                        </div>
+                      )}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm text-muted-foreground font-sans">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-primary/70" />

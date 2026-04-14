@@ -177,6 +177,12 @@ const translations = {
     cancelamento_gratis: 'Cancelamento Grátis até 24h',
     explorar_outros: 'Explorar outros destinos',
     voce_tambem_pode_gostar: 'VOCÊ TAMBÉM PODE GOSTAR',
+    opcoes_reserva: 'Opções de Reserva',
+    detalhes_opcao: 'Detalhes da Opção',
+    selecione_uma_opcao: 'Escolha uma Opção',
+    inclui: 'O que inclui',
+    nao_inclui: 'Não inclui',
+    selecionado: 'Selecionado',
 
     // Carrinho
     meu_carrinho: 'Meu Carrinho',
@@ -354,6 +360,12 @@ const translations = {
     cancelamento_gratis: 'Free Cancellation up to 24h',
     explorar_outros: 'Explore other destinations',
     voce_tambem_pode_gostar: 'YOU MAY ALSO LIKE',
+    opcoes_reserva: 'Booking Options',
+    detalhes_opcao: 'Option Details',
+    selecione_uma_opcao: 'Choose an Option',
+    inclui: 'Includes',
+    nao_inclui: 'Not included',
+    selecionado: 'Selected',
 
     // Cart
     meu_carrinho: 'My Cart',
@@ -531,6 +543,12 @@ const translations = {
     cancelamento_gratis: 'Cancelación Gratis hasta 24h',
     explorar_outros: 'Explorar outros destinos',
     voce_tambem_pode_gostar: 'VOCÊ TAMBÉM PODE GOSTAR',
+    opcoes_reserva: 'Opciones de Reserva',
+    detalhes_opcao: 'Detalles de la Opción',
+    selecione_uma_opcao: 'Elija una Opción',
+    inclui: 'Qué incluye',
+    nao_inclui: 'No incluye',
+    selecionado: 'Seleccionado',
 
     // Cart
     meu_carrinho: 'Mi Carrito',
