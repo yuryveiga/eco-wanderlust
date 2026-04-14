@@ -10,7 +10,7 @@ export interface CartItem {
   period: string;
   isPrivate: boolean;
   quantity: number;
-  pricing_model?: 'fixed' | 'dynamic' | 'group';
+  pricing_model?: 'fixed' | 'dynamic' | 'group' | 'custom';
   price_1_person?: number;
   price_2_people?: number;
   price_3_6_people?: number;
@@ -73,6 +73,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           else if (quantity >= 7) newPrice = i.price_7_19_people || 0;
         } else if (i.pricing_model === 'group' && i.group_price) {
           newPrice = i.group_price / (quantity || 1);
+        } else if (i.pricing_model === 'custom') {
+          newPrice = 0;
         }
         
         // Add extra price from selected option if it exists

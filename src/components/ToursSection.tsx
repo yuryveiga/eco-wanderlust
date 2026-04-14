@@ -24,7 +24,7 @@ type TourCardProps = {
   category_en?: string;
   category_es?: string;
   external_url?: string;
-  pricing_model?: 'fixed' | 'dynamic' | 'group';
+  pricing_model?: 'fixed' | 'dynamic' | 'group' | 'custom';
   price_1_person?: number;
   price_2_people?: number;
   price_3_6_people?: number;
@@ -80,15 +80,16 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         )}
         <div className="flex items-center justify-between">
           <div>
-            {(tour.price > 0 || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
+            {(tour.price > 0 || tour.pricing_model === 'custom' || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
                   {(() => {
-                    let minBase = 0;
                     if (tour.pricing_model === 'dynamic') {
                       minBase = tour.price_1_person || 0;
                     } else if (tour.pricing_model === 'group') {
                       minBase = (tour.price || 0);
+                    } else if (tour.pricing_model === 'custom') {
+                      minBase = 0;
                     } else {
                       minBase = tour.price || 0;
                     }
@@ -101,7 +102,7 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
                   })()}
                 </span>
                 <span className="text-muted-foreground text-sm font-sans">
-                  {" "}{tour.pricing_model === 'group' ? t("por_grupo") : tour.pricing_model === 'dynamic' ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
+                  {" "}{tour.pricing_model === 'group' ? t("por_grupo") : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
                 </span>
               </>
             )}

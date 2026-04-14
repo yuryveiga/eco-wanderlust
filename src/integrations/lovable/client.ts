@@ -167,7 +167,7 @@ export type LovableTour = {
   youtube_video_url?: string;
   external_url?: string;
   carousel_images_json?: string[];
-  pricing_model?: 'fixed' | 'dynamic' | 'group';
+  pricing_model?: 'fixed' | 'dynamic' | 'group' | 'custom';
   price_1_person?: number;
   price_2_people?: number;
   price_3_6_people?: number;

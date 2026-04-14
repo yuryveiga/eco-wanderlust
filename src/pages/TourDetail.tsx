@@ -139,6 +139,8 @@ export function TourDetail() {
       else basePrice = tour.price || 0;
     } else if (tour.pricing_model === 'group') {
       basePrice = (tour.price || 0) / (quantity || 1);
+    } else if (tour.pricing_model === 'custom') {
+      basePrice = 0;
     } else {
       basePrice = tour.price || 0;
     }
@@ -298,6 +300,8 @@ export function TourDetail() {
                     minBase = tour.price_1_person || 0;
                   } else if (tour.pricing_model === 'group') {
                     minBase = (tour.price || 0);
+                  } else if (tour.pricing_model === 'custom') {
+                    minBase = 0;
                   } else {
                     minBase = tour.price || 0;
                   }
@@ -610,6 +614,8 @@ export function TourDetail() {
                              minBase = tour.price_1_person || 0;
                            } else if (tour.pricing_model === 'group') {
                              minBase = (tour.price || 0);
+                           } else if (tour.pricing_model === 'custom') {
+                             minBase = 0;
                            } else {
                              minBase = tour.price || 0;
                            }
@@ -622,7 +628,7 @@ export function TourDetail() {
                          })()}
                        </span>
                         <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">
-                          {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : t("por_pessoa")}
+                          {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : t("por_pessoa")}
                         </span>
                      </div>
                    </div>
