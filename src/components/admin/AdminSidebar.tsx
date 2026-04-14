@@ -96,11 +96,11 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="gap-0 py-2">
+      <SidebarContent className="gap-0 py-0 overflow-x-hidden">
         {menuGroups.map((group) => (
-          <SidebarGroup key={group.label}>
+          <SidebarGroup key={group.label} className="py-1">
             {!collapsed && (
-              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70 mt-1 mb-1">
+              <SidebarGroupLabel className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground/60 h-auto py-1 px-4">
                 {group.label}
               </SidebarGroupLabel>
             )}
@@ -126,18 +126,18 @@ export function AdminSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
+      <SidebarFooter className="border-t p-2">
         {!collapsed && (
-          <div className="mb-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Logado como</p>
-            <p className="text-xs text-foreground font-medium truncate">
+          <div className="mb-2 px-2">
+            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Logado como</p>
+            <p className="text-[11px] text-foreground font-medium truncate">
               {user?.email}
             </p>
           </div>
         )}
-        <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full justify-start border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive">
-          <LogOut className="h-4 w-4 mr-2" />
-          {!collapsed && <span className="font-semibold">Sair do Painel</span>}
+        <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full h-8 justify-start border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive text-xs">
+          <LogOut className="h-3 w-3 mr-2" />
+          {!collapsed && <span className="font-semibold">Sair</span>}
         </Button>
       </SidebarFooter>
     </Sidebar>
