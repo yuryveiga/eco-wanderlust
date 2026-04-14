@@ -163,7 +163,9 @@ export function ToursSection() {
                         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
   const activeCat = categories[activeTab];
-  const displayTours = tours.filter(t => t.category?.toUpperCase().includes(activeCat.value));
+  const displayTours = tours
+    .filter(t => t.category?.toUpperCase().includes(activeCat.value))
+    .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
   
   // Title and subtitle
   const toursSectionTitleKey = language === 'pt' ? 'tours_section_title' : `tours_section_title_${language}`;

@@ -396,6 +396,7 @@ const AdminTours = () => {
                 if (activeFilter === 'inactive') return !tour.is_active;
                 return true;
               })
+              .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
               .map((tour) => (
               <div key={tour.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
                 <div className="relative h-48 bg-muted">
