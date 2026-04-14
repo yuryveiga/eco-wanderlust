@@ -222,12 +222,8 @@ export function TourDetail() {
       } : undefined
     });
 
-    toast.success(t("passeio_adicionado"), {
-      action: {
-        label: t("reservar"),
-        onClick: () => navigate("/carrinho")
-      }
-    });
+    toast.success(t("passeio_adicionado"));
+    navigate("/carrinho");
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
