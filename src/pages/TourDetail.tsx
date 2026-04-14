@@ -35,11 +35,19 @@ export function TourDetail() {
     queryKey: ["tour", id],
     queryFn: async () => {
       if (!id) return null;
-      const { data, error } = await supabase
-        .from("tours")
-        .select("*")
-        .or(`id.eq.${id},slug.eq.${id}`)
-        .single();
+      
+      // Check if id is a valid UUID to avoid database type errors
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+      
+      let query = supabase.from("tours").select("*");
+      
+      if (isUuid) {
+        query = query.or(`id.eq.${id},slug.eq.${id}`);
+      } else {
+        query = query.eq("slug", id);
+      }
+      
+      const { data, error } = await query.single();
       if (error) throw error;
       return data as LovableTour;
     },
