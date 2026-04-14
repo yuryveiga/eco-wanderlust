@@ -77,15 +77,25 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ error: "Email and password are required" }), { status: 400, headers: corsHeaders });
       }
 
-      const { data: users, error: listError } = await adminClient.auth.admin.listUsers();
-      if (listError) throw listError;
+      // Paginate through all users to find by email
+      let targetUser = null;
+      let page = 1;
+      const perPage = 100;
+      while (!targetUser) {
+        const { data: batch, error: listError } = await adminClient.auth.admin.listUsers({ page, perPage });
+        if (listError) throw listError;
+        if (!batch.users || batch.users.length === 0) break;
+        targetUser = batch.users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+        if (batch.users.length < perPage) break;
+        page++;
+      }
 
-      const user = users.users.find((u: any) => u.email === email);
-      if (!user) {
+      if (!targetUser) {
+        console.error("User not found in Auth for email:", email);
         return new Response(JSON.stringify({ error: "User not found in Auth" }), { status: 404, headers: corsHeaders });
       }
 
-      const { error: updateError } = await adminClient.auth.admin.updateUserById(user.id, {
+      const { error: updateError } = await adminClient.auth.admin.updateUserById(targetUser.id, {
         password,
       });
 
