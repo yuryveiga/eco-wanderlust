@@ -16,8 +16,13 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400, headers: corsHeaders })
     }
 
-    const headerTitle = isCustomerCopy ? 'Reserva Confirmada ✨' : 'Nova Reserva Recebida 🔔';
-    const subject = isCustomerCopy ? 'Sua reserva na Tocorime Rio está confirmada!' : '🔔 Nova Reserva Recebida!';
+    const headerTitle = isCustomerCopy 
+      ? 'Reserva Confirmada ✨ / Booking Confirmed ✨' 
+      : 'Nova Reserva Recebida 🔔 / New Booking Received 🔔';
+    
+    const subject = isCustomerCopy 
+      ? 'Sua reserva na Tocorime Rio está confirmada! / Your booking with Tocorime Rio is confirmed!' 
+      : '🔔 Nova Reserva Recebida! / New Booking Received!';
     
     const htmlContent = `
       <!DOCTYPE html>
@@ -40,6 +45,7 @@ Deno.serve(async (req) => {
           .total-value { font-size: 24px; font-weight: bold; display: block; }
           .footer { background: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #999; }
           .cta-button { display: inline-block; padding: 12px 24px; background-color: #2A9D8F; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+          .translation { font-style: italic; color: #666; font-size: 0.9em; }
         </style>
       </head>
       <body>
@@ -49,45 +55,49 @@ Deno.serve(async (req) => {
             <p>${headerTitle}</p>
           </div>
           <div class="content">
-            <p>Olá, <strong>${customerName}</strong>,</p>
-            <p>${isCustomerCopy ? 'Temos o prazer de informar que sua reserva foi confirmada com sucesso! Estamos ansiosos para recebê-lo.' : 'Uma nova venda foi realizada através do site.'}</p>
+            <p>Olá / Hello, <strong>${customerName}</strong>,</p>
+            <p>
+              ${isCustomerCopy 
+                ? 'Temos o prazer de informar que sua reserva foi confirmada com sucesso! Estamos ansiosos para recebê-lo. <br> <span class="translation">We are pleased to inform you that your booking has been successfully confirmed! We look forward to welcoming you.</span>' 
+                : 'Uma nova venda foi realizada através do site. <br> <span class="translation">A new sale has been completed through the website.</span>'}
+            </p>
             
             <div class="section">
-              <span class="section-title">Dados da Reserva</span>
+              <span class="section-title">Dados da Reserva / Booking Details</span>
               <div class="customer-info">
-                <p><strong>Nome:</strong> ${customerName}</p>
+                <p><strong>Nome / Name:</strong> ${customerName}</p>
                 <p><strong>E-mail:</strong> ${customerEmail}</p>
-                <p><strong>WhatsApp:</strong> ${customerPhone || 'Não informado'}</p>
+                <p><strong>WhatsApp:</strong> ${customerPhone || 'Não informado / Not provided'}</p>
               </div>
             </div>
 
             <div class="section">
-              <span class="section-title">Itens</span>
+              <span class="section-title">Itens / Items</span>
               ${items.map((item: any) => `
                 <div class="tour-item">
                   <span class="tour-title">${item.tour}</span>
                   <div class="tour-details">
-                    <span>${item.quantity} pessoa(s) • Data: ${item.date}</span>
+                    <span>${item.quantity} pessoa(s) / person(s) • Data / Date: ${item.date}</span>
                   </div>
                 </div>
               `).join('')}
             </div>
 
             <div class="total-box">
-              <span class="total-label">Valor Pago</span>
+              <span class="total-label">Valor Pago / Total Paid</span>
               <span class="total-value">R$ ${total.toFixed(2)}</span>
             </div>
 
             ${isCustomerCopy ? `
               <div style="text-align: center;">
-                <p>Dúvidas? Entre em contato pelo nosso WhatsApp.</p>
-                <a href="https://wa.me/5521970702523" class="cta-button">Falar conosco</a>
+                <p>Dúvidas? Entre em contato pelo nosso WhatsApp. <br> <span class="translation">Questions? Contact us via WhatsApp.</span></p>
+                <a href="https://wa.me/5521970702523" class="cta-button">Falar conosco / Contact us</a>
               </div>
             ` : ''}
           </div>
           <div class="footer">
-            <p>Este é um e-mail automático enviado pelo sistema de reservas Tocorime Rio.</p>
-            <p>&copy; ${new Date().getFullYear()} Tocorime Rio. Todos os direitos reservados.</p>
+            <p>Este é um e-mail automático enviado pelo sistema de reservas Tocorime Rio. <br> This is an automated email sent by the Tocorime Rio booking system.</p>
+            <p>&copy; ${new Date().getFullYear()} Tocorime Rio. Todos os direitos reservados. / All rights reserved.</p>
           </div>
         </div>
       </body>
