@@ -71,7 +71,7 @@ export function GallerySection() {
                   <div className="p-1">
                     <button
                       onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-[3/2] rounded-xl overflow-hidden group bg-card border"
+                      className="relative w-full aspect-video rounded-xl overflow-hidden group bg-card border"
                     >
                       <img
                         src={getOptimizedImage(img.url, 800)}
