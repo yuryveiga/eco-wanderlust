@@ -7,12 +7,14 @@ const fallbackTours: LovableTour[] = [
   { id: "3", title: "Angra dos Reis", short_description: "Navegue pelas ilhas paradisíacas de Angra dos Reis.", price: 200, duration: "10 horas", max_group_size: 25, image_url: "https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=1200", is_featured: true, category: "Barco", is_active: true, sort_order: 3 },
 ];
 
+const TOUR_LISTING_COLUMNS = "id,title,short_description,price,duration,max_group_size,image_url,is_featured,category,is_active,sort_order,slug,pricing_model,price_1_person,price_2_people,price_3_6_people,price_7_19_people,use_custom_options,custom_options_json,external_url,title_en,title_es,short_description_en,short_description_es,category_en,category_es";
+
 export function useSiteData() {
   const { data, isLoading } = useQuery({
     queryKey: ["siteData"],
     queryFn: async () => {
       const [toursData, pagesData, imagesData, socialData, settingsData] = await Promise.all([
-        fetchLovable<LovableTour>("tours"),
+        fetchLovable<LovableTour>("tours", TOUR_LISTING_COLUMNS),
         fetchLovable<LovablePage>("pages"),
         fetchLovable<LovableSiteImage>("site_images"),
         fetchLovable<LovableSocialMedia>("social_media"),

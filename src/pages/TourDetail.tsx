@@ -27,7 +27,24 @@ import { ptBR, enUS, es } from "date-fns/locale";
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tours, isLoading, siteSettings, socialMedia } = useSiteData();
+  const { tours, isLoading: isGlobalLoading, siteSettings, socialMedia } = useSiteData();
+  const { data: tour, isLoading: isTourLoading } = useQuery({
+    queryKey: ["tour", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data, error } = await supabase
+        .from("tours")
+        .select("*")
+        .or(`id.eq.${id},slug.eq.${id}`)
+        .single();
+      if (error) throw error;
+      return data as LovableTour;
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const isLoading = isGlobalLoading || isTourLoading;
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -40,7 +57,6 @@ export function TourDetail() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
 
-  const tour = tours.find((t) => t.id === id || t.slug === id);
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
 
   // TripAdvisor data

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube,
@@ -80,7 +81,7 @@ export function Header() {
 
   console.log("socialMedia:", socialMedia);
 
-  const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png";
+  const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/images__1_-removebg-preview.png";
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
@@ -88,7 +89,7 @@ export function Header() {
         <div className="flex items-center justify-between h-18 md:h-26">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-16 w-16 md:h-22 md:w-22 object-contain transition-all duration-300 focus:outline-none" />
+              <img src={getOptimizedImage(logoUrl, 200)} alt="Logo" className="h-16 w-16 md:h-22 md:w-22 object-contain transition-all duration-300 focus:outline-none" />
             ) : (
               <div className="w-16 h-16 md:h-22 md:w-22 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-primary-foreground font-bold text-2xl font-sans">P</span>

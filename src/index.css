@@ -82,10 +82,12 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    font-display: swap;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', Georgia, serif;
+    font-display: swap;
   }
 }
 
