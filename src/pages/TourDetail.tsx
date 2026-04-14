@@ -296,7 +296,23 @@ export function TourDetail() {
                 {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
               </span>
               <span className="text-4xl font-black text-primary">
-                {formatPrice(tour.pricing_model === 'group' ? tour.price : (tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price))}
+                {(() => {
+                  let minBase = 0;
+                  if (tour.pricing_model === 'dynamic') {
+                    const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
+                    minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
+                  } else if (tour.pricing_model === 'group') {
+                    minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                  } else {
+                    minBase = tour.price || 0;
+                  }
+                  
+                  if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
+                    const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
+                    minBase += Math.min(...optionPrices);
+                  }
+                  return formatPrice(minBase);
+                })()}
               </span>
               <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
                 {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}
@@ -438,11 +454,10 @@ export function TourDetail() {
                              )}
                            </div>
 
-                           <div className="space-y-4 pt-4 border-t border-primary/10">
+               <div className="space-y-4 pt-4 border-t border-primary/10">
                              {/* Positives */}
                              {(option.positive_notices || []).length > 0 && (
                                <div className="space-y-2">
-                                 <span className="text-[10px] font-black uppercase tracking-widest text-green-600 block">{t("inclui")}</span>
                                  <ul className="space-y-2">
                                    {option.positive_notices.map((n, i) => (
                                      <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
@@ -457,7 +472,6 @@ export function TourDetail() {
                              {/* Negatives */}
                              {(option.negative_notices || []).length > 0 && (
                                <div className="space-y-2">
-                                 <span className="text-[10px] font-black uppercase tracking-widest text-red-600 block">{t("nao_inclui")}</span>
                                  <ul className="space-y-2">
                                    {option.negative_notices.map((n, i) => (
                                      <li key={i} className="flex items-start gap-2 text-sm text-foreground/60 italic">
@@ -593,12 +607,25 @@ export function TourDetail() {
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                    
                    <div className="text-center mb-8">
-                     <span className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em]">
-                       {tour.pricing_model === 'group' ? t("valor_grupo") : t("a_partir_de")}
-                     </span>
                      <div className="flex items-center justify-center gap-2 mt-1">
                        <span className="text-5xl font-black text-primary">
-                         {formatPrice(tour.pricing_model === 'group' ? tour.price : (tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price))}
+                         {(() => {
+                           let minBase = 0;
+                           if (tour.pricing_model === 'dynamic') {
+                             const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
+                             minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
+                           } else if (tour.pricing_model === 'group') {
+                             minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                           } else {
+                             minBase = tour.price || 0;
+                           }
+                           
+                           if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
+                             const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
+                             minBase += Math.min(...optionPrices);
+                           }
+                           return formatPrice(minBase);
+                         })()}
                        </span>
                         <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">
                           {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : t("por_pessoa")}

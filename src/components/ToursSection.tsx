@@ -83,10 +83,23 @@ const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
             {(tour.price > 0 || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
-                  {tour.pricing_model === 'dynamic' 
-                    ? formatPrice(tour.price_1_person || 0) 
-                    : formatPrice(tour.price)
-                  }
+                  {(() => {
+                    let minBase = 0;
+                    if (tour.pricing_model === 'dynamic') {
+                      const prices = [tour.price_1_person, tour.price_2_people, tour.price_3_6_people, tour.price_7_19_people].filter(p => p !== undefined && p !== null && (p as number) > 0) as number[];
+                      minBase = prices.length > 0 ? Math.min(...prices) : (tour.price || 0);
+                    } else if (tour.pricing_model === 'group') {
+                      minBase = (tour.price || 0) / (tour.max_group_size || 1);
+                    } else {
+                      minBase = tour.price || 0;
+                    }
+                    
+                    if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
+                      const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
+                      minBase += Math.min(...optionPrices);
+                    }
+                    return formatPrice(minBase);
+                  })()}
                 </span>
                 <span className="text-muted-foreground text-sm font-sans">
                   {" "}{tour.pricing_model === 'group' ? t("por_grupo") : tour.pricing_model === 'dynamic' ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
