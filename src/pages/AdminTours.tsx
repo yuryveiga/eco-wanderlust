@@ -49,6 +49,7 @@ const AdminTours = () => {
   const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [isTranslateAllConfirmOpen, setIsTranslateAllConfirmOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const { toast } = useToast();
 
 
@@ -355,6 +356,34 @@ const AdminTours = () => {
         )}
       </div>
 
+      <div className="flex gap-2 mb-6 shrink-0 flex-wrap border-t pt-4">
+        <span className="text-xs font-black uppercase tracking-widest text-muted-foreground self-center mr-2">Status:</span>
+        <Button
+          variant={activeFilter === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveFilter('all')}
+          className="rounded-full font-sans"
+        >
+          Todos
+        </Button>
+        <Button
+          variant={activeFilter === 'active' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveFilter('active')}
+          className="rounded-full font-sans text-green-600 border-green-200 hover:bg-green-50"
+        >
+          Ativos
+        </Button>
+        <Button
+          variant={activeFilter === 'inactive' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveFilter('inactive')}
+          className="rounded-full font-sans text-red-600 border-red-200 hover:bg-red-50"
+        >
+          Inativos
+        </Button>
+      </div>
+
       <div className="flex-1 overflow-auto pr-2 pb-8">
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground font-sans uppercase tracking-[0.2em] animate-pulse">Carregando...</div>
@@ -362,6 +391,11 @@ const AdminTours = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tours
               .filter(tour => categoryFilter === 'all' || tour.category === categoryFilter)
+              .filter(tour => {
+                if (activeFilter === 'active') return tour.is_active;
+                if (activeFilter === 'inactive') return !tour.is_active;
+                return true;
+              })
               .map((tour) => (
               <div key={tour.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
                 <div className="relative h-48 bg-muted">
