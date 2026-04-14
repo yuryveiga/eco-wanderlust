@@ -563,16 +563,6 @@ export function TourDetail() {
                            </PopoverContent>
                          </Popover>
                          
-                         {tour?.available_days && tour.available_days.length > 0 && (
-                           <p className="text-[10px] text-muted-foreground px-1 font-medium">
-                             {t("disponivel_em") || "Disponível aos:"} {
-                               [...tour.available_days]
-                                 .sort()
-                                 .map(d => [t("dom"), t("seg"), t("ter"), t("qua"), t("qui"), t("sex"), t("sab")][parseInt(d)])
-                                 .join(", ")
-                             }
-                           </p>
-                         )}
 
                      </div>
 
