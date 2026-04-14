@@ -46,9 +46,15 @@ const menuGroups = [
     label: "Gestão Comercial",
     items: [
       { title: "Vendas", url: "/admin/sales", icon: DollarSign },
-      { title: "Simulador", url: "/admin/simulator", icon: Calculator },
       { title: "Calendário", url: "/admin/calendar", icon: CalendarDays },
       { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
+    ]
+  },
+  {
+    label: "Ferramentas",
+    items: [
+      { title: "Simulador", url: "/admin/simulator", icon: Calculator },
+      { title: "Otimizador", url: "/admin/optimizer", icon: Zap },
     ]
   },
   {
@@ -57,7 +63,6 @@ const menuGroups = [
       { title: "Passeios", url: "/admin/tours", icon: Map },
       { title: "Blog", url: "/admin/blog", icon: PenTool },
       { title: "Galeria", url: "/admin/gallery", icon: Images },
-      { title: "Páginas CMS", url: "/admin/pages", icon: FileText },
     ]
   },
   {
@@ -66,7 +71,6 @@ const menuGroups = [
       { title: "Estilo do Hero", url: "/admin/hero", icon: LayoutTemplate },
       { title: "Cores do Site", url: "/admin/theme", icon: Palette },
       { title: "Imagens do Site", url: "/admin/images", icon: Image },
-      { title: "Otimizador", url: "/admin/optimizer", icon: Zap },
       { title: "Redes Sociais", url: "/admin/social", icon: Share2 },
     ]
   },
