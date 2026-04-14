@@ -91,8 +91,16 @@ Deno.serve(async (req) => {
       }
 
       if (!targetUser) {
-        console.error("User not found in Auth for email:", email);
-        return new Response(JSON.stringify({ error: "User not found in Auth" }), { status: 404, headers: corsHeaders });
+        // User exists in profiles but not in Auth — auto-create in Auth
+        console.log("User not in Auth, auto-creating:", email);
+        const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+        });
+        if (createError) throw createError;
+        console.log("Auto-created user in Auth and set password for:", email);
+        return new Response(JSON.stringify({ success: true, auto_created: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
       const { error: updateError } = await adminClient.auth.admin.updateUserById(targetUser.id, {
