@@ -44,7 +44,7 @@ export function GallerySection() {
 
   return (
     <section className="py-20 lg:py-28 bg-muted/30 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="text-center mb-12 lg:mb-16">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Images className="w-6 h-6 text-primary" />
@@ -56,41 +56,41 @@ export function GallerySection() {
             {t("galeria_sub")}
           </p>
         </div>
+      </div>
 
-        <div className="px-12">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-3 md:-ml-4">
-              {galleryImages.map((img, index) => (
-                <CarouselItem key={img.key} className="pl-3 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3">
-                  <div className="p-1">
-                    <button
-                      onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-video rounded-xl overflow-hidden group bg-card border"
-                    >
-                      <img
-                        src={getOptimizedImage(img.url, 800)}
-                        alt={img.key}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                        <Images className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-                    </button>
+      <div className="relative w-full">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="ml-0">
+            {galleryImages.map((img, index) => (
+              <CarouselItem key={img.key} className="pl-0 basis-[85%] sm:basis-1/2 md:basis-[33.33%] lg:basis-1/4 xl:basis-1/5">
+                <button
+                  onClick={() => openLightbox(index)}
+                  className="relative w-full aspect-[4/3] overflow-hidden group bg-card border-0"
+                >
+                  <img
+                    src={getOptimizedImage(img.url, 800)}
+                    alt={img.key}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                    <div className="bg-white/10 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
+                      <Images className="w-5 h-5 text-white" />
+                    </div>
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="-left-12 lg:-left-16 w-12 h-12" />
-            <CarouselNext className="-right-12 lg:-right-16 w-12 h-12" />
-          </Carousel>
-        </div>
+                </button>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex left-4 w-10 h-10 bg-white/90 hover:bg-white backdrop-blur-md border-none shadow-lg text-primary z-10" />
+          <CarouselNext className="hidden md:flex right-4 w-10 h-10 bg-white/90 hover:bg-white backdrop-blur-md border-none shadow-lg text-primary z-10" />
+        </Carousel>
       </div>
 
       {selectedIndex !== null && (
