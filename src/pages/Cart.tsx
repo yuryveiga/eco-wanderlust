@@ -58,6 +58,7 @@ const Cart = () => {
           selected_period: item.period,
           is_private: item.isPrivate,
           is_paid: false,
+          provider: "tour",
         }).select("id").single();
 
         if (error) throw error;

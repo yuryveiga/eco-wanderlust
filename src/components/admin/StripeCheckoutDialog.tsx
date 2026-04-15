@@ -62,6 +62,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
         selected_date: selectedDate,
         is_paid: false,
         is_private: true,
+        provider: "tour",
       });
 
       const saleId = (savedSale as any)?.id;
