@@ -71,12 +71,12 @@ export function GallerySection() {
                   <div className="p-1">
                     <button
                       onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden group bg-card border"
+                      className="relative w-full aspect-video rounded-xl overflow-hidden group bg-card border"
                     >
                       <img
                         src={getOptimizedImage(img.url, 800)}
                         alt={img.key}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
