@@ -8,7 +8,7 @@ export function getOptimizedImage(url: string, width: number = 800, quality: num
   // Unsplash Optimization
   if (url.includes("images.unsplash.com")) {
     const baseUrl = url.split("?")[0];
-    return `${baseUrl}?q=${quality}&w=${width}&auto=format&fit=crop`;
+    return `${baseUrl}?q=${quality}&w=${width}&auto=format&fit=max`;
   }
 
   // Supabase Storage Optimization (Resize API)
@@ -17,7 +17,7 @@ export function getOptimizedImage(url: string, width: number = 800, quality: num
     // If you have image transformation enabled, the URL structure changes to:
     // .../storage/v1/render/image/public/bucket/path?width=...
     if (url.includes("/object/public/")) {
-        return url.replace("/object/public/", "/render/image/public/") + `?width=${width}&quality=${quality}`;
+        return url.replace("/object/public/", "/render/image/public/") + `?width=${width}&quality=${quality}&resize=contain`;
     }
   }
 
