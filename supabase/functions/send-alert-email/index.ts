@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { to, customerName, customerEmail, customerPhone, items, total, isCustomerCopy = false } = await req.json()
+    const { to, customerName, customerEmail, customerPhone, items, total, isCustomerCopy = false, selectedPeriod, isPrivate } = await req.json()
 
     if (!to) {
       return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400, headers: corsHeaders })
