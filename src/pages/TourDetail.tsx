@@ -49,7 +49,7 @@ export function TourDetail() {
       
       const { data, error } = await query.single();
       if (error) throw error;
-      return data as LovableTour;
+      return data as unknown as LovableTour;
     },
     enabled: !!id,
     staleTime: 1000 * 60 * 5, // 5 minutes

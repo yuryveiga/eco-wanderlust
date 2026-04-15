@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, LovableSale, LovableTour } from "@/integrations/lovable/client";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare, CreditCard } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, Check, X, Square, CheckSquare, CreditCard, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
