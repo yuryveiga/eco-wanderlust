@@ -268,6 +268,7 @@ export type Database = {
           is_cancelled: boolean | null
           is_paid: boolean | null
           is_private: boolean | null
+          passengers_json: Json | null
           quantity: number | null
           selected_date: string | null
           selected_period: string | null
@@ -286,6 +287,7 @@ export type Database = {
           is_cancelled?: boolean | null
           is_paid?: boolean | null
           is_private?: boolean | null
+          passengers_json?: Json | null
           quantity?: number | null
           selected_date?: string | null
           selected_period?: string | null
@@ -304,6 +306,7 @@ export type Database = {
           is_cancelled?: boolean | null
           is_paid?: boolean | null
           is_private?: boolean | null
+          passengers_json?: Json | null
           quantity?: number | null
           selected_date?: string | null
           selected_period?: string | null
