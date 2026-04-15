@@ -43,12 +43,14 @@ export function FloatingButtons() {
   };
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3">
+    <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3 items-end">
       {tripAdvisor && (
-        <div 
-          className="elfsight-app-4a2f6277-e52c-46f0-95d8-12ba7e619e77" 
-          data-elfsight-app-lazy
-        />
+        <div className="w-14 min-h-[56px] flex items-center justify-center">
+          <div 
+            className="elfsight-app-4a2f6277-e52c-46f0-95d8-12ba7e619e77" 
+            data-elfsight-app-lazy
+          />
+        </div>
       )}
       
       {instagram && (
