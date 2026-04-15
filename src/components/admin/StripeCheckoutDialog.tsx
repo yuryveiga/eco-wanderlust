@@ -30,8 +30,8 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
 
   const selectedTour = useMemo(() => tours.find(t => t.id === tourId), [tours, tourId]);
 
-  const effectivePrice = addFee ? pricePerPerson * 1.05 : pricePerPerson;
-  const total = effectivePrice * quantity;
+  const subtotal = pricePerPerson * quantity;
+  const total = subtotal * 1.05;
 
   const handleTourChange = (id: string) => {
     setTourId(id);
@@ -71,7 +71,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
           items: [{
             title: selectedTour?.title || "Passeio",
             quantity,
-            price: effectivePrice,
+            price: pricePerPerson,
             date: selectedDate,
             period: "",
           }],
@@ -182,25 +182,18 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
-            <Checkbox id="add-fee" checked={addFee} onCheckedChange={(v) => setAddFee(!!v)} />
-            <label htmlFor="add-fee" className="text-sm font-medium cursor-pointer">
-              Adicionar +5% (taxa do cartão)
-            </label>
-          </div>
-
           <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
             <div className="flex justify-between text-sm">
-              <span>Valor por pessoa:</span>
-              <span className="font-medium">{formatCurrency(effectivePrice)}</span>
+              <span>Subtotal:</span>
+              <span className="font-medium">{formatCurrency(pricePerPerson * quantity)}</span>
             </div>
             <div className="flex justify-between text-sm mt-1">
-              <span>Quantidade:</span>
-              <span className="font-medium">{quantity}</span>
+              <span>Taxa de Serviço (5%):</span>
+              <span className="font-medium">{formatCurrency(pricePerPerson * quantity * 0.05)}</span>
             </div>
             <div className="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-primary/20">
-              <span>Total:</span>
-              <span className="text-primary">{formatCurrency(total)}</span>
+              <span>Total Final:</span>
+              <span className="text-primary">{formatCurrency(pricePerPerson * quantity * 1.05)}</span>
             </div>
           </div>
 

@@ -92,7 +92,7 @@ export default function MatchDetail() {
         customer_email: customerInfo.email,
         customer_phone: customerInfo.whatsapp,
         quantity: quantity,
-        total_price: match.price * quantity,
+        total_price: (match.price * quantity) * 1.05,
         selected_date: format(new Date(match.match_date), "yyyy-MM-dd"),
         selected_period: "match_time",
         is_paid: false,
@@ -281,9 +281,19 @@ export default function MatchDetail() {
                                 </div>
                              </div>
 
-                             <div className="pt-6 border-t border-dashed border-border flex items-center justify-between">
-                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
-                                <span className="text-2xl font-black text-foreground">{formatPrice(match.price * quantity)}</span>
+                             <div className="pt-6 border-t border-dashed border-border space-y-2">
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
+                                   <span className="text-lg font-bold">{formatPrice(match.price * quantity)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
+                                   <span className="text-lg font-bold">{formatPrice((match.price * quantity) * 0.05)}</span>
+                                </div>
+                                <div className="flex items-center justify-between pt-2">
+                                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
+                                   <span className="text-2xl font-black text-foreground">{formatPrice((match.price * quantity) * 1.05)}</span>
+                                </div>
                              </div>
 
                              <Button 

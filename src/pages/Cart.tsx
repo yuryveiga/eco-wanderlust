@@ -23,11 +23,10 @@ const Cart = () => {
     window.scrollTo(0, 0);
   }, []);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
-  const navigate = useNavigate();
-  
-  const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
+    const serviceFee = total * 0.05;
+    const finalTotal = total + serviceFee;
 
-  const handleCheckout = async () => {
+    const handleCheckout = async () => {
     if (items.length === 0) return;
     
     if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
@@ -41,6 +40,11 @@ const Cart = () => {
       
       // Save sale to database and collect IDs
       for (const item of items) {
+        // Apply 5% fee to each item's total price proportionally
+        const itemTotal = item.price * item.quantity;
+        const itemFee = itemTotal * 0.05;
+        const totalWithFee = itemTotal + itemFee;
+
         const { data, error } = await (supabase.from("sales") as any).insert({
           tour_id: item.id,
           tour_title: item.title,
@@ -49,7 +53,7 @@ const Cart = () => {
           customer_email: customerInfo.email,
           customer_phone: customerInfo.whatsapp,
           quantity: item.quantity,
-          total_price: item.price * item.quantity,
+          total_price: totalWithFee,
           selected_date: item.date,
           selected_period: item.period,
           is_private: item.isPrivate,
@@ -248,12 +252,12 @@ const Cart = () => {
                     <span className="font-bold">{formatPrice(total)}</span>
                   </div>
                   <div className="flex justify-between font-sans text-muted-foreground">
-                    <span className="font-medium">{t("taxas")}</span>
-                    <span className="font-bold">{formatPrice(0)}</span>
+                    <span className="font-medium">{t("taxas")} (5%)</span>
+                    <span className="font-bold">{formatPrice(serviceFee)}</span>
                   </div>
                   <div className="flex justify-between font-sans text-2xl font-black text-foreground border-t border-dashed pt-6">
                     <span>{t("total")}</span>
-                    <span className="text-primary">{formatPrice(total)}</span>
+                    <span className="text-primary">{formatPrice(finalTotal)}</span>
                   </div>
                 </div>
 
