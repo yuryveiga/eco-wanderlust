@@ -211,6 +211,18 @@ export default function MatchDetail() {
                  <section className="space-y-6">
                     <h2 className="text-3xl font-serif font-black flex items-center gap-4">
                        <div className="w-2 h-10 bg-primary rounded-full" />
+                       {t('sobre_evento')}
+                    </h2>
+                    <div className="text-lg text-muted-foreground leading-relaxed font-medium">
+                       {language === 'pt' ? (match.description_pt || t('matchday_fallback')) : 
+                        language === 'en' ? (match.description_en || t('matchday_fallback')) : 
+                        (match.description_es || match.description_pt || t('matchday_fallback'))}
+                    </div>
+                 </section>
+
+                 <section className="space-y-6">
+                    <h2 className="text-3xl font-serif font-black flex items-center gap-4">
+                       <div className="w-2 h-10 bg-primary rounded-full" />
                        {t('o_que_incluso')}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
