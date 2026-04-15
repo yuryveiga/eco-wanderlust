@@ -71,15 +71,25 @@ export function GallerySection() {
                   <div className="p-1">
                     <button
                       onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-video rounded-xl overflow-hidden group bg-card border"
+                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden group bg-black border"
                     >
+                      {/* Fundo desfocado */}
+                      <img
+                        src={getOptimizedImage(img.url, 100)}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-60"
+                        loading="lazy"
+                      />
+                      
+                      {/* Foto principal completa */}
                       <img
                         src={getOptimizedImage(img.url, 800)}
                         alt={img.key}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 z-10"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                      
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center z-20">
                         <Images className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                     </button>
