@@ -31,10 +31,19 @@ serve(async (req) => {
       );
     }
 
-    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "https://tocorimerio.lovable.app";
+    console.log("Processing checkout for items:", JSON.stringify(items));
+    
+    // Calculate totals in cents for better precision
+    const subtotalCents = items.reduce((acc: number, item: any) => {
+      const price = parseFloat(item.price);
+      const quantity = parseInt(item.quantity);
+      return acc + Math.round(price * 100 * quantity);
+    }, 0);
+    
+    const feeCents = Math.round(subtotalCents * 0.05);
+    const totalCents = subtotalCents + feeCents;
 
-    const subtotal = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-    const feeAmount = Math.round(subtotal * 0.05);
+    console.log(`Subtotal: ${subtotalCents} cents, Fee: ${feeCents} cents, Total: ${totalCents} cents`);
 
     const lineItems = items.map((item: any) => ({
       price_data: {
@@ -43,13 +52,13 @@ serve(async (req) => {
           name: item.title,
           description: `${item.quantity} pessoa(s) - ${item.date} ${item.period}`,
         },
-        unit_amount: Math.round(item.price * 100),
+        unit_amount: Math.round(parseFloat(item.price) * 100),
       },
-      quantity: item.quantity,
+      quantity: parseInt(item.quantity),
     }));
 
     // Add 5% Service Fee
-    if (feeAmount > 0) {
+    if (feeCents > 0) {
       lineItems.push({
         price_data: {
           currency: currency,
@@ -57,7 +66,7 @@ serve(async (req) => {
             name: "Taxa de Serviço (5%)",
             description: "Taxa de reserva e processamento",
           },
-          unit_amount: Math.round(feeAmount * 100),
+          unit_amount: feeCents,
         },
         quantity: 1,
       });
@@ -68,7 +77,7 @@ serve(async (req) => {
       sale_ids: JSON.stringify(sale_ids || []),
       source_platform: "Tocorime Rio",
       attribution_origin: "https://tocorime.com.br",
-      total_with_fee: (subtotal + feeAmount).toString()
+      total_with_fee_cents: totalCents.toString()
     };
 
     if (customer?.email) metadata.customer_email = customer.email;
