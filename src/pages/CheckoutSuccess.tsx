@@ -38,7 +38,7 @@ const CheckoutSuccess = () => {
         if (error) throw error;
         
         if (data) {
-          setSales(data);
+          setSales(data as unknown as LovableSale[]);
           // Initialize participants state
           const initialParticipants: Record<string, { name: string; dob: string }[]> = {};
           data.forEach(sale => {
