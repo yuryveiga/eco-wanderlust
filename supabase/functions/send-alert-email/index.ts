@@ -106,6 +106,11 @@ Deno.serve(async (req) => {
       </html>
     `
 
+    // Handle multiple recipients if 'to' is a comma-separated string
+    const recipients = typeof to === 'string' && to.includes(',') 
+      ? to.split(',').map(email => email.trim())
+      : to;
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -114,7 +119,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         from: 'Tocorime Rio <reservas@tocorimerio.com>',
-        to: to,
+        to: recipients,
         subject: subject,
         html: htmlContent
       })
