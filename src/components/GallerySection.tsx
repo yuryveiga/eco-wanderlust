@@ -66,15 +66,15 @@ export function GallerySection() {
           }}
           className="w-full"
         >
-          <CarouselContent className="ml-0">
+          <CarouselContent className="-ml-4">
             {galleryImages.map((img, index) => (
-              <CarouselItem key={img.key} className="pl-0 basis-[85%] sm:basis-1/2 md:basis-[33.33%] lg:basis-1/4 xl:basis-1/5">
+              <CarouselItem key={img.key} className="pl-4 basis-[90%] sm:basis-[70%] md:basis-1/2 lg:basis-[40%] xl:basis-1/3">
                 <button
                   onClick={() => openLightbox(index)}
-                  className="relative w-full aspect-[4/3] overflow-hidden group bg-card border-0"
+                  className="relative w-full aspect-[4/3] overflow-hidden rounded-xl group bg-card border-0 shadow-sm"
                 >
                   <img
-                    src={getOptimizedImage(img.url, 800)}
+                    src={getOptimizedImage(img.url, 1200)}
                     alt={img.key}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
