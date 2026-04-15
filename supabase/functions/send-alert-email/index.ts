@@ -68,6 +68,8 @@ Deno.serve(async (req) => {
                 <p><strong>Nome / Name:</strong> ${customerName}</p>
                 <p><strong>E-mail:</strong> ${customerEmail}</p>
                 <p><strong>WhatsApp:</strong> ${customerPhone || 'Não informado / Not provided'}</p>
+                ${selectedPeriod ? `<p><strong>Período / Period:</strong> ${selectedPeriod}</p>` : ''}
+                <p><strong>Tipo / Type:</strong> ${isPrivate ? 'Privativo / Private' : 'Grupo Aberto / Open Group'}</p>
               </div>
             </div>
 

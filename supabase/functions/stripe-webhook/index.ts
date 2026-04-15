@@ -137,6 +137,8 @@ async function sendEmailAlert(sale: Record<string, any>, supabaseUrl: string, is
         customerPhone: sale.customer_phone,
         total: sale.total_price,
         isCustomerCopy: isCustomer,
+        selectedPeriod: sale.selected_period,
+        isPrivate: sale.is_private,
         items: [{
           tour: sale.tour_title,
           quantity: sale.quantity,
