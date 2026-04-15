@@ -82,40 +82,6 @@ async function getAccessToken(email: string, key: string): Promise<string> {
 
 // ---- WhatsApp Alert ----
 
-const ADMIN_WHATSAPP = Deno.env.get("ADMIN_WHATSAPP") || "552199564596";
-
-async function sendWhatsAppAlert(sale: Record<string, any>, supabaseUrl: string) {
-  try {
-    const message = `🎉 *Nova venda paga!*\n\n` +
-      `📌 *Passeio:* ${sale.tour_title}\n` +
-      `👤 *Cliente:* ${sale.customer_name}\n` +
-      `📧 *Email:* ${sale.customer_email}\n` +
-      `📱 *Telefone:* ${sale.customer_phone || 'Não informado'}\n` +
-      `👥 *Pessoas:* ${sale.quantity}\n` +
-      `📅 *Data:* ${sale.selected_date}\n` +
-      `🕐 *Período:* ${sale.selected_period || 'Não definido'}\n` +
-      `💰 *Total:* R$ ${sale.total_price}\n` +
-      `🔒 *Tipo:* ${sale.is_private ? 'Privativo' : 'Grupo Aberto'}`;
-
-    const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-      },
-      body: JSON.stringify({ message, phone: ADMIN_WHATSAPP }),
-    });
-
-    if (!res.ok) {
-      console.error("WhatsApp alert failed:", await res.text());
-    } else {
-      console.log("WhatsApp alert sent successfully for sale:", sale.id);
-    }
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("WhatsApp alert error:", msg);
-  }
-}
 
 // ---- Email Alert ----
 
@@ -287,7 +253,7 @@ serve(async (req) => {
 
           console.log(`Sale ${id} marked as paid. Sending notifications...`);
           await createGoogleCalendarEvent(sale);
-          await sendWhatsAppAlert(sale, supabaseUrl);
+          
           await sendEmailAlert(sale, supabaseUrl); // Admin alert
           await sendEmailAlert(sale, supabaseUrl, true); // Customer confirmation
         }
