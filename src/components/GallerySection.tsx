@@ -71,7 +71,7 @@ export function GallerySection() {
                   <div className="p-1">
                     <button
                       onClick={() => openLightbox(index)}
-                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden group bg-black border"
+                      className="relative w-full aspect-video rounded-xl overflow-hidden group bg-black border"
                     >
                       {/* Fundo desfocado */}
                       <img
