@@ -12,19 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const { items, sale_ids, customer, currency = "brl", usePartnerStripe = false } = await req.json();
+    const { items, sale_ids, customer, currency = "brl" } = await req.json();
 
-    // Select Stripe Key
-    let stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (usePartnerStripe) {
-      const partnerKey = Deno.env.get("PARTNER_STRIPE_SECRET_KEY");
-      if (partnerKey) {
-        stripeKey = partnerKey;
-        console.log("Using Partner Stripe Key for match booking");
-      } else {
-        console.warn("PARTNER_STRIPE_SECRET_KEY not found, falling back to default");
-      }
-    }
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
 
     if (!stripeKey) {
       throw new Error("Stripe API key not configured");

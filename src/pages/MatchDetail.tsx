@@ -120,8 +120,7 @@ export default function MatchDetail() {
             }],
             sale_ids: [saleData.id],
             customer: customerInfo,
-            currency: "brl",
-            usePartnerStripe: true // FLAG PARA USAR O STRIPE DO SÓCIO
+            currency: "brl"
           }),
         }
       );
