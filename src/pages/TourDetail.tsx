@@ -631,8 +631,8 @@ export function TourDetail() {
                                  alt={`${translatedTitle} ${i + 1}`} 
                                  width={600}
                                  containerClassName="w-full h-full"
-                                 fit="contain"
-                                 className="w-full h-full group-hover/gal:scale-110 transition-transform duration-700" 
+                                 fit="cover"
+                                 className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
                                  loading="lazy"
                                />
                              </div>
@@ -829,80 +829,97 @@ export function TourDetail() {
       {/* Lightbox Overlay */}
       {isLightboxOpen && (
         <div 
-          className="fixed inset-0 bg-black z-[100] flex items-center justify-center p-0"
+          className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-0 backdrop-blur-sm"
           onKeyDown={(e) => {
             if (e.key === "Escape") setIsLightboxOpen(false);
+            if (e.key === "ArrowLeft") {
+              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              setLightboxIndex((prev) => (prev > 0 ? prev - 1 : list.length - 1));
+            }
+            if (e.key === "ArrowRight") {
+              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              setLightboxIndex((prev) => (prev < list.length - 1 ? prev + 1 : 0));
+            }
           }}
           tabIndex={0}
         >
-          {/* Controls Layer */}
-          <div className="absolute inset-0 z-[110] pointer-events-none">
-            <button
-              onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-4 right-4 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
+          {/* Close Button */}
+          <button
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-6 right-6 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-all z-[120] border border-white/10 text-white"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-            <div className="absolute bottom-10 left-0 right-0 text-center pointer-events-none">
-              <span className="bg-black/50 text-white font-sans text-sm px-4 py-1.5 rounded-full border border-white/10 shadow-2xl">
-                {lightboxIndex + 1} / {((lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images).length)}
-              </span>
-            </div>
+          {/* Navigation Buttons */}
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 md:px-10 z-[115] pointer-events-none">
+            <button
+              onClick={() => {
+                const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+                setLightboxIndex((prev) => (prev > 0 ? prev - 1 : list.length - 1));
+              }}
+              className="w-12 h-12 md:w-16 md:h-16 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-all pointer-events-auto border border-white/10 text-white group"
+            >
+              <ArrowLeft className="w-6 h-6 md:w-8 md:h-8 group-hover:-translate-x-1 transition-transform" />
+            </button>
+            <button
+              onClick={() => {
+                const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+                setLightboxIndex((prev) => (prev < list.length - 1 ? prev + 1 : 0));
+              }}
+              className="w-12 h-12 md:w-16 md:h-16 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-all pointer-events-auto border border-white/10 text-white group"
+            >
+              <ArrowRight className="w-6 h-6 md:w-8 md:h-8 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
 
-          <Carousel 
-            opts={{ startIndex: lightboxIndex, loop: true }} 
-            className="w-full h-full"
-          >
-            <CarouselContent className="h-full ml-0 flex items-center">
-              {(lightboxSource === 'gallery' 
-                ? ((tour as any)?.carousel_images_json as string[] || [])
-                : images
-                ).map((img, i) => {
-                  const dims = imageDimensions[img];
-                  const isLandscape = dims ? dims.width > dims.height : false;
-                  const isGallerySource = lightboxSource === 'gallery';
-                  const shouldLimitHeight = isGallerySource && isLandscape;
+          {/* Image Container - Absolute Center */}
+          <div className="w-full h-full p-4 md:p-12 flex items-center justify-center">
+            {(() => {
+              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              const img = list[lightboxIndex];
+              const dims = imageDimensions[img];
+              const isLandscape = dims ? dims.width > dims.height : false;
+              const isGallerySource = lightboxSource === 'gallery';
+              const shouldLimitHeight = isGallerySource && isLandscape;
+
+              return (
+                <div key={img} className="relative w-full h-full flex items-center justify-center animate-in fade-in zoom-in-95 duration-500">
+                  <OptimizedImage 
+                    src={img} 
+                    alt={`${translatedTitle} view ${lightboxIndex + 1}`} 
+                    width={4000}
+                    height={shouldLimitHeight ? 600 : undefined}
+                    quality={100}
+                    containerClassName={cn(
+                      "w-full h-full flex items-center justify-center",
+                      shouldLimitHeight && "max-h-[600px] h-[600px]"
+                    )}
+                    className={cn(
+                      "max-w-full cursor-auto",
+                      shouldLimitHeight ? "max-h-[600px] h-auto lg:h-[600px]" : "max-h-full h-auto w-auto"
+                    )}
+                    fit="contain"
+                    fill={false}
+                    fetchPriority="high"
+                    onDimensions={(w, h) => {
+                      setImageDimensions(prev => ({
+                        ...prev,
+                        [img]: { width: w, height: h }
+                      }));
+                    }}
+                  />
                   
-                  return (
-                    <CarouselItem key={i} className="pl-0 h-full w-full flex items-center justify-center">
-                      <div className="w-full h-full flex flex-col items-center justify-center p-4 md:p-12">
-                        <OptimizedImage 
-                          src={img} 
-                          alt={`${translatedTitle} view ${i+1}`} 
-                          width={4000}
-                          height={shouldLimitHeight ? 600 : undefined}
-                          quality={100}
-                          containerClassName={cn(
-                            "w-full h-full flex items-center justify-center",
-                            shouldLimitHeight && "max-h-[600px] h-[600px]"
-                          )}
-                          className={cn(
-                            "max-w-full cursor-auto",
-                            shouldLimitHeight ? "max-h-[600px] h-auto lg:h-[600px]" : "max-h-full h-auto w-auto"
-                          )}
-                          fit="contain"
-                          fill={false}
-                          fetchPriority="high"
-                          onDimensions={(w, h) => {
-                            setImageDimensions(prev => ({
-                              ...prev,
-                              [img]: { width: w, height: h }
-                            }));
-                          }}
-                        />
-                      </div>
-                    </CarouselItem>
-                  );
-                })}
-            </CarouselContent>
-            
-            <div className="hidden sm:block pointer-events-none">
-              <CarouselPrevious className="left-6 bg-black/50 hover:bg-black/80 border-white/10 text-white h-14 w-14 pointer-events-auto shadow-2xl" />
-              <CarouselNext className="right-6 bg-black/50 hover:bg-black/80 border-white/10 text-white h-14 w-14 pointer-events-auto shadow-2xl" />
-            </div>
-          </Carousel>
+                  {/* Counter */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[120]">
+                    <span className="bg-black/50 text-white font-sans text-xs md:text-sm px-4 py-2 rounded-full border border-white/10 shadow-2xl backdrop-blur-md">
+                      {lightboxIndex + 1} / {list.length}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
         </div>
       )}
     </main>
