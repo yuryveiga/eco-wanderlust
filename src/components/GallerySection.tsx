@@ -136,13 +136,13 @@ export function GallerySection() {
           </div>
           
           {/* Image Container */}
-          <div className="w-full h-full flex items-center justify-center overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center p-4 md:p-8">
             <OptimizedImage
               src={galleryImages[selectedIndex].url}
               alt={galleryImages[selectedIndex].key}
               width={1800}
-              containerClassName="h-full w-auto flex items-center justify-center"
-              className="h-full w-auto min-w-[unset] max-w-none cursor-auto object-contain"
+              containerClassName="max-w-full max-h-full flex items-center justify-center"
+              className="max-w-full max-h-full w-auto h-auto cursor-auto"
               fit="contain"
               fill={false}
               fetchPriority="high"
