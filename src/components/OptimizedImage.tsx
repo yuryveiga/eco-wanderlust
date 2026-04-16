@@ -77,10 +77,10 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "transition-all duration-1000 ease-in-out",
+            "transition-all duration-[1500ms] ease-in-out",
             fill ? "w-full h-full" : "max-w-full max-h-full",
             fit === "cover" ? "object-cover" : "object-contain",
-            isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
+            isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-2xl",
             className
           )}
         />

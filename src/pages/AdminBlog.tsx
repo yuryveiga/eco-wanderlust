@@ -10,6 +10,7 @@ import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loade
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -303,7 +304,13 @@ const AdminBlog = () => {
             <div key={post.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm flex flex-col group hover:shadow-xl transition-all duration-300">
               <div className="relative h-44 bg-muted">
                 {post.image_url ? (
-                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <OptimizedImage 
+                    src={post.image_url} 
+                    alt={post.title} 
+                    width={400}
+                    containerClassName="w-full h-full"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
                 ) : (
                   <div className="flex items-center justify-center h-full text-muted-foreground"><ImageIcon className="w-10 opacity-20" /></div>
                 )}
@@ -350,7 +357,13 @@ const AdminBlog = () => {
                           <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Imagem de Capa</Label>
                           <div className="aspect-video rounded-2xl bg-muted border-2 border-dashed border-border/50 overflow-hidden relative group">
                              {editing.image_url ? (
-                                <img src={editing.image_url} alt="Destaque" className="w-full h-full object-cover" />
+                                <OptimizedImage 
+                                  src={editing.image_url} 
+                                  alt="Destaque" 
+                                  width={400}
+                                  containerClassName="w-full h-full"
+                                  className="w-full h-full object-cover" 
+                                />
                              ) : (
                                 <div className="flex flex-col items-center justify-center h-full gap-2 p-6 text-center text-muted-foreground">
                                    <Upload className="w-6 h-6 opacity-30" />
@@ -451,7 +464,13 @@ const AdminBlog = () => {
                             key={img.id}
                             className={`group relative aspect-square rounded-xl overflow-hidden border-4 transition-all ${editing.image_url === img.image_url ? "border-primary ring-4 ring-primary/20 shadow-lg" : "border-transparent"}`}
                           >
-                            <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
+                            <OptimizedImage 
+                               src={img.image_url} 
+                               alt={img.label || ""} 
+                               width={200}
+                               containerClassName="w-full h-full"
+                               className="w-full h-full object-cover" 
+                            />
                             
                             {/* Icons Overlay */}
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
@@ -504,7 +523,13 @@ const AdminBlog = () => {
                   key={img.id}
                   className="group relative aspect-square rounded-lg overflow-hidden border-2 border-transparent transition-all"
                 >
-                  <img src={img.image_url} alt={img.label || ""} className="w-full h-full object-cover" />
+                  <OptimizedImage 
+                    src={img.image_url} 
+                    alt={img.label || ""} 
+                    width={200}
+                    containerClassName="w-full h-full"
+                    className="w-full h-full object-cover" 
+                  />
                   
                   {/* Icons Overlay */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-2 p-2">

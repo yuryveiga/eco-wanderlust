@@ -1,6 +1,7 @@
 import { Bus, Shield, Heart, Users } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
+import { OptimizedImage } from "./OptimizedImage";
 
 const DEFAULT_IMAGES = [
   'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600',
@@ -40,15 +41,47 @@ export function AboutSection() {
   return (
     <section id="about" className="py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-4">
-              <div className="h-48 lg:h-64 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[0]}')` }} />
-              <div className="h-32 lg:h-40 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[1]}')` }} />
+              <div className="h-48 lg:h-64 rounded-2xl overflow-hidden relative shadow-lg group">
+                <OptimizedImage
+                  src={aboutImages[0]}
+                  alt="About 1"
+                  width={800}
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
+              <div className="h-32 lg:h-40 rounded-2xl overflow-hidden relative shadow-lg group">
+                <OptimizedImage
+                  src={aboutImages[1]}
+                  alt="About 2"
+                  width={600}
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
             </div>
             <div className="space-y-4 pt-8">
-              <div className="h-32 lg:h-40 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[2]}')` }} />
-              <div className="h-48 lg:h-64 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[3]}')` }} />
+              <div className="h-32 lg:h-40 rounded-2xl overflow-hidden relative shadow-lg group">
+                <OptimizedImage
+                  src={aboutImages[2]}
+                  alt="About 3"
+                  width={600}
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
+              <div className="h-48 lg:h-64 rounded-2xl overflow-hidden relative shadow-lg group">
+                <OptimizedImage
+                  src={aboutImages[3]}
+                  alt="About 4"
+                  width={800}
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
             </div>
           </div>
 
@@ -57,16 +90,18 @@ export function AboutSection() {
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
               {aboutTitle}
             </h2>
-            <p className="text-muted-foreground text-lg mb-6 leading-relaxed font-sans">
-              {aboutDesc}
-            </p>
-            {aboutDesc2 && (
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-sans">
-                {aboutDesc2}
+            <div className="space-y-6">
+              <p className="text-muted-foreground text-lg leading-relaxed font-sans whitespace-pre-wrap">
+                {aboutDesc}
               </p>
-            )}
+              {aboutDesc2 && (
+                <p className="text-muted-foreground text-lg leading-relaxed font-sans whitespace-pre-wrap">
+                  {aboutDesc2}
+                </p>
+              )}
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-10">
               {features.map((feature) => (
                 <div key={feature.title} className="flex gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">

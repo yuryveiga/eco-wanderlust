@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { uploadLovableFile } from "@/integrations/lovable/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 
 const CATEGORIES = [
@@ -279,7 +280,14 @@ const AdminGallery = () => {
           {previewUrls.length > 0 && (
             <div className="flex gap-1 overflow-hidden max-w-[120px]">
                {previewUrls.slice(0, 3).map((url, i) => (
-                  <img key={i} src={url} alt="Preview" className="h-10 w-10 object-cover rounded" />
+                  <OptimizedImage 
+                    key={i} 
+                    src={url} 
+                    alt="Preview" 
+                    width={100}
+                    containerClassName="h-10 w-10 overflow-hidden"
+                    className="h-full w-full object-cover rounded" 
+                  />
                ))}
                {previewUrls.length > 3 && <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs font-semibold">+{previewUrls.length - 3}</div>}
             </div>
@@ -339,7 +347,13 @@ const AdminGallery = () => {
                 <div key={img.id} className={`bg-card rounded-xl border overflow-hidden flex flex-col group cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary' : ''}`} onClick={() => toggleSelect(img.id)}>
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {img.image_url ? (
-                    <img src={img.image_url} alt={img.label} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <OptimizedImage 
+                      src={img.image_url} 
+                      alt={img.label} 
+                      width={300}
+                      containerClassName="w-full h-full"
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                    />
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center">
                       <Images className="w-12 h-12 text-muted-foreground/30" />

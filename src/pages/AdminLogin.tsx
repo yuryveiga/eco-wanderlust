@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -48,10 +49,12 @@ const AdminLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md bg-card rounded-2xl shadow-lg border border-border/50 p-8">
         <div className="text-center mb-8">
-          <img 
+          <OptimizedImage 
             src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//images__1_-removebg-preview.png" 
             alt="Tocorime Rio" 
-            className="w-20 h-20 mx-auto mb-4 object-contain"
+            width={80}
+            containerClassName="w-20 h-20 mx-auto mb-4"
+            className="w-full h-full object-contain"
           />
           <h1 className="font-serif text-2xl font-bold text-foreground">Painel Admin</h1>
         </div>

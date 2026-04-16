@@ -177,9 +177,10 @@ export default function MatchDetail() {
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
            <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group">
-              <img 
+              <OptimizedImage 
                 src="/maracana-hero.jpg" 
                 alt="Maracanã Stadium" 
+                containerClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
@@ -214,7 +215,7 @@ export default function MatchDetail() {
                        <div className="w-2 h-10 bg-primary rounded-full" />
                        {t('sobre_evento')}
                     </h2>
-                    <div className="text-lg text-muted-foreground leading-relaxed font-medium">
+                    <div className="text-lg text-muted-foreground leading-relaxed font-medium whitespace-pre-wrap">
                        {language === 'pt' ? (match.description_pt || t('matchday_fallback')) : 
                         language === 'en' ? (match.description_en || t('matchday_fallback')) : 
                         (match.description_es || match.description_pt || t('matchday_fallback'))}
@@ -256,8 +257,8 @@ export default function MatchDetail() {
                           <div key={i} className="relative">
                              <div className="absolute -left-[29px] top-1 w-5 h-5 rounded-full bg-primary border-4 border-background ring-2 ring-primary/20 shadow-lg" />
                              <div>
-                                <h4 className="font-bold text-xl mb-2">{step.title}</h4>
-                                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                                <h4 className="font-bold text-xl mb-2 whitespace-pre-wrap">{step.title}</h4>
+                                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{step.description}</p>
                              </div>
                           </div>
                        ))}

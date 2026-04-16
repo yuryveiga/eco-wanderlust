@@ -117,6 +117,8 @@ const AdminImages = () => {
   );
 };
 
+import { OptimizedImage } from "@/components/OptimizedImage";
+
 // Subcomponent para gerenciar o input invisível localmente sem encher a tela de Refs
 const ImageCard = ({ 
   preset, 
@@ -155,7 +157,13 @@ const ImageCard = ({
              <p className="text-xs font-medium">Enviando...</p>
            </div>
         ) : img?.image_url ? (
-          <img src={img.image_url} alt={preset.label} className="w-full h-full object-cover" />
+          <OptimizedImage 
+            src={img.image_url} 
+            alt={preset.label} 
+            width={400}
+            containerClassName="w-full h-full"
+            className="w-full h-full object-cover" 
+          />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
             <ImageIcon className="w-10 h-10 mb-2 opacity-20" />

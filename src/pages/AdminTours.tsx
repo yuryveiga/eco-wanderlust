@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { translateText } from "@/utils/translate";
 import { Sunrise, Sun, Moon } from "lucide-react";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -401,7 +402,13 @@ const AdminTours = () => {
               <div key={tour.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
                 <div className="relative h-48 bg-muted">
                   {tour.image_url ? (
-                    <img src={tour.image_url} alt={tour.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <OptimizedImage 
+                      src={tour.image_url} 
+                      alt={tour.title} 
+                      width={400}
+                      containerClassName="w-full h-full"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
                   ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
                       <ImageIcon className="w-10 h-10 opacity-30" />
@@ -741,7 +748,13 @@ const AdminTours = () => {
                               }}
                               className="relative aspect-square rounded-xl overflow-hidden border-2 hover:border-primary transition-all"
                             >
-                              <img src={img.image_url} alt={img.label} className="w-full h-full object-cover" />
+                              <OptimizedImage 
+                                src={img.image_url} 
+                                alt={img.label} 
+                                width={200}
+                                containerClassName="w-full h-full"
+                                className="w-full h-full object-cover" 
+                              />
                               <div className="absolute inset-0 bg-primary/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <Plus className="w-6 h-6 text-white" />
                               </div>
@@ -754,7 +767,13 @@ const AdminTours = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
                       {editing.images_json?.map((url, index) => (
                         <div key={index} className={`group relative aspect-square rounded-3xl overflow-hidden border-4 transition-all ${editing.image_url === url ? "border-primary shadow-lg scale-[0.98]" : "border-transparent"}`}>
-                          <img src={url} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
+                          <OptimizedImage 
+                            src={url} 
+                            alt={`Gallery ${index}`} 
+                            width={300}
+                            containerClassName="w-full h-full"
+                            className="w-full h-full object-cover" 
+                          />
                           
                           {/* Main Image Badge */}
                           {editing.image_url === url && (
@@ -839,7 +858,13 @@ const AdminTours = () => {
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {editing.carousel_images_json?.map((url, index) => (
                           <div key={index} className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-border shadow-sm hover:shadow-md transition-all">
-                            <img src={url} alt={`Carousel ${index + 1}`} className="w-full h-full object-cover" />
+                            <OptimizedImage 
+                              src={url} 
+                              alt={`Carousel ${index + 1}`} 
+                              width={300}
+                              containerClassName="w-full h-full"
+                              className="w-full h-full object-cover" 
+                            />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end p-2 text-white">
                               <Button 
                                 size="icon" 

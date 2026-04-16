@@ -473,7 +473,7 @@ export function TourDetail() {
                   <div className="w-2 h-10 bg-primary rounded-full" />
                   {t("sobre_o_passeio")}
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">{translatedShortDesc}</p>
+                <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1 whitespace-pre-wrap">{translatedShortDesc}</p>
               </div>
 
                {/* Custom Options Selection */}
