@@ -109,40 +109,47 @@ export function GallerySection() {
         >
           <button
             onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
+            className="absolute top-4 right-4 w-12 h-12 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center transition-colors z-50 border border-white/10"
           >
             <X className="w-6 h-6 text-white" />
           </button>
           
-          <button
-            onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
-          
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            <OptimizedImage
-              src={galleryImages[selectedIndex].url}
-              alt={galleryImages[selectedIndex].key}
-              width={1600}
-              containerClassName="w-full h-full flex items-center justify-center"
-              className="max-h-screen w-auto object-contain"
-              fit="contain"
-              fill={false}
-              fetchPriority="high"
-            />
+          {/* Absolute centering layer for the image */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+            <div className="w-full h-full max-w-full max-h-screen p-4 flex items-center justify-center pointer-events-auto">
+              <OptimizedImage
+                src={galleryImages[selectedIndex].url}
+                alt={galleryImages[selectedIndex].key}
+                width={1600}
+                containerClassName="w-full h-full flex items-center justify-center"
+                className="max-h-screen w-auto object-contain cursor-auto"
+                fit="contain"
+                fill={false}
+                fetchPriority="high"
+              />
+            </div>
           </div>
           
-          <button
-            onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
+          {/* Navigation Controls */}
+          <div className="absolute inset-0 pointer-events-none z-10">
+            <button
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+              title={t("anterior")}
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+              title={t("proximo")}
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+          </div>
           
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full z-50">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full z-20">
             {selectedIndex + 1} / {galleryImages.length}
           </div>
         </div>

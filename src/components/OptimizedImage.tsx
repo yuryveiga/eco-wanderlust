@@ -65,7 +65,8 @@ export function OptimizedImage({
       )}
 
       {/* Main Image with modern format support */}
-      <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
+      {/* Main Image with modern format support */}
+      <picture className={cn(!fill && "block w-full h-full")}>
         <source 
           srcSet={getOptimizedImage(src, width, quality, 'avif')} 
           type="image/avif" 
@@ -83,7 +84,7 @@ export function OptimizedImage({
           decoding={decoding}
           className={cn(
             "transition-all duration-1000 ease-in-out",
-            fill ? "w-full h-full" : "max-w-full max-h-full",
+            fill ? "w-full h-full" : "max-w-full max-h-screen h-auto w-auto mx-auto block",
             fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
             className
