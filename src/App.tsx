@@ -75,8 +75,8 @@ const App = () => {
                   <Toaster />
                   <Sonner />
                   <ThemeApplier />
-                  <FloatingButtons />
                   <BrowserRouter>
+                    <FloatingButtons />
                     <Suspense fallback={<PageLoader />}>
                       <Routes>
                         <Route path="/" element={<Index />} />

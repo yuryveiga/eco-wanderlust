@@ -1,12 +1,15 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
   const { isAdmin } = useAuth();
+  const { pathname } = useLocation();
   
-  if (isAdmin) return null;
+  // Hide buttons on admin pages or if the user is an admin
+  if (isAdmin || pathname.startsWith("/admin")) return null;
   
   useEffect(() => {
     const script = document.createElement("script");
