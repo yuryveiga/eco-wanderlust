@@ -3,7 +3,7 @@ import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useLocale } from "@/contexts/LocaleContext";
-import { getOptimizedImage } from "@/utils/imageOptimization";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 export function GallerySection() {
   const { gallery } = useSiteData();
@@ -73,11 +73,11 @@ export function GallerySection() {
                   onClick={() => openLightbox(index)}
                   className="relative w-full aspect-square overflow-hidden rounded-md group bg-card border-0 shadow-sm"
                 >
-                  <img
-                    src={getOptimizedImage(img.url, 1200)}
+                  <OptimizedImage
+                    src={img.url}
                     alt={img.key}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    loading="lazy"
+                    className="w-full h-full"
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                     <div className="bg-white/10 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
