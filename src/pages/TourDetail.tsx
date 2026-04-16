@@ -875,12 +875,12 @@ export function TourDetail() {
                           height={shouldLimitHeight ? 600 : undefined}
                           quality={100}
                           containerClassName={cn(
-                            "w-full flex items-center justify-center transition-all duration-500",
-                            shouldLimitHeight ? "max-h-[600px] h-[600px]" : "max-h-full h-full"
+                            "w-full h-full flex items-center justify-center",
+                            shouldLimitHeight && "max-h-[600px] h-[600px]"
                           )}
                           className={cn(
-                            "max-w-full cursor-auto transition-all duration-500",
-                            shouldLimitHeight ? "max-h-[600px] h-auto lg:h-[600px]" : "max-h-full h-full w-auto"
+                            "max-w-full cursor-auto",
+                            shouldLimitHeight ? "max-h-[600px] h-auto lg:h-[600px]" : "max-h-full h-auto w-auto"
                           )}
                           fit="contain"
                           fill={false}
