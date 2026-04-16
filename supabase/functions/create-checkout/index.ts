@@ -31,6 +31,8 @@ serve(async (req) => {
       );
     }
 
+    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "https://tocorimerio.lovable.app";
+
     console.log("Processing checkout for items:", JSON.stringify(items));
     
     // Calculate totals in cents for better precision
