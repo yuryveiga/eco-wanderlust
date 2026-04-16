@@ -140,7 +140,8 @@ export function GallerySection() {
             <OptimizedImage
               src={galleryImages[selectedIndex].url}
               alt={galleryImages[selectedIndex].key}
-              width={1800}
+              width={4000}
+              quality={100}
               containerClassName="max-w-full max-h-full flex items-center justify-center"
               className="max-w-full max-h-full w-auto h-auto cursor-auto"
               fit="contain"

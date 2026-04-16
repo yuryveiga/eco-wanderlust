@@ -251,7 +251,8 @@ const BlogPost = () => {
                     alt={title}
                     width={1200}
                     containerClassName="w-full h-full"
-                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+                    fit="contain"
+                    className="w-full h-full transition-transform duration-[2s] group-hover:scale-105"
                     loading="eager"
                     fetchPriority="high"
                   />

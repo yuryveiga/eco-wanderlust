@@ -181,7 +181,8 @@ export default function MatchDetail() {
                 src="/maracana-hero.jpg" 
                 alt="Maracanã Stadium" 
                 containerClassName="w-full h-full"
-                className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+                fit="contain"
+                className="w-full h-full transition-transform duration-[2s] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               

@@ -62,15 +62,15 @@ export function OptimizedImage({
       {/* Main Image with modern format support */}
       <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'avif')} 
+          srcSet={getOptimizedImage(src, width, quality, 'avif', fit)} 
           type="image/avif" 
         />
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'webp')} 
+          srcSet={getOptimizedImage(src, width, quality, 'webp', fit)} 
           type="image/webp" 
         />
         <img
-          src={getOptimizedImage(src, width, quality)}
+          src={getOptimizedImage(src, width, quality, undefined, fit)}
           alt={alt}
           onLoad={() => setIsLoaded(true)}
           loading={loading}
