@@ -12,6 +12,7 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from "@/components/ui/carousel";
+import { OptimizedImage } from "./OptimizedImage";
 
 export function BlogCarousel() {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
