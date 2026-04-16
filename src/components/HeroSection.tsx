@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
+import { OptimizedImage } from "./OptimizedImage";
 
 export function HeroSection() {
   const { images, siteSettings } = useSiteData();
@@ -45,9 +45,11 @@ export function HeroSection() {
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
         >
-          <img
+          <OptimizedImage
             src={bg}
             alt=""
+            width={1600}
+            containerClassName="w-full h-full"
             className="w-full h-full object-cover"
             loading={index === 0 ? "eager" : "lazy"}
             fetchPriority={index === 0 ? "high" : "low"}

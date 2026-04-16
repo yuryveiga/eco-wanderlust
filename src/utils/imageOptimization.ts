@@ -1,25 +1,39 @@
 /**
- * Optimizes image URLs by appending resizing and quality parameters.
+ * Optimizes image URLs by appending resizing, quality, and format parameters.
  * Supports Unsplash and Supabase Storage (if transformation is enabled).
  */
-export function getOptimizedImage(url: string, width: number = 800, quality: number = 80): string {
+export function getOptimizedImage(
+  url: string, 
+  width: number = 800, 
+  quality: number = 80, 
+  format?: 'webp' | 'avif'
+): string {
   if (!url) return "";
 
   // Unsplash Optimization
   if (url.includes("images.unsplash.com")) {
     const baseUrl = url.split("?")[0];
-    return `${baseUrl}?q=${quality}&w=${width}&auto=format&fit=crop`;
+    const fmt = format ? `&fm=${format}` : "&auto=format";
+    return `${baseUrl}?q=${quality}&w=${width}${fmt}&fit=crop`;
   }
 
   // Supabase Storage Optimization (Resize API)
-  // Note: Requires Supabase Pro or Image Transformation enabled
   if (url.includes("supabase.co/storage/v1/object/public")) {
-    // If you have image transformation enabled, the URL structure changes to:
-    // .../storage/v1/render/image/public/bucket/path?width=...
     if (url.includes("/object/public/")) {
-        return url.replace("/object/public/", "/render/image/public/") + `?width=${width}&quality=${quality}`;
+        const renderUrl = url.replace("/object/public/", "/render/image/public/");
+        const fmt = format ? `&format=${format}` : "";
+        return `${renderUrl}?width=${width}&quality=${quality}${fmt}`;
     }
   }
 
   return url;
+}
+
+/**
+ * Generates a tiny, low-quality version of the image for use as a blur placeholder (LQIP).
+ */
+export function getBlurPlaceholder(url: string): string {
+  if (!url) return "";
+  // tiny width (20px) and low quality (10) for maximum blur efficiency
+  return getOptimizedImage(url, 20, 10, 'webp');
 }

@@ -13,6 +13,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { getOptimizedImage } from "@/utils/imageOptimization";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { 
   Carousel, 
   CarouselContent, 
@@ -384,10 +385,13 @@ export function TourDetail() {
               className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
               onClick={() => openLightbox(0)}
             >
-              <img 
-                src={getOptimizedImage(images[0] || "/placeholder.svg", 1200)} 
+              <OptimizedImage 
+                src={images[0] || "/placeholder.svg"} 
                 alt={translatedTitle} 
+                width={1200}
+                containerClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-110" 
+                fetchPriority="high"
               />
               <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
             </div>
@@ -399,9 +403,11 @@ export function TourDetail() {
                 className="hidden md:block relative overflow-hidden cursor-pointer group/item"
                 onClick={() => openLightbox(idx + 1)}
               >
-                <img 
-                  src={getOptimizedImage(img, 800)} 
+                <OptimizedImage 
+                  src={img} 
                   alt={`${translatedTitle} ${idx + 1}`} 
+                  width={800}
+                  containerClassName="w-full h-full"
                   className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-125" 
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
@@ -616,9 +622,11 @@ export function TourDetail() {
                                className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm"
                                onClick={() => openLightbox(i, 'gallery')}
                              >
-                               <img 
-                                 src={getOptimizedImage(img, 600)} 
+                               <OptimizedImage 
+                                 src={img} 
                                  alt={`${translatedTitle} ${i + 1}`} 
+                                 width={600}
+                                 containerClassName="w-full h-full"
                                  className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
                                  loading="lazy"
                                />
@@ -835,9 +843,11 @@ export function TourDetail() {
                 : images
               ).map((img, i) => (
                 <CarouselItem key={i} className="h-full flex items-center justify-center">
-                  <img 
-                    src={getOptimizedImage(img, 1600)} 
+                  <OptimizedImage 
+                    src={img} 
                     alt={`${translatedTitle} full view ${i+1}`} 
+                    width={1600}
+                    containerClassName="w-full h-full flex items-center justify-center"
                     className="max-w-full max-h-full object-contain" 
                   />
                 </CarouselItem>

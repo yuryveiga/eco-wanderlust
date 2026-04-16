@@ -4,6 +4,7 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getOptimizedImage } from "@/utils/imageOptimization";
+import { OptimizedImage } from "./OptimizedImage";
 
 export function GallerySection() {
   const { gallery } = useSiteData();
@@ -73,9 +74,11 @@ export function GallerySection() {
                   onClick={() => openLightbox(index)}
                   className="relative w-full aspect-square overflow-hidden rounded-md group bg-card border-0 shadow-sm"
                 >
-                  <img
-                    src={getOptimizedImage(img.url, 1200)}
+                  <OptimizedImage
+                    src={img.url}
                     alt={img.key}
+                    width={1200}
+                    containerClassName="w-full h-full"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
@@ -118,11 +121,13 @@ export function GallerySection() {
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           
-          <img
-            src={getOptimizedImage(galleryImages[selectedIndex].url, 1600)}
+          <OptimizedImage
+            src={galleryImages[selectedIndex].url}
             alt={galleryImages[selectedIndex].key}
-            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
-            onClick={(e) => e.stopPropagation()}
+            width={1600}
+            containerClassName="max-w-[90vw] max-h-[90vh] rounded-lg"
+            className="w-full h-full object-contain"
+            fetchPriority="high"
           />
           
           <button
