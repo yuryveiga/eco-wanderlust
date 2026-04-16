@@ -222,6 +222,8 @@ const translations = {
     total: 'Total',
     pagar_agora: 'Pagar com Stripe',
     seguranca_stripe: 'Pagamento processado com segurança via Stripe. Seus dados estão protegidos.',
+    faq_titulo: 'FAQ',
+    galeria_fotos: 'Fotos',
   },
   en: {
     inicio: 'Home',
@@ -432,6 +434,8 @@ const translations = {
     total: 'Total',
     pagar_agora: 'Pay with Stripe',
     seguranca_stripe: 'Payment processed securely via Stripe. Your data is protected.',
+    faq_titulo: 'FAQ',
+    galeria_fotos: 'Photos',
   },
   es: {
     inicio: 'Inicio',
@@ -642,6 +646,8 @@ const translations = {
     total: 'Total',
     pagar_agora: 'Pagar con Stripe',
     seguranca_stripe: 'Pago procesado de forma segura a través de Stripe. Tus datos estão protegidos.',
+    faq_titulo: 'FAQ',
+    galeria_fotos: 'Fotos',
   }
 };
 
