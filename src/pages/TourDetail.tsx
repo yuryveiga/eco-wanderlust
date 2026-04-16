@@ -821,50 +821,64 @@ export function TourDetail() {
 
       <Footer />
 
-      {/* Lightbox Dialog */}
-      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
-        <DialogContent className="max-w-screen-2xl w-[95vw] h-[90vh] p-0 bg-black/95 border-none flex flex-col items-center justify-center overflow-hidden">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute top-4 right-4 text-white hover:bg-white/10 z-50 rounded-full"
-            onClick={() => setIsLightboxOpen(false)}
-          >
-            <X className="w-8 h-8" />
-          </Button>
+      {/* Lightbox Overlay */}
+      {isLightboxOpen && (
+        <div 
+          className="fixed inset-0 bg-black z-[100] flex items-center justify-center p-0"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setIsLightboxOpen(false);
+          }}
+          tabIndex={0}
+        >
+          {/* Controls Layer */}
+          <div className="absolute inset-0 z-[110] pointer-events-none">
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-4 right-4 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+
+            <div className="absolute bottom-10 left-0 right-0 text-center pointer-events-none">
+              <span className="bg-black/50 text-white font-sans text-sm px-4 py-1.5 rounded-full border border-white/10 shadow-2xl">
+                {lightboxIndex + 1} / {((lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images).length)}
+              </span>
+            </div>
+          </div>
 
           <Carousel 
             opts={{ startIndex: lightboxIndex, loop: true }} 
-            className="w-full h-full flex flex-col"
+            className="w-full h-full flex items-center justify-center"
           >
-            <CarouselContent className="h-full items-center">
+            <CarouselContent className="h-full ml-0">
               {(lightboxSource === 'gallery' 
                 ? ((tour as any)?.carousel_images_json as string[] || [])
                 : images
               ).map((img, i) => (
-                <CarouselItem key={i} className="h-full flex items-center justify-center">
-                  <OptimizedImage 
-                    src={img} 
-                    alt={`${translatedTitle} full view ${i+1}`} 
-                    width={1600}
-                    containerClassName="max-w-[90vw] max-h-[90vh] flex items-center justify-center rounded-lg overflow-hidden"
-                    className="max-w-full max-h-full object-contain" 
-                  />
+                <CarouselItem key={i} className="pl-0 h-full w-full flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center p-4 md:p-12">
+                    <OptimizedImage 
+                      src={img} 
+                      alt={`${translatedTitle} view ${i+1}`} 
+                      width={1800}
+                      containerClassName="max-w-full max-h-full flex items-center justify-center"
+                      className="max-w-full max-h-full w-auto h-auto cursor-auto" 
+                      fit="contain"
+                      fill={false}
+                      fetchPriority="high"
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
             
-            <div className="hidden sm:block">
-              <CarouselPrevious className="left-6 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
-              <CarouselNext className="right-6 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
-            </div>
-
-            <div className="absolute bottom-10 left-0 right-0 text-center text-white/60 text-sm font-bold">
-              {lightboxIndex + 1} / {(lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []).length : images.length)}
+            <div className="hidden sm:block pointer-events-none">
+              <CarouselPrevious className="left-6 bg-black/50 hover:bg-black/80 border-white/10 text-white h-14 w-14 pointer-events-auto shadow-2xl" />
+              <CarouselNext className="right-6 bg-black/50 hover:bg-black/80 border-white/10 text-white h-14 w-14 pointer-events-auto shadow-2xl" />
             </div>
           </Carousel>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </main>
   );
 }
