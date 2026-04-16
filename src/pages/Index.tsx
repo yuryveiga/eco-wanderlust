@@ -31,8 +31,8 @@ const Index = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tocorimerio.com/" />
         <meta property="og:site_name" content="Tocorime Rio" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta property="og:locale:alternate" content="en_US" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:locale:alternate" content="pt_BR" />
         <meta property="og:locale:alternate" content="es_ES" />
         <link rel="canonical" href="https://tocorimerio.com/" />
       </Helmet>

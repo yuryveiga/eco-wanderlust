@@ -661,8 +661,8 @@ const rates = {
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
 export const LocaleProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('pt');
-  const [currency, setCurrency] = useState<Currency>('BRL');
+  const [language, setLanguage] = useState<Language>('en');
+  const [currency, setCurrency] = useState<Currency>('USD');
 
   const t = (key: string) => {
     return translations[language][key as keyof typeof translations.pt] || key;
