@@ -5,17 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
-  const { isAdmin } = useAuth();
-  const { pathname } = useLocation();
-  const [visible, setVisible] = useState(true);
-  
-  // Visibility restriction removed by user request. 
-  // Buttons are now always visible.
   
   useEffect(() => {
-    if (!visible) return;
-    // ... rest of the code is simplified to only return if not visible (which is never now) // Exit if not visible
-    
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";
     script.async = true;
@@ -25,9 +16,7 @@ export function FloatingButtons() {
         document.body.removeChild(script);
       }
     };
-  }, [visible]);
-
-  if (!visible) return null;
+  }, []);
 
   const tripAdvisor = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
@@ -56,7 +45,7 @@ export function FloatingButtons() {
   };
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3 items-end">
+    <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3 items-end pointer-events-auto">
       {tripAdvisor && (
         <div className="w-14 min-h-[56px] flex items-center justify-center">
           <div 
