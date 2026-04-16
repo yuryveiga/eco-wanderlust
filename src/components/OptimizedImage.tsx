@@ -27,7 +27,7 @@ export function OptimizedImage({
   fetchPriority = "auto",
   decoding = "async",
   fill = true,
-  fit = "cover",
+  fit = "contain",
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");

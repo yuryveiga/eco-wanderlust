@@ -390,7 +390,7 @@ export function TourDetail() {
                 alt={translatedTitle} 
                 width={1200}
                 containerClassName="w-full h-full"
-                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-110" 
+                className="w-full h-full transition-transform duration-[1.5s] ease-out group-hover/item:scale-110" 
                 fetchPriority="high"
               />
               <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
@@ -408,7 +408,7 @@ export function TourDetail() {
                   alt={`${translatedTitle} ${idx + 1}`} 
                   width={800}
                   containerClassName="w-full h-full"
-                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover/item:scale-125" 
+                  className="w-full h-full transition-transform duration-[1.5s] ease-out group-hover/item:scale-125" 
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
               </div>
@@ -627,7 +627,7 @@ export function TourDetail() {
                                  alt={`${translatedTitle} ${i + 1}`} 
                                  width={600}
                                  containerClassName="w-full h-full"
-                                 className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
+                                 className="w-full h-full group-hover/gal:scale-110 transition-transform duration-700" 
                                  loading="lazy"
                                />
                              </div>
@@ -860,7 +860,8 @@ export function TourDetail() {
                     <OptimizedImage 
                       src={img} 
                       alt={`${translatedTitle} view ${i+1}`} 
-                      width={1800}
+                      width={4000}
+                      quality={100}
                       containerClassName="max-w-full max-h-full flex items-center justify-center"
                       className="max-w-full max-h-full w-auto h-auto cursor-auto" 
                       fit="contain"

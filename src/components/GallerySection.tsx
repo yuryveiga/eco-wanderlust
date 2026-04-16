@@ -79,7 +79,7 @@ export function GallerySection() {
                     alt={img.key}
                     width={1200}
                     containerClassName="w-full h-full"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
@@ -140,7 +140,8 @@ export function GallerySection() {
             <OptimizedImage
               src={galleryImages[selectedIndex].url}
               alt={galleryImages[selectedIndex].key}
-              width={1800}
+              width={4000}
+              quality={100}
               containerClassName="max-w-full max-h-full flex items-center justify-center"
               className="max-w-full max-h-full w-auto h-auto cursor-auto"
               fit="contain"
