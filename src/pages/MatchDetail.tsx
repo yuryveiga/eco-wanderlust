@@ -292,10 +292,7 @@ export default function MatchDetail() {
                                     <span className="font-black text-xl">{quantity}</span>
                                     <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(q+1, Math.max(1, (match.available_spots || 20) - (match.sold_count || 0))))}><Plus className="h-4 w-4" /></Button>
                                  </div>
-                                 <p className="text-[10px] text-muted-foreground text-center">
-                                    {Math.max(0, (match.available_spots || 20) - (match.sold_count || 0))} {t('vagas_disponiveis') || 'vagas disponíveis'}
-                                 </p>
-                             </div>
+                              </div>
 
                              <div className="pt-6 border-t border-dashed border-border space-y-2">
                                 <div className="flex items-center justify-between text-muted-foreground">
