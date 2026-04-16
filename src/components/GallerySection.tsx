@@ -98,7 +98,7 @@ export function GallerySection() {
 
       {selectedIndex !== null && (
         <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
           onClick={closeLightbox}
           onKeyDown={(e) => {
             if (e.key === "Escape") closeLightbox();
@@ -107,38 +107,46 @@ export function GallerySection() {
           }}
           tabIndex={0}
         >
-          <button
-            onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-          >
-            <X className="w-6 h-6 text-white" />
-          </button>
+          {/* Controls Layer */}
+          <div className="absolute inset-0 z-50 pointer-events-none">
+            <button
+              onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+              className="absolute top-4 right-4 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+            
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full">
+              {selectedIndex + 1} / {galleryImages.length}
+            </div>
+          </div>
           
-          <button
-            onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
-          
-          <OptimizedImage
-            src={galleryImages[selectedIndex].url}
-            alt={galleryImages[selectedIndex].key}
-            width={1600}
-            containerClassName="max-w-[90vw] max-h-[90vh] rounded-lg"
-            className="max-w-full max-h-full object-contain cursor-auto"
-            fetchPriority="high"
-          />
-          
-          <button
-            onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
-          
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full">
-            {selectedIndex + 1} / {galleryImages.length}
+          {/* Image Container */}
+          <div className="w-full h-full flex items-center justify-center p-0 md:p-4">
+            <OptimizedImage
+              src={galleryImages[selectedIndex].url}
+              alt={galleryImages[selectedIndex].key}
+              width={1800}
+              containerClassName="w-full h-full flex items-center justify-center"
+              className="max-h-screen max-w-full w-auto h-auto cursor-auto"
+              fit="contain"
+              fill={false}
+              fetchPriority="high"
+            />
           </div>
         </div>
       )}

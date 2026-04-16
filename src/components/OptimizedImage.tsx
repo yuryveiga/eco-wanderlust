@@ -12,6 +12,8 @@ interface OptimizedImageProps {
   loading?: "lazy" | "eager";
   fetchPriority?: "high" | "low" | "auto";
   decoding?: "async" | "sync" | "auto";
+  fill?: boolean;
+  fit?: "cover" | "contain";
 }
 
 export function OptimizedImage({
@@ -24,6 +26,8 @@ export function OptimizedImage({
   loading = "lazy",
   fetchPriority = "auto",
   decoding = "async",
+  fill = true,
+  fit = "cover",
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
@@ -37,7 +41,11 @@ export function OptimizedImage({
   }, [src]);
 
   return (
-    <div className={cn("relative overflow-hidden bg-muted/20", containerClassName)}>
+    <div className={cn(
+      "relative bg-muted/20",
+      fill && "overflow-hidden w-full h-full",
+      containerClassName
+    )}>
       {/* Blurred Placeholder (LQIP) */}
       {blurSrc && (
         <img
@@ -52,7 +60,7 @@ export function OptimizedImage({
       )}
 
       {/* Main Image with modern format support */}
-      <picture>
+      <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         <source 
           srcSet={getOptimizedImage(src, width, quality, 'avif')} 
           type="image/avif" 
@@ -69,7 +77,9 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "w-full h-full object-cover transition-all duration-1000 ease-in-out",
+            "transition-all duration-1000 ease-in-out",
+            fill ? "w-full h-full" : "max-w-full max-h-full",
+            fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
             className
           )}
