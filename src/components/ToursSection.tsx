@@ -4,7 +4,7 @@ import { Clock, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 
 export type TourCardProps = {
   id: string;
@@ -63,7 +63,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const CardContent = (
     <>
       <div className="relative h-64 overflow-hidden bg-muted">
-        <OptimizedImage src={tour.image_url} alt={title} className="w-full h-full" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+        <img src={getOptimizedImage(tour.image_url, 600)} alt={title} className="w-full h-full object-cover object-center transition-transform duration-500" loading="lazy" />
         {tour.is_featured && (
           <div className="absolute top-4 left-4 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full font-sans flex items-center gap-1">
             <Star className="w-3 h-3 fill-current" /> {t("destaque")}

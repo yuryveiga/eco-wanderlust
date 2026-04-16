@@ -3,7 +3,7 @@ import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useLocale } from "@/contexts/LocaleContext";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { getOptimizedImage } from "@/utils/imageOptimization";
 
 export function GallerySection() {
   const { gallery } = useSiteData();
@@ -73,11 +73,11 @@ export function GallerySection() {
                   onClick={() => openLightbox(index)}
                   className="relative w-full aspect-square overflow-hidden rounded-md group bg-card border-0 shadow-sm"
                 >
-                  <OptimizedImage
-                    src={img.url}
+                  <img
+                    src={getOptimizedImage(img.url, 1200)}
                     alt={img.key}
-                    className="w-full h-full"
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                     <div className="bg-white/10 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
@@ -118,12 +118,10 @@ export function GallerySection() {
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           
-          <OptimizedImage
-            src={galleryImages[selectedIndex].url}
+          <img
+            src={getOptimizedImage(galleryImages[selectedIndex].url, 1600)}
             alt={galleryImages[selectedIndex].key}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
-            sizes="90vw"
-            priority
             onClick={(e) => e.stopPropagation()}
           />
           
