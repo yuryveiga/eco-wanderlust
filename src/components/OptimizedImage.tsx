@@ -12,6 +12,7 @@ interface OptimizedImageProps {
   loading?: "lazy" | "eager";
   fetchPriority?: "high" | "low" | "auto";
   decoding?: "async" | "sync" | "auto";
+  fit?: "cover" | "contain";
 }
 
 export function OptimizedImage({
@@ -24,6 +25,7 @@ export function OptimizedImage({
   loading = "lazy",
   fetchPriority = "auto",
   decoding = "async",
+  fit = "cover",
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
@@ -44,7 +46,8 @@ export function OptimizedImage({
           src={blurSrc}
           alt=""
           className={cn(
-            "absolute inset-0 w-full h-full object-cover scale-110 blur-2xl transition-opacity duration-1000 ease-in-out",
+            "absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out blur-2xl scale-110",
+            fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-0 invisible" : "opacity-100 visible"
           )}
           aria-hidden="true"
@@ -69,7 +72,8 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "w-full h-full object-cover transition-all duration-1000 ease-in-out",
+            "w-full h-full transition-all duration-1000 ease-in-out",
+            fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
             className
           )}
