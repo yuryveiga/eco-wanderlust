@@ -7,16 +7,14 @@ export function FloatingButtons() {
   const { socialMedia } = useSiteData();
   const { isAdmin } = useAuth();
   const { pathname } = useLocation();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
+  
+  // Visibility restriction removed by user request. 
+  // Buttons are now always visible.
   
   useEffect(() => {
-    // Check visibility in effect to decouple from sync render cycle
-    const isHidden = isAdmin || pathname.startsWith("/admin");
-    setVisible(!isHidden);
-  }, [isAdmin, pathname]);
-
-  useEffect(() => {
-    if (!visible) return; // Exit if not visible
+    if (!visible) return;
+    // ... rest of the code is simplified to only return if not visible (which is never now) // Exit if not visible
     
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";

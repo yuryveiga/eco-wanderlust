@@ -76,9 +76,10 @@ const App = () => {
                   <Sonner />
                   <ThemeApplier />
                   <BrowserRouter>
-                    <FloatingButtons />
                     <Suspense fallback={<PageLoader />}>
+                      <FloatingButtons />
                       <Routes>
+                        {/* Public Routes */}
                         <Route path="/" element={<Index />} />
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:slug" element={<BlogPost />} />
@@ -86,11 +87,16 @@ const App = () => {
                         <Route path="/confirmacao" element={<CheckoutSuccess />} />
                         <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
                         <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
+                        
+                        {/* Detail Routes */}
                         <Route path="/passeio/:id" element={<TourDetail />} />
                         <Route path="/match/:id" element={<MatchDetail />} />
                         <Route path="/jogo/:id" element={<MatchDetail />} />
+
+                        {/* Admin Routes - Grouped for clarity */}
                         <Route path="/admin/login" element={<AdminLogin />} />
                         <Route path="/admin/reset-password" element={<AdminResetPassword />} />
+                        
                         <Route path="/admin" element={<AdminLayout />}>
                           <Route index element={<AdminDashboard />} />
                           <Route path="blog" element={<AdminBlog />} />
@@ -106,8 +112,10 @@ const App = () => {
                           <Route path="simulator" element={<AdminSimulator />} />
                           <Route path="calendar" element={<AdminCalendar />} />
                           <Route path="pages" element={<AdminPages />} />
-                           <Route path="optimizer" element={<AdminImagesOptimizer />} />
+                          <Route path="optimizer" element={<AdminImagesOptimizer />} />
                         </Route>
+
+                        {/* Fallback Routes */}
                         <Route path="/:slug" element={<GenericPage />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
