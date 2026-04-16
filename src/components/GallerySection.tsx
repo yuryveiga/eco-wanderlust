@@ -126,7 +126,7 @@ export function GallerySection() {
             alt={galleryImages[selectedIndex].key}
             width={1600}
             containerClassName="max-w-[90vw] max-h-[90vh] rounded-lg"
-            className="w-full h-full object-contain"
+            className="max-w-full max-h-full object-contain cursor-auto"
             fetchPriority="high"
           />
           

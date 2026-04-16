@@ -847,7 +847,7 @@ export function TourDetail() {
                     src={img} 
                     alt={`${translatedTitle} full view ${i+1}`} 
                     width={1600}
-                    containerClassName="w-full h-full flex items-center justify-center"
+                    containerClassName="max-w-[90vw] max-h-[90vh] flex items-center justify-center rounded-lg overflow-hidden"
                     className="max-w-full max-h-full object-contain" 
                   />
                 </CarouselItem>

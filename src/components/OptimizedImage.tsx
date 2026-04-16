@@ -69,8 +69,8 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "w-full h-full object-cover transition-all duration-700 ease-in-out",
-            isLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-lg scale-105",
+            "transition-all duration-700 ease-in-out",
+            isLoaded ? "opacity-100 blur-0" : "opacity-0 blur-lg",
             className
           )}
         />
