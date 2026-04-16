@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
