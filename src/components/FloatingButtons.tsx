@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,15 +7,11 @@ export function FloatingButtons() {
   const { socialMedia } = useSiteData();
   const { isAdmin } = useAuth();
   const { pathname } = useLocation();
-  const [visible, setVisible] = useState(true);
   
-  // Visibility restriction removed by user request. 
-  // Buttons are now always visible.
+  // Hide buttons on admin pages or if the user is an admin
+  if (isAdmin || pathname.startsWith("/admin")) return null;
   
   useEffect(() => {
-    if (!visible) return;
-    // ... rest of the code is simplified to only return if not visible (which is never now) // Exit if not visible
-    
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";
     script.async = true;
@@ -25,9 +21,7 @@ export function FloatingButtons() {
         document.body.removeChild(script);
       }
     };
-  }, [visible]);
-
-  if (!visible) return null;
+  }, []);
 
   const tripAdvisor = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false

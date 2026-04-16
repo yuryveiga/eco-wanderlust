@@ -12,7 +12,6 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { TourCard, TourCardProps } from "@/components/ToursSection";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { OptimizedImage } from "@/components/OptimizedImage";
 import "react-quill-new/dist/quill.snow.css";
 
 const BlogPost = () => {
@@ -204,14 +203,9 @@ const BlogPost = () => {
           <>
             {/* HERO SECTION FOR BLOG POST - NEW STYLE */}
             <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
-              <OptimizedImage 
-                src={post.image_url || fallbackImage} 
-                alt={title} 
-                width={1920}
-                containerClassName="absolute inset-0"
-                className="w-full h-full object-cover transition-transform duration-[20s] hover:scale-110"
-                fetchPriority="high"
-                loading="eager"
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
+                style={{ backgroundImage: `url('${post.image_url || fallbackImage}')` }}
               />
               <div className="absolute inset-0 bg-black/50" />
               <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
@@ -251,14 +245,10 @@ const BlogPost = () => {
               </Link>
    
                 <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
-                  <OptimizedImage 
+                  <img 
                     src={post.image_url || fallbackImage} 
                     alt={title} 
-                    width={1200}
-                    containerClassName="w-full h-full"
                     className="w-full h-full object-cover"
-                    fetchPriority="high"
-                    loading="eager"
                   />
                 </div>
               

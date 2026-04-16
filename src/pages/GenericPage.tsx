@@ -3,7 +3,6 @@ import { useParams, Navigate } from "react-router-dom";
 import { fetchLovable, LovablePage } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { OptimizedImage } from "@/components/OptimizedImage";
 
 const GenericPage = () => {
   const { slug } = useParams();
@@ -40,15 +39,13 @@ const GenericPage = () => {
       
       <main className="flex-1 bg-background pb-16">
         {/* Cover Section (Matches Blog Style) */}
-        <div className="w-full h-[35vh] md:h-[50vh] relative bg-muted overflow-hidden">
-          <OptimizedImage 
+        <div className="w-full h-[35vh] md:h-[50vh] relative bg-primary/10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-10" />
+          <img 
             src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070" 
             alt="Fundo" 
-            width={1920}
-            containerClassName="w-full h-full"
-            className="w-full h-full object-cover" 
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-10" />
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-center pb-24 z-20">
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center drop-shadow-lg px-4">
               {page.title}
