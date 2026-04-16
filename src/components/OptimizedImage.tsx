@@ -14,6 +14,8 @@ interface OptimizedImageProps {
   decoding?: "async" | "sync" | "auto";
   fill?: boolean;
   fit?: "cover" | "contain";
+  height?: number;
+  onDimensions?: (width: number, height: number) => void;
 }
 
 export function OptimizedImage({
@@ -28,17 +30,19 @@ export function OptimizedImage({
   decoding = "async",
   fill = true,
   fit = "cover",
+  height,
+  onDimensions,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
 
   useEffect(() => {
     if (src) {
-      setBlurSrc(getBlurPlaceholder(src, fit));
+      setBlurSrc(getBlurPlaceholder(src, fit, height));
       // Reset load state if src changes
       setIsLoaded(false);
     }
-  }, [src, fit]);
+  }, [src, fit, height]);
 
   return (
     <div className={cn(
@@ -63,17 +67,23 @@ export function OptimizedImage({
       {/* Main Image with modern format support */}
       <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'avif', fit)} 
+          srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height)} 
           type="image/avif" 
         />
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'webp', fit)} 
+          srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height)} 
           type="image/webp" 
         />
         <img
-          src={getOptimizedImage(src, width, quality, undefined, fit)}
+          src={getOptimizedImage(src, width, quality, undefined, fit, height)}
           alt={alt}
-          onLoad={() => setIsLoaded(true)}
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            if (onDimensions) {
+              onDimensions(img.naturalWidth, img.naturalHeight);
+            }
+            setIsLoaded(true);
+          }}
           loading={loading}
           fetchPriority={fetchPriority}
           decoding={decoding}

@@ -3,12 +3,13 @@ import { Images, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useLocale } from "@/contexts/LocaleContext";
-import { getOptimizedImage } from "@/utils/imageOptimization";
+import { cn } from "@/lib/utils";
 import { OptimizedImage } from "./OptimizedImage";
 
 export function GallerySection() {
   const { gallery } = useSiteData();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
   const { t } = useLocale();
 
   const galleryImages = useMemo(() => {
@@ -39,9 +40,15 @@ export function GallerySection() {
   }
 
   const openLightbox = (index: number) => setSelectedIndex(index);
-  const closeLightbox = () => setSelectedIndex(null);
+  const closeLightbox = () => {
+    setSelectedIndex(null);
+  };
   const prevImage = () => setSelectedIndex((prev) => prev! > 0 ? prev! - 1 : galleryImages.length - 1);
   const nextImage = () => setSelectedIndex((prev) => prev! < galleryImages.length - 1 ? prev! + 1 : 0);
+
+  const currentImage = selectedIndex !== null ? galleryImages[selectedIndex] : null;
+  const currentDimensions = currentImage ? imageDimensions[currentImage.url] : null;
+  const isLandscape = currentDimensions ? currentDimensions.width > currentDimensions.height : false;
 
   return (
     <section className="py-20 lg:py-28 bg-muted/30 overflow-hidden">
@@ -141,12 +148,25 @@ export function GallerySection() {
               src={galleryImages[selectedIndex].url}
               alt={galleryImages[selectedIndex].key}
               width={4000}
+              height={isLandscape ? 600 : undefined}
               quality={100}
-              containerClassName="max-w-full max-h-full flex items-center justify-center"
-              className="max-w-full max-h-full w-auto h-auto cursor-auto"
+              containerClassName={cn(
+                "max-w-full flex items-center justify-center",
+                isLandscape ? "max-h-[600px] h-[600px]" : "max-h-full h-full"
+              )}
+              className={cn(
+                "max-w-full cursor-auto",
+                isLandscape ? "max-h-[600px] h-auto md:h-[600px]" : "max-h-full h-auto"
+              )}
               fit="contain"
               fill={false}
               fetchPriority="high"
+              onDimensions={(w, h) => {
+                setImageDimensions(prev => ({
+                  ...prev,
+                  [galleryImages[selectedIndex].url]: { width: w, height: h }
+                }));
+              }}
             />
           </div>
         </div>
