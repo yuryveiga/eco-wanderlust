@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { LovableTour } from "@/integrations/lovable/client";
 import { useSiteData } from "@/hooks/useSiteData";
@@ -68,6 +69,7 @@ export function TourDetail() {
   const [weather, setWeather] = useState<{ temp: number; condition: string; humidity: number; wind: number } | null>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
+  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
 
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
 
@@ -857,23 +859,43 @@ export function TourDetail() {
               {(lightboxSource === 'gallery' 
                 ? ((tour as any)?.carousel_images_json as string[] || [])
                 : images
-                ).map((img, i) => (
-                  <CarouselItem key={i} className="pl-0 h-full w-full flex items-center justify-center">
-                    <div className="w-full h-full flex items-center justify-center p-4 md:p-12">
-                      <OptimizedImage 
-                        src={img} 
-                        alt={`${translatedTitle} view ${i+1}`} 
-                        width={4000}
-                        quality={100}
-                        containerClassName="w-full h-full flex items-center justify-center"
-                        className="max-w-full max-h-full w-full h-full cursor-auto" 
-                        fit="contain"
-                        fill={false}
-                        fetchPriority="high"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
+                ).map((img, i) => {
+                  const dims = imageDimensions[img];
+                  const isLandscape = dims ? dims.width > dims.height : false;
+                  const isGallerySource = lightboxSource === 'gallery';
+                  const shouldLimitHeight = isGallerySource && isLandscape;
+                  
+                  return (
+                    <CarouselItem key={i} className="pl-0 h-full w-full flex items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center p-4 md:p-12">
+                        <OptimizedImage 
+                          src={img} 
+                          alt={`${translatedTitle} view ${i+1}`} 
+                          width={4000}
+                          height={shouldLimitHeight ? 600 : undefined}
+                          quality={100}
+                          containerClassName={cn(
+                            "w-full flex items-center justify-center transition-all duration-500",
+                            shouldLimitHeight ? "max-h-[600px] h-[600px]" : "max-h-full h-full"
+                          )}
+                          className={cn(
+                            "max-w-full cursor-auto transition-all duration-500",
+                            shouldLimitHeight ? "max-h-[600px] h-auto lg:h-[600px]" : "max-h-full h-full w-auto"
+                          )}
+                          fit="contain"
+                          fill={false}
+                          fetchPriority="high"
+                          onDimensions={(w, h) => {
+                            setImageDimensions(prev => ({
+                              ...prev,
+                              [img]: { width: w, height: h }
+                            }));
+                          }}
+                        />
+                      </div>
+                    </CarouselItem>
+                  );
+                })}
             </CarouselContent>
             
             <div className="hidden sm:block pointer-events-none">
