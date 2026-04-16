@@ -51,8 +51,8 @@ export function HeroSection() {
             alt=""
             width={1600}
             containerClassName="w-full h-full"
-            fit="contain"
-            className="w-full h-full"
+            fit="cover"
+            className="w-full h-full object-cover"
             loading={index === 0 ? "eager" : "lazy"}
             fetchPriority={index === 0 ? "high" : "low"}
             decoding={index === 0 ? "sync" : "async"}
