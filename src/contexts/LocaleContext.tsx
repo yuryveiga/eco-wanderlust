@@ -210,6 +210,7 @@ const translations = {
     experiencia_imersiva_desc: 'Assista ao jogo com guia bilingue explicando a cultura do futebol carioca.',
     sobre_evento: 'Sobre a Experiência',
     matchday_fallback: 'Viva a emoção única de um jogo no Maracanã, o templo do futebol mundial. Nossa experiência oferece todo o conforto e segurança para você desfrutar do espetáculo, com transporte executivo, ingresso no melhor setor do estádio e acompanhamento de guia especializado em cultura de futebol.',
+    ingresso: 'Ingresso',
 
     // Carrinho
     meu_carrinho: 'Meu Carrinho',
@@ -422,6 +423,7 @@ const translations = {
     experiencia_imersiva_desc: 'Watch the match with a bilingual guide explaining the Carioca football culture.',
     sobre_evento: 'About the Experience',
     matchday_fallback: 'Experience the unique emotion of a match at Maracanã, the temple of world football. Our experience offers all the comfort and safety for you to enjoy the spectacle, with executive transport, tickets in the best sector of the stadium, and the guidance of an expert in football culture.',
+    ingresso: 'Ticket',
 
     // Cart
     meu_carrinho: 'My Cart',
@@ -634,6 +636,7 @@ const translations = {
     experiencia_imersiva_desc: 'Vea el partido con un guía bilingüe que explica la cultura del fútbol carioca.',
     sobre_evento: 'Sobre la Experiencia',
     matchday_fallback: 'Vive la emoción única de un partido en el Maracanã, el templo del fútbol mundial. Nuestra experiencia ofrece todo el confort y la seguridad para que disfrutes del espectáculo, com transporte ejecutivo, entrada en el mejor sector del estadio y acompañamiento de un guía especializado en cultura del fútbol.',
+    ingresso: 'Entrada',
 
     // Cart
     meu_carrinho: 'Mi Carrito',
