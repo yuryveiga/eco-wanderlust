@@ -98,7 +98,7 @@ export function GallerySection() {
 
       {selectedIndex !== null && (
         <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[100] flex items-center justify-center p-0"
           onClick={closeLightbox}
           onKeyDown={(e) => {
             if (e.key === "Escape") closeLightbox();
@@ -110,36 +110,39 @@ export function GallerySection() {
           <button
             onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
             className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
           >
             <X className="w-6 h-6 text-white" />
           </button>
           
           <button
             onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           
-          <OptimizedImage
-            src={galleryImages[selectedIndex].url}
-            alt={galleryImages[selectedIndex].key}
-            width={1600}
-            containerClassName="max-w-[95vw] max-h-[85vh] mx-auto"
-            className="cursor-auto shadow-2xl rounded-lg"
-            fit="contain"
-            fill={false}
-            fetchPriority="high"
-          />
+          <div className="relative w-full h-full flex items-center justify-center p-4">
+            <OptimizedImage
+              src={galleryImages[selectedIndex].url}
+              alt={galleryImages[selectedIndex].key}
+              width={1600}
+              containerClassName="w-full h-full flex items-center justify-center"
+              className="max-h-screen w-auto object-contain"
+              fit="contain"
+              fill={false}
+              fetchPriority="high"
+            />
+          </div>
           
           <button
             onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
           >
             <ChevronRight className="w-6 h-6 text-white" />
           </button>
           
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-sans text-sm bg-black/50 px-3 py-1 rounded-full z-50">
             {selectedIndex + 1} / {galleryImages.length}
           </div>
         </div>
