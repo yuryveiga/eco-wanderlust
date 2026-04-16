@@ -865,8 +865,8 @@ export function TourDetail() {
                         alt={`${translatedTitle} view ${i+1}`} 
                         width={4000}
                         quality={100}
-                        containerClassName="max-w-full max-h-full flex items-center justify-center"
-                        className="max-w-full max-h-full w-auto h-auto cursor-auto" 
+                        containerClassName="w-full h-full flex items-center justify-center"
+                        className="max-w-full max-h-full w-full h-full cursor-auto" 
                         fit="contain"
                         fill={false}
                         fetchPriority="high"
