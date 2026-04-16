@@ -132,8 +132,8 @@ Deno.serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ success: true }), { headers: corsHeaders })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Function error:', error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders })
+    return new Response(JSON.stringify({ error: error?.message }), { status: 500, headers: corsHeaders })
   }
 })

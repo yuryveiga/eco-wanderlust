@@ -130,8 +130,8 @@ Deno.serve(async (req) => {
 
     return new Response(JSON.stringify({ error: "Invalid action" }), { status: 400, headers: corsHeaders });
 
-  } catch (error) {
-    console.error("Function error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (error: any) {
+    console.error("Function error:", error?.message);
+    return new Response(JSON.stringify({ error: error?.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

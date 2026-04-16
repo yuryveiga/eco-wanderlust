@@ -90,8 +90,8 @@ serve(async (req) => {
         "Cache-Control": "public, max-age=3600",
       },
     });
-  } catch (error) {
-    console.error("Sitemap error:", error.message);
-    return new Response(error.message, { status: 500, headers: corsHeaders });
+  } catch (error: any) {
+    console.error("Sitemap error:", error?.message);
+    return new Response(error?.message, { status: 500, headers: corsHeaders });
   }
 });
