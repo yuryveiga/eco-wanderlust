@@ -118,10 +118,12 @@ export function GallerySection() {
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           
-          <img
-            src={getOptimizedImage(galleryImages[selectedIndex].url, 1600)}
+          <OptimizedImage
+            src={galleryImages[selectedIndex].url}
             alt={galleryImages[selectedIndex].key}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+            sizes="90vw"
+            priority
             onClick={(e) => e.stopPropagation()}
           />
           
