@@ -10,11 +10,18 @@ export function getOptimizedImage(
 ): string {
   if (!url) return "";
 
+  // Enable resizing ONLY for tiny placeholders (like the 20px blur prev)
+  // to avoid downloading full images for the blur step.
+  // Main images will bypass the width parameter as requested.
+  const isPlaceholder = width <= 50;
+  const widthParam = isPlaceholder ? `&w=${width}` : "";
+  const sbWidthParam = isPlaceholder ? `&width=${width}` : "";
+
   // Unsplash Optimization
   if (url.includes("images.unsplash.com")) {
     const baseUrl = url.split("?")[0];
     const fmt = format ? `&fm=${format}` : "&auto=format";
-    return `${baseUrl}?q=${quality}&w=${width}${fmt}&fit=crop`;
+    return `${baseUrl}?q=${quality}${widthParam}${fmt}&fit=crop`;
   }
 
   // Supabase Storage Optimization (Resize API)
@@ -22,7 +29,7 @@ export function getOptimizedImage(
     if (url.includes("/object/public/")) {
         const renderUrl = url.replace("/object/public/", "/render/image/public/");
         const fmt = format ? `&format=${format}` : "";
-        return `${renderUrl}?width=${width}&quality=${quality}${fmt}`;
+        return `${renderUrl}?quality=${quality}${sbWidthParam}${fmt}`;
     }
   }
 
