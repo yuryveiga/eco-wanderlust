@@ -1,7 +1,6 @@
 import { Bus, Shield, Heart, Users } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
-import { OptimizedImage } from "./OptimizedImage";
 
 const DEFAULT_IMAGES = [
   'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600',
@@ -44,40 +43,12 @@ export function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-4">
-              <div className="h-48 lg:h-64 rounded-2xl overflow-hidden relative">
-                <OptimizedImage
-                  src={aboutImages[0]}
-                  alt="About 1"
-                  containerClassName="w-full h-full"
-                  className="w-full h-full"
-                />
-              </div>
-              <div className="h-32 lg:h-40 rounded-2xl overflow-hidden relative">
-                <OptimizedImage
-                  src={aboutImages[1]}
-                  alt="About 2"
-                  containerClassName="w-full h-full"
-                  className="w-full h-full"
-                />
-              </div>
+              <div className="h-48 lg:h-64 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[0]}')` }} />
+              <div className="h-32 lg:h-40 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[1]}')` }} />
             </div>
             <div className="space-y-4 pt-8">
-              <div className="h-32 lg:h-40 rounded-2xl overflow-hidden relative">
-                <OptimizedImage
-                  src={aboutImages[2]}
-                  alt="About 3"
-                  containerClassName="w-full h-full"
-                  className="w-full h-full"
-                />
-              </div>
-              <div className="h-48 lg:h-64 rounded-2xl overflow-hidden relative">
-                <OptimizedImage
-                  src={aboutImages[3]}
-                  alt="About 4"
-                  containerClassName="w-full h-full"
-                  className="w-full h-full"
-                />
-              </div>
+              <div className="h-32 lg:h-40 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[2]}')` }} />
+              <div className="h-48 lg:h-64 rounded-2xl bg-cover bg-center" style={{ backgroundImage: `url('${aboutImages[3]}')` }} />
             </div>
           </div>
 

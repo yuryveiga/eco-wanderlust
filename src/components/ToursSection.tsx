@@ -63,14 +63,13 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
 
   const CardContent = (
     <>
-      <div className="relative h-64 overflow-hidden bg-muted">
+      <div className="relative h-56 overflow-hidden bg-muted">
         <OptimizedImage 
           src={tour.image_url} 
           alt={title} 
           width={600} 
           containerClassName="w-full h-full"
-          fit="cover"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+          className="w-full h-full object-contain transition-transform duration-500" 
           loading="lazy" 
         />
         {tour.is_featured && (

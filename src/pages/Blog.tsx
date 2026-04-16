@@ -84,7 +84,7 @@ const Blog = () => {
                       alt={post.title}
                       width={600}
                       containerClassName="w-full h-full"
-                      className="w-full h-full group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
