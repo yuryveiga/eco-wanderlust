@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { useLocale } from "@/contexts/LocaleContext";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
@@ -175,11 +176,15 @@ export default function MatchDetail() {
       <main className="pt-24 pb-20">
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-           <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group">
-              <img 
+           <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group bg-muted">
+              <OptimizedImage 
                 src="/maracana-hero.jpg" 
                 alt="Maracanã Stadium" 
+                width={1920}
+                containerClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+                fetchPriority="high"
+                loading="eager"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               

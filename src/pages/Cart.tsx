@@ -5,6 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldCheck, Users, Plus, Minus } from "lucide-react";
@@ -128,9 +129,14 @@ const Cart = () => {
             ) : (
               <div className="space-y-4">
                 {items.map((item, idx) => (
-                  <div key={`${item.id}-${idx}`} className="bg-card rounded-2xl p-6 border border-border/50 shadow-sm flex flex-col sm:flex-row gap-6 group hover:shadow-md transition-all">
-                    <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0 relative">
-                      <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                    <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0 relative bg-muted">
+                      <OptimizedImage 
+                        src={item.image_url} 
+                        alt={item.title} 
+                        width={200}
+                        containerClassName="w-full h-full"
+                        className="w-full h-full object-cover" 
+                      />
                       <div className="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded-full shadow-lg">
                         {item.quantity}x
                       </div>

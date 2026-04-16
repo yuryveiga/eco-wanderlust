@@ -1,6 +1,7 @@
 import { Instagram, MapPin, Mail, Phone, Facebook, Youtube, Music } from "lucide-react";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
+import { OptimizedImage } from "./OptimizedImage";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube,
@@ -63,7 +64,15 @@ export function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               {logoUrl ? (
-                <img src={logoUrl} alt="Logo" className="h-10 w-10 rounded-full object-cover" />
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center p-1">
+                  <OptimizedImage 
+                    src={logoUrl} 
+                    alt="Logo" 
+                    width={100} 
+                    containerClassName="h-10 w-10 rounded-full"
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
               ) : (
                 <div className="w-10 h-10 rounded-full bg-[hsl(145,40%,40%)] flex items-center justify-center">
                   <span className="font-bold text-lg font-sans">P</span>
