@@ -34,11 +34,11 @@ export function OptimizedImage({
 
   useEffect(() => {
     if (src) {
-      setBlurSrc(getBlurPlaceholder(src));
+      setBlurSrc(getBlurPlaceholder(src, fit));
       // Reset load state if src changes
       setIsLoaded(false);
     }
-  }, [src]);
+  }, [src, fit]);
 
   return (
     <div className={cn(
@@ -52,7 +52,8 @@ export function OptimizedImage({
           src={blurSrc}
           alt=""
           className={cn(
-            "absolute inset-0 w-full h-full object-cover scale-110 blur-2xl transition-opacity duration-1000 ease-in-out",
+            "absolute inset-0 w-full h-full blur-2xl transition-opacity duration-1000 ease-in-out",
+            fit === "cover" ? "object-cover scale-110" : "object-contain scale-100",
             isLoaded ? "opacity-0 invisible" : "opacity-100 visible"
           )}
           aria-hidden="true"

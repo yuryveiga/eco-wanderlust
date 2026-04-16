@@ -22,9 +22,15 @@ export function getOptimizedImage(
   if (url.includes("images.unsplash.com")) {
     const baseUrl = url.split("?")[0];
     const fmt = format ? `&fm=${format}` : "&auto=format";
-    // Using fit=crop for covers and fit=max for contained images
-    const unsplashFit = fit === 'cover' ? 'crop' : 'max';
-    return `${baseUrl}?q=${quality}${widthParam}${fmt}&fit=${unsplashFit}`;
+    
+    // For covers we use fit=crop. 
+    // For contain (full image), we omit fit or use fit=max to ensure NO CROP.
+    // If widthParam is empty (main image), we skip fit entirely to get the original.
+    if (fit === 'contain') {
+      return `${baseUrl}?q=${quality}${widthParam}${fmt}`;
+    }
+    
+    return `${baseUrl}?q=${quality}${widthParam}${fmt}&fit=crop`;
   }
 
   // Supabase Storage Optimization (Resize API)
@@ -44,8 +50,8 @@ export function getOptimizedImage(
 /**
  * Generates a tiny, low-quality version of the image for use as a blur placeholder (LQIP).
  */
-export function getBlurPlaceholder(url: string): string {
+export function getBlurPlaceholder(url: string, fit: 'cover' | 'contain' = 'cover'): string {
   if (!url) return "";
   // tiny width (20px) and low quality (10) for maximum blur efficiency
-  return getOptimizedImage(url, 20, 10, 'webp');
+  return getOptimizedImage(url, 20, 10, 'webp', fit);
 }
