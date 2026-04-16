@@ -86,8 +86,6 @@ export function Header() {
         { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
       ];
 
-  console.log("socialMedia:", socialMedia);
-
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/images__1_-removebg-preview.png";
 
   return (
