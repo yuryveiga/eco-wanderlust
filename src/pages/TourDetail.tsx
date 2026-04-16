@@ -853,9 +853,9 @@ export function TourDetail() {
 
           <Carousel 
             opts={{ startIndex: lightboxIndex, loop: true }} 
-            className="w-full h-full flex items-center justify-center"
+            className="w-full h-full"
           >
-            <CarouselContent className="h-full ml-0">
+            <CarouselContent className="h-full ml-0 flex items-center">
               {(lightboxSource === 'gallery' 
                 ? ((tour as any)?.carousel_images_json as string[] || [])
                 : images
@@ -867,7 +867,7 @@ export function TourDetail() {
                   
                   return (
                     <CarouselItem key={i} className="pl-0 h-full w-full flex items-center justify-center">
-                      <div className="w-full h-full flex items-center justify-center p-4 md:p-12">
+                      <div className="w-full h-full flex flex-col items-center justify-center p-4 md:p-12">
                         <OptimizedImage 
                           src={img} 
                           alt={`${translatedTitle} view ${i+1}`} 
