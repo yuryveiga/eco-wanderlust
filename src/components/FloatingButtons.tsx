@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
+  const { isAdmin } = useAuth();
+  
+  if (isAdmin) return null;
   
   useEffect(() => {
     const script = document.createElement("script");
