@@ -37,15 +37,15 @@ export function OptimizedImage({
   }, [src]);
 
   return (
-    <div className={cn("relative overflow-hidden bg-muted", containerClassName)}>
+    <div className={cn("relative overflow-hidden bg-muted/20", containerClassName)}>
       {/* Blurred Placeholder (LQIP) */}
-      {blurSrc && !isLoaded && (
+      {blurSrc && (
         <img
           src={blurSrc}
           alt=""
           className={cn(
-            "absolute inset-0 w-full h-full object-cover scale-110 blur-2xl transition-opacity duration-500",
-            isLoaded ? "opacity-0" : "opacity-100"
+            "absolute inset-0 w-full h-full object-cover scale-110 blur-2xl transition-opacity duration-1000 ease-in-out",
+            isLoaded ? "opacity-0 invisible" : "opacity-100 visible"
           )}
           aria-hidden="true"
         />
@@ -69,8 +69,8 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "transition-all duration-700 ease-in-out",
-            isLoaded ? "opacity-100 blur-0" : "opacity-0 blur-lg",
+            "w-full h-full object-cover transition-all duration-1000 ease-in-out",
+            isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
             className
           )}
         />

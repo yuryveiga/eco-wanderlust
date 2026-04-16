@@ -69,11 +69,14 @@ export function BlogCarousel() {
                   return (
                     <CarouselItem key={post.id} className="pl-6 basis-full md:basis-1/2">
                       <div className="bg-card rounded-2xl overflow-hidden shadow-2xl h-[480px] flex flex-col group border-none">
-                        <div className="h-2/5 overflow-hidden">
-                          <img 
-                            src={post.image_url || fallbackImage} 
-                            alt={title} 
+                        <div className="h-2/5 overflow-hidden bg-muted">
+                          <OptimizedImage
+                            src={post.image_url || fallbackImage}
+                            alt={title}
+                            width={600}
+                            containerClassName="w-full h-full"
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy"
                           />
                         </div>
                         <div className="h-3/5 bg-[#008967] p-8 flex flex-col justify-between items-start">

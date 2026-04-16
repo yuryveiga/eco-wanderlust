@@ -13,6 +13,7 @@ import { TourCard, TourCardProps } from "@/components/ToursSection";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import "react-quill-new/dist/quill.snow.css";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -244,11 +245,15 @@ const BlogPost = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
               </Link>
    
-                <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
-                  <img 
-                    src={post.image_url || fallbackImage} 
-                    alt={title} 
-                    className="w-full h-full object-cover"
+                <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50 bg-muted">
+                  <OptimizedImage
+                    src={post.image_url || fallbackImage}
+                    alt={title}
+                    width={1200}
+                    containerClassName="w-full h-full"
+                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+                    loading="eager"
+                    fetchPriority="high"
                   />
                 </div>
               

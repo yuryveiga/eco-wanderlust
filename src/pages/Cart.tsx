@@ -12,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
@@ -129,8 +130,15 @@ const Cart = () => {
               <div className="space-y-4">
                 {items.map((item, idx) => (
                   <div key={`${item.id}-${idx}`} className="bg-card rounded-2xl p-6 border border-border/50 shadow-sm flex flex-col sm:flex-row gap-6 group hover:shadow-md transition-all">
-                    <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0 relative">
-                      <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                    <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0 relative bg-muted">
+                      <OptimizedImage 
+                        src={item.image_url} 
+                        alt={item.title} 
+                        width={400}
+                        containerClassName="w-full h-full"
+                        className="w-full h-full object-cover" 
+                        loading="lazy"
+                      />
                       <div className="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded-full shadow-lg">
                         {item.quantity}x
                       </div>

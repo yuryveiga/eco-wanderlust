@@ -9,6 +9,7 @@ import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Helmet } from "react-helmet-async";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const Blog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
@@ -78,9 +79,11 @@ const Blog = () => {
                   className="bg-card border rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
                 >
                   <div className="aspect-video relative overflow-hidden bg-muted">
-                    <img 
-                      src={post.image_url || fallbackImage} 
-                      alt={post.title} 
+                    <OptimizedImage
+                      src={post.image_url || fallbackImage}
+                      alt={post.title}
+                      width={600}
+                      containerClassName="w-full h-full"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
