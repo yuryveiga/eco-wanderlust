@@ -286,11 +286,14 @@ export default function MatchDetail() {
                           <div className="space-y-6">
                              <div className="space-y-3">
                                 <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('quantas_pessoas')}</label>
-                                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-2xl border">
-                                   <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="h-4 w-4" /></Button>
-                                   <span className="font-black text-xl">{quantity}</span>
-                                   <Button variant="ghost" size="icon" onClick={() => setQuantity(q => q+1)}><Plus className="h-4 w-4" /></Button>
-                                </div>
+                                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-2xl border">
+                                    <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="h-4 w-4" /></Button>
+                                    <span className="font-black text-xl">{quantity}</span>
+                                    <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(q+1, Math.max(1, (match.available_spots || 20) - (match.sold_count || 0))))}><Plus className="h-4 w-4" /></Button>
+                                 </div>
+                                 <p className="text-[10px] text-muted-foreground text-center">
+                                    {Math.max(0, (match.available_spots || 20) - (match.sold_count || 0))} {t('vagas_disponiveis') || 'vagas disponíveis'}
+                                 </p>
                              </div>
 
                              <div className="pt-6 border-t border-dashed border-border space-y-2">
