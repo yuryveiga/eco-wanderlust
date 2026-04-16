@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
   const { t, language, formatPrice } = useLocale();
+  const dateLocale = language === 'pt' ? ptBR : language === 'es' ? es : enUS;
   const { siteSettings } = useSiteData();
   const [isProcessing, setIsProcessing] = useState(false);
 
