@@ -15,9 +15,9 @@ export function FloatingButtons() {
     setVisible(!isHidden);
   }, [isAdmin, pathname]);
 
-  if (!visible) return null;
-  
   useEffect(() => {
+    if (!visible) return; // Exit if not visible
+    
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";
     script.async = true;
@@ -27,7 +27,9 @@ export function FloatingButtons() {
         document.body.removeChild(script);
       }
     };
-  }, []);
+  }, [visible]);
+
+  if (!visible) return null;
 
   const tripAdvisor = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
