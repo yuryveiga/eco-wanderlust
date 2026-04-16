@@ -15,7 +15,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
-import { getMatchDateInRio, getMatchHour } from "@/lib/dateUtils";
+import { getMatchDateInRio, getMatchHour, getDisplaySpots } from "@/lib/dateUtils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -289,11 +289,28 @@ export default function MatchDetail() {
                                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-2xl border">
                                     <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="h-4 w-4" /></Button>
                                     <span className="font-black text-xl">{quantity}</span>
-                                    <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.min(q+1, Math.max(1, (match.available_spots || 20) - (match.sold_count || 0))))}><Plus className="h-4 w-4" /></Button>
+                                    <Button 
+                                       variant="ghost" 
+                                       size="icon" 
+                                       onClick={() => {
+                                          const spotsAvail = getDisplaySpots(match.id, match.available_spots, match.sold_count);
+                                          setQuantity(q => Math.min(q + 1, spotsAvail));
+                                       }}
+                                       disabled={quantity >= getDisplaySpots(match.id, match.available_spots, match.sold_count)}
+                                    >
+                                       <Plus className="h-4 w-4" />
+                                    </Button>
                                  </div>
-                                 <p className="text-[10px] text-muted-foreground text-center">
-                                    {Math.max(0, (match.available_spots || 20) - (match.sold_count || 0))} {t('vagas_disponiveis') || 'vagas disponíveis'}
-                                 </p>
+                                 {(() => {
+                                    const displaySpots = getDisplaySpots(match.id, match.available_spots, match.sold_count);
+                                    const isUrgent = displaySpots <= 5 && displaySpots > 0;
+                                    return (
+                                       <p className={`text-[10px] text-center font-bold flex items-center justify-center gap-1 ${isUrgent ? 'text-destructive animate-pulse' : 'text-muted-foreground'}`}>
+                                          <Users className="h-3 w-3" />
+                                          {displaySpots} {t('vagas_disponiveis') || 'vagas disponíveis'}
+                                       </p>
+                                    );
+                                 })()}
                              </div>
 
                              <div className="pt-6 border-t border-dashed border-border space-y-2">
