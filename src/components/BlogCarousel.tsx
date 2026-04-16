@@ -12,7 +12,6 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from "@/components/ui/carousel";
-import { OptimizedImage } from "./OptimizedImage";
 
 export function BlogCarousel() {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
@@ -71,12 +70,10 @@ export function BlogCarousel() {
                     <CarouselItem key={post.id} className="pl-6 basis-full md:basis-1/2">
                       <div className="bg-card rounded-2xl overflow-hidden shadow-2xl h-[480px] flex flex-col group border-none">
                         <div className="h-2/5 overflow-hidden">
-                          <OptimizedImage 
+                          <img 
                             src={post.image_url || fallbackImage} 
                             alt={title} 
-                            width={800}
-                            containerClassName="w-full h-full"
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                         </div>
                         <div className="h-3/5 bg-[#008967] p-8 flex flex-col justify-between items-start">
