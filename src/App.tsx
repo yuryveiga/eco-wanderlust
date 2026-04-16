@@ -76,8 +76,8 @@ const App = () => {
                   <Sonner />
                   <ThemeApplier />
                   <BrowserRouter>
-                    <FloatingButtons />
                     <Suspense fallback={<PageLoader />}>
+                      <FloatingButtons />
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/blog" element={<Blog />} />
