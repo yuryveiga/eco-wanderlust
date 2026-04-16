@@ -68,7 +68,7 @@ export function GallerySection() {
         >
           <CarouselContent className="-ml-1">
             {galleryImages.map((img, index) => (
-              <CarouselItem key={img.key} className="pl-1 basis-[95%] sm:basis-[80%] md:basis-1/2 lg:basis-[45%] xl:basis-1/3">
+              <CarouselItem key={img.key} className="pl-1 basis-full md:basis-1/3">
                 <button
                   onClick={() => openLightbox(index)}
                   className="relative w-full aspect-square overflow-hidden rounded-md group bg-card border-0 shadow-sm"
