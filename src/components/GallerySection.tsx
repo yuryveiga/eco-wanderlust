@@ -125,9 +125,10 @@ export function GallerySection() {
             src={galleryImages[selectedIndex].url}
             alt={galleryImages[selectedIndex].key}
             width={1600}
-            containerClassName="max-w-[95vw] max-h-[95vh] rounded-lg"
-            className="cursor-auto"
+            containerClassName="max-w-[95vw] max-h-[85vh] mx-auto"
+            className="cursor-auto shadow-2xl rounded-lg"
             fit="contain"
+            fill={false}
             fetchPriority="high"
           />
           

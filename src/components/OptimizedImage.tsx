@@ -13,6 +13,7 @@ interface OptimizedImageProps {
   fetchPriority?: "high" | "low" | "auto";
   decoding?: "async" | "sync" | "auto";
   fit?: "cover" | "contain";
+  fill?: boolean;
 }
 
 export function OptimizedImage({
@@ -26,6 +27,7 @@ export function OptimizedImage({
   fetchPriority = "auto",
   decoding = "async",
   fit = "cover",
+  fill = true,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
@@ -39,14 +41,22 @@ export function OptimizedImage({
   }, [src]);
 
   return (
-    <div className={cn("relative overflow-hidden bg-muted/20", containerClassName)}>
+    <div className={cn(
+      "relative",
+      fill && "overflow-hidden w-full h-full",
+      !fill && "flex items-center justify-center",
+      containerClassName
+    )}>
+      {/* Background placeholder base for better UX */}
+      {fill && <div className="absolute inset-0 bg-muted/20" />}
       {/* Blurred Placeholder (LQIP) */}
       {blurSrc && (
         <img
           src={blurSrc}
           alt=""
           className={cn(
-            "absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out blur-2xl scale-110",
+            "transition-opacity duration-1000 ease-in-out blur-2xl scale-110 pointer-events-none",
+            fill ? "absolute inset-0 w-full h-full" : "w-full h-full",
             fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-0 invisible" : "opacity-100 visible"
           )}
@@ -55,7 +65,7 @@ export function OptimizedImage({
       )}
 
       {/* Main Image with modern format support */}
-      <picture>
+      <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         <source 
           srcSet={getOptimizedImage(src, width, quality, 'avif')} 
           type="image/avif" 
@@ -72,7 +82,8 @@ export function OptimizedImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           className={cn(
-            "w-full h-full transition-all duration-1000 ease-in-out",
+            "transition-all duration-1000 ease-in-out",
+            fill ? "w-full h-full" : "max-w-full max-h-full",
             fit === "cover" ? "object-cover" : "object-contain",
             isLoaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg",
             className
