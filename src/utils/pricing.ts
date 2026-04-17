@@ -30,36 +30,42 @@ function asNumber(val: any): number {
 export function getTourMinPrice(tour: PricingTour): number {
   if (!tour) return 0;
 
-  let prices: number[] = [];
+  // 1. Gather all dynamic tiers
+  const tiers = [
+    asNumber(tour.price_1_person),
+    asNumber(tour.price_2_people),
+    asNumber(tour.price_3_6_people),
+    asNumber(tour.price_7_19_people)
+  ].filter(p => p > 0);
 
-  // Base price (often used for fixed or group models)
+  // 2. Base price candidate (often a residual in dynamic models, but primary in fixed/group)
   const basePrice = asNumber(tour.price);
-  if (basePrice > 0) prices.push(basePrice);
 
-  // Dynamic per-person tiers - adding all valid prices to find the minimum
-  const p1 = asNumber(tour.price_1_person);
-  if (p1 > 0) prices.push(p1);
-  
-  const p2 = asNumber(tour.price_2_people);
-  if (p2 > 0) prices.push(p2);
-  
-  const p36 = asNumber(tour.price_3_6_people);
-  if (p36 > 0) prices.push(p36);
-  
-  const p719 = asNumber(tour.price_7_19_people);
-  if (p719 > 0) prices.push(p719);
+  let minBase = 0;
 
-  // Initial candidate for min price across all available tiers
-  let minBase = prices.length > 0 ? Math.min(...prices) : basePrice;
-
-  // Group model specific override
-  if (tour.pricing_model === 'group') {
+  // 3. Logic based on pricing model
+  if (tour.pricing_model === 'dynamic') {
+    // For dynamic tours, the tiers are the source of truth for "Starting from".
+    // We only use the base price if no tiers are defined.
+    if (tiers.length > 0) {
+      minBase = Math.min(...tiers);
+    } else {
+      minBase = basePrice;
+    }
+  } else if (tour.pricing_model === 'group') {
+    // For groups, it's the fixed group price
     minBase = basePrice;
-  } else if (tour.pricing_model === 'custom' && prices.length === 0) {
-    minBase = 0;
+  } else if (tour.pricing_model === 'custom') {
+    // Custom model often starts at 0 or a base fee
+    minBase = tiers.length > 0 ? Math.min(...tiers) : basePrice;
+  } else {
+    // Fallback for fixed or undefined models: use anything available
+    const allCandidates = [...tiers];
+    if (basePrice > 0) allCandidates.push(basePrice);
+    minBase = allCandidates.length > 0 ? Math.min(...allCandidates) : 0;
   }
 
-  // If there are custom options and they are active, add the lowest possible required option price
+  // 4. If there are custom options and they are active, add the lowest possible required option price
   if (tour.use_custom_options && Array.isArray(tour.custom_options_json) && tour.custom_options_json.length > 0) {
     const optionPrices = (tour.custom_options_json as any[])
       .map(o => asNumber(o.price))
