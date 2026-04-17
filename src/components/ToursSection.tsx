@@ -6,7 +6,6 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 import { OptimizedImage } from "./OptimizedImage";
-import { getTourMinPrice } from "@/utils/pricing";
 
 export type TourCardProps = {
   id: string;
@@ -96,7 +95,22 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
               <>
                 <span className="text-2xl font-bold text-primary font-sans">
                   {(() => {
-                    return formatPrice(getTourMinPrice(tour as any));
+                    let minBase = 0;
+                    if (tour.pricing_model === 'dynamic') {
+                      minBase = tour.price_1_person || 0;
+                    } else if (tour.pricing_model === 'group') {
+                      minBase = (tour.price || 0);
+                    } else if (tour.pricing_model === 'custom') {
+                      minBase = 0;
+                    } else {
+                      minBase = tour.price || 0;
+                    }
+                    
+                    if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
+                      const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
+                      minBase += Math.min(...optionPrices);
+                    }
+                    return formatPrice(minBase);
                   })()}
                 </span>
                 <span className="text-muted-foreground text-sm font-sans">
