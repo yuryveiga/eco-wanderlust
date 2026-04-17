@@ -22,7 +22,7 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
         .map((s) => s[0])
         .join('')
         .replace(/[\u200B\u00AD\u00A0]/g, ' ') // Replace zero-width/soft-hyphen/non-breaking-space with regular space
-        .replace(/\s+/g, ' ') // Collapse multiple spaces (common in translation)
+        .replace(/[^\n\r\S]+/g, ' ') // Collapse multiple SPACES (and tabs) but PRESERVE newlines (\n)
         .trim();
 
       return restore(translated, replacements);
