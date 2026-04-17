@@ -101,6 +101,9 @@ export function Header() {
                 width={200}
                 containerClassName="h-16 w-16 md:h-22 md:w-22"
                 className="h-full w-full object-contain transition-all duration-300 focus:outline-none" 
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
               />
             ) : (
               <div className="w-16 h-16 md:h-22 md:w-22 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
