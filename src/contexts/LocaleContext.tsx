@@ -655,7 +655,7 @@ const translations = {
 };
 
 // Câmbio aproximado para os cálculos locais baseados em Real (BRL)
-const rates = {
+export const rates = {
   BRL: 1,
   USD: 5.65,
   EUR: 6.10,

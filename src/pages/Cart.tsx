@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
-import { useLocale } from "@/contexts/LocaleContext";
+import { useLocale, rates } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,13 +37,17 @@ const Cart = () => {
     }
     
     setIsProcessing(true);
+    const currentCurrency = currency.toLowerCase();
+    const rate = rates[currency] || 1;
+
     try {
       const saleIds: string[] = [];
       
       // Save sale to database and collect IDs
       for (const item of items) {
-        // Apply 5% fee to each item's total price proportionally
-        const itemTotal = item.price * item.quantity;
+        // Calculate price in the target currency
+        const convertedPrice = Math.round((item.price / rate) * 100) / 100;
+        const itemTotal = convertedPrice * item.quantity;
         const itemFee = itemTotal * 0.05;
         const totalWithFee = itemTotal + itemFee;
 
@@ -56,6 +60,7 @@ const Cart = () => {
           customer_phone: customerInfo.whatsapp,
           quantity: item.quantity,
           total_price: totalWithFee,
+          currency: currency, // Store the currency used
           selected_date: item.date,
           selected_period: item.period,
           is_private: item.isPrivate,
@@ -78,14 +83,14 @@ const Cart = () => {
           body: JSON.stringify({
             items: items.map(item => ({
               title: item.title,
-              price: item.price,
+              price: Math.round((item.price / rate) * 100) / 100, // Send converted price
               quantity: item.quantity,
               date: item.date,
               period: item.period,
             })),
             sale_ids: saleIds,
             customer: customerInfo,
-            currency: "brl",
+            currency: currentCurrency, // Send selected currency (usd, eur, brl)
           }),
         }
       );
