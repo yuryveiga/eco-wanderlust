@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Map, Globe, Sparkles, Loader2, DollarSign, Users, CalendarCheck, CalendarClock, Save, LayoutGrid, FileText, Image, Share2 } from "lucide-react";
 import { ChangePassword } from "@/components/admin/ChangePassword";
+import { BulkTranslateCard } from "@/components/admin/BulkTranslateCard";
 import { fetchLovable, updateLovable, insertLovable, LovableSiteSetting, LovableSale, LovableTour } from "@/integrations/lovable/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -291,6 +292,8 @@ const AdminDashboard = () => {
             {isSaving ? "Salvando..." : <><Save className="w-4 h-4 mr-2" /> Salvar Layout e Categorias</>}
           </Button>
         </div>
+
+        <BulkTranslateCard />
 
         <div className="md:col-span-2">
           <ChangePassword />
