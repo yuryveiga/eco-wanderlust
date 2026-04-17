@@ -236,8 +236,8 @@
 
 /* Utility for justified text with hyphen protection */
 .text-justified {
-  text-align: justify !important;
+  text-align: left !important;
   hyphens: none !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
 }

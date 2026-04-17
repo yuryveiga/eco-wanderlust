@@ -73,16 +73,20 @@ const BlogPost = () => {
           font-size: 1.05rem !important;
           text-align: left !important;
           hyphens: none !important;
-          word-break: normal !important;
+          word-break: keep-all !important;
+          overflow-wrap: normal !important;
         }
         .blog-content-area * {
           margin-top: 0 !important;
           margin-inline: 0 !important;
+          word-break: inherit !important;
+          overflow-wrap: inherit !important;
         }
         .blog-content-area p {
           margin-bottom: 0.8rem !important;
           line-height: 1.6 !important;
           text-align: left !important;
+          word-break: inherit !important;
         }
         /* Remove space from empty lines created by editor */
         .blog-content-area p:has(br:only-child),

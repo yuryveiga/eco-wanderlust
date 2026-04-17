@@ -16,7 +16,9 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
     
     if (data && data[0]) {
       const translated = (data[0] as string[][]).map((s) => s[0]).join('');
-      return restore(translated, replacements);
+      const restored = restore(translated, replacements);
+      // Remove zero-width spaces (\u200B) and soft hyphens (\u00AD) that cause ghost line breaks
+      return restored.replace(/[\u200B\u00AD]/g, '');
     }
     return text;
   } catch (error: unknown) {
