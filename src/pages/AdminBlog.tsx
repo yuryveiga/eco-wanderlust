@@ -447,20 +447,20 @@ const AdminBlog = () => {
                          <TabsContent value="pt" className="flex-1 flex flex-col gap-6 overflow-hidden mt-0 data-[state=inactive]:hidden">
                             <div className="space-y-2 shrink-0">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Título (PT)</Label>
-                               <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante em português..." />
+                               <Input value={editing.title ?? ""} onChange={(e) => setEditing(prev => prev ? { ...prev, title: e.target.value } : prev)} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Título impactante em português..." />
                             </div>
                             <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                               <ReactQuill ref={quillRef} theme="snow" value={editing.content || ""} onChange={(val) => setEditing({ ...editing, content: val })} className="editor-container h-full" modules={modules} formats={formats} placeholder="Conte sua história em português..." />
+                               <ReactQuill ref={quillRef} theme="snow" value={editing.content || ""} onChange={(val) => setEditing(prev => prev ? { ...prev, content: val } : prev)} className="editor-container h-full" modules={modules} formats={formats} placeholder="Conte sua história em português..." />
                             </div>
                          </TabsContent>
 
                          <TabsContent value="en" className="flex-1 flex flex-col gap-6 overflow-hidden mt-0 data-[state=inactive]:hidden">
                             <div className="space-y-2 shrink-0">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-blue-600">Title (EN)</Label>
-                               <Input value={editing.title_en ?? ""} onChange={(e) => setEditing({ ...editing, title_en: e.target.value })} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Impactful title in English..." />
+                               <Input value={editing.title_en ?? ""} onChange={(e) => setEditing(prev => prev ? { ...prev, title_en: e.target.value } : prev)} className="h-14 text-xl font-serif font-bold border-none bg-white shadow-sm px-6 rounded-2xl" placeholder="Impactful title in English..." />
                             </div>
                             <div className="flex-1 flex flex-col overflow-hidden rounded-2xl shadow-sm border bg-white min-h-0">
-                               <ReactQuill theme="snow" value={editing.content_en || ""} onChange={(val) => setEditing({ ...editing, content_en: val })} className="editor-container h-full" modules={modules} formats={formats} placeholder="Tell your story in English..." />
+                               <ReactQuill theme="snow" value={editing.content_en || ""} onChange={(val) => setEditing(prev => prev ? { ...prev, content_en: val } : prev)} className="editor-container h-full" modules={modules} formats={formats} placeholder="Tell your story in English..." />
                             </div>
                          </TabsContent>
 
