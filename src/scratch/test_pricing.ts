@@ -1,4 +1,4 @@
-import { getTourMinPrice } from './src/utils/pricing';
+import { getTourMinPrice } from '../utils/pricing';
 
 const mockTour = {
   title: "City Tour Rio Completo!",

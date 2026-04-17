@@ -140,15 +140,17 @@ const AdminBlog = () => {
       const url = await uploadLovableFile(file);
       if (url) {
         // Create the image record in the site_images table so it appears in the gallery
-        const newImg = await insertLovable("site_images", {
+        const newImg = await insertLovable<LovableSiteImage>("site_images", {
           image_url: url,
           key: `gallery_${Date.now()}`,
           label: file.name
         });
         
         // Update local state to show the new image immediately
-        setGalleryImages(prev => [newImg, ...prev]);
-        toast({ title: "Imagem adicionada à galeria!" });
+        if (newImg) {
+          setGalleryImages(prev => [newImg, ...prev]);
+          toast({ title: "Imagem adicionada à galeria!" });
+        }
       }
     } catch (err) {
       toast({ title: "Erro", description: "Falha ao enviar para galeria.", variant: "destructive" });
