@@ -43,7 +43,7 @@ export async function translateHtml(html: string, targetLang: 'en' | 'es'): Prom
   const doc = parser.parseFromString(html, 'text/html');
   
   async function translateNode(node: Node) {
-    if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent) {
       const translated = await translateText(node.textContent, targetLang);
       node.textContent = translated;
     } else {

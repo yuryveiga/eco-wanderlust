@@ -233,3 +233,11 @@
 .dark .ql-snow .ql-picker {
   color: #fff;
 }
+
+/* Utility for justified text with hyphen protection */
+.text-justified {
+  text-align: justify !important;
+  hyphens: none !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}

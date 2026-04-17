@@ -62,7 +62,7 @@ const GenericPage = () => {
           <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-12 border border-border/50">
             <div 
               className="prose prose-lg dark:prose-invert max-w-none font-sans leading-relaxed ql-viewer"
-              dangerouslySetInnerHTML={{ __html: page.content || "<p className='text-center text-muted-foreground'>Página em construção.</p>" }}
+              dangerouslySetInnerHTML={{ __html: page.content || "<p className='text-center text-muted-foreground font-sans'>Página em construção.</p>" }}
             />
           </div>
         </div>

@@ -71,7 +71,7 @@ const BlogPost = () => {
           color: #555555 !important;
           line-height: 1.6 !important;
           font-size: 1.05rem !important;
-          text-align: justify !important;
+          text-align: left !important;
           hyphens: none !important;
           word-break: normal !important;
         }
@@ -82,7 +82,7 @@ const BlogPost = () => {
         .blog-content-area p {
           margin-bottom: 0.8rem !important;
           line-height: 1.6 !important;
-          text-align: justify !important;
+          text-align: left !important;
         }
         /* Remove space from empty lines created by editor */
         .blog-content-area p:has(br:only-child),

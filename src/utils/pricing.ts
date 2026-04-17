@@ -23,8 +23,9 @@ export function getTourMinPrice(tour: PricingTour): number {
   let minBase = 0;
 
   if (tour.pricing_model === 'dynamic') {
-    // For dynamic model, we find the minimum of all defined per-person tiers
+    // For dynamic model, we find the minimum of all defined per-person tiers AND the base price
     const dynamicPrices = [
+      tour.price,
       tour.price_1_person,
       tour.price_2_people,
       tour.price_3_6_people,

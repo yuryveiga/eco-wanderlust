@@ -368,24 +368,7 @@ export function TourDetail() {
                 {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
               </span>
               <span className="text-4xl font-black text-primary">
-                {(() => {
-                  let minBase = 0;
-                  if (tour.pricing_model === 'dynamic') {
-                    minBase = tour.price_1_person || 0;
-                  } else if (tour.pricing_model === 'group') {
-                    minBase = (tour.price || 0);
-                  } else if (tour.pricing_model === 'custom') {
-                    minBase = 0;
-                  } else {
-                    minBase = tour.price || 0;
-                  }
-                  
-                  if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
-                    const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
-                    minBase += Math.min(...optionPrices);
-                  }
-                  return formatPrice(minBase);
-                })()}
+                {formatPrice(getTourMinPrice(tour as any))}
               </span>
               <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
                 {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}

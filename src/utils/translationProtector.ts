@@ -91,5 +91,5 @@ export function restore(text: string, replacements: Map<string, string>): string
   result = result.replace(/[ \t]{2,}/g, ' ');
   result = result.replace(/\s+([.,;:!?)])/g, '$1');
   result = result.replace(/([(])\s+/g, '$1');
-  return result.trim();
+  return result;
 }
