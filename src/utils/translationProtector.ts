@@ -3,6 +3,8 @@
  */
 
 const PROTECTED_NAMES = [
+  "Favela Rio Tour",
+  "Rocinha",
   "Tocorime Rio",
   "Rio",
   "Pedra da Gávea",
