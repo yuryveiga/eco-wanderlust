@@ -18,11 +18,15 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
       // Join multiple segments. Sometimes Google splits long sentences.
       // We join them and then clean up any double spaces that might result,
       // but primarily we remove the invisible characters that cause line break issues.
-      const translated = (data[0] as string[][])
+      let translated = (data[0] as string[][])
         .map((s) => s[0])
-        .join('')
-        .replace(/[\u200B\u00AD\u00A0]/g, ' ') // Replace zero-width/soft-hyphen/non-breaking-space with regular space
-        .replace(/[^\n\r\S]+/g, ' ') // Collapse multiple SPACES (and tabs) but PRESERVE newlines (\n)
+        .join('');
+
+      // Replace literal "&nbsp;" strings AND the \u00A0 Unicode character with a regular space
+      translated = translated
+        .replace(/&nbsp;/g, ' ')
+        .replace(/[\u200B\u00AD\u00A0]/g, ' ')
+        .replace(/[^\n\r\S]+/g, ' ') // Collapse multiple SPACES (preserve \n)
         .trim();
 
       return restore(translated, replacements);
@@ -41,13 +45,6 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
 export async function translateHtml(html: string, targetLang: 'en' | 'es'): Promise<string> {
   if (!html || html.trim() === "") return "";
 
-  // For complex HTML, we could use a DOM parser, 
-  // but for simple blog posts, we can try to translate sentences between tags.
-  // This is a naive implementation:
-  
-  // Realistically, for a "WOW" effect, a proper API like OpenAI would be better.
-  // But let's try to translate the text content within HTML tags.
-
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   
@@ -56,12 +53,26 @@ export async function translateHtml(html: string, targetLang: 'en' | 'es'): Prom
       const translated = await translateText(node.textContent, targetLang);
       node.textContent = translated;
     } else {
-      for (const child of Array.from(node.childNodes)) {
+      const children = Array.from(node.childNodes);
+      for (const child of children) {
         await translateNode(child);
       }
     }
   }
 
   await translateNode(doc.body);
-  return doc.body.innerHTML;
+
+  // Post-processing to ensure spaces around tags like <strong> and <a>
+  // Sometimes translation engines trim whitespace that's needed for HTML rendering.
+  let result = doc.body.innerHTML;
+  
+  // Ensure space after closing tags and before opening tags of inline elements
+  // only if they are missing.
+  result = result
+    .replace(/<\/strong>([^\s.,!?;:]) /g, '</strong> $1') // If no space after strong, add one
+    .replace(/([^\s])<strong>/g, '$1 <strong>')         // If no space before strong, add one
+    .replace(/<\/a>([^\s.,!?;:]) /g, '</a> $1')           // Same for links
+    .replace(/([^\s])<a/g, '$1 <a');                      // Same for links
+    
+  return result;
 }
