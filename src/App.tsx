@@ -50,15 +50,7 @@ const PageLoader = () => <div className="min-h-screen flex items-center justify-
 const App = () => {
   useEffect(() => {
     const lastVersion = localStorage.getItem("app_version");
-    if (lastVersion && lastVersion !== BUILD_ID) {
-      localStorage.setItem("app_version", BUILD_ID);
-      if ('caches' in window) {
-        caches.keys().then((names) => {
-          names.forEach(name => caches.delete(name));
-        });
-      }
-      window.location.reload();
-    } else if (!lastVersion) {
+    if (lastVersion !== BUILD_ID) {
       localStorage.setItem("app_version", BUILD_ID);
     }
   }, []);

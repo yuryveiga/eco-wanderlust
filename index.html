@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function() {
+        const version = "v_1776200000000";
+        const lastVersion = localStorage.getItem("app_version");
+        if (lastVersion && lastVersion !== version) {
+          if ('caches' in window) {
+            caches.keys().then(function(names) {
+              for (var name of names) caches.delete(name);
+            });
+          }
+          localStorage.setItem("app_version", version);
+          window.location.reload(true);
+        }
+      })();
+    </script>
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2A9D8F">
