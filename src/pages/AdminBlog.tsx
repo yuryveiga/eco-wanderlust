@@ -168,11 +168,13 @@ const AdminBlog = () => {
     toast({ title: "Mágica em andamento...", description: "Traduzindo para Inglês e Espanhol..." });
 
     try {
-      const [titleEn, titleEs, contentEn, contentEs] = await Promise.all([
+      const [titleEn, titleEs, contentEn, contentEs, excerptEn, excerptEs] = await Promise.all([
         translateText(editing.title || "", "en"),
         translateText(editing.title || "", "es"),
         translateHtml(editing.content || "", "en"),
-        translateHtml(editing.content || "", "es")
+        translateHtml(editing.content || "", "es"),
+        translateText(editing.excerpt || "", "en"),
+        translateText(editing.excerpt || "", "es")
       ]);
 
       setEditing(prev => {
@@ -182,7 +184,9 @@ const AdminBlog = () => {
           title_en: titleEn,
           title_es: titleEs,
           content_en: contentEn,
-          content_es: contentEs
+          content_es: contentEs,
+          excerpt_en: excerptEn,
+          excerpt_es: excerptEs
         } as Partial<LovableBlogPost>;
       });
       
@@ -654,17 +658,21 @@ const AdminBlog = () => {
                 let translated = 0;
                 for (const post of posts) {
                   try {
-                    const [titleEn, titleEs, excerptEn, excerptEs] = await Promise.all([
+                    const [titleEn, titleEs, excerptEn, excerptEs, contentEn, contentEs] = await Promise.all([
                       translateText(post.title || "", "en"),
                       translateText(post.title || "", "es"),
                       translateText(post.excerpt || "", "en"),
                       translateText(post.excerpt || "", "es"),
+                      translateHtml(post.content || "", "en"),
+                      translateHtml(post.content || "", "es"),
                     ]);
                     await updateLovable("blog_posts", post.id, {
                       title_en: titleEn,
                       title_es: titleEs,
                       excerpt_en: excerptEn,
                       excerpt_es: excerptEs,
+                      content_en: contentEn,
+                      content_es: contentEs,
                     });
                     translated++;
                     await new Promise(r => setTimeout(r, 300));
