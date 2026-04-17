@@ -39,6 +39,7 @@ const AdminBlog = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isTranslatingAll, setIsTranslatingAll] = useState(false);
   const [galleryImages, setGalleryImages] = useState<LovableSiteImage[]>([]);
+  const [isGalleryUploading, setIsGalleryUploading] = useState(false);
   const [pickerMode, setPickerMode] = useState<'cover' | 'editor'>('editor');
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [galleryItemToDelete, setGalleryItemToDelete] = useState<string | null>(null);
@@ -126,6 +127,32 @@ const AdminBlog = () => {
       toast({ title: "Erro", description: "Falha ao enviar imagem.", variant: "destructive" });
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsGalleryUploading(true);
+    try {
+      const url = await uploadLovableFile(file);
+      if (url) {
+        // Create the image record in the site_images table so it appears in the gallery
+        const newImg = await insertLovable("site_images", {
+          image_url: url,
+          key: `gallery_${Date.now()}`,
+          label: file.name
+        });
+        
+        // Update local state to show the new image immediately
+        setGalleryImages(prev => [newImg, ...prev]);
+        toast({ title: "Imagem adicionada à galeria!" });
+      }
+    } catch (err) {
+      toast({ title: "Erro", description: "Falha ao enviar para galeria.", variant: "destructive" });
+    } finally {
+      setIsGalleryUploading(false);
     }
   };
 
@@ -513,45 +540,81 @@ const AdminBlog = () => {
 
         {/* Gallery Picker Modal */}
         <Dialog open={showGalleryPicker} onOpenChange={setShowGalleryPicker}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
-            <DialogHeader>
-              <DialogTitle>Escolher da Galeria do Site</DialogTitle>
-            </DialogHeader>
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 overflow-y-auto max-h-[60vh] p-4">
-              {galleryImages.map((img) => (
-                <div
-                  key={img.id}
-                  className="group relative aspect-square rounded-lg overflow-hidden border-2 border-transparent transition-all"
-                >
-                  <OptimizedImage 
-                    src={img.image_url} 
-                    alt={img.label || ""} 
-                    width={200}
-                    containerClassName="w-full h-full"
-                    className="w-full h-full object-cover" 
-                  />
-                  
-                  {/* Icons Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-2 p-2">
-                      <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="h-7 px-3 text-[10px] font-bold bg-white/90 w-full" 
-                        onClick={() => insertImageFromGallery(img.image_url)}
-                      >
-                        Inserir
-                      </Button>
-                      <Button 
-                        size="icon" 
-                        variant="destructive" 
-                        className="h-7 w-7 rounded-full shadow-lg absolute top-1 right-1" 
-                        onClick={(e) => { e.stopPropagation(); setGalleryItemToDelete(img.id); }}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                  </div>
+          <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+            <DialogHeader className="p-6 border-b bg-muted/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <DialogTitle className="font-serif text-2xl">Galeria de Mídia</DialogTitle>
+                  <p className="text-muted-foreground text-sm font-sans">Escolha uma imagem existente ou envie uma nova para o servidor.</p>
                 </div>
-              ))}
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => document.getElementById('gallery-modal-upload')?.click()}
+                    disabled={isGalleryUploading}
+                    className="font-bold py-6 px-6 rounded-xl shadow-lg"
+                  >
+                    {isGalleryUploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                    Fazer Upload
+                  </Button>
+                  <Input type="file" accept="image/*" onChange={handleGalleryUpload} className="hidden" id="gallery-modal-upload" />
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className="flex-1 overflow-y-auto p-6 bg-muted/[0.02]">
+              {galleryImages.length === 0 && !isGalleryUploading ? (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                  <ImageIcon className="w-16 h-16 opacity-10 mb-4" />
+                  <p className="font-sans font-medium text-lg">Sua galeria está vazia</p>
+                  <p className="text-sm opacity-60">Comece enviando sua primeira imagem!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                  {isGalleryUploading && (
+                    <div className="aspect-square rounded-2xl bg-primary/5 border-2 border-dashed border-primary/30 flex flex-col items-center justify-center animate-pulse">
+                      <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                      <span className="text-[10px] font-black uppercase text-primary tracking-widest">Enviando...</span>
+                    </div>
+                  )}
+                  {galleryImages.map((img) => (
+                    <div
+                      key={img.id}
+                      className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm border border-border/40 hover:border-primary/50 transition-all hover:shadow-xl group"
+                    >
+                      <OptimizedImage 
+                        src={img.image_url} 
+                        alt={img.label || ""} 
+                        width={300}
+                        containerClassName="w-full h-full"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                      />
+                      
+                      {/* Interaction Overlay */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3 p-4">
+                          <Button 
+                            size="sm" 
+                            className="bg-white text-primary hover:bg-white/90 font-bold px-6 h-10 w-full rounded-xl" 
+                            onClick={() => insertImageFromGallery(img.image_url)}
+                          >
+                            {pickerMode === 'cover' ? 'Definir Capa' : 'Inserir no Texto'}
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="destructive" 
+                            className="h-10 w-10 rounded-xl shadow-lg absolute top-3 right-3" 
+                            onClick={(e) => { e.stopPropagation(); setGalleryItemToDelete(img.id); }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                      </div>
+
+                      <div className="absolute bottom-0 inset-x-0 p-2 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+                        <p className="text-[9px] text-white font-bold truncate text-center uppercase tracking-widest">{img.label || 'Sem nome'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
