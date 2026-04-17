@@ -12,17 +12,9 @@ import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { slugify } from "@/utils/slugify";
 
-const slugify = (text: string) => {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-};
+
 
 const AdminPages = () => {
   const [pages, setPages] = useState<LovablePage[]>([]);

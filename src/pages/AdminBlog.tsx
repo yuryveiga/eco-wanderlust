@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { translateText, translateHtml } from "@/utils/translate";
+import { slugify } from "@/utils/slugify";
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 // @ts-ignore - No types available for this module
@@ -411,7 +412,7 @@ const AdminBlog = () => {
 
                        <div className="space-y-3">
                           <Label className="text-[10px] font-black uppercase tracking-widest text-primary">URL amigável (SLUG)</Label>
-                          <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
+                          <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: slugify(e.target.value) })} className="font-mono text-xs h-12 rounded-xl bg-muted/20 border-none shadow-inner" placeholder="ex: explorando-rio" />
                        </div>
 
                         <div className="mt-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">

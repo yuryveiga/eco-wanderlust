@@ -15,10 +15,17 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
     const data = await response.json();
     
     if (data && data[0]) {
-      const translated = (data[0] as string[][]).map((s) => s[0]).join('');
-      const restored = restore(translated, replacements);
-      // Remove zero-width spaces (\u200B) and soft hyphens (\u00AD) that cause ghost line breaks
-      return restored.replace(/[\u200B\u00AD]/g, '');
+      // Join multiple segments. Sometimes Google splits long sentences.
+      // We join them and then clean up any double spaces that might result,
+      // but primarily we remove the invisible characters that cause line break issues.
+      const translated = (data[0] as string[][])
+        .map((s) => s[0])
+        .join('')
+        .replace(/[\u200B\u00AD\u00A0]/g, ' ') // Replace zero-width/soft-hyphen/non-breaking-space with regular space
+        .replace(/\s+/g, ' ') // Collapse multiple spaces (common in translation)
+        .trim();
+
+      return restore(translated, replacements);
     }
     return text;
   } catch (error: unknown) {
