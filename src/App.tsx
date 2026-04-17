@@ -30,7 +30,6 @@ const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const AdminHero = lazy(() => import("./pages/AdminHero"));
 const AdminTheme = lazy(() => import("./pages/AdminTheme"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
-const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminSales = lazy(() => import("./pages/AdminSales"));
 const AdminSimulator = lazy(() => import("./pages/AdminSimulator"));
 const AdminCalendar = lazy(() => import("./pages/AdminCalendar"));
@@ -102,7 +101,6 @@ const App = () => {
                           <Route path="images" element={<AdminImages />} />
                           <Route path="social" element={<AdminSocial />} />
                           <Route path="gallery" element={<AdminGallery />} />
-                          <Route path="reviews" element={<AdminReviews />} />
                           <Route path="sales" element={<AdminSales />} />
                           <Route path="simulator" element={<AdminSimulator />} />
                           <Route path="calendar" element={<AdminCalendar />} />

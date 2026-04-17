@@ -47,7 +47,6 @@ const menuGroups = [
     items: [
       { title: "Vendas", url: "/admin/sales", icon: DollarSign },
       { title: "Calendário", url: "/admin/calendar", icon: CalendarDays },
-      { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
     ]
   },
   {
