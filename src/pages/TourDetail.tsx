@@ -29,6 +29,22 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 
+const getYouTubeEmbedUrl = (url: string) => {
+  if (!url) return "";
+  
+  // Extract video ID from various YouTube URL formats
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  
+  const videoId = (match && match[2].length === 11) ? match[2] : null;
+  
+  if (videoId) {
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  
+  return url;
+};
+
 export function TourDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -655,7 +671,7 @@ export function TourDetail() {
                    </h2>
                    <div className="aspect-video rounded-2xl overflow-hidden border shadow-lg">
                      <iframe 
-                       src={tour.youtube_video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} 
+                       src={getYouTubeEmbedUrl(tour.youtube_video_url)} 
                        title={translatedTitle}
                        className="w-full h-full"
                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
