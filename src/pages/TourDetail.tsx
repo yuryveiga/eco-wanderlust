@@ -15,6 +15,7 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getTourMinPrice } from "@/utils/pricing";
 import { 
   Carousel, 
   CarouselContent, 
@@ -691,24 +692,7 @@ export function TourDetail() {
                    <div className="text-center mb-8">
                      <div className="flex items-center justify-center gap-2 mt-1">
                        <span className="text-5xl font-black text-primary">
-                         {(() => {
-                           let minBase = 0;
-                           if (tour.pricing_model === 'dynamic') {
-                             minBase = tour.price_1_person || 0;
-                           } else if (tour.pricing_model === 'group') {
-                             minBase = (tour.price || 0);
-                           } else if (tour.pricing_model === 'custom') {
-                             minBase = 0;
-                           } else {
-                             minBase = tour.price || 0;
-                           }
-                           
-                           if (tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as any[]).length > 0) {
-                             const optionPrices = (tour.custom_options_json as any[]).map(o => o.price || 0);
-                             minBase += Math.min(...optionPrices);
-                           }
-                           return formatPrice(minBase);
-                         })()}
+                         {formatPrice(getTourMinPrice(tour as any))}
                        </span>
                         <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">
                           {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : t("por_pessoa")}
@@ -831,7 +815,7 @@ export function TourDetail() {
             <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("a_partir_de")}</span>
             <div className="flex items-baseline gap-1">
                <div className="font-black text-xl text-primary">
-                 {formatPrice(tour.pricing_model === 'dynamic' ? tour.price_1_person || 0 : tour.price)}
+                 {formatPrice(getTourMinPrice(tour as any))}
                </div>
                <span className="text-[9px] font-black text-muted-foreground uppercase opacity-70">/ {t("pessoa")}</span>
             </div>
