@@ -23,7 +23,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Maximize2, X, Calendar as CalendarIcon } from "lucide-react";
+import { Maximize2, Calendar as CalendarIcon } from "lucide-react";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
