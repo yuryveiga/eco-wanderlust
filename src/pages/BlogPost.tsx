@@ -69,17 +69,20 @@ const BlogPost = () => {
         .blog-content-area {
           font-family: 'Open Sans', sans-serif !important;
           color: #555555 !important;
-          line-height: 1.4 !important;
-          font-size: 1rem !important;
-          text-align: left;
+          line-height: 1.6 !important;
+          font-size: 1.05rem !important;
+          text-align: justify !important;
+          hyphens: none !important;
+          word-break: normal !important;
         }
         .blog-content-area * {
           margin-top: 0 !important;
           margin-inline: 0 !important;
         }
         .blog-content-area p {
-          margin-bottom: 0.4rem !important;
-          line-height: 1.4 !important;
+          margin-bottom: 0.8rem !important;
+          line-height: 1.6 !important;
+          text-align: justify !important;
         }
         /* Remove space from empty lines created by editor */
         .blog-content-area p:has(br:only-child),
