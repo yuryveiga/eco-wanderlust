@@ -16,7 +16,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
-  const { t, language, formatPrice } = useLocale();
+  const { t, language, formatPrice, currency } = useLocale();
   const dateLocale = language === 'pt' ? ptBR : language === 'es' ? es : enUS;
   const { siteSettings } = useSiteData();
   const [isProcessing, setIsProcessing] = useState(false);
