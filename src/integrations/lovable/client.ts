@@ -225,6 +225,8 @@ export type LovableSale = {
   is_cancelled?: boolean;
   is_archived?: boolean;
   passengers_json?: { name: string; dob: string }[];
+  currency?: string;
+  provider?: string;
   created_at: string;
 };
 

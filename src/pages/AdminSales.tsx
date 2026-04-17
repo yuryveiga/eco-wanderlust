@@ -219,8 +219,12 @@ const AdminSales = () => {
     toast({ title: status === 'paid' ? 'Pago' : status === 'pending' ? 'Pendente' : 'Cancelado' });
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+  const formatPrice = (price: number, curr: string = 'BRL') => {
+    try {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: curr?.toUpperCase() || 'BRL' }).format(price);
+    } catch {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+    }
   };
 
   const formatDate = (date: string) => {
@@ -321,7 +325,7 @@ const AdminSales = () => {
                       )}
                     </div>
                   </td>
-                  <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price)}                  </td>
+                  <td className="p-4 text-sm font-bold text-primary">{formatPrice(sale.total_price, sale.currency)}                  </td>
                   <td className="p-4 text-sm">
                     {sale.is_cancelled ? (
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">Cancelado</span>

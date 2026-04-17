@@ -60,6 +60,7 @@ const Cart = () => {
         const { data, error } = await (supabase.from("sales") as any).insert({
           tour_id: item.id,
           tour_title: item.title,
+          tour_slug: item.slug,
           customer_name: customerInfo.name,
           customer_email: customerInfo.email,
           customer_phone: customerInfo.whatsapp,
@@ -67,7 +68,10 @@ const Cart = () => {
           total_price: totalWithFee,
           selected_date: item.date,
           selected_period: item.period,
+          is_private: item.isPrivate,
           is_paid: false,
+          currency: currency, // Savando a moeda original (BRL, USD, EUR)
+          provider: "tour",
         }).select("id").single();
 
         if (error) {

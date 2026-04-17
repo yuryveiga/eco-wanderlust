@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useLocale } from "@/contexts/LocaleContext";
+import { useLocale, rates } from "@/contexts/LocaleContext";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -83,6 +83,13 @@ export default function MatchDetail() {
     }
 
     setIsProcessing(true);
+    const currentCurrency = currency.toLowerCase();
+    const rate = rates[currency] || 1;
+    const unitPrice = Math.round((match.price / rate) * 100) / 100;
+    const itemTotal = unitPrice * quantity;
+    const itemFee = Math.round((itemTotal * 0.05) * 100) / 100;
+    const totalWithFee = Math.round((itemTotal + itemFee) * 100) / 100;
+
     try {
       // 1. Create sale record in TOCORIME database first
       const { data: saleData, error: saleError } = await (localSupabase.from("sales") as any).insert({
@@ -93,10 +100,11 @@ export default function MatchDetail() {
         customer_email: customerInfo.email,
         customer_phone: customerInfo.whatsapp,
         quantity: quantity,
-        total_price: (match.price * quantity) * 1.05,
+        total_price: totalWithFee,
         selected_date: format(new Date(match.match_date), "yyyy-MM-dd"),
         selected_period: "match_time",
         is_paid: false,
+        currency: currency, // Savando a moeda (BRL, USD, EUR)
         provider: "matchday" // Track that this is a partner sale
       }).select("id").single();
 
@@ -113,15 +121,15 @@ export default function MatchDetail() {
           },
           body: JSON.stringify({
             items: [{
-              title: `${match.home_team} x ${match.away_team}`,
-              price: match.price,
+              title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
+              price: unitPrice,
               quantity: quantity,
-              date: format(new Date(match.match_date), "dd/MM/yyyy"),
-              period: getMatchHour(match.match_date),
+              date: format(new Date(match.match_date), "yyyy-MM-dd"),
+              period: "match_time"
             }],
             sale_ids: [saleData.id],
             customer: customerInfo,
-            currency: "brl"
+            currency: currentCurrency
           }),
         }
       );
