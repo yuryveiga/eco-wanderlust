@@ -246,16 +246,16 @@ const BlogPost = () => {
               </Link>
    
                 <div className="w-full aspect-video relative rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50 bg-muted">
-                  <OptimizedImage
-                    src={post.image_url || fallbackImage}
-                    alt={title}
-                    width={1200}
-                    containerClassName="w-full h-full"
-                    fit="contain"
-                    className="w-full h-full transition-transform duration-[2s] group-hover:scale-105"
-                    loading="eager"
-                    fetchPriority="high"
-                  />
+                    <OptimizedImage
+                      src={post.image_url || fallbackImage}
+                      alt={title}
+                      width={1200}
+                      containerClassName="w-full h-full"
+                      fit="cover"
+                      className="w-full h-full transition-transform duration-[2s] group-hover:scale-105"
+                      loading="eager"
+                      fetchPriority="high"
+                    />
                 </div>
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-sans">

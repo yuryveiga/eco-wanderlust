@@ -81,10 +81,10 @@ const Blog = () => {
                   <div className="aspect-video relative overflow-hidden bg-muted">
                     <OptimizedImage
                       src={post.image_url || fallbackImage}
-                      alt={post.title}
+                      alt={getTranslated(post, 'title')}
                       width={600}
                       containerClassName="w-full h-full"
-                      fit="contain"
+                      fit="cover"
                       className="w-full h-full group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
