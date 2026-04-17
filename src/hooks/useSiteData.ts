@@ -9,45 +9,84 @@ const fallbackTours: LovableTour[] = [
 
 const TOUR_LISTING_COLUMNS = "id,title,short_description,price,duration,max_group_size,image_url,is_featured,category,is_active,sort_order,slug,pricing_model,price_1_person,price_2_people,price_3_6_people,price_7_19_people,use_custom_options,custom_options_json,external_url,title_en,title_es,short_description_en,short_description_es,category_en,category_es";
 
-export function useSiteData() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["siteData"],
+export function useTours() {
+  return useQuery({
+    queryKey: ["tours"],
     queryFn: async () => {
-      const [toursData, pagesData, imagesData, socialData, settingsData] = await Promise.all([
-        fetchLovable<LovableTour>("tours", TOUR_LISTING_COLUMNS),
-        fetchLovable<LovablePage>("pages"),
-        fetchLovable<LovableSiteImage>("site_images"),
-        fetchLovable<LovableSocialMedia>("social_media"),
-        fetchLovable<LovableSiteSetting>("site_settings"),
-      ]);
+      const data = await fetchLovable<LovableTour>("tours", TOUR_LISTING_COLUMNS);
+      return data.filter((t) => t.is_active).sort((a, b) => a.sort_order - b.sort_order);
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}
 
-      const activeTours = toursData.filter((t) => t.is_active).sort((a, b) => a.sort_order - b.sort_order);
-      
+export function usePages() {
+  return useQuery({
+    queryKey: ["pages"],
+    queryFn: async () => {
+      const data = await fetchLovable<LovablePage>("pages");
+      return data.filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order);
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour for pages
+  });
+}
+
+export function useSiteImages() {
+  return useQuery({
+    queryKey: ["siteImages"],
+    queryFn: async () => {
+      const data = await fetchLovable<LovableSiteImage>("site_images");
       const imagesMap: Record<string, string> = {};
-      imagesData.forEach((img) => { imagesMap[img.key] = img.image_url; });
+      data.forEach((img) => { imagesMap[img.key] = img.image_url; });
       
-      const settingsMap: Record<string, string> = {};
-      settingsData.forEach((s) => { settingsMap[s.key] = s.value; });
-
-      if (settingsData.length > 0) {
-        localStorage.setItem('site_settings', JSON.stringify(settingsMap));
-      }
-
-      const galleryImages = imagesData
+      const galleryImages = data
         .filter(img => img.key?.startsWith('gallery'))
         .map(img => ({ id: img.id, url: img.image_url, key: img.key }));
 
-      return {
-        tours: activeTours.length > 0 ? activeTours : fallbackTours,
-        pages: pagesData.filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order),
-        images: imagesMap,
-        gallery: galleryImages,
-        socialMedia: socialData.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order),
-        siteSettings: settingsMap,
-      };
+      return { imagesMap, galleryImages };
     },
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 30, // 30 minutes
   });
+}
+
+export function useSocialMedia() {
+  return useQuery({
+    queryKey: ["socialMedia"],
+    queryFn: async () => {
+      const data = await fetchLovable<LovableSocialMedia>("social_media");
+      return data.filter((s) => s.is_active).sort((a, b) => a.sort_order - b.sort_order);
+    },
+    staleTime: 1000 * 60 * 60,
+  });
+}
+
+export function useSiteSettings() {
+  return useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: async () => {
+      const data = await fetchLovable<LovableSiteSetting>("site_settings");
+      const settingsMap: Record<string, string> = {};
+      data.forEach((s) => { settingsMap[s.key] = s.value; });
+      
+      if (data.length > 0) {
+        localStorage.setItem('site_settings', JSON.stringify(settingsMap));
+      }
+      
+      return settingsMap;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}
+
+// Backward compatible combined hook
+export function useSiteData() {
+  const toursQuery = useTours();
+  const pagesQuery = usePages();
+  const imagesQuery = useSiteImages();
+  const socialQuery = useSocialMedia();
+  const settingsQuery = useSiteSettings();
+
+  const isLoading = toursQuery.isLoading || pagesQuery.isLoading || imagesQuery.isLoading || socialQuery.isLoading || settingsQuery.isLoading;
 
   // Handle cached settings fallback
   const cachedSettings = (() => {
@@ -59,12 +98,12 @@ export function useSiteData() {
   })();
 
   return {
-    tours: data?.tours || fallbackTours,
-    pages: data?.pages || [],
-    images: data?.images || {},
-    gallery: data?.gallery || [],
-    socialMedia: data?.socialMedia || [],
-    siteSettings: data?.siteSettings || cachedSettings,
+    tours: toursQuery.data || fallbackTours,
+    pages: pagesQuery.data || [],
+    images: imagesQuery.data?.imagesMap || {},
+    gallery: imagesQuery.data?.galleryImages || [],
+    socialMedia: socialQuery.data || [],
+    siteSettings: settingsQuery.data || cachedSettings,
     isLoading,
   };
 }
