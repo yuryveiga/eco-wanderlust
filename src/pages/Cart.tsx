@@ -175,6 +175,7 @@ const Cart = () => {
                                 onClick={() => updateQuantity(item.id, item.date, item.period, Math.max(1, item.quantity - 1))}
                                 className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
                                 disabled={item.quantity <= 1}
+                                aria-label={language === 'pt' ? "Diminuir quantidade" : "Decrease quantity"}
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
@@ -183,6 +184,7 @@ const Cart = () => {
                                 onClick={() => updateQuantity(item.id, item.date, item.period, item.quantity + 1)}
                                 className={`w-6 h-6 rounded-full bg-muted flex items-center justify-center transition-all ${item.max_group_size && item.quantity >= item.max_group_size ? 'opacity-30 cursor-not-allowed' : 'hover:bg-muted/80'}`}
                                 disabled={item.max_group_size ? item.quantity >= item.max_group_size : false}
+                                aria-label={language === 'pt' ? "Aumentar quantidade" : "Increase quantity"}
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -207,6 +209,7 @@ const Cart = () => {
                         size="icon" 
                         className="text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full h-12 w-12"
                         onClick={() => removeFromCart(item.id, item.date, item.period)}
+                        aria-label={language === 'pt' ? "Remover item" : "Remove item"}
                       >
                         <Trash2 className="w-6 h-6" />
                       </Button>

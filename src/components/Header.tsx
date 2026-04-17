@@ -129,7 +129,10 @@ export function Header() {
             <div className="flex items-center space-x-1 mr-2 border-r pr-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5">
+                  <button 
+                    className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5"
+                    aria-label={language === 'pt' ? "Alterar idioma" : "Change language"}
+                  >
                     <span>{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : '🇪🇸'}</span>
                     <span className="uppercase">{language}</span>
                     <ChevronDown className="w-3 h-3 opacity-50" />
@@ -152,7 +155,10 @@ export function Header() {
             <div className="flex items-center space-x-1 border-r pr-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5">
+                  <button 
+                    className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5"
+                    aria-label={language === 'pt' ? "Alterar moeda" : "Change currency"}
+                  >
                     <span>{currency === 'BRL' ? 'R$' : currency === 'USD' ? '$' : '€'}</span>
                     <span className="uppercase">{currency}</span>
                     <ChevronDown className="w-3 h-3 opacity-50" />
@@ -172,7 +178,7 @@ export function Header() {
               </DropdownMenu>
             </div>
 
-            <Link to="/carrinho" className="relative group">
+            <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
               <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
                 <ShoppingCart className="w-6 h-6" />
                 {items.length > 0 && (
@@ -205,7 +211,10 @@ export function Header() {
             <div className="flex items-center border border-border rounded-full px-1 py-0.5 bg-muted/30">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none">
+                  <button 
+                    className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none"
+                    aria-label={language === 'pt' ? "Alterar idioma" : "Change language"}
+                  >
                     <span>{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : '🇪🇸'}</span>
                     <span className="uppercase">{language}</span>
                   </button>
@@ -227,7 +236,10 @@ export function Header() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none">
+                  <button 
+                    className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-1 outline-none"
+                    aria-label={language === 'pt' ? "Alterar moeda" : "Change currency"}
+                  >
                     <span>{currency === 'BRL' ? 'R$' : currency === 'USD' ? '$' : '€'}</span>
                   </button>
                 </DropdownMenuTrigger>

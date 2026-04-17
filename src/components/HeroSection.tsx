@@ -180,9 +180,13 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <button 
+        onClick={() => scrollTo("tours")}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce p-2 hover:text-primary transition-colors focus:outline-none"
+        aria-label={language === 'pt' ? "Rolar para passeios" : "Scroll to tours"}
+      >
         <ChevronDown className="w-8 h-8 text-white/70" />
-      </div>
+      </button>
     </section>
   );
 }
