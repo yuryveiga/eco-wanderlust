@@ -60,7 +60,6 @@ const Cart = () => {
           customer_phone: customerInfo.whatsapp,
           quantity: item.quantity,
           total_price: totalWithFee,
-          currency: currency, // Store the currency used
           selected_date: item.date,
           selected_period: item.period,
           is_private: item.isPrivate,
