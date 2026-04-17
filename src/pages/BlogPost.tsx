@@ -73,8 +73,8 @@ const BlogPost = () => {
           font-size: 1.05rem !important;
           text-align: left !important;
           hyphens: none !important;
-          word-break: keep-all !important;
-          overflow-wrap: normal !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
         }
         .blog-content-area * {
           margin-top: 0 !important;
