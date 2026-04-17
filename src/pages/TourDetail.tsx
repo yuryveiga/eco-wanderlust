@@ -204,24 +204,32 @@ export function TourDetail() {
   }, [tour]);
   const currentUnitPrice = useMemo(() => {
     if (!tour) return 0;
+    
+    // Improved robust parsing for all price fields
+    const p1 = Number(tour.price_1_person) || 0;
+    const p2 = Number(tour.price_2_people) || 0;
+    const p36 = Number(tour.price_3_6_people) || 0;
+    const p719 = Number(tour.price_7_19_people) || 0;
+    const baseP = Number(tour.price) || 0;
+
     let basePrice = 0;
     if (tour.pricing_model === 'dynamic') {
-      if (quantity === 1) basePrice = tour.price_1_person || 0;
-      else if (quantity === 2) basePrice = tour.price_2_people || 0;
-      else if (quantity >= 3 && quantity <= 6) basePrice = tour.price_3_6_people || 0;
-      else if (quantity >= 7) basePrice = tour.price_7_19_people || 0;
-      else basePrice = tour.price || 0;
+      if (quantity === 1) basePrice = p1;
+      else if (quantity === 2) basePrice = p2;
+      else if (quantity >= 3 && quantity <= 6) basePrice = p36;
+      else if (quantity >= 7) basePrice = p719;
+      else basePrice = baseP;
     } else if (tour.pricing_model === 'group') {
-      basePrice = (tour.price || 0) / (quantity || 1);
+      basePrice = baseP / (quantity || 1);
     } else if (tour.pricing_model === 'custom') {
       basePrice = 0;
     } else {
-      basePrice = tour.price || 0;
+      basePrice = baseP;
     }
 
     // Add custom option price if active
     if (tour.use_custom_options && tour.custom_options_json && tour.custom_options_json[selectedOptionIdx]) {
-      basePrice += tour.custom_options_json[selectedOptionIdx].price || 0;
+      basePrice += (Number(tour.custom_options_json[selectedOptionIdx].price) || 0);
     }
     
     return basePrice;
