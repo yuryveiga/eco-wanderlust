@@ -108,9 +108,9 @@ export function ContactSection() {
                 <Input id="phone" name="phone" placeholder="+55 21 99999-9999" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tour" className="font-sans">{t("passeio_interesse")}</Label>
+                <Label htmlFor="tour-select" className="font-sans">{t("passeio_interesse")}</Label>
                 <Select name="tour_interest">
-                  <SelectTrigger>
+                  <SelectTrigger id="tour-select">
                     <SelectValue placeholder={t("selecione_passeio")} />
                   </SelectTrigger>
                   <SelectContent>

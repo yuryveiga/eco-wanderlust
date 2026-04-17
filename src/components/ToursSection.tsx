@@ -102,7 +102,9 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
               </>
             )}
           </div>
-          <Button size="sm" className="font-sans">{isExternal ? (language === 'pt' ? 'Saber Mais' : 'Learn More') : t("reservar")}</Button>
+          <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 font-sans">
+            {isExternal ? (language === 'pt' ? 'Saber Mais' : 'Learn More') : t("reservar")}
+          </div>
         </div>
       </div>
     </>
@@ -110,14 +112,24 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-primary"
+        aria-label={`${isExternal ? (language === 'pt' ? 'Saber mais sobre' : 'Learn more about') : t("reservar")} ${title}`}
+      >
         {CardContent}
       </a>
     );
   }
 
   return (
-    <Link to={href} className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300">
+    <Link 
+      to={href} 
+      className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-primary"
+      aria-label={`${t("reservar")} ${title}`}
+    >
       {CardContent}
     </Link>
   );

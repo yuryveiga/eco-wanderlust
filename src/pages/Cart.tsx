@@ -238,26 +238,41 @@ const Cart = () => {
                 <div className="space-y-6 mb-10">
                   {/* Customer Info */}
                   <div className="space-y-4">
-                    <Label className="text-sm font-bold text-foreground">{language === 'pt' ? 'Seus Dados' : 'Your Details'}</Label>
-                    <Input 
-                      placeholder={language === 'pt' ? 'Nome completo' : 'Full name'} 
-                      value={customerInfo.name}
-                      onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
-                      className="h-11 rounded-xl"
-                    />
-                    <Input 
-                      placeholder={language === 'pt' ? 'WhatsApp (com DDD)' : 'WhatsApp (with area code)'} 
-                      value={customerInfo.whatsapp}
-                      onChange={(e) => setCustomerInfo({...customerInfo, whatsapp: e.target.value})}
-                      className="h-11 rounded-xl"
-                    />
-                    <Input 
-                      type="email"
-                      placeholder={language === 'pt' ? 'E-mail' : 'Email'} 
-                      value={customerInfo.email}
-                      onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
-                      className="h-11 rounded-xl"
-                    />
+                    <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">{language === 'pt' ? 'Seus Dados' : 'Your Details'}</h3>
+                    
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cust-name" className="text-xs font-medium text-muted-foreground">{language === 'pt' ? 'Nome completo' : 'Full name'}</Label>
+                      <Input 
+                        id="cust-name"
+                        placeholder={language === 'pt' ? 'Ex: João Silva' : 'Ex: John Doe'} 
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                        className="h-11 rounded-xl"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cust-whatsapp" className="text-xs font-medium text-muted-foreground">{language === 'pt' ? 'WhatsApp (com DDD)' : 'WhatsApp (with area code)'}</Label>
+                      <Input 
+                        id="cust-whatsapp"
+                        placeholder="+55 21 99999-9999" 
+                        value={customerInfo.whatsapp}
+                        onChange={(e) => setCustomerInfo({...customerInfo, whatsapp: e.target.value})}
+                        className="h-11 rounded-xl"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cust-email" className="text-xs font-medium text-muted-foreground">{language === 'pt' ? 'E-mail' : 'Email'}</Label>
+                      <Input 
+                        id="cust-email"
+                        type="email"
+                        placeholder="email@exemplo.com" 
+                        value={customerInfo.email}
+                        onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                        className="h-11 rounded-xl"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex justify-between font-sans text-muted-foreground">

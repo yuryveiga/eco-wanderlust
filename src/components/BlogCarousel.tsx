@@ -90,11 +90,15 @@ export function BlogCarousel() {
                             </p>
                           </div>
                           
-                          <Link to={`/blog/${post.slug}`} className="mt-4">
-                            <Button className="bg-[#FF8A5B] hover:bg-[#ff7a45] text-white rounded-full px-8 h-12 font-sans font-black flex items-center gap-2 group/btn border-none shadow-lg">
+                          <Link 
+                            to={`/blog/${post.slug}`} 
+                            className="mt-4 focus:outline-none focus:ring-2 focus:ring-white rounded-full translate-y-0 active:scale-95 transition-transform"
+                            aria-label={`${t("explore_conosco")}: ${title}`}
+                          >
+                            <div className="inline-flex items-center justify-center rounded-full text-sm font-black transition-colors bg-[#FF8A5B] hover:bg-[#ff7a45] text-white px-8 h-12 font-sans flex items-center gap-2 shadow-lg">
                               {t("explore_conosco")}
-                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                            </Button>
+                              <ArrowRight className="w-4 h-4" />
+                            </div>
                           </Link>
                         </div>
                       </div>
