@@ -45,16 +45,21 @@ const Cart = () => {
       
       // Save sale to database and collect IDs
       for (const item of items) {
-        // Calculate price in the target currency
+        // Calculate rounded price for the DB
         const convertedPrice = Math.round((item.price / rate) * 100) / 100;
         const itemTotal = convertedPrice * item.quantity;
-        const itemFee = itemTotal * 0.05;
-        const totalWithFee = itemTotal + itemFee;
+        const itemFee = Math.round((itemTotal * 0.05) * 100) / 100;
+        const totalWithFee = Math.round((itemTotal + itemFee) * 100) / 100;
+
+        console.log(`Inserting sale for ${item.title}:`, {
+          tour_id: item.id,
+          total_price: totalWithFee,
+          quantity: item.quantity
+        });
 
         const { data, error } = await (supabase.from("sales") as any).insert({
           tour_id: item.id,
           tour_title: item.title,
-          tour_slug: item.slug,
           customer_name: customerInfo.name,
           customer_email: customerInfo.email,
           customer_phone: customerInfo.whatsapp,
@@ -62,46 +67,45 @@ const Cart = () => {
           total_price: totalWithFee,
           selected_date: item.date,
           selected_period: item.period,
-          is_private: item.isPrivate,
           is_paid: false,
-          provider: "tour",
         }).select("id").single();
 
-        if (error) throw error;
-        if (data?.id) saleIds.push(data.id as string);
+        if (error) {
+          console.error("Supabase insert error:", error);
+          throw new Error(`Erro ao salvar no banco: ${error.message || JSON.stringify(error)}`);
+        }
+        
+        if (data) {
+          saleIds.push(data.id);
+        }
       }
 
-      const response = await fetch(
-        "https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/create-checkout",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            items: items.map(item => ({
-              title: item.title,
-              price: Math.round((item.price / rate) * 100) / 100, // Send converted price
-              quantity: item.quantity,
-              date: item.date,
-              period: item.period,
-            })),
-            sale_ids: saleIds,
-            customer: customerInfo,
-            currency: currentCurrency, // Send selected currency (usd, eur, brl)
-          }),
+      console.log("Sales created successfully, IDs:", saleIds);
+
+      // Now call the Stripe checkout function
+      const { data: functionData, error: functionError } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: Math.round((item.price / rate) * 100) / 100, // Pass unit price in selected currency
+            quantity: item.quantity,
+            date: item.date,
+            period: item.period
+          })),
+          sale_ids: saleIds,
+          customer: customerInfo,
+          currency: currentCurrency
         }
-      );
-      
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || "Erro ao processar pagamento");
+      });
+
+      if (functionError) throw functionError;
+      if (functionData?.url) {
+        window.location.href = functionData.url;
       }
-    } catch (error) {
-      alert(language === 'pt' ? "Erro ao processar pagamento" : "Error processing payment");
+    } catch (error: any) {
+      console.error("Checkout error details:", error);
+      alert("Houve um erro ao processar seu pagamento:\n" + (error.message || "Erro desconhecido"));
     } finally {
       setIsProcessing(false);
     }
