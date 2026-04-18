@@ -110,7 +110,7 @@ export function Header() {
                 src={logoUrl} 
                 alt="Logo" 
                 width={200}
-                containerClassName="h-16 w-16 md:h-22 md:w-22"
+                containerClassName={`${isScrolled ? "h-12 w-12 md:h-14 md:w-14" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500`}
                 className="h-full w-full object-contain transition-all duration-300 focus:outline-none" 
                 loading="eager"
                 fetchPriority="high"
@@ -205,7 +205,13 @@ export function Header() {
                 <s.icon className="w-5 h-5" />
               </a>
             ))}
-            <Button onClick={() => handleNav("#tours")} size="sm" className="font-bold px-6 shadow-lg shadow-primary/20">{t("reservar")}</Button>
+            <Button 
+              onClick={() => handleNav("#tours")} 
+              size="sm" 
+              className={`font-bold px-6 transition-all duration-500 ${isScrolled ? "shadow-[0_0_20px_rgba(231,111,81,0.4)] scale-110" : "shadow-lg shadow-primary/20"}`}
+            >
+              {t("reservar")}
+            </Button>
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">

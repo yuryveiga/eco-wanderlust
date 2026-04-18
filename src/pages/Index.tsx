@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
@@ -16,10 +17,22 @@ const Footer = lazy(() => import("@/components/Footer").then(m => ({ default: m.
 
 const SectionLoader = () => <div className="h-40 w-full flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
 
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.8, delay, ease: "easeOut" }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
 const Index = () => {
   const { siteSettings } = useSiteData();
-  const siteTitle = siteSettings?.site_title || "Passeios Privativos Rio de Janeiro | Tocorime Rio";
-  const siteDescription = siteSettings?.site_description || "Descubra passeios privativos no Rio de Janeiro com guias cariocas especializados. Cultura, história e ecoturismo em roteiros personalizados. Reserve sua experiência única hoje!";
+  const siteTitle = siteSettings?.site_title || "Exclusive Private Tours in Rio de Janeiro | Authentic Local Experiences";
+  const siteDescription = siteSettings?.site_description || "Book exclusive private tours in Rio de Janeiro. Safe and authentic experiences with local experts. From Maracanã football matches to private hiking tours. Experience Rio like a local.";
 
   return (
     <main>
@@ -40,13 +53,13 @@ const Index = () => {
       <HeroSection />
       
       <Suspense fallback={<SectionLoader />}>
-        <WeatherSection />
-        <ToursSection />
-        <ReviewsSection />
-        <AboutSection />
-        <ContactSection />
-        <GallerySection />
-        <BlogCarousel />
+        <FadeIn><WeatherSection /></FadeIn>
+        <FadeIn><ToursSection /></FadeIn>
+        <FadeIn><ReviewsSection /></FadeIn>
+        <FadeIn><AboutSection /></FadeIn>
+        <FadeIn><ContactSection /></FadeIn>
+        <FadeIn><GallerySection /></FadeIn>
+        <FadeIn><BlogCarousel /></FadeIn>
         <Footer />
       </Suspense>
     </main>

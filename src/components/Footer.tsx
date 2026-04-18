@@ -2,6 +2,7 @@ import { Instagram, MapPin, Mail, Phone, Facebook, Youtube, Music } from "lucide
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { OptimizedImage } from "./OptimizedImage";
+import { PaymentLogos } from "./PaymentLogos";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube,
@@ -134,9 +135,16 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Tocorime Rio. {t("direitos")}</p>
-            <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">{t("turismo_sustentavel")}</p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex flex-col gap-2">
+              <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Tocorime Rio. {t("direitos")}</p>
+              <p className="text-[hsl(140,10%,96%)]/60 text-xs font-sans opacity-70 tracking-tight">{t("turismo_sustentavel")}</p>
+            </div>
+            
+            <div className="flex flex-col items-center md:items-end gap-3">
+              <p className="text-[hsl(140,10%,96%)]/40 text-[9px] font-black uppercase tracking-[0.2em]">{language === 'pt' ? 'Pagamento Seguro' : 'Secure Checkout'}</p>
+              <PaymentLogos variant="dark" className="opacity-80" />
+            </div>
           </div>
         </div>
       </div>

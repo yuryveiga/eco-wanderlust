@@ -366,9 +366,12 @@ export function TourDetail() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
                <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px] px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{translatedCategory}</span>
+               <span className="text-accent font-black uppercase tracking-[0.2em] text-[10px] px-3 py-1 bg-accent/10 rounded-full border border-accent/20">Private & Exclusive</span>
                {tour.is_featured && <span className="bg-amber-100 text-amber-700 font-black text-[10px] px-3 py-1 rounded-full border border-amber-200 uppercase tracking-widest">{t("destaque")}</span>}
             </div>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-[1.1] tracking-tight">{translatedTitle}</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-[1.1] tracking-tight">
+               {translatedTitle}
+            </h1>
           </div>
           <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
             <div className="text-right">
@@ -677,57 +680,56 @@ export function TourDetail() {
             {/* Booking Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-28 space-y-6">
-                 <div className="bg-card rounded-3xl border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
+                 <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                    
-                   <div className="text-center mb-8">
-                     <div className="flex items-center justify-center gap-2 mt-1">
-                       <span className="text-5xl font-black text-primary">
-                         {formatPrice(getTourMinPrice(tour as any))}
-                       </span>
-                        <span className="text-[10px] font-black uppercase text-muted-foreground mt-2 opacity-60 tracking-widest block text-center w-full">
-                          {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : t("por_pessoa")}
+                   <div className="flex flex-col items-center justify-center gap-1 mb-6">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-black text-primary">
+                          {formatPrice(getTourMinPrice(tour as any))}
                         </span>
-                     </div>
+                         <span className="text-[10px] font-black uppercase text-muted-foreground opacity-60 tracking-widest">
+                           {tour.pricing_model === 'group' ? t("por_grupo") : t("por_pessoa")}
+                         </span>
+                      </div>
+                      <span className="text-[9px] font-black uppercase text-muted-foreground opacity-40 tracking-tighter">
+                        {tour.pricing_model === 'group' ? `${t("ate")} ${tour.max_group_size} ${t("pessoas")}` : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : ""}
+                      </span>
                    </div>
 
-                   <div className="space-y-6">
-                     <div className="space-y-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <label className="text-xs font-black uppercase text-muted-foreground">{t("quantas_pessoas")}</label>
+                   <div className="space-y-4">
+                     <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("quantas_pessoas")}</label>
                           {tour.pricing_model !== 'group' && (
-                            <span className="text-xs font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
+                            <span className="text-[10px] font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
                           )}
                         </div>
-                        <div className="flex items-center justify-between p-2 bg-muted/50 rounded-2xl border">
-                          <Button variant="ghost" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-4 h-4" /></Button>
-                          <span className="font-black text-xl">{quantity}</span>
+                        <div className="flex items-center justify-between p-1.5 bg-muted/30 rounded-xl border border-primary/5">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-3 h-3" /></Button>
+                          <span className="font-black text-lg">{quantity}</span>
                           <Button 
                             variant="ghost" 
                             size="icon" 
+                            className={`h-8 w-8 ${quantity >= (tour.max_group_size || 10) ? 'opacity-20' : ''}`}
                             onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}
                             disabled={quantity >= (tour.max_group_size || 10)}
-                            className={quantity >= (tour.max_group_size || 10) ? 'opacity-30 cursor-not-allowed' : ''}
                           >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-3 h-3" />
                           </Button>
-                        </div>
-                        <div className="flex items-center justify-between pt-2 px-1">
-                           <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("valor_total")}</span>
-                           <span className="text-lg font-black text-primary">{formatPrice(currentUnitPrice * quantity)}</span>
                         </div>
                      </div>
 
-                     <div className="space-y-3">
-                        <label className="text-xs font-black uppercase text-muted-foreground">{t("data_viagem")}</label>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("data_viagem")}</label>
                          <Popover>
                            <PopoverTrigger asChild>
                              <Button
                                variant="outline"
-                               className={`w-full h-14 rounded-2xl border bg-background font-bold text-sm justify-start gap-3 px-4 shadow-none hover:bg-muted/30 transition-colors ${!selectedDate && "text-muted-foreground"}`}
+                               className={`w-full h-11 rounded-xl border bg-background font-bold text-xs justify-start gap-2 px-3 shadow-none hover:bg-muted/30 transition-colors ${!selectedDate && "text-muted-foreground"}`}
                              >
-                               <CalendarIcon className="w-5 h-5 text-primary" />
-                               {selectedDate ? format(parseISO(selectedDate), "PPP", { locale: language === 'pt' ? ptBR : language === 'es' ? es : enUS }) : t("selecione_data")}
+                               <CalendarIcon className="w-4 h-4 text-primary" />
+                               {selectedDate ? format(parseISO(selectedDate), "dd/MM/yy", { locale: language === 'pt' ? ptBR : language === 'es' ? es : enUS }) : t("selecione_data")}
                              </Button>
                            </PopoverTrigger>
                            <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden shadow-2xl border-primary/10" align="start">
@@ -755,29 +757,33 @@ export function TourDetail() {
                              />
                            </PopoverContent>
                          </Popover>
-                         
-
                      </div>
 
                      {weather && (
-                       <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                           <Sun className="w-8 h-8 text-amber-500" />
+                       <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                           <Sun className="w-6 h-6 text-amber-500" />
                            <div>
-                             <span className="text-lg font-black block">{weather.temp}°C</span>
-                             <span className="text-xs text-muted-foreground">{weather.condition}</span>
+                             <span className="text-sm font-black block">{weather.temp}°C</span>
+                             <span className="text-[9px] text-muted-foreground uppercase">{weather.condition}</span>
                            </div>
                          </div>
-                         <div className="text-[10px] text-right text-muted-foreground">
+                         <div className="text-[9px] text-right text-muted-foreground leading-tight">
                            <span>HUM: {weather.humidity}%</span><br/>
                            <span>WIND: {weather.wind}km/h</span>
                          </div>
                        </div>
                      )}
 
-                     <Button onClick={handleBooking} size="lg" className="w-full h-16 rounded-2xl font-black text-lg gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                       <ShoppingCart className="w-6 h-6" /> {t("reservar_agora")}
-                     </Button>
+                     <div className="pt-2">
+                       <Button onClick={handleBooking} size="lg" className="w-full h-14 rounded-xl font-black text-sm uppercase tracking-widest gap-2 shadow-xl shadow-primary/10 hover:bg-accent hover:shadow-accent/20 active:scale-95 transition-all">
+                         <ShoppingCart className="w-5 h-5" /> {t("reservar_agora")}
+                       </Button>
+                       <div className="flex items-center justify-between mt-3 px-1">
+                            <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{t("valor_total")}</span>
+                            <span className="text-base font-black text-primary">{formatPrice(currentUnitPrice * quantity)}</span>
+                       </div>
+                     </div>
                    </div>
 
                    <p className="text-center text-[10px] text-muted-foreground mt-6 font-bold uppercase tracking-widest">{t("pagamento_seguro")}</p>

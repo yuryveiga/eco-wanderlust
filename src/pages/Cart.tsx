@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { PaymentLogos } from "@/components/PaymentLogos";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
@@ -310,9 +311,15 @@ const Cart = () => {
                 </Button>
 
                 <div className="mt-8 space-y-4">
-                  <div className="flex items-center gap-4 text-[10px] text-muted-foreground bg-background/50 p-4 rounded-2xl border border-dashed border-border">
-                    <ShieldCheck className="w-8 h-8 text-green-600 flex-shrink-0" />
-                    <p className="leading-relaxed">{t("seguranca_stripe")}</p>
+                  <div className="flex flex-col gap-6 bg-background/50 p-6 rounded-2xl border border-dashed border-border shadow-inner">
+                    <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
+                      <ShieldCheck className="w-8 h-8 text-green-600 flex-shrink-0" />
+                      <p className="leading-relaxed">{t("seguranca_stripe")}</p>
+                    </div>
+                    <div className="pt-2 border-t border-border/50">
+                      <p className="text-[10px] font-black uppercase text-muted-foreground/60 mb-3 tracking-widest">{language === 'pt' ? 'Métodos Aceitos' : 'Accepted Methods'}</p>
+                      <PaymentLogos />
+                    </div>
                   </div>
                 </div>
               </div>
