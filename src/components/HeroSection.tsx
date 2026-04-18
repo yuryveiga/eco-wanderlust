@@ -156,7 +156,7 @@ export function HeroSection() {
             <span className="text-sm font-medium font-sans">{t("avaliados")}</span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-balance drop-shadow-xl">
+          <h1 className="font-serif text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 text-white text-balance drop-shadow-2xl leading-[1.05] tracking-tight">
             {heroTitle}
           </h1>
 
