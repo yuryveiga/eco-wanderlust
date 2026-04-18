@@ -85,14 +85,20 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         <p className="text-muted-foreground text-sm mb-6 font-sans line-clamp-2 min-h-[2.5rem]">{short_description}</p>
 
         <div className="mt-auto space-y-4">
-          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60 min-h-[18px]">
-            {!isExternal && tour.duration ? (
-              <>
+          <div className="flex items-center gap-4 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60 min-h-[18px]">
+            {tour.duration ? (
+              <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-primary" />
-                <span>{durationStr?.split(' ')[0]} {t("horas")}</span>
-              </>
+                {durationStr?.split(' ')[0]} {t("horas")}
+              </span>
             ) : (
               <span className="invisible">.</span>
+            )}
+            {tour.max_group_size > 1 && (
+              <span className="flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-primary" />
+                {language === 'pt' ? `até ${tour.max_group_size}` : language === 'es' ? `hasta ${tour.max_group_size}` : `up to ${tour.max_group_size}`}
+              </span>
             )}
           </div>
 
