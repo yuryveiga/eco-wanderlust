@@ -85,15 +85,19 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         <p className="text-muted-foreground text-sm mb-6 font-sans line-clamp-2">{short_description}</p>
 
         <div className="mt-auto space-y-4">
-          {!isExternal && (
-            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60">
-              <Clock className="w-3.5 h-3.5 text-primary" />
-              <span>{durationStr?.split(' ')[0]} {t("horas")}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60 min-h-[18px]">
+            {!isExternal && tour.duration ? (
+              <>
+                <Clock className="w-3.5 h-3.5 text-primary" />
+                <span>{durationStr?.split(' ')[0]} {t("horas")}</span>
+              </>
+            ) : (
+              <span className="invisible">.</span>
+            )}
+          </div>
 
-          <div>
-            {(tour.price > 0 || tour.pricing_model === 'custom' || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
+          <div className="min-h-[40px] flex items-end">
+            {(tour.price > 0 || tour.pricing_model === 'custom' || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) ? (
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-black text-primary font-sans leading-none">
                   {formatPrice(getTourMinPrice(tour as any))}
@@ -102,14 +106,14 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
                   {tour.pricing_model === 'group' ? t("por_grupo") : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
                 </span>
               </div>
+            ) : (
+              <span className="invisible text-3xl leading-none">.</span>
             )}
           </div>
           
           <Button className="w-full h-12 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] shadow-xl shadow-primary/10 group-hover:bg-accent group-hover:shadow-accent/20 transition-all duration-300">
             {isExternal 
-              ? (tour.title.toLowerCase().includes('maracana') 
-                ? (language === 'pt' ? 'RESERVAR AGORA' : 'BOOK NOW') 
-                : (language === 'pt' ? 'Saber Mais' : 'Learn More')) 
+              ? (language === 'pt' ? 'RESERVAR AGORA' : language === 'es' ? 'RESERVAR AHORA' : 'BOOK NOW') 
               : t("reservar")}
           </Button>
         </div>
