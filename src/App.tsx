@@ -11,6 +11,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
 import { FloatingButtons } from "./components/FloatingButtons";
 import { ThemeApplier } from "./components/ThemeApplier";
+import { useAnalytics } from "./hooks/useAnalytics";
 import { BUILD_ID } from "./version";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -34,6 +35,7 @@ const AdminSales = lazy(() => import("./pages/AdminSales"));
 const AdminSimulator = lazy(() => import("./pages/AdminSimulator"));
 const AdminCalendar = lazy(() => import("./pages/AdminCalendar"));
 const AdminImagesOptimizer = lazy(() => import("./pages/AdminImagesOptimizer"));
+const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 const TourDetail = lazy(() => import("./pages/TourDetail").then(m => ({ default: m.TourDetail })));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -46,6 +48,11 @@ const MatchDetail = lazy(() => import("./pages/MatchDetail"));
 const queryClient = new QueryClient();
 
 const PageLoader = () => <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+
+const AnalyticsTracker = () => {
+  useAnalytics();
+  return null;
+};
 
 const App = () => {
   useEffect(() => {
@@ -67,6 +74,7 @@ const App = () => {
                   <Sonner />
                   <ThemeApplier />
                   <BrowserRouter>
+                    <AnalyticsTracker />
                     <Suspense fallback={<PageLoader />}>
                       <FloatingButtons />
                       <Routes>
@@ -98,6 +106,7 @@ const App = () => {
                           <Route path="calendar" element={<AdminCalendar />} />
                           <Route path="pages" element={<AdminPages />} />
                            <Route path="optimizer" element={<AdminImagesOptimizer />} />
+                           <Route path="analytics" element={<AdminAnalytics />} />
                         </Route>
                         <Route path="/:slug" element={<GenericPage />} />
                         <Route path="*" element={<NotFound />} />

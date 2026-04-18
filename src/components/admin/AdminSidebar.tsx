@@ -15,7 +15,8 @@ import {
   Calculator,
   Layout,
   CalendarDays,
-  Zap
+  Zap,
+  BarChart3
 } from "lucide-react";
 
 import { NavLink } from "@/components/NavLink";
@@ -40,6 +41,7 @@ const menuGroups = [
     label: "Dashboard",
     items: [
       { title: "Início", url: "/admin", icon: LayoutDashboard },
+      { title: "Análises", url: "/admin/analytics", icon: BarChart3 },
     ]
   },
   {
