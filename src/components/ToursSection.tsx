@@ -80,33 +80,32 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         )}
         <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-xs font-black px-3 py-1 rounded-full font-sans uppercase tracking-widest">{category}</div>
       </div>
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground text-sm mb-4 font-sans line-clamp-2">{short_description}</p>
+        <p className="text-muted-foreground text-sm mb-6 font-sans line-clamp-2">{short_description}</p>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-t border-border/50 pt-4">
-            <div>
-              {(tour.price > 0 || tour.pricing_model === 'custom' || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
-                <>
-                  <span className="text-2xl font-black text-primary font-sans">
-                    {formatPrice(getTourMinPrice(tour as any))}
-                  </span>
-                  <span className="text-muted-foreground text-xs font-black uppercase tracking-tighter opacity-70 ml-1">
-                    {tour.pricing_model === 'group' ? t("por_grupo") : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
-                  </span>
-                </>
-              )}
+        <div className="mt-auto space-y-4">
+          {!isExternal && (
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60">
+              <Clock className="w-3.5 h-3.5 text-primary" />
+              <span>{durationStr?.split(' ')[0]} {t("horas")}</span>
             </div>
-            {!isExternal && (
-              <div className="flex items-center gap-3 text-xs text-muted-foreground font-black uppercase tracking-widest opacity-60">
-                <Clock className="w-3 h-3 text-primary" />
-                <span>{durationStr?.split(' ')[0]} {t("horas")}</span>
+          )}
+
+          <div>
+            {(tour.price > 0 || tour.pricing_model === 'custom' || (tour.pricing_model === 'dynamic' && (tour.price_1_person || tour.price_2_people || tour.price_3_6_people || tour.price_7_19_people))) && (
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-primary font-sans leading-none">
+                  {formatPrice(getTourMinPrice(tour as any))}
+                </span>
+                <span className="text-muted-foreground text-[9px] font-black uppercase tracking-tighter opacity-50">
+                  {tour.pricing_model === 'group' ? t("por_grupo") : (tour.pricing_model === 'dynamic' || tour.pricing_model === 'custom') ? t("a_partir_por_pessoa") : `/ ${t("por_pessoa")}`}
+                </span>
               </div>
             )}
           </div>
           
-          <Button className="w-full h-12 rounded-xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/10 group-hover:bg-accent group-hover:shadow-accent/20 transition-all duration-300">
+          <Button className="w-full h-12 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] shadow-xl shadow-primary/10 group-hover:bg-accent group-hover:shadow-accent/20 transition-all duration-300">
             {isExternal ? (language === 'pt' ? 'Saber Mais' : 'Learn More') : t("reservar")}
           </Button>
         </div>

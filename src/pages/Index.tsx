@@ -31,8 +31,9 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 
 const Index = () => {
   const { siteSettings } = useSiteData();
-  const siteTitle = siteSettings?.site_title || "Exclusive Private Tours in Rio de Janeiro | Authentic Local Experiences";
-  const siteDescription = siteSettings?.site_description || "Book exclusive private tours in Rio de Janeiro. Safe and authentic experiences with local experts. From Maracanã football matches to private hiking tours. Experience Rio like a local.";
+  const { language } = useLanguage();
+  const siteTitle = siteSettings?.site_title || (language === 'pt' ? "Passeios Privativos Exclusivos no Rio de Janeiro | Experiências Locais Autênticas" : language === 'es' ? "Tours Privados Exclusivos en Río de Janeiro | Experiencias Locales Auténticas" : "Exclusive Private Tours in Rio de Janeiro | Authentic Local Experiences");
+  const siteDescription = siteSettings?.site_description || (language === 'pt' ? "Descubra o melhor do Rio de Janeiro com nossos guias especialistas. Tours privativos e personalizados para garantir segurança e exclusividade." : language === 'es' ? "Descubra lo mejor de Río de Janeiro con nuestros guías expertos. Tours privados y personalizados para garantizar seguridad y exclusividad." : "Discover the best of Rio de Janeiro with our expert guides. Private and personalized tours to ensure safety and exclusivity.");
 
   return (
     <main>

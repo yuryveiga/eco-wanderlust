@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-const siteUrl = 'https://tocorimerio.com'; // Change to your production URL
+const siteUrl = 'https://tocorimerio.com'; // Definitive production URL
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Supabase credentials not found in environment variables.');

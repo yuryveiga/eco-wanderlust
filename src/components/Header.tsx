@@ -106,17 +106,14 @@ export function Header() {
         <div className="flex items-center justify-between h-18 md:h-26">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
+              <div className={`relative flex items-center justify-center ${isScrolled ? "h-11 w-11 md:h-12 md:w-12 mt-1" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500 ease-in-out`}>
               <OptimizedImage 
-                src={logoUrl} 
+                src={siteSettings?.logo_url || logoUrl} 
                 alt="Logo" 
-                width={200}
-                containerClassName={`${isScrolled ? "h-12 w-12 md:h-14 md:w-14" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500`}
-                className="h-full w-full object-contain transition-all duration-300 focus:outline-none" 
-                loading="eager"
-                fetchPriority="high"
-                decoding="sync"
+                fit="contain"
+                className="w-full h-full object-contain filter drop-shadow-sm transition-transform duration-500" 
               />
-            ) : (
+            </div>) : (
               <div className="w-16 h-16 md:h-22 md:w-22 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-primary-foreground font-bold text-2xl font-sans">P</span>
               </div>
