@@ -5,7 +5,10 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
-  
+  const location = useLocation();
+
+  if (location.pathname.startsWith('/admin')) return null;
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";
