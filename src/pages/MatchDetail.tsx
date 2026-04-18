@@ -30,7 +30,7 @@ const partnerSupabase = createClient(MARACANA_PROJECT_URL, MARACANA_ANON_KEY);
 export default function MatchDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { language, t, formatPrice } = useLocale();
+  const { language, t, formatPrice, currency } = useLocale();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
