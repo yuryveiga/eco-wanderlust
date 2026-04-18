@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useLocale } from "@/contexts/LocaleContext";
 
 // Lazy load sections below the fold
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
