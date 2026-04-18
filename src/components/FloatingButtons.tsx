@@ -5,8 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
-  
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   useEffect(() => {
+    if (isAdmin) return;
     const script = document.createElement("script");
     script.src = "https://elfsightcdn.com/platform.js";
     script.async = true;
@@ -16,7 +19,9 @@ export function FloatingButtons() {
         document.body.removeChild(script);
       }
     };
-  }, []);
+  }, [isAdmin]);
+
+  if (isAdmin) return null;
 
   const tripAdvisor = socialMedia.find(s => 
     s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false

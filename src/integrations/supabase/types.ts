@@ -401,6 +401,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_visits: {
+        Row: {
+          country: string | null
+          created_at: string | null
+          id: string
+          page_url: string
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          page_url: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          page_url?: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       social_media: {
         Row: {
           created_at: string
