@@ -81,8 +81,8 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-xs font-black px-3 py-1 rounded-full font-sans uppercase tracking-widest">{category}</div>
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground text-sm mb-6 font-sans line-clamp-2">{short_description}</p>
+        <h3 className="font-serif text-xl font-semibold text-foreground mb-2 line-clamp-2 min-h-[3.5rem]">{title}</h3>
+        <p className="text-muted-foreground text-sm mb-6 font-sans line-clamp-2 min-h-[2.5rem]">{short_description}</p>
 
         <div className="mt-auto space-y-4">
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] opacity-60 min-h-[18px]">
