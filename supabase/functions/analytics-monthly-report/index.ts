@@ -28,26 +28,61 @@ Deno.serve(async (req) => {
     const periodCurrent = { start: firstDayCurrentMonth.toISOString(), end: lastDayCurrentMonth.toISOString() };
     const periodPrev = { start: firstDayPrevMonth.toISOString(), end: lastDayPrevMonth.toISOString() };
 
-    // 2. Fetch Data
-    const [
-      { data: visitsCurrent },
-      { data: visitsPrev },
-      { data: salesCurrent },
-      { data: salesPrev },
-      { data: admins }
-    ] = await Promise.all([
-      supabase.from("site_visits").select("*").gte("created_at", periodCurrent.start).lte("created_at", periodCurrent.end),
-      supabase.from("site_visits").select("*").gte("created_at", periodPrev.start).lte("created_at", periodPrev.end),
-      supabase.from("sales").select("*").gte("created_at", periodCurrent.start).lte("created_at", periodCurrent.end),
-      supabase.from("sales").select("*").gte("created_at", periodPrev.start).lte("created_at", periodPrev.end),
-      supabase.from("profiles").select("email").eq("role", "admin")
-    ]);
+    const body = await req.json().catch(() => ({}));
+    const isTest = body?.test === true;
 
-    if (!admins || admins.length === 0) {
-      return new Response(JSON.stringify({ error: "No admin profiles found" }), { status: 404 });
+    // 2. Fetch Data (Skip if test mode)
+    let metricsCurrent, metricsPrev;
+    let adminEmails: string[] = [];
+
+    if (isTest) {
+      console.log("Running in TEST mode with dummy data");
+      metricsCurrent = {
+        totalVisits: 1250,
+        uniqueVisitors: 850,
+        totalSales: 42,
+        conversionRate: 4.94,
+        topPages: [["/", 500], ["/passeio-rio", 300], ["/blog", 200], ["/contato", 150], ["/galeria", 100]],
+        topCountries: [["Brasil", 800], ["EUA", 250], ["Argentina", 100], ["Chile", 60], ["Portugal", 40]]
+      };
+      metricsPrev = {
+        totalVisits: 1000,
+        uniqueVisitors: 700,
+        totalSales: 30,
+        conversionRate: 4.28,
+        topPages: [],
+        topCountries: []
+      };
+      
+      const { data: admins } = await supabase.from("profiles").select("email").eq("role", "admin");
+      adminEmails = admins?.map(a => a.email) || [];
+    } else {
+      const [
+        { data: visitsCurrent },
+        { data: visitsPrev },
+        { data: salesCurrent },
+        { data: salesPrev },
+        { data: admins }
+      ] = await Promise.all([
+        supabase.from("site_visits").select("*").gte("created_at", periodCurrent.start).lte("created_at", periodCurrent.end),
+        supabase.from("site_visits").select("*").gte("created_at", periodPrev.start).lte("created_at", periodPrev.end),
+        supabase.from("sales").select("*").gte("created_at", periodCurrent.start).lte("created_at", periodCurrent.end),
+        supabase.from("sales").select("*").gte("created_at", periodPrev.start).lte("created_at", periodPrev.end),
+        supabase.from("profiles").select("email").eq("role", "admin")
+      ]);
+
+      if (!admins || admins.length === 0) {
+        return new Response(JSON.stringify({ error: "No admin profiles found" }), { status: 404, headers: corsHeaders });
+      }
+
+      adminEmails = admins.map(a => a.email);
+      metricsCurrent = processMetrics(visitsCurrent || [], salesCurrent || []);
+      metricsPrev = processMetrics(visitsPrev || [], salesPrev || []);
     }
 
-    const adminEmails = admins.map(a => a.email);
+    if (adminEmails.length === 0) {
+      return new Response(JSON.stringify({ error: "Nenhum administrador encontrado para receber o relatório." }), { status: 404, headers: corsHeaders });
+    }
 
     // 3. Process Metrics
     const processMetrics = (visits: any[], sales: any[]) => {
