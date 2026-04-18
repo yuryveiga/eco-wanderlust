@@ -1,0 +1,1 @@
+UPDATE public.tours SET duration='6 horas', price=90, max_group_size=20 WHERE id='d633308a-cab2-4b0a-ae73-43ca40cd485e';
