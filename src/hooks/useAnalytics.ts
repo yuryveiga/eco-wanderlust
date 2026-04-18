@@ -7,6 +7,11 @@ export const useAnalytics = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Skip tracking for admin pages
+    if (location.pathname.startsWith("/admin")) {
+      return;
+    }
+
     const trackVisit = async () => {
       try {
         // Get or create session_id
