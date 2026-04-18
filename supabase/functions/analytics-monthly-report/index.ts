@@ -6,6 +6,31 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const processMetrics = (visits: any[], sales: any[]) => {
+  const totalVisits = visits?.length || 0;
+  const uniqueVisitors = new Set(visits?.map(v => v.session_id)).size;
+  const totalSales = sales?.length || 0;
+  const conversionRate = uniqueVisitors > 0 ? (totalSales / uniqueVisitors * 100) : 0;
+
+  const pagesMap: Record<string, number> = {};
+  visits?.forEach(v => {
+    try {
+      const path = new URL(v.page_url).pathname;
+      pagesMap[path] = (pagesMap[path] || 0) + 1;
+    } catch (e) { pagesMap[v.page_url] = (pagesMap[v.page_url] || 0) + 1; }
+  });
+  const topPages = Object.entries(pagesMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  const countriesMap: Record<string, number> = {};
+  visits?.forEach(v => {
+    const c = v.country || "Unknown";
+    countriesMap[c] = (countriesMap[c] || 0) + 1;
+  });
+  const topCountries = Object.entries(countriesMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  return { totalVisits, uniqueVisitors, totalSales, conversionRate, topPages, topCountries };
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -17,11 +42,9 @@ Deno.serve(async (req) => {
     const resendApiKey = Deno.env.get("RESEND_API_KEY") ?? "";
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // 1. Define date ranges
     const now = new Date();
     const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    
     const firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastDayPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
@@ -31,8 +54,8 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const isTest = body?.test === true;
 
-    // 2. Fetch Data (Skip if test mode)
-    let metricsCurrent, metricsPrev;
+    let metricsCurrent: ReturnType<typeof processMetrics>;
+    let metricsPrev: ReturnType<typeof processMetrics>;
     let adminEmails: string[] = [];
 
     if (isTest) {
@@ -53,7 +76,7 @@ Deno.serve(async (req) => {
         topPages: [],
         topCountries: []
       };
-      
+
       const { data: admins } = await supabase.from("profiles").select("email").eq("role", "admin");
       adminEmails = admins?.map(a => a.email) || [];
     } else {
@@ -71,11 +94,7 @@ Deno.serve(async (req) => {
         supabase.from("profiles").select("email").eq("role", "admin")
       ]);
 
-      if (!admins || admins.length === 0) {
-        return new Response(JSON.stringify({ error: "No admin profiles found" }), { status: 404, headers: corsHeaders });
-      }
-
-      adminEmails = admins.map(a => a.email);
+      adminEmails = (admins || []).map(a => a.email);
       metricsCurrent = processMetrics(visitsCurrent || [], salesCurrent || []);
       metricsPrev = processMetrics(visitsPrev || [], salesPrev || []);
     }
@@ -84,42 +103,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Nenhum administrador encontrado para receber o relatório." }), { status: 404, headers: corsHeaders });
     }
 
-    // 3. Process Metrics
-    const processMetrics = (visits: any[], sales: any[]) => {
-      const totalVisits = visits?.length || 0;
-      const uniqueVisitors = new Set(visits?.map(v => v.session_id)).size;
-      const totalSales = sales?.length || 0;
-      const conversionRate = uniqueVisitors > 0 ? (totalSales / uniqueVisitors * 100) : 0;
-      
-      const pagesMap: Record<string, number> = {};
-      visits?.forEach(v => {
-        try {
-          const path = new URL(v.page_url).pathname;
-          pagesMap[path] = (pagesMap[path] || 0) + 1;
-        } catch(e) { pagesMap[v.page_url] = (pagesMap[v.page_url] || 0) + 1; }
-      });
-      const topPages = Object.entries(pagesMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
-
-      const countriesMap: Record<string, number> = {};
-      visits?.forEach(v => {
-        const c = v.country || "Unknown";
-        countriesMap[c] = (countriesMap[c] || 0) + 1;
-      });
-      const topCountries = Object.entries(countriesMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
-
-      return { totalVisits, uniqueVisitors, totalSales, conversionRate, topPages, topCountries };
-    };
-
-    const metricsCurrent = processMetrics(visitsCurrent || [], salesCurrent || []);
-    const metricsPrev = processMetrics(visitsPrev || [], salesPrev || []);
-
     const calcTrend = (curr: number, prev: number) => {
       if (prev === 0) return curr > 0 ? "+100%" : "0%";
       const diff = ((curr - prev) / prev) * 100;
       return (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%";
     };
 
-    // 4. Format Email
     const monthName = now.toLocaleString('pt-BR', { month: 'long' });
     const year = now.getFullYear();
 
@@ -189,7 +178,6 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    // 5. Send Email
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
