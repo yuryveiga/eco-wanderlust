@@ -106,7 +106,11 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
           </div>
           
           <Button className="w-full h-12 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] shadow-xl shadow-primary/10 group-hover:bg-accent group-hover:shadow-accent/20 transition-all duration-300">
-            {isExternal ? (language === 'pt' ? 'Saber Mais' : 'Learn More') : t("reservar")}
+            {isExternal 
+              ? (tour.title.toLowerCase().includes('maracana') 
+                ? (language === 'pt' ? 'RESERVAR AGORA' : 'BOOK NOW') 
+                : (language === 'pt' ? 'Saber Mais' : 'Learn More')) 
+              : t("reservar")}
           </Button>
         </div>
       </div>
