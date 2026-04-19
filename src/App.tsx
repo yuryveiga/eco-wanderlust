@@ -55,13 +55,6 @@ const AnalyticsTracker = () => {
 };
 
 const App = () => {
-  useEffect(() => {
-    const lastVersion = localStorage.getItem("app_version");
-    if (lastVersion !== BUILD_ID) {
-      localStorage.setItem("app_version", BUILD_ID);
-    }
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
