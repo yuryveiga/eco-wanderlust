@@ -96,7 +96,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="flex flex-col">
             <h3 className="font-semibold text-lg mb-4 font-sans">{t("contato")}</h3>
             <ul className="space-y-3 font-sans mb-8">
               {contactEmail && (
@@ -120,7 +120,7 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="mt-10 space-y-6">
+            <div className="mt-auto space-y-6">
               <div className="flex items-center justify-between gap-2 w-full max-w-[320px]">
                 <img 
                   src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
@@ -141,7 +141,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="flex flex-col">
             <h3 className="font-semibold text-lg mb-4 font-sans">{t("siga_nos")}</h3>
             <div className="flex items-center gap-4 mb-8">
               {activeSocials.map((s) => (
@@ -151,7 +151,7 @@ export function Footer() {
               ))}
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="mt-auto flex flex-wrap items-center gap-3">
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
                 alt="Viator" 
