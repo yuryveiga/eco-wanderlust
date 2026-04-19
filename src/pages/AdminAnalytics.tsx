@@ -1,127 +1,178 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  LineChart, 
-  Line,
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
   Cell,
   PieChart,
-  Pie
+  Pie,
+  Legend,
 } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Loader2, Users, Eye, Globe, MousePointer2 } from "lucide-react";
+import { Loader2, Users, Eye, Globe, MousePointer2, Link2, Repeat } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Visit = {
   id: string;
   page_url: string;
-  referrer: string;
-  user_agent: string;
-  session_id: string;
-  country: string;
+  referrer: string | null;
+  user_agent: string | null;
+  session_id: string | null;
+  country: string | null;
   created_at: string;
+};
+
+type RangeKey = "7" | "30" | "90" | "all";
+
+const RANGE_DAYS: Record<RangeKey, number | null> = {
+  "7": 7,
+  "30": 30,
+  "90": 90,
+  all: null,
+};
+
+const COLORS = ["hsl(var(--primary))", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#ec4899"];
+
+const cleanPath = (rawUrl: string): string | null => {
+  try {
+    const url = new URL(rawUrl);
+    const path = url.pathname === "/" ? "/" : url.pathname.replace(/\/$/, "");
+    return path;
+  } catch {
+    return rawUrl?.startsWith("/") ? rawUrl : null;
+  }
+};
+
+const cleanReferrer = (ref: string | null): string => {
+  if (!ref) return "Direto";
+  try {
+    return new URL(ref).hostname.replace(/^www\./, "");
+  } catch {
+    return "Direto";
+  }
 };
 
 const AdminAnalytics = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Visit[]>([]);
-  const [stats, setStats] = useState({
-    totalVisits: 0,
-    uniqueVisitors: 0,
-    topPages: [] as any[],
-    visitsByDay: [] as any[],
-    visitsByCountry: [] as any[],
-  });
+  const [allVisits, setAllVisits] = useState<Visit[]>([]);
+  const [range, setRange] = useState<RangeKey>("30");
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       setLoading(true);
-      const { data: visits, error } = await supabase
+      const { data, error } = await supabase
         .from("site_visits")
         .select("*")
-        .order("created_at", { ascending: true });
+        .order("created_at", { ascending: true })
+        .limit(10000);
 
       if (error) {
         console.error("Error fetching analytics:", error);
       } else {
-        setData(visits || []);
-        processData(visits || []);
+        setAllVisits((data as Visit[]) || []);
       }
       setLoading(false);
     };
-
     fetchAnalytics();
   }, []);
 
-  const processData = (visits: Visit[]) => {
-    const totalVisits = visits.length;
-    const uniqueSessionIds = new Set(visits.map(v => v.session_id));
-    const uniqueVisitors = uniqueSessionIds.size;
+  const stats = useMemo(() => {
+    // Filter out admin pages and apply date range
+    const days = RANGE_DAYS[range];
+    const cutoff = days ? Date.now() - days * 24 * 60 * 60 * 1000 : 0;
 
-    // Process Top Pages
+    const visits = allVisits.filter((v) => {
+      const path = cleanPath(v.page_url);
+      if (!path) return false;
+      if (path.startsWith("/admin")) return false;
+      if (cutoff && new Date(v.created_at).getTime() < cutoff) return false;
+      return true;
+    });
+
+    const totalVisits = visits.length;
+    const sessions = new Set(visits.map((v) => v.session_id).filter(Boolean));
+    const uniqueVisitors = sessions.size;
+
+    // Pages per session (avg)
+    const sessionPageCount: Record<string, number> = {};
+    visits.forEach((v) => {
+      if (!v.session_id) return;
+      sessionPageCount[v.session_id] = (sessionPageCount[v.session_id] || 0) + 1;
+    });
+    const avgPagesPerSession =
+      uniqueVisitors > 0
+        ? (Object.values(sessionPageCount).reduce((a, b) => a + b, 0) / uniqueVisitors).toFixed(1)
+        : "0";
+
+    // Top pages
     const pagesMap: Record<string, number> = {};
-    visits.forEach(v => {
-      try {
-        const url = new URL(v.page_url);
-        // Clean up URL (remove domain, keep path)
-        const path = url.pathname === "/" ? "/" : url.pathname.replace(/\/$/, "");
-        pagesMap[path] = (pagesMap[path] || 0) + 1;
-      } catch (e) {
-        pagesMap[v.page_url] = (pagesMap[v.page_url] || 0) + 1;
-      }
+    visits.forEach((v) => {
+      const path = cleanPath(v.page_url);
+      if (!path) return;
+      pagesMap[path] = (pagesMap[path] || 0) + 1;
     });
     const topPages = Object.entries(pagesMap)
       .map(([name, visits]) => ({ name, visits }))
       .sort((a, b) => b.visits - a.visits)
       .slice(0, 10);
 
-    // Process Visits by Day (last 30 days)
+    // Visits by day (within range, default 30)
+    const numDays = days ?? 30;
     const daysMap: Record<string, number> = {};
     const now = new Date();
-    for (let i = 29; i >= 0; i--) {
+    for (let i = numDays - 1; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const dayStr = d.toISOString().split("T")[0];
-      daysMap[dayStr] = 0;
+      daysMap[d.toISOString().split("T")[0]] = 0;
     }
-    
-    visits.forEach(v => {
+    visits.forEach((v) => {
       const dayStr = v.created_at.split("T")[0];
-      if (daysMap[dayStr] !== undefined) {
-        daysMap[dayStr]++;
-      }
+      if (daysMap[dayStr] !== undefined) daysMap[dayStr]++;
     });
     const visitsByDay = Object.entries(daysMap).map(([date, count]) => ({
-      date: new Date(date).toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit' }),
-      count
+      date: new Date(date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      count,
     }));
 
-    // Process Visits by Country
+    // Countries
     const countryMap: Record<string, number> = {};
-    visits.forEach(v => {
-      const country = v.country || "Unknown";
-      countryMap[country] = (countryMap[country] || 0) + 1;
+    visits.forEach((v) => {
+      const c = v.country || "Desconhecido";
+      countryMap[c] = (countryMap[c] || 0) + 1;
     });
     const visitsByCountry = Object.entries(countryMap)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, 6);
 
-    setStats({
+    // Referrers
+    const refMap: Record<string, number> = {};
+    visits.forEach((v) => {
+      const r = cleanReferrer(v.referrer);
+      refMap[r] = (refMap[r] || 0) + 1;
+    });
+    const topReferrers = Object.entries(refMap)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+
+    return {
       totalVisits,
       uniqueVisitors,
+      avgPagesPerSession,
       topPages,
       visitsByDay,
-      visitsByCountry
-    });
-  };
+      visitsByCountry,
+      topReferrers,
+    };
+  }, [allVisits, range]);
 
   if (loading) {
     return (
@@ -131,25 +182,35 @@ const AdminAnalytics = () => {
     );
   }
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-
   return (
     <div className="space-y-8 pb-12">
-      <div>
-        <h1 className="text-3xl font-bold font-serif text-foreground">Análise de Visitas</h1>
-        <p className="text-muted-foreground mt-2">Monitore o desempenho e o tráfego do seu site.</p>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold font-serif text-foreground">Análise de Visitas</h1>
+          <p className="text-muted-foreground mt-2">
+            Visitas em páginas públicas (rotas <code>/admin</code> são ignoradas).
+          </p>
+        </div>
+        <Tabs value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+          <TabsList>
+            <TabsTrigger value="7">7d</TabsTrigger>
+            <TabsTrigger value="30">30d</TabsTrigger>
+            <TabsTrigger value="90">90d</TabsTrigger>
+            <TabsTrigger value="all">Tudo</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total de Visitas</CardTitle>
             <Eye className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalVisits}</div>
-            <p className="text-xs text-muted-foreground">Visualizações de página totais</p>
+            <div className="text-2xl font-bold">{stats.totalVisits.toLocaleString("pt-BR")}</div>
+            <p className="text-xs text-muted-foreground">Pageviews no período</p>
           </CardContent>
         </Card>
         <Card>
@@ -158,104 +219,182 @@ const AdminAnalytics = () => {
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.uniqueVisitors}</div>
-            <p className="text-xs text-muted-foreground">Baseado em IDs de sessão</p>
+            <div className="text-2xl font-bold">{stats.uniqueVisitors.toLocaleString("pt-BR")}</div>
+            <p className="text-xs text-muted-foreground">Sessões distintas</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Top País</CardTitle>
+            <CardTitle className="text-sm font-medium">Páginas / Sessão</CardTitle>
+            <Repeat className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.avgPagesPerSession}</div>
+            <p className="text-xs text-muted-foreground">Engajamento médio</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Top Origem</CardTitle>
             <Globe className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.visitsByCountry[0]?.name || "N/A"}</div>
-            <p className="text-xs text-muted-foreground">Maior origem de tráfego</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Página Principal</CardTitle>
-            <MousePointer2 className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold truncate">{stats.topPages[0]?.name || "/"}</div>
-            <p className="text-xs text-muted-foreground">URL mais acessada</p>
+            <div className="text-2xl font-bold truncate">
+              {stats.visitsByCountry[0]?.name || "N/A"}
+            </div>
+            <p className="text-xs text-muted-foreground">País com mais tráfego</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Traffic Over Time */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Visitas por Dia (Últimos 30 dias)</CardTitle>
-            <CardDescription>Volume de tráfego diário no site</CardDescription>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={stats.visitsByDay}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="count" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2} 
-                  dot={{ r: 4 }} 
-                  activeDot={{ r: 6 }} 
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Traffic Over Time - full width */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Visitas ao longo do tempo</CardTitle>
+          <CardDescription>Volume diário de pageviews</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[320px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={stats.visitsByDay}>
+              <defs>
+                <linearGradient id="visitsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "hsl(var(--background))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: 8,
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                fill="url(#visitsGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Pages */}
         <Card>
           <CardHeader>
-            <CardTitle>Páginas Mais Visitadas</CardTitle>
-            <CardDescription>Ranking das URLs com mais acessos</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <MousePointer2 className="w-4 h-4" /> Páginas Mais Visitadas
+            </CardTitle>
+            <CardDescription>Top 10 URLs públicas</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.topPages} layout="vertical" margin={{ left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={80} />
-                <Tooltip />
-                <Bar dataKey="visits" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="h-[340px]">
+            {stats.topPages.length === 0 ? (
+              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                Sem dados no período.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stats.topPages} layout="vertical" margin={{ left: 16, right: 16 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
+                  <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" width={140} tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Bar dataKey="visits" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
-        {/* Top Countries */}
+        {/* Referrers */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribuição por País</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="w-4 h-4" /> Origem do Tráfego
+            </CardTitle>
+            <CardDescription>De onde vêm seus visitantes</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[340px]">
+            {stats.topReferrers.length === 0 ? (
+              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                Sem dados no período.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stats.topReferrers} layout="vertical" margin={{ left: 16, right: 16 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
+                  <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]}>
+                    {stats.topReferrers.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Countries */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-4 h-4" /> Distribuição por País
+            </CardTitle>
             <CardDescription>Principais origens internacionais</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={stats.visitsByCountry}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {stats.visitsByCountry.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+          <CardContent className="h-[340px]">
+            {stats.visitsByCountry.length === 0 ? (
+              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                Sem dados no período.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stats.visitsByCountry}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    outerRadius={110}
+                    dataKey="value"
+                  >
+                    {stats.visitsByCountry.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
       </div>
