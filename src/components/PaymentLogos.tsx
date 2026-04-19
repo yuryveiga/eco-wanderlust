@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Apple } from 'lucide-react';
 
 interface PaymentLogosProps {
   className?: string;
@@ -40,6 +40,27 @@ export const PaymentLogos: React.FC<PaymentLogosProps> = ({ className = "", vari
         <div className={badgeBase}>
           <span className={`text-[10px] font-black tracking-tight ${isDark ? 'text-white' : 'text-[#32BCAD]'}`}>
             Pix
+          </span>
+        </div>
+
+        {/* Apple Pay */}
+        <div className={badgeBase}>
+          <Apple className={`w-3 h-3 ${isDark ? 'text-white' : 'text-black'}`} fill="currentColor" />
+          <span className={`text-[10px] font-black tracking-tight ml-0.5 ${isDark ? 'text-white' : 'text-black'}`}>
+            Pay
+          </span>
+        </div>
+
+        {/* Google Pay */}
+        <div className={badgeBase}>
+          <span className="text-[10px] font-black tracking-tight">
+            <span className="text-[#4285F4]">G</span>
+            <span className="text-[#EA4335]">o</span>
+            <span className="text-[#FBBC04]">o</span>
+            <span className="text-[#4285F4]">g</span>
+            <span className="text-[#34A853]">l</span>
+            <span className="text-[#EA4335]">e</span>
+            <span className={`ml-1 ${isDark ? 'text-white' : 'text-black'}`}>Pay</span>
           </span>
         </div>
       </div>
