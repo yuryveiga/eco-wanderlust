@@ -138,19 +138,6 @@ export function Footer() {
                   className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
               </div>
-
-              <a 
-                href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block hover:scale-105 transition-transform"
-              >
-                <img 
-                  src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
-                  alt="Cadastur" 
-                  className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
-                />
-              </a>
             </div>
           </div>
 
@@ -181,12 +168,27 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 md:w-1/3">
               <p className="text-[hsl(140,10%,96%)]/60 text-sm font-sans">&copy; {new Date().getFullYear()} Tocorime Rio. {t("direitos")}</p>
               <p className="text-[hsl(140,10%,96%)]/60 text-xs font-sans opacity-70 tracking-tight">{t("turismo_sustentavel")}</p>
             </div>
+
+            <div className="flex justify-center md:w-1/3">
+              <a 
+                href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-transform"
+              >
+                <img 
+                  src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
+                  alt="Cadastur" 
+                  className="h-10 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </a>
+            </div>
             
-            <div className="flex flex-col items-center md:items-end gap-3">
+            <div className="flex flex-col items-center md:items-end gap-3 md:w-1/3">
               <p className="text-[hsl(140,10%,96%)]/40 text-[9px] font-black uppercase tracking-[0.2em]">{language === 'pt' ? 'Pagamento Seguro' : 'Secure Checkout'}</p>
               <PaymentLogos variant="dark" className="opacity-80" />
             </div>
