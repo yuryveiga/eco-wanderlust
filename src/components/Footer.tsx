@@ -131,49 +131,50 @@ export function Footer() {
                   <img 
                     src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
                     alt="Cadastur" 
-                    className="h-6 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                    className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
                   />
                 </a>
                 
-                <div className="flex flex-wrap items-center gap-3">
-                  <img 
-                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
-                    alt="TripAdvisor" 
-                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                  />
-                  <img 
-                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
-                    alt="Airbnb" 
-                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                  />
-                  <img 
-                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
-                    alt="Google Reviews" 
-                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                  />
-                  <img 
-                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
-                    alt="Viator" 
-                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                  />
-                  <img 
-                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
-                    alt="Homefans" 
-                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                  />
-                </div>
+                <img 
+                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
+                  alt="TripAdvisor" 
+                  className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                />
+                <img 
+                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
+                  alt="Airbnb" 
+                  className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                />
               </div>
             </div>
           </div>
 
           <div>
             <h3 className="font-semibold text-lg mb-4 font-sans">{t("siga_nos")}</h3>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-8">
               {activeSocials.map((s) => (
                 <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label={s.platform}>
                   <s.icon className="w-5 h-5" />
                 </a>
               ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <img 
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
+                alt="Google Reviews" 
+                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              />
+              <img 
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
+                alt="Viator" 
+                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              />
+              <img 
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
+                alt="Homefans" 
+                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              />
             </div>
           </div>
         </div>
