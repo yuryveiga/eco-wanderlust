@@ -120,21 +120,8 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="mt-10">
-              <div className="flex flex-wrap items-center gap-4 lg:gap-6">
-                <a 
-                  href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:scale-105 transition-transform"
-                >
-                  <img 
-                    src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
-                    alt="Cadastur" 
-                    className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
-                  />
-                </a>
-                
+            <div className="mt-10 space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
                 <img 
                   src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
                   alt="TripAdvisor" 
@@ -145,7 +132,25 @@ export function Footer() {
                   alt="Airbnb" 
                   className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
+                <img 
+                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
+                  alt="Google Reviews" 
+                  className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                />
               </div>
+
+              <a 
+                href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block hover:scale-105 transition-transform"
+              >
+                <img 
+                  src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
+                  alt="Cadastur" 
+                  className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </a>
             </div>
           </div>
 
@@ -160,11 +165,6 @@ export function Footer() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
-                alt="Google Reviews" 
-                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
                 alt="Viator" 
