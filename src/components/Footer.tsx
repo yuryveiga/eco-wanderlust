@@ -162,6 +162,11 @@ export function Footer() {
                 alt="Homefans" 
                 className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
+              <img 
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png" 
+                alt="Turismo Responsável" 
+                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              />
             </div>
           </div>
         </div>
