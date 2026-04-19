@@ -168,12 +168,12 @@ export function Footer() {
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
                 alt="Viator" 
-                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
                 alt="Homefans" 
-                className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
             </div>
           </div>
