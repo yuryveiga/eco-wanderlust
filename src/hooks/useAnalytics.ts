@@ -14,6 +14,10 @@ export const useAnalytics = () => {
 
     const trackVisit = async () => {
       try {
+        // Skip tracking for logged-in users (admins/staff)
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) return;
+
         // Get or create session_id
         let sessionId = sessionStorage.getItem("site_session_id");
         if (!sessionId) {
