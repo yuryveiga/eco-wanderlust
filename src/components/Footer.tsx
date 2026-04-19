@@ -120,55 +120,40 @@ export function Footer() {
                 </li>
               )}
             </ul>
-
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
+            <div className="mt-10">
+              <div className="flex flex-wrap items-center gap-4 lg:gap-6">
                 <img 
-                  src="/cadastur-logo.png" 
+                  src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
                   alt="Cadastur" 
-                  className="h-10 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                  className="h-6 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
                 />
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-lg bg-[hsl(145,20%,20%)] flex items-center justify-center group-hover:bg-[#00af87] transition-colors">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
-                      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm4.4-11.8c-.8 0-1.4.6-1.4 1.4s.6 1.4 1.4 1.4 1.4-.6 1.4-1.4-.6-1.4-1.4-1.4zm-8.8 0c-.8 0-1.4.6-1.4 1.4s.6 1.4 1.4 1.4 1.4-.6 1.4-1.4-.6-1.4-1.4-1.4zm4.4 6c-1.8 0-3.3-1.1-3.9-2.7h7.8c-.6 1.6-2.1 2.7-3.9 2.7z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-[hsl(140,10%,96%)]">TripAdvisor</p>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-bold text-[#00af87]">5.0</span>
-                      <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <div key={i} className="w-2 h-2 rounded-full bg-[#00af87]" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-lg bg-[hsl(145,20%,20%)] flex items-center justify-center group-hover:bg-[#4285F4] transition-colors">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
-                      <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-[hsl(140,10%,96%)]">Google Reviews</p>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-bold text-[#FBBC05]">5.0</span>
-                      <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <svg key={i} viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-[#FBBC05]">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                
+                <div className="flex flex-wrap items-center gap-3">
+                  <img 
+                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
+                    alt="TripAdvisor" 
+                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  />
+                  <img 
+                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
+                    alt="Airbnb" 
+                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  />
+                  <img 
+                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
+                    alt="Google Reviews" 
+                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  />
+                  <img 
+                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
+                    alt="Viator" 
+                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  />
+                  <img 
+                    src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
+                    alt="Homefans" 
+                    className="h-10 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  />
                 </div>
               </div>
             </div>
