@@ -125,17 +125,17 @@ export function Footer() {
                 <img 
                   src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
                   alt="TripAdvisor" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
                 <img 
                   src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
                   alt="Airbnb" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
                 <img 
                   src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
                   alt="Google Reviews" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                  className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
               </div>
             </div>
@@ -155,17 +155,17 @@ export function Footer() {
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
                 alt="Viator" 
-                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
                 alt="Homefans" 
-                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png" 
                 alt="Turismo Responsável" 
-                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
             </div>
           </div>
