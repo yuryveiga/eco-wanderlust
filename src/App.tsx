@@ -1,5 +1,5 @@
 // Force clean build after dependency cleanup
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -55,13 +55,6 @@ const AnalyticsTracker = () => {
 };
 
 const App = () => {
-  useEffect(() => {
-    const lastVersion = localStorage.getItem("app_version");
-    if (lastVersion !== BUILD_ID) {
-      localStorage.setItem("app_version", BUILD_ID);
-    }
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
