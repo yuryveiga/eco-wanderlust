@@ -11,21 +11,11 @@
     <link rel="preload" href="/fonts/Poppins-400.ttf" as="font" type="font/truetype" crossorigin>
     <link rel="preload" href="/fonts/Poppins-600.ttf" as="font" type="font/truetype" crossorigin>
 
-    <script>
-      (function() {
-        const version = "v_1776200000000";
-        const lastVersion = localStorage.getItem("app_version");
-        if (lastVersion && lastVersion !== version) {
-          if ('caches' in window) {
-            caches.keys().then(function(names) {
-              for (var name of names) caches.delete(name);
-            });
-          }
-          localStorage.setItem("app_version", version);
-          window.location.reload(true);
-        }
-      })();
-    </script>
+    <!-- Prevent HTML caching to always fetch the latest app shell -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2A9D8F">
