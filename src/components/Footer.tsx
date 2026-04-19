@@ -120,25 +120,6 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="mt-10 space-y-6">
-              <div className="flex items-center justify-between gap-2 w-full max-w-[320px]">
-                <img 
-                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
-                  alt="TripAdvisor" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                />
-                <img 
-                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
-                  alt="Airbnb" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                />
-                <img 
-                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
-                  alt="Google Reviews" 
-                  className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
-                />
-              </div>
-            </div>
           </div>
 
           <div>
@@ -150,19 +131,36 @@ export function Footer() {
                 </a>
               ))}
             </div>
+          </div>
+        </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
-                alt="Viator" 
-                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
-                alt="Homefans" 
-                className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </div>
+        <div className="mt-12 py-8 border-y border-[hsl(145,15%,22%)]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+            <img 
+              src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
+              alt="TripAdvisor" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <img 
+              src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
+              alt="Airbnb" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <img 
+              src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
+              alt="Google Reviews" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <img 
+              src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
+              alt="Viator" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <img 
+              src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
+              alt="Homefans" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
           </div>
         </div>
 
