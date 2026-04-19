@@ -122,11 +122,18 @@ export function Footer() {
             </ul>
             <div className="mt-10">
               <div className="flex flex-wrap items-center gap-4 lg:gap-6">
-                <img 
-                  src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
-                  alt="Cadastur" 
-                  className="h-6 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
-                />
+                <a 
+                  href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:scale-105 transition-transform"
+                >
+                  <img 
+                    src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
+                    alt="Cadastur" 
+                    className="h-6 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </a>
                 
                 <div className="flex flex-wrap items-center gap-3">
                   <img 
