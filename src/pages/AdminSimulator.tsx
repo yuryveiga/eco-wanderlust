@@ -13,7 +13,7 @@ const AdminSimulator = () => {
   const [selectedTourId, setSelectedTourId] = useState("");
   const [customerName, setCustomerName] = useState("Cliente de Teste");
   const [customerEmail, setCustomerEmail] = useState("teste@exemplo.com");
-  const [bookingDate, setBookingDate] = useState("2026-04-13");
+  const [bookingDate, setBookingDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedPeriod, setSelectedPeriod] = useState("Manhã");
   const [isSimulating, setIsSimulating] = useState(false);
   const { toast } = useToast();
@@ -105,7 +105,7 @@ const AdminSimulator = () => {
 
       toast({ 
         title: "Sucesso!", 
-        description: "Reserva criada, agenda sincronizada e e-mails de alerta enviados!", 
+        description: `Reserva para ${bookingDate} criada, agenda sincronizada e e-mails enviados!`, 
       });
 
     } catch (error: any) {
