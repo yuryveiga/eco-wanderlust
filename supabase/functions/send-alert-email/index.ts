@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { to, customerName, customerEmail, customerPhone, items, total, isCustomerCopy = false, selectedPeriod, isPrivate } = await req.json()
+    const { to, customerName, customerEmail, customerPhone, items, total, isCustomerCopy = false, selectedPeriod, isPrivate, replyTo } = await req.json()
 
     if (!to) {
       return new Response(JSON.stringify({ error: 'Email não configurado' }), { status: 400, headers: corsHeaders })
@@ -120,6 +120,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         from: 'Tocorime Rio <reservas@tocorimerio.com>',
         to: recipients,
+        reply_to: replyTo,
         subject: subject,
         html: htmlContent
       })

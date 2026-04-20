@@ -87,8 +87,9 @@ async function getAccessToken(email: string, key: string): Promise<string> {
 
 async function sendEmailAlert(sale: Record<string, any>, supabaseUrl: string, isCustomer = false) {
   try {
-    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "tocorimeriotours@gmail.com, veiga.yury@gmail.com";
     const to = isCustomer ? sale.customer_email : adminEmail;
+    const replyTo = isCustomer ? "tocorimeriotours@gmail.com" : undefined;
     
     const res = await fetch(`${supabaseUrl}/functions/v1/send-alert-email`, {
       method: "POST",
@@ -105,6 +106,7 @@ async function sendEmailAlert(sale: Record<string, any>, supabaseUrl: string, is
         isCustomerCopy: isCustomer,
         selectedPeriod: sale.selected_period,
         isPrivate: sale.is_private,
+        replyTo: replyTo,
         items: [{
           tour: sale.tour_title,
           quantity: sale.quantity,

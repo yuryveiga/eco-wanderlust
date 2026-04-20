@@ -71,9 +71,41 @@ const AdminSimulator = () => {
 
       if (syncError || syncResult?.error) throw new Error(syncError?.message || syncResult?.error);
       
+      // 4. Enviar e-mails de alerta (Simulando o que o Webhook faria)
+      toast({ title: "Passo 4/4", description: "Enviando e-mails de notificação..." });
+      
+      const emailPayload = {
+        customerName,
+        customerEmail,
+        customerPhone: "(21) 99999-9999",
+        total: tour?.price || 100,
+        selectedPeriod,
+        isPrivate: false,
+        items: [{
+          tour: tour?.title || "Passeio de Teste",
+          quantity: 1,
+          price: tour?.price || 100,
+          date: bookingDate
+        }]
+      };
+
+      // Alerta para o Admin (Enviando para os admins reais e também para o e-mail do teste)
+      const { error: adminEmailError } = await supabase.functions.invoke("send-alert-email", {
+        body: { ...emailPayload, to: `tocorimeriotours@gmail.com, veiga.yury@gmail.com, ${customerEmail}`, isCustomerCopy: false }
+      });
+      
+      if (adminEmailError) console.error("Erro no e-mail do admin:", adminEmailError);
+
+      // Confirmação para o Cliente (Com replyTo configurado)
+      const { error: customerEmailError } = await supabase.functions.invoke("send-alert-email", {
+        body: { ...emailPayload, to: customerEmail, isCustomerCopy: true, replyTo: "tocorimeriotours@gmail.com" }
+      });
+
+      if (customerEmailError) console.error("Erro no e-mail do cliente:", customerEmailError);
+
       toast({ 
         title: "Sucesso!", 
-        description: "Reserva criada, paga e enviada para a agenda!", 
+        description: "Reserva criada, agenda sincronizada e e-mails de alerta enviados!", 
       });
 
     } catch (error: any) {
