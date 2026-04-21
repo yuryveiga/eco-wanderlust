@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
+import { supabase } from "@/integrations/supabase/client";
 
 export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,11 +28,47 @@ export function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!contactEmail) {
+      toast({ 
+        title: "Erro", 
+        description: language === 'pt' ? "E-mail de contato não configurado nas redes sociais." : "Contact email not configured in social media.", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    toast({ title: t("msg_enviada"), description: t("contato_breve") });
-    (e.target as HTMLFormElement).reset();
-    setIsSubmitting(false);
+    
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      to: contactEmail,
+      senderName: formData.get("name") as string,
+      senderEmail: formData.get("email") as string,
+      senderPhone: formData.get("phone") as string,
+      tourInterest: formData.get("tour_interest") as string,
+      message: formData.get("message") as string,
+    };
+
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: data
+      });
+
+      if (error) throw error;
+
+      toast({ title: t("msg_enviada"), description: t("contato_breve") });
+      (e.target as HTMLFormElement).reset();
+    } catch (error: any) {
+      console.error("Error sending contact email:", error);
+      toast({ 
+        title: "Erro ao enviar", 
+        description: language === 'pt' ? "Houve um problema ao enviar sua mensagem. Tente novamente." : "There was a problem sending your message. Please try again.",
+        variant: "destructive" 
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
