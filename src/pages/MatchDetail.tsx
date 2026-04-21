@@ -63,7 +63,7 @@ export default function MatchDetail() {
                match_date: new Date(Date.now() + 86400000 * 2).toISOString(),
                venue: "Maracanã",
                stadium: "Estádio Jornalista Mário Filho",
-               price: 490,
+               price: 350,
                available_spots: 15,
                sold_count: 5,
                status: "available",
