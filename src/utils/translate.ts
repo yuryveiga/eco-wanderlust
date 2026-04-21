@@ -18,18 +18,21 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
       // Join multiple segments. Sometimes Google splits long sentences.
       // We join them and then clean up any double spaces that might result,
       // but primarily we remove the invisible characters that cause line break issues.
+      // Preserve original leading/trailing whitespace which is crucial for HTML text nodes
+      const leadingSpace = text.match(/^\s*/)?.[0] || "";
+      const trailingSpace = text.match(/\s*$/)?.[0] || "";
+
       let translated = (data[0] as string[][])
         .map((s) => s[0])
         .join('');
 
-      // Replace literal "&nbsp;" strings AND the \u00A0 Unicode character with a regular space
+      // Clean up invisible characters and normalize internal spaces
       translated = translated
         .replace(/&nbsp;/g, ' ')
         .replace(/[\u200B\u00AD\u00A0]/g, ' ')
-        .replace(/[^\n\r\S]+/g, ' ') // Collapse multiple SPACES (preserve \n)
-        .trim();
+        .replace(/[^\n\r\S]+/g, ' '); // Collapse multiple internal spaces
 
-      return restore(translated, replacements);
+      return restore(leadingSpace + translated.trim() + trailingSpace, replacements);
     }
     return text;
   } catch (error: unknown) {
@@ -49,7 +52,7 @@ export async function translateHtml(html: string, targetLang: 'en' | 'es'): Prom
   const doc = parser.parseFromString(html, 'text/html');
   
   async function translateNode(node: Node) {
-    if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent && node.textContent.trim() !== "") {
       const translated = await translateText(node.textContent, targetLang);
       node.textContent = translated;
     } else {
@@ -62,17 +65,16 @@ export async function translateHtml(html: string, targetLang: 'en' | 'es'): Prom
 
   await translateNode(doc.body);
 
-  // Post-processing to ensure spaces around tags like <strong> and <a>
-  // Sometimes translation engines trim whitespace that's needed for HTML rendering.
   let result = doc.body.innerHTML;
   
-  // Ensure space after closing tags and before opening tags of inline elements
-  // only if they are missing.
+  // Fix spacing around inline tags that might have been lost during translation
   result = result
-    .replace(/<\/strong>([^\s.,!?;:]) /g, '</strong> $1') // If no space after strong, add one
-    .replace(/([^\s])<strong>/g, '$1 <strong>')         // If no space before strong, add one
-    .replace(/<\/a>([^\s.,!?;:]) /g, '</a> $1')           // Same for links
-    .replace(/([^\s])<a/g, '$1 <a');                      // Same for links
+    .replace(/<\/strong>([^\s.,!?;:])/g, '</strong> $1') // Add space if missing after </strong>
+    .replace(/([^\s])<strong>/g, '$1 <strong>')        // Add space if missing before <strong>
+    .replace(/<\/a>([^\s.,!?;:])/g, '</a> $1')           // Add space if missing after </a>
+    .replace(/([^\s])<a/g, '$1 <a')                      // Add space if missing before <a
+    .replace(/<\/em>([^\s.,!?;:])/g, '</em> $1')         // Add space if missing after </em>
+    .replace(/([^\s])<em>/g, '$1 <em>');                // Add space if missing before <em>
     
   return result;
 }

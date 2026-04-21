@@ -83,17 +83,20 @@ const BlogPost = () => {
           overflow-wrap: inherit !important;
         }
         .blog-content-area p {
-          margin-bottom: 0.8rem !important;
-          line-height: 1.6 !important;
+          margin-bottom: 1.2rem !important;
+          line-height: 1.7 !important;
           text-align: left !important;
-          word-break: inherit !important;
+          word-break: normal !important;
         }
-        /* Remove space from empty lines created by editor */
-        .blog-content-area p:has(br:only-child),
+        /* Handle spacing for manual line breaks without forcing them to be blocks */
         .blog-content-area br {
-          content: "";
-          display: block;
-          margin-bottom: 0.2rem !important;
+          margin-bottom: 0 !important;
+        }
+        /* Specific fix for empty paragraphs used as spacers by some editors */
+        .blog-content-area p:empty,
+        .blog-content-area p:has(br:only-child) {
+          min-height: 1.2rem;
+          margin-bottom: 0.8rem !important;
         }
         .blog-content-area h1, 
         .blog-content-area h2, 
