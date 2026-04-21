@@ -79,8 +79,6 @@ const BlogPost = () => {
         .blog-content-area * {
           margin-top: 0 !important;
           margin-inline: 0 !important;
-          word-break: inherit !important;
-          overflow-wrap: inherit !important;
         }
         .blog-content-area p {
           margin-bottom: 1.2rem !important;

@@ -29,7 +29,8 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
       // Clean up invisible characters and normalize internal spaces
       translated = translated
         .replace(/&nbsp;/g, ' ')
-        .replace(/[\u200B\u00AD\u00A0]/g, ' ')
+        .replace(/[\u200B\u00AD]/g, '') // Remove zero-width spaces and soft hyphens
+        .replace(/\u00A0/g, ' ')       // Replace non-breaking space with regular space
         .replace(/[^\n\r\S]+/g, ' '); // Collapse multiple internal spaces
 
       return restore(leadingSpace + translated.trim() + trailingSpace, replacements);
