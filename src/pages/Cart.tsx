@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
-import { useLocale, rates } from "@/contexts/LocaleContext";
+import { useLocale } from "@/contexts/LocaleContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import { PaymentLogos } from "@/components/PaymentLogos";
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
   const { t, language, formatPrice, currency } = useLocale();
+  const { rates } = useCurrency();
   const dateLocale = language === 'pt' ? ptBR : language === 'es' ? es : enUS;
   const { siteSettings } = useSiteData();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -47,7 +49,8 @@ const Cart = () => {
       // Save sale to database and collect IDs
       for (const item of items) {
         // Calculate rounded price for the DB
-        const convertedPrice = Math.round((item.price / rate) * 100) / 100;
+        // Agora rate é multiplicador (ex: 0.20 para USD)
+        const convertedPrice = Math.round((item.price * rate) * 100) / 100;
         const itemTotal = convertedPrice * item.quantity;
         const itemFee = Math.round((itemTotal * 0.05) * 100) / 100;
         const totalWithFee = Math.round((itemTotal + itemFee) * 100) / 100;
@@ -93,7 +96,8 @@ const Cart = () => {
           items: items.map(item => ({
             id: item.id,
             title: item.title,
-            price: Math.round((item.price / rate) * 100) / 100, // Pass unit price in selected currency
+            price: Math.round((item.price * rate) * 100) / 100, // Pass unit price in selected currency
+            price_brl: item.price,
             quantity: item.quantity,
             date: item.date,
             period: item.period

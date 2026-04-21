@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { HelmetProvider } from "react-helmet-async";
 import { FloatingButtons } from "./components/FloatingButtons";
@@ -59,8 +60,9 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <AuthProvider>
-          <LocaleProvider>
-            <CartProvider>
+          <CurrencyProvider>
+            <LocaleProvider>
+              <CartProvider>
               <HelmetProvider>
                 <TooltipProvider>
                   <Toaster />
@@ -110,8 +112,9 @@ const App = () => {
               </HelmetProvider>
             </CartProvider>
           </LocaleProvider>
-        </AuthProvider>
-      </ErrorBoundary>
+        </CurrencyProvider>
+      </AuthProvider>
+    </ErrorBoundary>
 
     </QueryClientProvider>
   );

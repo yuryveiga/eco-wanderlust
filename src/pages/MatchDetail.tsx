@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useLocale, rates } from "@/contexts/LocaleContext";
+import { useLocale } from "@/contexts/LocaleContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -31,6 +32,7 @@ export default function MatchDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { language, t, formatPrice, currency } = useLocale();
+  const { rates } = useCurrency();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
@@ -85,7 +87,8 @@ export default function MatchDetail() {
     setIsProcessing(true);
     const currentCurrency = currency.toLowerCase();
     const rate = rates[currency] || 1;
-    const unitPrice = Math.round((match.price / rate) * 100) / 100;
+    // Agora rate é multiplicador (ex: 0.20 para USD)
+    const unitPrice = Math.round((match.price * rate) * 100) / 100;
     const itemTotal = unitPrice * quantity;
     const itemFee = Math.round((itemTotal * 0.05) * 100) / 100;
     const totalWithFee = Math.round((itemTotal + itemFee) * 100) / 100;
@@ -123,6 +126,7 @@ export default function MatchDetail() {
             items: [{
               title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
               price: unitPrice,
+              price_brl: match.price,
               quantity: quantity,
               date: format(new Date(match.match_date), "yyyy-MM-dd"),
               period: "match_time"

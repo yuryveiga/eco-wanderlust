@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useCurrency } from './CurrencyContext';
 
 type Language = 'pt' | 'en' | 'es';
 type Currency = 'BRL' | 'USD' | 'EUR';
@@ -654,12 +655,6 @@ const translations = {
   }
 };
 
-// Câmbio aproximado para os cálculos locais baseados em Real (BRL)
-export const rates = {
-  BRL: 1,
-  USD: 5.65,
-  EUR: 6.10,
-};
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
@@ -667,13 +662,20 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>('en');
   const [currency, setCurrency] = useState<Currency>('USD');
 
+  const { rates } = useCurrency();
+
   const t = (key: string) => {
     return translations[language][key as keyof typeof translations.pt] || key;
   };
 
   const formatPrice = (priceBrl: number) => {
     if (!priceBrl) return "";
-    const converted = priceBrl / rates[currency];
+    
+    // Agora rates são multiplicadores (ex: 0.20 para USD se 1 USD = 5 BRL)
+    // No LocaleContext antigo era priceBrl / rates[currency]
+    // Para manter compatibilidade com a nova API que retorna multiplicadores:
+    const converted = priceBrl * (rates[currency] || 1);
+    
     return new Intl.NumberFormat(language === 'en' ? 'en-US' : language === 'es' ? 'es-ES' : 'pt-BR', {
       style: 'currency',
       currency: currency,
