@@ -114,13 +114,22 @@ const BlogPost = () => {
         
         .blog-content-area ul, 
         .blog-content-area ol {
-          margin-bottom: 0.8rem !important;
-          margin-top: 0.3rem !important;
-          padding-left: 1.2rem !important;
+          margin-bottom: 1.5rem !important;
+          margin-top: 0.5rem !important;
+          padding-left: 2rem !important;
+          display: block !important;
+        }
+        .blog-content-area ul {
+          list-style-type: disc !important;
+        }
+        .blog-content-area ol {
+          list-style-type: decimal !important;
         }
         .blog-content-area li {
-          margin-bottom: 0.2rem !important;
-          line-height: 1.4 !important;
+          margin-bottom: 0.5rem !important;
+          line-height: 1.6 !important;
+          display: list-item !important;
+          list-style: inherit !important;
         }
         .blog-content-area img {
           border-radius: 0.5rem;
