@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { translateText } from "@/utils/translate";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, peopleServed: 0, totalReservations: 0, futureReservations: 0, totalRevenue: 0, futureRevenue: 0 });
@@ -18,6 +19,7 @@ const AdminDashboard = () => {
   const [isSavingGeneral, setIsSavingGeneral] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const { toast } = useToast();
+  const { rates } = useCurrency();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,6 +112,8 @@ const AdminDashboard = () => {
     { label: "Reservas Futuras", value: counts.futureReservations.toString(), icon: CalendarClock, color: "bg-destructive/10 text-destructive" },
     { label: "Total Faturado", value: formatCurrency(counts.totalRevenue), icon: DollarSign, color: "bg-green-100 text-green-600" },
     { label: "A Faturar", value: formatCurrency(counts.futureRevenue), icon: DollarSign, color: "bg-green-500/10 text-green-600" },
+    { label: "Dólar Hoje", value: `R$ ${(1 / (rates.USD || 0.18)).toFixed(2)}`, icon: Globe, color: "bg-blue-100 text-blue-600" },
+    { label: "Euro Hoje", value: `R$ ${(1 / (rates.EUR || 0.16)).toFixed(2)}`, icon: Globe, color: "bg-indigo-100 text-indigo-600" },
   ];
 
   return (
