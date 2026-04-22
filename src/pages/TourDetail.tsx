@@ -354,7 +354,7 @@ export function TourDetail() {
 
       {/* Breadcrumbs & Title Section */}
       <section className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">
+        <nav aria-label={t("breadcrumbs") || "Navegação secundária"} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">
           <Link to="/" className="hover:text-primary transition-colors">{t("inicio")}</Link>
           <span className="opacity-30">/</span>
           <Link to="/#tours" className="hover:text-primary transition-colors">{t("passeios")}</Link>
@@ -682,37 +682,47 @@ export function TourDetail() {
               <div className="sticky top-28 space-y-6">
                  <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
-                   
                     <div className="space-y-4">
-                     <div className="space-y-2">
+                      <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("quantas_pessoas")}</label>
+                          <Label htmlFor="quantity-input" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest cursor-pointer">{t("quantas_pessoas")}</Label>
                           {tour.pricing_model !== 'group' && (
                             <span className="text-[10px] font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
                           )}
                         </div>
                         <div className="flex items-center justify-between p-1.5 bg-muted/30 rounded-xl border border-primary/5">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => Math.max(1, q-1))}><Minus className="w-3 h-3" /></Button>
-                          <span className="font-black text-lg">{quantity}</span>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8" 
+                            onClick={() => setQuantity(q => Math.max(1, q-1))}
+                            aria-label={language === 'pt' ? "Diminuir quantidade" : "Decrease quantity"}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </Button>
+                          <span id="quantity-input" className="font-black text-lg" aria-live="polite">{quantity}</span>
                           <Button 
                             variant="ghost" 
                             size="icon" 
                             className={`h-8 w-8 ${quantity >= (tour.max_group_size || 10) ? 'opacity-20' : ''}`}
                             onClick={() => setQuantity(q => Math.min(tour.max_group_size || 10, q+1))}
                             disabled={quantity >= (tour.max_group_size || 10)}
+                            aria-label={language === 'pt' ? "Aumentar quantidade" : "Increase quantity"}
                           >
                             <Plus className="w-3 h-3" />
                           </Button>
                         </div>
-                     </div>
+                      </div>
 
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("data_viagem")}</label>
+                      <div className="space-y-2">
+                        <Label htmlFor="date-trigger" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest cursor-pointer">{t("data_viagem")}</Label>
                          <Popover>
                            <PopoverTrigger asChild>
                              <Button
+                               id="date-trigger"
                                variant="outline"
                                className={`w-full h-11 rounded-xl border bg-background font-bold text-xs justify-start gap-2 px-3 shadow-none hover:bg-muted/30 transition-colors ${!selectedDate && "text-muted-foreground"}`}
+                               aria-label={selectedDate ? `${t("data_viagem")}: ${format(parseISO(selectedDate), "dd/MM/yy")}` : t("selecione_data")}
                              >
                                <CalendarIcon className="w-4 h-4 text-primary" />
                                {selectedDate ? format(parseISO(selectedDate), "dd/MM/yy", { locale: language === 'pt' ? ptBR : language === 'es' ? es : enUS }) : t("selecione_data")}

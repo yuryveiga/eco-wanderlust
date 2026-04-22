@@ -218,10 +218,14 @@ export function ToursSection() {
           {toursSubtitle && <p className="text-muted-foreground text-lg max-w-xl mx-auto font-sans">{toursSubtitle}</p>}
         </div>
         
-        <div className="flex justify-center gap-3 mb-12">
+        <div role="tablist" className="flex justify-center gap-3 mb-12">
           {categories.map((cat, idx) => (
             <Button
               key={cat.value}
+              role="tab"
+              aria-selected={activeTab === idx}
+              aria-controls={`panel-${idx}`}
+              id={`tab-${idx}`}
               size="lg"
               variant={activeTab === idx ? 'default' : 'outline'}
               onClick={() => handleTabChange(idx)}
@@ -232,7 +236,12 @@ export function ToursSection() {
           ))}
         </div>
         
-        <div className={`transition-all duration-500 ease-in-out ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <div 
+          id={`panel-${activeTab}`}
+          role="tabpanel"
+          aria-labelledby={`tab-${activeTab}`}
+          className={`transition-all duration-500 ease-in-out ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}
+        >
           {isLoading ? (
             <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
               {[1, 2, 3].map((i) => <div key={i} className="h-80 bg-muted rounded-2xl animate-pulse" />)}

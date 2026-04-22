@@ -80,6 +80,7 @@ export function GallerySection() {
                 <button
                   onClick={() => openLightbox(index)}
                   className="relative w-full aspect-square overflow-hidden rounded-md group bg-card border-0 shadow-sm"
+                  aria-label={`${t("ver_foto")} ${index + 1}`}
                 >
                   <OptimizedImage
                     src={img.url}
@@ -119,6 +120,7 @@ export function GallerySection() {
             <button
               onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
               className="absolute top-4 right-4 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+              aria-label={t("fechar") || "Fechar"}
             >
               <X className="w-6 h-6 text-white" />
             </button>
@@ -126,6 +128,7 @@ export function GallerySection() {
             <button
               onClick={(e) => { e.stopPropagation(); prevImage(); }}
               className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+              aria-label={t("anterior") || "Anterior"}
             >
               <ChevronLeft className="w-6 h-6 text-white" />
             </button>
@@ -133,6 +136,7 @@ export function GallerySection() {
             <button
               onClick={(e) => { e.stopPropagation(); nextImage(); }}
               className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors pointer-events-auto border border-white/10"
+              aria-label={t("proximo") || "Próximo"}
             >
               <ChevronRight className="w-6 h-6 text-white" />
             </button>
