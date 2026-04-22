@@ -12,14 +12,14 @@ export function getOptimizedImage(
 ): string {
   if (!url) return "";
 
-  // Construct dimension parameters if provided
-  const widthParam = width ? `&w=${width}` : "";
-  const heightParam = height ? `&h=${height}` : "";
-  const sbWidthParam = width ? `&width=${width}` : "";
-  const sbHeightParam = height ? `&height=${height}` : "";
-
-  // Check if we are generating a tiny placeholder (LQIP)
+  // Enable resizing ONLY for tiny placeholders (like the 20px blur prev)
+  // to avoid downloading full images for the blur step.
+  // Main images will bypass the width parameter as requested.
   const isPlaceholder = width <= 50;
+  const widthParam = isPlaceholder ? `&w=${width}` : "";
+  const heightParam = height ? `&h=${height}` : "";
+  const sbWidthParam = isPlaceholder ? `&width=${width}` : "";
+  const sbHeightParam = height ? `&height=${height}` : "";
 
   // Unsplash Optimization
   if (url.includes("images.unsplash.com")) {
