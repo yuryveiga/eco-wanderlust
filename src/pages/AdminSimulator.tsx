@@ -62,17 +62,8 @@ const AdminSimulator = () => {
 
       if (updateError) throw updateError;
 
-      // 3. Trigger manual do fluxo de agenda
-      toast({ title: "Passo 3/3", description: "Enviando reserva para o Google Agenda..." });
-      
-      const { data: syncResult, error: syncError } = await supabase.functions.invoke("sync-calendar", {
-        body: { saleId: newSale.id }
-      });
-
-      if (syncError || syncResult?.error) throw new Error(syncError?.message || syncResult?.error);
-      
-      // 4. Enviar e-mails de alerta (Simulando o que o Webhook faria)
-      toast({ title: "Passo 4/4", description: "Enviando e-mails de notificação..." });
+      // 3 & 4. Executar integrações em paralelo para maior performance
+      toast({ title: "Processando...", description: "Sincronizando agenda e enviando e-mails..." });
       
       const emailPayload = {
         customerName,
@@ -89,23 +80,31 @@ const AdminSimulator = () => {
         }]
       };
 
-      // Alerta para o Admin (Enviando para os admins reais e também para o e-mail do teste)
-      const { error: adminEmailError } = await supabase.functions.invoke("send-alert-email", {
-        body: { ...emailPayload, to: `tocorimeriotours@gmail.com, veiga.yury@gmail.com, ${customerEmail}`, isCustomerCopy: false }
-      });
+      const [syncResponse, adminEmailResponse, customerEmailResponse] = await Promise.all([
+        // Step 3: Google Agenda
+        supabase.functions.invoke("sync-calendar", { body: { saleId: newSale.id } }),
+        
+        // Step 4: Admin Email
+        supabase.functions.invoke("send-alert-email", {
+          body: { ...emailPayload, to: `tocorimeriotours@gmail.com, veiga.yury@gmail.com, ${customerEmail}`, isCustomerCopy: false }
+        }),
+        
+        // Step 4: Customer Email
+        supabase.functions.invoke("send-alert-email", {
+          body: { ...emailPayload, to: customerEmail, isCustomerCopy: true, replyTo: "tocorimeriotours@gmail.com" }
+        })
+      ]);
+
+      if (syncResponse.error || syncResponse.data?.error) {
+        console.error("Erro no calendário:", syncResponse.error || syncResponse.data?.error);
+      }
       
-      if (adminEmailError) console.error("Erro no e-mail do admin:", adminEmailError);
-
-      // Confirmação para o Cliente (Com replyTo configurado)
-      const { error: customerEmailError } = await supabase.functions.invoke("send-alert-email", {
-        body: { ...emailPayload, to: customerEmail, isCustomerCopy: true, replyTo: "tocorimeriotours@gmail.com" }
-      });
-
-      if (customerEmailError) console.error("Erro no e-mail do cliente:", customerEmailError);
+      if (adminEmailResponse.error) console.error("Erro no e-mail do admin:", adminEmailResponse.error);
+      if (customerEmailResponse.error) console.error("Erro no e-mail do cliente:", customerEmailResponse.error);
 
       toast({ 
         title: "Sucesso!", 
-        description: `Reserva para ${bookingDate} criada, agenda sincronizada e e-mails enviados!`, 
+        description: `Reserva para ${bookingDate} concluída com sucesso!`, 
       });
 
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { fetchLovable, LovableTour, LovablePage, LovableSiteImage, LovableSocialMedia, LovableSiteSetting } from "@/integrations/lovable/client";
 
 const fallbackTours: LovableTour[] = [
@@ -86,18 +87,19 @@ export function useSiteData() {
   const socialQuery = useSocialMedia();
   const settingsQuery = useSiteSettings();
 
-  const isLoading = toursQuery.isLoading || pagesQuery.isLoading || imagesQuery.isLoading || socialQuery.isLoading || settingsQuery.isLoading;
+  // isLoading is true ONLY during the very first fetch of ANY critical resource
+  const isLoading = toursQuery.isPending || pagesQuery.isPending || imagesQuery.isPending || socialQuery.isPending || settingsQuery.isPending;
 
   // Handle cached settings fallback
-  const cachedSettings = (() => {
+  const cachedSettings = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem('site_settings') || '{}');
     } catch {
       return {};
     }
-  })();
+  }, []);
 
-  return {
+  return useMemo(() => ({
     tours: toursQuery.data || fallbackTours,
     pages: pagesQuery.data || [],
     images: imagesQuery.data?.imagesMap || {},
@@ -105,5 +107,17 @@ export function useSiteData() {
     socialMedia: socialQuery.data || [],
     siteSettings: settingsQuery.data || cachedSettings,
     isLoading,
-  };
+    isError: toursQuery.isError || pagesQuery.isError || imagesQuery.isError,
+  }), [
+    toursQuery.data, 
+    pagesQuery.data, 
+    imagesQuery.data, 
+    socialQuery.data, 
+    settingsQuery.data, 
+    isLoading, 
+    cachedSettings,
+    toursQuery.isError,
+    pagesQuery.isError,
+    imagesQuery.isError
+  ]);
 }
