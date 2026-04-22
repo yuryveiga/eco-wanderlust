@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { t } = useLocale();
+  const { t, language } = useLocale();
   const { socialMedia, tours } = useSiteData();
 
   const emailSocial = socialMedia.find(s => s.platform.toLowerCase() === 'email');
