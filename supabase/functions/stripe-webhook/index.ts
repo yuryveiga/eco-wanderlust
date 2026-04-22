@@ -183,6 +183,33 @@ async function createGoogleCalendarEvent(sale: Record<string, any>) {
   }
 }
 
+// ---- External Webhook Alert ----
+
+async function sendExternalWebhook(sale: Record<string, any>) {
+  const WEBHOOK_URL = Deno.env.get("EXTERNAL_WEBHOOK_URL");
+  if (!WEBHOOK_URL) return;
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "sale.paid",
+        timestamp: new Date().toISOString(),
+        data: sale
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`External webhook failed: ${await response.text()}`);
+    } else {
+      console.log(`External webhook sent successfully for sale: ${sale.id}`);
+    }
+  } catch (error: unknown) {
+    console.error("External webhook error:", error);
+  }
+}
+
 // ---- Stripe Webhook Handler ----
 
 serve(async (req) => {
@@ -244,6 +271,7 @@ serve(async (req) => {
           
           await sendEmailAlert(sale, supabaseUrl); // Admin alert
           await sendEmailAlert(sale, supabaseUrl, true); // Customer confirmation
+          await sendExternalWebhook(sale); // External notification
         }
       }
     }
