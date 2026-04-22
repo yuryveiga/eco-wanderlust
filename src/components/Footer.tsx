@@ -182,6 +182,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:scale-105 transition-transform"
+                aria-label="Ver certificado Cadastur (abre em nova aba)"
               >
                 <img 
                   src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 

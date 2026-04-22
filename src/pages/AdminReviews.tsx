@@ -200,12 +200,12 @@ export default function AdminReviews() {
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Nome do Autor *</Label>
-                <Input value={form.author_name} onChange={e => setForm(f => ({ ...f, author_name: e.target.value }))} placeholder="Maria Silva" />
+                <Label htmlFor="review-author-name">Nome do Autor *</Label>
+                <Input id="review-author-name" value={form.author_name} onChange={e => setForm(f => ({ ...f, author_name: e.target.value }))} placeholder="Maria Silva" />
               </div>
               <div>
-                <Label>Localização</Label>
-                <Input value={form.author_location} onChange={e => setForm(f => ({ ...f, author_location: e.target.value }))} placeholder="São Paulo, Brasil" />
+                <Label htmlFor="review-author-location">Localização</Label>
+                <Input id="review-author-location" value={form.author_location} onChange={e => setForm(f => ({ ...f, author_location: e.target.value }))} placeholder="São Paulo, Brasil" />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -220,21 +220,21 @@ export default function AdminReviews() {
                 </div>
               </div>
               <div>
-                <Label>Nome do Passeio</Label>
-                <Input value={form.tour_name} onChange={e => setForm(f => ({ ...f, tour_name: e.target.value }))} placeholder="City Tour Rio" />
+                <Label htmlFor="review-tour-name">Nome do Passeio</Label>
+                <Input id="review-tour-name" value={form.tour_name} onChange={e => setForm(f => ({ ...f, tour_name: e.target.value }))} placeholder="City Tour Rio" />
               </div>
               <div>
-                <Label>Data</Label>
-                <Input type="date" value={form.review_date} onChange={e => setForm(f => ({ ...f, review_date: e.target.value }))} />
+                <Label htmlFor="review-date">Data</Label>
+                <Input id="review-date" type="date" value={form.review_date} onChange={e => setForm(f => ({ ...f, review_date: e.target.value }))} />
               </div>
             </div>
             <div>
-              <Label>Título (PT) *</Label>
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+              <Label htmlFor="review-title-pt">Título (PT) *</Label>
+              <Input id="review-title-pt" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
             </div>
             <div>
-              <Label>Conteúdo (PT) *</Label>
-              <Textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} rows={3} />
+              <Label htmlFor="review-content-pt">Conteúdo (PT) *</Label>
+              <Textarea id="review-content-pt" value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} rows={3} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -3,6 +3,7 @@ import { Cloud, Sun, CloudRain, Wind, Thermometer, MapPin, Loader2, Calendar, Cl
 import { format, addDays, startOfHour } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
+import { Label } from "@/components/ui/label";
 
 export function WeatherSection() {
   const { t, language } = useLocale();
@@ -100,10 +101,11 @@ export function WeatherSection() {
 
             <div className="flex flex-wrap items-center gap-4 bg-muted/40 p-4 rounded-2xl border border-border/50">
               <div className="flex flex-col gap-1.5">
-                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("data")}</Label>
+                <Label htmlFor="weather-date" className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("data")}</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                   <select 
+                    id="weather-date"
                     className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-background font-sans text-sm font-bold focus:ring-2 focus:ring-primary outline-none appearance-none min-w-[180px]"
                     value={selectedDate.toISOString()}
                     onChange={(e) => setSelectedDate(new Date(e.target.value))}
@@ -118,10 +120,11 @@ export function WeatherSection() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("horario")}</Label>
+                <Label htmlFor="weather-hour" className="text-[10px] font-sans font-bold uppercase text-muted-foreground ml-1">{t("horario")}</Label>
                 <div className="relative">
                   <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                   <select 
+                    id="weather-hour"
                     className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-background font-sans text-sm font-bold focus:ring-2 focus:ring-primary outline-none appearance-none min-w-[120px]"
                     value={selectedHour}
                     onChange={(e) => setSelectedHour(Number(e.target.value))}
@@ -185,8 +188,4 @@ export function WeatherSection() {
       </div>
     </section>
   );
-}
-
-function Label({ children, className }: { children: React.ReactNode, className?: string }) {
-  return <span className={`block ${className}`}>{children}</span>;
 }

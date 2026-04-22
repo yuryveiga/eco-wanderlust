@@ -130,8 +130,9 @@ const AdminSimulator = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold">Passeio Desejado</Label>
+            <Label htmlFor="tour-select" className="text-sm font-semibold">Passeio Desejado</Label>
             <select
+              id="tour-select"
               value={selectedTourId}
               onChange={(e) => setSelectedTourId(e.target.value)}
               className="w-full h-11 rounded-lg border-2 border-muted bg-background px-3 py-2 focus:border-primary transition-colors"
@@ -145,16 +146,18 @@ const AdminSimulator = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Nome do Cliente</Label>
+              <Label htmlFor="customer-name" className="text-sm font-semibold">Nome do Cliente</Label>
               <Input 
+                id="customer-name"
                 className="h-11 border-2 border-muted"
                 value={customerName} 
                 onChange={e => setCustomerName(e.target.value)} 
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Email (Google Agenda)</Label>
+              <Label htmlFor="customer-email" className="text-sm font-semibold">Email (Google Agenda)</Label>
               <Input 
+                id="customer-email"
                 className="h-11 border-2 border-muted"
                 type="email"
                 value={customerEmail} 
@@ -165,8 +168,9 @@ const AdminSimulator = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Data da Reserva</Label>
+              <Label htmlFor="booking-date" className="text-sm font-semibold">Data da Reserva</Label>
               <Input 
+                id="booking-date"
                 type="date" 
                 className="h-11 border-2 border-muted"
                 value={bookingDate} 
@@ -174,8 +178,9 @@ const AdminSimulator = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Período / Turno</Label>
+              <Label htmlFor="period-select" className="text-sm font-semibold">Período / Turno</Label>
               <select
+                id="period-select"
                 value={selectedPeriod}
                 onChange={(e) => setSelectedPeriod(e.target.value)}
                 className="w-full h-11 rounded-lg border-2 border-muted bg-background px-3 py-2 focus:border-primary transition-colors"

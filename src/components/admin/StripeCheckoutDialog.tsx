@@ -139,24 +139,25 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
 
         <div className="space-y-4 pt-2">
           <div className="space-y-2">
-            <Label>Nome do Cliente *</Label>
-            <Input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Nome completo" />
+            <Label htmlFor="checkout-customer-name">Nome do Cliente *</Label>
+            <Input id="checkout-customer-name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Nome completo" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Telefone</Label>
-              <Input value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="(21) 99999-9999" />
+              <Label htmlFor="checkout-customer-phone">Telefone</Label>
+              <Input id="checkout-customer-phone" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="(21) 99999-9999" />
             </div>
             <div className="space-y-2">
-              <Label>Email *</Label>
-              <Input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} placeholder="email@exemplo.com" />
+              <Label htmlFor="checkout-customer-email">Email *</Label>
+              <Input id="checkout-customer-email" type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} placeholder="email@exemplo.com" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Passeio *</Label>
+            <Label htmlFor="checkout-tour-select">Passeio *</Label>
             <select
+              id="checkout-tour-select"
               value={tourId}
               onChange={(e) => handleTourChange(e.target.value)}
               className="w-full h-10 rounded-md border bg-background px-3 py-2"
@@ -170,16 +171,16 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Pessoas *</Label>
-              <Input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+              <Label htmlFor="checkout-quantity">Pessoas *</Label>
+              <Input id="checkout-quantity" type="number" min={1} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
             </div>
             <div className="space-y-2">
-              <Label>Data *</Label>
-              <Input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+              <Label htmlFor="checkout-date">Data *</Label>
+              <Input id="checkout-date" type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label>Valor/pessoa</Label>
-              <Input type="number" min={0} step={0.01} value={pricePerPerson} onChange={(e) => setPricePerPerson(Number(e.target.value))} />
+              <Label htmlFor="checkout-price">Valor/pessoa</Label>
+              <Input id="checkout-price" type="number" min={0} step={0.01} value={pricePerPerson} onChange={(e) => setPricePerPerson(Number(e.target.value))} />
             </div>
           </div>
 
