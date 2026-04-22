@@ -23,7 +23,7 @@ serve(async (req) => {
     }
 
     const subject = `Novo Contato do Site: ${senderName}`;
-    const htmlContent = `
+    const adminHtmlContent = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -65,7 +65,41 @@ serve(async (req) => {
       </html>
     `;
 
-    const response = await fetch("https://api.resend.com/emails", {
+    const customerHtmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; text-align: center; }
+          .header { background: #2A9D8F; color: white; padding: 20px; border-radius: 10px 10px 0 0; }
+          .content { padding: 30px; }
+          .footer { margin-top: 30px; font-size: 12px; color: #999; }
+          .btn { display: inline-block; padding: 12px 24px; background: #2A9D8F; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>Recebemos sua mensagem!</h2>
+          </div>
+          <div class="content">
+            <p>Olá, <strong>${senderName}</strong>,</p>
+            <p>Obrigado por entrar em contato com a <strong>Tocorime Rio</strong>!</p>
+            <p>Recebemos sua mensagem e nossa equipe responderá o mais rápido possível para ajudar você com sua aventura no Rio de Janeiro.</p>
+            <p>Enquanto isso, que tal explorar nossos passeios e experiências incríveis?</p>
+            <a href="https://tocorimerio.lovable.app/#tours" class="btn">Ver Todos os Passeios</a>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Tocorime Rio. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Send to Admin
+    const adminResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${resendApiKey}`,
@@ -76,14 +110,29 @@ serve(async (req) => {
         to: [to],
         reply_to: senderEmail,
         subject: subject,
-        html: htmlContent,
+        html: adminHtmlContent,
       }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error("Resend error:", errorData);
-      throw new Error("Erro ao enviar e-mail via Resend");
+    // Send to Customer (Auto-reply)
+    const customerResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Tocorime Rio <contato@tocorimerio.com>",
+        to: [senderEmail],
+        subject: "Recebemos sua mensagem! - Tocorime Rio",
+        html: customerHtmlContent,
+      }),
+    });
+
+    if (!adminResponse.ok) {
+      const errorData = await adminResponse.text();
+      console.error("Resend Admin error:", errorData);
+      throw new Error("Erro ao enviar e-mail para o administrador");
     }
 
     return new Response(JSON.stringify({ success: true }), {
