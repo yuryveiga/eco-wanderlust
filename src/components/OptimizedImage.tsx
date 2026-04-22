@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getOptimizedImage, getBlurPlaceholder } from "@/utils/imageOptimization";
 import { cn } from "@/lib/utils";
+import { useSiteData } from "@/hooks/useSiteData";
 
 interface OptimizedImageProps {
   src: string;
@@ -16,6 +17,7 @@ interface OptimizedImageProps {
   fit?: "cover" | "contain";
   height?: number;
   onDimensions?: (width: number, height: number) => void;
+  version?: string | number;
 }
 
 export function OptimizedImage({
@@ -32,17 +34,21 @@ export function OptimizedImage({
   fit = "cover",
   height,
   onDimensions,
+  version: propVersion,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
+  const { version: siteVersion } = useSiteData();
+  
+  const version = propVersion || siteVersion;
 
   useEffect(() => {
     if (src) {
-      setBlurSrc(getBlurPlaceholder(src, fit, height));
+      setBlurSrc(getBlurPlaceholder(src, fit, height, version));
       // Reset load state if src changes
       setIsLoaded(false);
     }
-  }, [src, fit, height]);
+  }, [src, fit, height, version]);
 
   return (
     <div className={cn(
@@ -67,15 +73,15 @@ export function OptimizedImage({
       {/* Main Image with modern format support */}
       <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height)} 
+          srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height, version)} 
           type="image/avif" 
         />
         <source 
-          srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height)} 
+          srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height, version)} 
           type="image/webp" 
         />
         <img
-          src={getOptimizedImage(src, width, quality, undefined, fit, height)}
+          src={getOptimizedImage(src, width, quality, undefined, fit, height, version)}
           alt={alt}
           onLoad={(e) => {
             const img = e.currentTarget;

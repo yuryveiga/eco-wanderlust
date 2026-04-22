@@ -46,7 +46,7 @@ export function useSiteImages() {
 
       return { imagesMap, galleryImages };
     },
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -75,7 +75,7 @@ export function useSiteSettings() {
       
       return settingsMap;
     },
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -108,12 +108,15 @@ export function useSiteData() {
     siteSettings: settingsQuery.data || cachedSettings,
     isLoading,
     isError: toursQuery.isError || pagesQuery.isError || imagesQuery.isError,
+    version: imagesQuery.dataUpdatedAt || settingsQuery.dataUpdatedAt || Date.now(),
   }), [
     toursQuery.data, 
     pagesQuery.data, 
     imagesQuery.data, 
+    imagesQuery.dataUpdatedAt,
     socialQuery.data, 
     settingsQuery.data, 
+    settingsQuery.dataUpdatedAt,
     isLoading, 
     cachedSettings,
     toursQuery.isError,
