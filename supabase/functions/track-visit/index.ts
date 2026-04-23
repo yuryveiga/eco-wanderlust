@@ -6,6 +6,56 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const isPrivateIp = (ip: string): boolean => {
+  if (!ip) return true;
+  if (ip === "127.0.0.1" || ip === "::1" || ip === "localhost") return true;
+  if (ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("169.254.")) return true;
+  if (ip.startsWith("172.")) {
+    const second = parseInt(ip.split(".")[1] || "0", 10);
+    if (second >= 16 && second <= 31) return true;
+  }
+  if (ip.startsWith("fc") || ip.startsWith("fd") || ip.startsWith("fe80")) return true;
+  return false;
+};
+
+const extractClientIp = (req: Request): string => {
+  const cf = req.headers.get("cf-connecting-ip");
+  if (cf) return cf.trim();
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  const xreal = req.headers.get("x-real-ip");
+  if (xreal) return xreal.trim();
+  return "";
+};
+
+const resolveCountry = async (req: Request): Promise<string> => {
+  // Try Cloudflare-provided country first (instant, no network call)
+  const cfCountry = req.headers.get("cf-ipcountry");
+  if (cfCountry && cfCountry !== "XX" && cfCountry !== "T1") {
+    return cfCountry;
+  }
+
+  const ip = extractClientIp(req);
+  if (!ip || isPrivateIp(ip)) return "Unknown";
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(`https://ipapi.co/${ip}/country_name/`, {
+      signal: controller.signal,
+      headers: { "User-Agent": "tocorimerio-analytics/1.0" },
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return "Unknown";
+    const text = (await res.text()).trim();
+    if (!text || text.toLowerCase().includes("error") || text.length > 60) return "Unknown";
+    return text;
+  } catch (e) {
+    console.warn("Country lookup failed:", (e as Error).message);
+    return "Unknown";
+  }
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -18,8 +68,7 @@ Deno.serve(async (req) => {
 
     const { page_url, referrer, user_agent, session_id } = await req.json();
 
-    // Get country from header (Supabase/Cloudflare usually provides this)
-    const country = req.headers.get("x-country-code") || "Unknown";
+    const country = await resolveCountry(req);
 
     const { error } = await supabase
       .from("site_visits")
