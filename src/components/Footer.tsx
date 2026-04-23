@@ -149,21 +149,21 @@ export function Footer() {
               ))}
             </div>
 
-            <div className="flex flex-wrap items-center gap-1 mt-4">
+            <div className="flex items-center gap-2 mt-4">
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
                 alt="Viator" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
                 alt="Homefans" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png" 
                 alt="Turismo Responsável" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
             </div>
           </div>
