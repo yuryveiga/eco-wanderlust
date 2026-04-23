@@ -120,23 +120,6 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="flex items-center gap-2 mt-4">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
-                alt="TripAdvisor" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
-                alt="Airbnb" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
-                alt="Google Reviews" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </div>
           </div>
 
           <div className="flex flex-col">
@@ -148,25 +131,40 @@ export function Footer() {
                 </a>
               ))}
             </div>
-
-            <div className="flex items-center gap-2 mt-4">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
-                alt="Viator" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
-                alt="Homefans" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png" 
-                alt="Turismo Responsável" 
-                className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </div>
           </div>
+        </div>
+
+        <div className="mt-8 flex items-center gap-3">
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png"
+            alt="TripAdvisor"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png"
+            alt="Airbnb"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png"
+            alt="Google Reviews"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png"
+            alt="Viator"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png"
+            alt="Homefans"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png"
+            alt="Turismo Responsável"
+            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
         </div>
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
