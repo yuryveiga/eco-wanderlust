@@ -120,21 +120,21 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="flex flex-wrap items-center gap-1 mt-4">
+            <div className="flex flex-col items-stretch gap-2 mt-4">
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
                 alt="TripAdvisor" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
                 alt="Airbnb" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
               <img 
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
                 alt="Google Reviews" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
               />
             </div>
           </div>
