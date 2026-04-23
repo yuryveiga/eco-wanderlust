@@ -120,23 +120,6 @@ export function Footer() {
                 </li>
               )}
             </ul>
-            <div className="flex flex-wrap items-center gap-1 mt-4">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png" 
-                alt="TripAdvisor" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png" 
-                alt="Airbnb" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png" 
-                alt="Google Reviews" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </div>
           </div>
 
           <div className="flex flex-col">
@@ -148,25 +131,25 @@ export function Footer() {
                 </a>
               ))}
             </div>
-
-            <div className="flex flex-wrap items-center gap-1 mt-4">
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png" 
-                alt="Viator" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png" 
-                alt="Homefans" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-              <img 
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png" 
-                alt="Turismo Responsável" 
-                className="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </div>
           </div>
+        </div>
+
+        <div className="mt-10 grid grid-cols-3 sm:grid-cols-6 gap-4 items-center justify-items-center">
+          {[
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png", alt: "TripAdvisor" },
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png", alt: "Airbnb" },
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png", alt: "Google Reviews" },
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png", alt: "Viator" },
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png", alt: "Homefans" },
+            { src: "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png", alt: "Turismo Responsável" },
+          ].map((badge) => (
+            <img
+              key={badge.alt}
+              src={badge.src}
+              alt={badge.alt}
+              className="h-16 w-16 object-contain opacity-90 hover:opacity-100 transition-opacity"
+            />
+          ))}
         </div>
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
