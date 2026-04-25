@@ -383,11 +383,11 @@ const BlogPost = () => {
             </div>
             
             <div className="mt-12 text-center">
-              <Link to="/#tours">
-                <Button size="lg" className="rounded-full px-10 font-bold h-14 text-sm uppercase tracking-widest shadow-xl shadow-primary/20">
-                  {t("ver_todos_passeios") || (language === 'pt' ? 'Ver Todos os Passeios' : 'View All Tours')}
-                </Button>
-              </Link>
+                <Link to="/#tours">
+                  <Button size="lg" className="rounded-full px-10 font-bold h-14 text-sm uppercase tracking-widest shadow-xl shadow-primary/20">
+                    TOURS
+                  </Button>
+                </Link>
             </div>
           </div>
         </section>
