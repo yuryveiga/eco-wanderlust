@@ -79,7 +79,10 @@ const BlogPost = () => {
 
   // Fix line breaks for hyphenated words like "mata-mata" or "bem-sucedidas"
   // We use non-breaking hyphen (&#8209;) for hyphens between letters
-  const content = rawContent?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
+  // And remove soft hyphens (\u00AD) that might cause incorrect syllable splitting
+  const content = rawContent
+    ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3')
+    ?.replace(/\u00AD/g, '');
 
   const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
 
@@ -93,6 +96,8 @@ const BlogPost = () => {
           font-size: 1.05rem !important;
           text-align: left !important;
           hyphens: none !important;
+          -webkit-hyphens: none !important;
+          -ms-hyphens: none !important;
           word-break: normal !important;
           overflow-wrap: break-word !important;
           }
@@ -107,6 +112,8 @@ const BlogPost = () => {
           word-break: normal !important;
           overflow-wrap: break-word !important;
           hyphens: none !important;
+          -webkit-hyphens: none !important;
+          -ms-hyphens: none !important;
         }
         /* Handle spacing for manual line breaks without forcing them to be blocks */
         .blog-content-area br {
