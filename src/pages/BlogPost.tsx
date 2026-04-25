@@ -99,7 +99,7 @@ const BlogPost = () => {
           color: #555555 !important;
           line-height: 1.6 !important;
           font-size: 1.05rem !important;
-          text-align: left !important;
+          text-align: justify !important;
           hyphens: none !important;
           -webkit-hyphens: none !important;
           -ms-hyphens: none !important;
@@ -119,7 +119,7 @@ const BlogPost = () => {
         .blog-content-area p {
           margin-bottom: 1.2rem !important;
           line-height: 1.7 !important;
-          text-align: left !important;
+          text-align: justify !important;
           word-break: normal !important;
           line-break: strict !important;
           overflow-wrap: break-word !important;
@@ -146,6 +146,7 @@ const BlogPost = () => {
           margin-top: 1rem !important;
           margin-bottom: 0.3rem !important;
           line-height: 1.2 !important;
+          text-align: left !important;
         }
         .blog-content-area h1 { font-size: 2rem !important; }
         .blog-content-area h2 { font-size: 1.6rem !important; }
