@@ -154,12 +154,12 @@ const BlogPost = () => {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={getCanonicalUrl(`/blog/${post.slug}`, language)} />
+        <meta property="og:url" content={getCanonicalUrl(`/blog/${post.slug}`)} />
         <meta property="og:title" content={`${title} | ${siteTitle}`} />
         <meta property="og:description" content={excerpt || title} />
         <meta property="og:image" content={post.image_url || fallbackImage} />
 
-        <link rel="canonical" href={getCanonicalUrl(`/blog/${post.slug}`, language)} />
+        <link rel="canonical" href={getCanonicalUrl(`/blog/${post.slug}`)} />
 
         <script type="application/ld+json">
           {JSON.stringify({

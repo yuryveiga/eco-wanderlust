@@ -45,10 +45,10 @@ const Index = () => {
         <meta property="og:title" content={siteTitle} />
         <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={getCanonicalUrl("/", language)} />
+        <meta property="og:url" content={getCanonicalUrl("/")} />
         <meta property="og:site_name" content="Tocorime Rio" />
         <meta property="og:locale" content={language === 'pt' ? 'pt_BR' : language === 'es' ? 'es_ES' : 'en_US'} />
-        <link rel="canonical" href={getCanonicalUrl("/", language)} />
+        <link rel="canonical" href={getCanonicalUrl("/")} />
       </Helmet>
       <Header />
       <HeroSection />

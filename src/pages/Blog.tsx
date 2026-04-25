@@ -48,7 +48,7 @@ const Blog = () => {
       <Helmet>
         <title>Blog - Tocorime Rio | Dicas de Passeios no Rio de Janeiro</title>
         <meta name="description" content="Dicas, roteiros e guias sobre passeios no Rio de Janeiro. Descubra trilhas, praias, gastronomia e experiências únicas com a Tocorime Rio." />
-        <link rel="canonical" href={getCanonicalUrl("/blog", language)} />
+        <link rel="canonical" href={getCanonicalUrl("/blog")} />
       </Helmet>
       <Header />
       

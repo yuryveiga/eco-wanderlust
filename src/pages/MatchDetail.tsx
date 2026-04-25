@@ -184,8 +184,8 @@ export default function MatchDetail() {
       <Helmet>
         <title>{match.home_team} x {match.away_team} | Maracanã Matchday Experience</title>
         <meta name="description" content={`Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`} />
-        <meta property="og:url" content={getCanonicalUrl(`/match/${match.slug || match.id}`, language)} />
-        <link rel="canonical" href={getCanonicalUrl(`/match/${match.slug || match.id}`, language)} />
+        <meta property="og:url" content={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
+        <link rel="canonical" href={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
       </Helmet>
       
       <Header />

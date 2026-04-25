@@ -21,7 +21,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { pages, socialMedia, images, siteSettings } = useSiteData();
-  const { language, setLanguage, currency, setCurrency, t, localizePath } = useLocale();
+  const { language, setLanguage, currency, setCurrency, t } = useLocale();
   const { items } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -124,9 +124,9 @@ export function Header() {
             {allNavLinks.map((link) => (
               <Link 
                 key={link.label} 
-                to={link.href.startsWith("#") ? (location.pathname === localizePath("/") ? link.href : localizePath(link.href)) : localizePath(link.href)}
+                to={link.href}
                 onClick={(e) => {
-                  if (link.href.startsWith("#") && location.pathname === localizePath("/")) {
+                  if (link.href.startsWith("#") && location.pathname === "/") {
                     e.preventDefault();
                     handleNav(link.href);
                   } else {
@@ -290,16 +290,16 @@ export function Header() {
               {allNavLinks.map((link) => (
                 <Link 
                   key={link.label} 
-                  to={link.href.startsWith("#") ? (location.pathname === localizePath("/") ? link.href : localizePath(link.href)) : localizePath(link.href)}
+                  to={link.href}
                   onClick={(e) => {
-                    if (link.href.startsWith("#") && location.pathname === localizePath("/")) {
+                    if (link.href.startsWith("#") && location.pathname === "/") {
                       e.preventDefault();
                       handleNav(link.href);
                     } else {
                       setIsMenuOpen(false);
                     }
                   }} 
-                  className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === localizePath(link.href) ? "text-primary" : "text-foreground"}`}
+                  className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === link.href ? "text-primary" : "text-foreground"}`}
                 >
                   {link.label}
                 </Link>

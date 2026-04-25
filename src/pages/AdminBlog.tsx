@@ -200,6 +200,41 @@ const AdminBlog = () => {
     }
   };
 
+  const translateToPt = async () => {
+    if (!editing) return;
+    if (!editing.title_en && !editing.content_en) {
+      toast({ title: "Atenção", description: "Escreva algo em Inglês primeiro." });
+      return;
+    }
+
+    setIsTranslating(true);
+    toast({ title: "Traduzindo...", description: "Traduzindo de Inglês para Português..." });
+
+    try {
+      const [titlePt, contentPt, excerptPt] = await Promise.all([
+        translateText(editing.title_en || "", "pt", "en"),
+        translateHtml(editing.content_en || "", "pt", "en"),
+        translateText(editing.excerpt_en || "", "pt", "en")
+      ]);
+
+      setEditing(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          title: titlePt,
+          content: contentPt,
+          excerpt: excerptPt
+        } as Partial<LovableBlogPost>;
+      });
+      
+      toast({ title: "Sucesso!", description: "Tradução para Português concluída." });
+    } catch (err) {
+      toast({ title: "Erro na tradução", description: "Tente novamente.", variant: "destructive" });
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
   const quillRef = useRef<any>(null);
 
@@ -423,7 +458,8 @@ const AdminBlog = () => {
 
                         <div className="mt-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
                            <h4 className="font-serif font-bold text-primary text-sm">Tradução Automática</h4>
-                           <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3 mr-2" /> : <Sparkles className="w-3 mr-2" />}Traduzir para EN e ES</Button>
+                           <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3 mr-2" /> : <Sparkles className="w-3 mr-2" />}PT -&gt; EN/ES</Button>
+                           <Button onClick={() => translateToPt()} disabled={isTranslating} variant="outline" size="sm" className="w-full h-9 font-bold bg-white text-xs">{isTranslating ? <Loader2 className="animate-spin w-3 mr-2" /> : <Sparkles className="w-3 mr-2 text-blue-600" />}EN -&gt; PT</Button>
                         </div>
                     </div>
 
@@ -441,7 +477,11 @@ const AdminBlog = () => {
                               <span className="text-[10px] font-bold text-primary px-3 uppercase tracking-wider">Mágica</span>
                               <Button onClick={() => autoTranslate()} disabled={isTranslating} variant="outline" size="sm" className="h-8 font-bold bg-white text-[10px] rounded-lg border-primary/20 hover:bg-primary/10 transition-all">
                                 {isTranslating ? <Loader2 className="animate-spin w-3 h-3 mr-2" /> : <Sparkles className="w-3 h-3 mr-2 text-primary" />}
-                                Traduzir Conteúdo
+                                PT -&gt; EN/ES
+                              </Button>
+                              <Button onClick={() => translateToPt()} disabled={isTranslating} variant="outline" size="sm" className="h-8 font-bold bg-white text-[10px] rounded-lg border-primary/20 hover:bg-primary/10 transition-all">
+                                {isTranslating ? <Loader2 className="animate-spin w-3 h-3 mr-2" /> : <Sparkles className="w-3 h-3 mr-2 text-blue-600" />}
+                                EN -&gt; PT
                               </Button>
                            </div>
                          </div>

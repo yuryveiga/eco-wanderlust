@@ -60,39 +60,31 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <AuthProvider>
-          <CurrencyProvider>
-            <LocaleProvider>
-              <CartProvider>
-              <HelmetProvider>
+          <HelmetProvider>
                 <TooltipProvider>
                   <Toaster />
                   <Sonner />
                   <ThemeApplier />
                   <BrowserRouter>
-                    <CurrencyProvider>
-                      <LocaleProvider>
-                        <AnalyticsTracker />
+                <CurrencyProvider>
+                  <LocaleProvider>
+                    <CartProvider>
+                      <AnalyticsTracker />
                         <Suspense fallback={<PageLoader />}>
                           <FloatingButtons />
                           <Routes>
-                            {/* Redirect root to default language */}
-                            <Route path="/" element={<Navigate to="/en" replace />} />
-
-                            {/* Public routes with language prefix */}
-                            <Route path="/:lang">
-                              <Route index element={<Index />} />
-                              <Route path="blog" element={<Blog />} />
-                              <Route path="blog/:slug" element={<BlogPost />} />
-                              <Route path="carrinho" element={<Cart />} />
-                              <Route path="confirmacao" element={<CheckoutSuccess />} />
-                              <Route path="maracanã-calendário" element={<MaracanaCalendar />} />
-                              <Route path="maracana-calendario" element={<MaracanaCalendar />} />
-                              <Route path="maracanacalendar" element={<MaracanaCalendar />} />
-                              <Route path="passeio/:id" element={<TourDetail />} />
-                              <Route path="match/:id" element={<MatchDetail />} />
-                              <Route path="jogo/:id" element={<MatchDetail />} />
-                              <Route path=":slug" element={<GenericPage />} />
-                            </Route>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/blog" element={<Blog />} />
+                          <Route path="/blog/:slug" element={<BlogPost />} />
+                          <Route path="/carrinho" element={<Cart />} />
+                          <Route path="/confirmacao" element={<CheckoutSuccess />} />
+                          <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
+                          <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
+                          <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
+                          <Route path="/passeio/:id" element={<TourDetail />} />
+                          <Route path="/match/:id" element={<MatchDetail />} />
+                          <Route path="/jogo/:id" element={<MatchDetail />} />
+                          <Route path="/:slug" element={<GenericPage />} />
 
                             {/* Admin routes (no language prefix needed for admin) */}
                             <Route path="/admin/login" element={<AdminLogin />} />
@@ -119,16 +111,15 @@ const App = () => {
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>
-                      </LocaleProvider>
-                    </CurrencyProvider>
-                  </BrowserRouter>
-                </TooltipProvider>
-              </HelmetProvider>
-            </CartProvider>
+                      </CartProvider>
+                    </LocaleProvider>
+                  </CurrencyProvider>
+                </BrowserRouter>
+              </TooltipProvider>
+            </HelmetProvider>
           </AuthProvider>
         </ErrorBoundary>
-
-    </QueryClientProvider>
+      </QueryClientProvider>
   );
 };
 

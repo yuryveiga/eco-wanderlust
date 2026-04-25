@@ -6,10 +6,9 @@ export const BASE_URL = "https://tocorimerio.com";
  * @param lang O idioma atual para incluir na URL (ex: "pt", "en")
  * @returns A URL canônica completa
  */
-export const getCanonicalUrl = (path: string = "", lang: string = "") => {
-  const langPrefix = lang ? `/${lang}` : "";
+export const getCanonicalUrl = (path: string = "") => {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   // Remove trailing slash unless it's just the root
   const finalPath = cleanPath === "/" ? "" : cleanPath.replace(/\/$/, "");
-  return `${BASE_URL}${langPrefix}${finalPath}`;
+  return `${BASE_URL}${finalPath}`;
 };

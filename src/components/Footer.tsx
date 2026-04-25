@@ -11,7 +11,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function Footer() {
   const { pages, socialMedia, images, siteSettings } = useSiteData();
-  const { t, language, localizePath } = useLocale();
+  const { t, language } = useLocale();
 
   const aboutDescKey = language === 'pt' ? 'about_desc' : `about_desc_${language}`;
   const footerDesc = siteSettings[aboutDescKey] || siteSettings['about_desc'] || t("footer_desc");
@@ -90,9 +90,9 @@ export function Footer() {
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link 
-                    to={localizePath(link.href)}
+                    to={link.href}
                     onClick={(e) => {
-                      if (link.href.startsWith("#") && window.location.pathname === localizePath("/")) {
+                      if (link.href.startsWith("#") && window.location.pathname === "/") {
                         e.preventDefault();
                         scrollTo(link.href);
                       }

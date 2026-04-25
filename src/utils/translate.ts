@@ -1,6 +1,6 @@
 import { protect, restore } from "./translationProtector";
 
-export async function translateText(text: string, targetLang: 'en' | 'es', sourceLang: string = 'pt'): Promise<string> {
+export async function translateText(text: string, targetLang: 'en' | 'es' | 'pt', sourceLang: string = 'pt'): Promise<string> {
   if (!text || text.trim() === "") return "";
   
   try {
@@ -46,7 +46,7 @@ export async function translateText(text: string, targetLang: 'en' | 'es', sourc
 /**
  * Helper to translate HTML content (experimental - tries to preserve tags)
  */
-export async function translateHtml(html: string, targetLang: 'en' | 'es'): Promise<string> {
+export async function translateHtml(html: string, targetLang: 'en' | 'es' | 'pt', sourceLang: string = 'pt'): Promise<string> {
   if (!html || html.trim() === "") return "";
 
   const parser = new DOMParser();
@@ -54,7 +54,7 @@ export async function translateHtml(html: string, targetLang: 'en' | 'es'): Prom
   
   async function translateNode(node: Node) {
     if (node.nodeType === Node.TEXT_NODE && node.textContent && node.textContent.trim() !== "") {
-      const translated = await translateText(node.textContent, targetLang);
+      const translated = await translateText(node.textContent, targetLang, sourceLang);
       node.textContent = translated;
     } else {
       const children = Array.from(node.childNodes);
