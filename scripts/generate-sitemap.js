@@ -44,7 +44,7 @@ async function generateSitemap() {
     }
 
     const staticPages = [
-      { url: '', priority: 1.0, changefreq: 'daily' },
+      { url: '/', priority: 1.0, changefreq: 'daily' },
       { url: '/blog', priority: 0.9, changefreq: 'weekly' },
       { url: '/sobre', priority: 0.7, changefreq: 'monthly' },
       { url: '/contato', priority: 0.7, changefreq: 'monthly' },

@@ -134,9 +134,7 @@ export default function MatchDetail() {
             }],
             sale_ids: [saleData.id],
             customer: customerInfo,
-            currency: currentCurrency,
-            success_url: `${window.location.origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify([saleData.id]))}`,
-            cancel_url: `${window.location.origin}/match/${match.id}?canceled=true`
+            currency: currentCurrency
           }),
         }
       );
