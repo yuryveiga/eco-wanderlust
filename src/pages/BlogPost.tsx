@@ -3,8 +3,9 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { fetchLovable, LovableBlogPost } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Calendar, ArrowLeft } from "lucide-react";
+import { Calendar, ArrowLeft, Facebook, MessageCircle, Link2 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Helmet } from "react-helmet-async";
@@ -39,6 +40,20 @@ const BlogPost = () => {
     };
     loadPost();
   }, [slug]);
+
+  const shareOnWhatsApp = () => {
+    const text = encodeURIComponent(`${title}\n\n${window.location.href}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success(language === 'pt' ? 'Link copiado!' : language === 'es' ? '¡Enlace copiado!' : 'Link copied!');
+  };
 
   const getTranslated = (field: keyof LovableBlogPost) => {
     if (!post) return "";
@@ -76,7 +91,7 @@ const BlogPost = () => {
           hyphens: none !important;
           word-break: normal !important;
           overflow-wrap: break-word !important;
-        }
+          }
         .blog-content-area * {
           margin-top: 0 !important;
           margin-inline: 0 !important;
@@ -256,23 +271,63 @@ const BlogPost = () => {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full -ml-12 -mb-12 transition-transform group-hover:scale-150 duration-700" />
                   
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4 relative z-10">
-                    {language === 'pt' ? 'Gostou dessa dica?' : 
-                     language === 'es' ? '¿Te gustó este consejo?' : 
-                     'Did you like this tip?'}
-                  </h3>
-                  <p className="text-muted-foreground text-lg mb-8 font-sans max-w-2xl mx-auto relative z-10">
-                    {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
-                     language === 'es' ? 'Vive la emoción de descubrir Río de Janeiro con nuestros guías expertos y exclusivos.' : 
-                     'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
-                  </p>
-                  <Link to="/#tours" className="relative z-10 inline-block">
-                    <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
-                      {language === 'pt' ? 'Reservar Agora' : 
-                       language === 'es' ? 'Reservar Ahora' : 
-                       'Book Now'}
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div className="text-left flex-1">
+                      <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4">
+                        {language === 'pt' ? 'Gostou dessa dica?' : 
+                         language === 'es' ? '¿Te gustó este consejo?' : 
+                         'Did you like this tip?'}
+                      </h3>
+                      <p className="text-muted-foreground text-lg mb-0 font-sans max-w-xl">
+                        {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
+                         language === 'es' ? 'Vive la emoción de descubrir Río de Janeiro con nuestros guías expertos y exclusivos.' : 
+                         'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4 shrink-0">
+                      <Link to="/#tours">
+                        <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
+                          {language === 'pt' ? 'Reservar Agora' : 
+                           language === 'es' ? 'Reservar Ahora' : 
+                           'Book Now'}
+                        </Button>
+                      </Link>
+
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mr-2 opacity-60">
+                          {language === 'pt' ? 'Compartilhar:' : language === 'es' ? 'Compartir:' : 'Share:'}
+                        </span>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full w-10 h-10 border-green-500/20 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                          onClick={shareOnWhatsApp}
+                          title="WhatsApp"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full w-10 h-10 border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                          onClick={shareOnFacebook}
+                          title="Facebook"
+                        >
+                          <Facebook className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full w-10 h-10 border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm"
+                          onClick={copyToClipboard}
+                          title={language === 'pt' ? 'Copiar Link' : 'Copy Link'}
+                        >
+                          <Link2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -316,23 +371,63 @@ const BlogPost = () => {
               <div className="mt-16 p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 text-center animate-fade-in shadow-inner relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
                 
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4 relative z-10">
-                  {language === 'pt' ? 'Gostou dessa dica?' : 
-                   language === 'es' ? '¿Te gustó este consejo?' : 
-                   'Did you like this tip?'}
-                </h3>
-                <p className="text-muted-foreground text-lg mb-8 font-sans max-w-2xl mx-auto relative z-10">
-                  {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
-                   language === 'es' ? 'Vive la emoción de descubrir Río de Janeiro con nuestros guías expertos y exclusivos.' : 
-                   'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
-                </p>
-                <Link to="/#tours" className="relative z-10 inline-block">
-                  <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
-                    {language === 'pt' ? 'Reservar Agora' : 
-                     language === 'es' ? 'Reservar Ahora' : 
-                     'Book Now'}
-                  </Button>
-                </Link>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                  <div className="text-left flex-1">
+                    <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4">
+                      {language === 'pt' ? 'Gostou dessa dica?' : 
+                       language === 'es' ? '¿Te gustó este consejo?' : 
+                       'Did you like this tip?'}
+                    </h3>
+                    <p className="text-muted-foreground text-lg mb-0 font-sans max-w-xl">
+                      {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
+                       language === 'es' ? 'Vive la emoción de descobrir Río de Janeiro con nossos guías expertos e exclusivos.' : 
+                       'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-4 shrink-0">
+                    <Link to="/#tours">
+                      <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
+                        {language === 'pt' ? 'Reservar Agora' : 
+                         language === 'es' ? 'Reservar Ahora' : 
+                         'Book Now'}
+                      </Button>
+                    </Link>
+
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mr-2 opacity-60">
+                        {language === 'pt' ? 'Compartilhar:' : language === 'es' ? 'Compartir:' : 'Share:'}
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full w-10 h-10 border-green-500/20 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                        onClick={shareOnWhatsApp}
+                        title="WhatsApp"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full w-10 h-10 border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                        onClick={shareOnFacebook}
+                        title="Facebook"
+                      >
+                        <Facebook className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full w-10 h-10 border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm"
+                        onClick={copyToClipboard}
+                        title={language === 'pt' ? 'Copiar Link' : 'Copy Link'}
+                      >
+                        <Link2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -343,7 +438,7 @@ const BlogPost = () => {
             <div className="text-center mb-12">
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 {language === 'pt' ? 'Que tal viver essa experiência no Rio de Janeiro?' : 
-                 language === 'es' ? '¿Qué tal vivir esta experiencia en Río?' : 
+                 language === 'es' ? '¿Qué tal viver esta experiência en Río?' : 
                  'How about living this experience in Rio?'}
               </h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
