@@ -80,7 +80,7 @@ export function TourDetail() {
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
-  const { t, language, formatPrice } = useLocale();
+  const { t, language, formatPrice, localizePath } = useLocale();
   const { addToCart } = useCart();
   const [selectedPeriod, setSelectedPeriod] = useState('morning');
   const [selectedDate, setSelectedDate] = useState("");
@@ -310,12 +310,12 @@ export function TourDetail() {
     });
 
     toast.success(t("passeio_adicionado"));
-    navigate("/carrinho");
+    navigate(localizePath("/carrinho"));
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
 
-  if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to="/"><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
+  if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to={localizePath("/")}><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
 
   const highlights = (translatedHighlights as any[]) || [];
   const faqItems = (translatedFaq as any[]) || [];
@@ -355,9 +355,9 @@ export function TourDetail() {
       {/* Breadcrumbs & Title Section */}
       <section className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav aria-label={t("breadcrumbs") || "Navegação secundária"} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary transition-colors">{t("inicio")}</Link>
+          <Link to={localizePath("/")} className="hover:text-primary transition-colors">{t("inicio")}</Link>
           <span className="opacity-30">/</span>
-          <Link to="/#tours" className="hover:text-primary transition-colors">{t("passeios")}</Link>
+          <Link to={localizePath("/#tours")} className="hover:text-primary transition-colors">{t("passeios")}</Link>
           <span className="opacity-30">/</span>
           <span className="text-foreground">{translatedTitle}</span>
         </nav>
