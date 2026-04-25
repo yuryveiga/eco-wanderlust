@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, X, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, X, Star, Shield, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart, Facebook, MessageCircle, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
@@ -312,6 +312,20 @@ export function TourDetail() {
 
     toast.success(t("passeio_adicionado"));
     navigate("/carrinho");
+  };
+
+  const shareOnWhatsApp = () => {
+    const text = encodeURIComponent(`${translatedTitle} - ${translatedShortDesc}\n\n${window.location.href}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success(language === 'pt' ? 'Link copiado!' : language === 'es' ? '¡Enlace copiado!' : 'Link copied!');
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
@@ -682,6 +696,42 @@ export function TourDetail() {
             {/* Booking Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-28 space-y-6">
+                {/* Share Buttons */}
+                <div className="bg-card rounded-[2rem] border border-border/50 p-6 shadow-sm">
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-4 block opacity-70">
+                    {language === 'pt' ? 'Compartilhar Passeio' : language === 'es' ? 'Compartir Tour' : 'Share Tour'}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-11 h-11 border-green-500/20 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                      onClick={shareOnWhatsApp}
+                      title="WhatsApp"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-11 h-11 border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                      onClick={shareOnFacebook}
+                      title="Facebook"
+                    >
+                      <Facebook className="w-5 h-5" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-11 h-11 border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm"
+                      onClick={copyToClipboard}
+                      title={language === 'pt' ? 'Copiar Link' : 'Copy Link'}
+                    >
+                      <Link2 className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </div>
+
                  <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                     <div className="space-y-4">
