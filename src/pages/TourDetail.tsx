@@ -500,10 +500,45 @@ export function TourDetail() {
              </div>
 
              <div className="space-y-8 prose prose-slate max-w-none">
-                <h2 className="text-4xl font-serif font-black flex items-center gap-4 text-foreground">
-                  <div className="w-2 h-10 bg-primary rounded-full" />
-                  {t("sobre_o_passeio")}
-                </h2>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                  <h2 className="text-4xl font-serif font-black flex items-center gap-4 text-foreground">
+                    <div className="w-2 h-10 bg-primary rounded-full" />
+                    {t("sobre_o_passeio")}
+                  </h2>
+                  
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60 mr-1">
+                      {language === 'pt' ? 'Compartilhar:' : language === 'es' ? 'Compartir:' : 'Share:'}
+                    </span>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-10 h-10 border-green-500/20 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                      onClick={shareOnWhatsApp}
+                      title="WhatsApp"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-10 h-10 border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                      onClick={shareOnFacebook}
+                      title="Facebook"
+                    >
+                      <Facebook className="w-5 h-5" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full w-10 h-10 border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm"
+                      onClick={copyToClipboard}
+                      title={language === 'pt' ? 'Copiar Link' : 'Copy Link'}
+                    >
+                      <Link2 className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </div>
                 <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1 whitespace-pre-wrap">{translatedShortDesc}</p>
               </div>
 
@@ -697,41 +732,6 @@ export function TourDetail() {
             <div className="lg:col-span-1">
               <div className="sticky top-28 space-y-6">
                 {/* Share Buttons */}
-                <div className="bg-card rounded-[2rem] border border-border/50 p-6 shadow-sm">
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-4 block opacity-70">
-                    {language === 'pt' ? 'Compartilhar Passeio' : language === 'es' ? 'Compartir Tour' : 'Share Tour'}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="rounded-full w-11 h-11 border-green-500/20 hover:bg-green-500 hover:text-white transition-all shadow-sm"
-                      onClick={shareOnWhatsApp}
-                      title="WhatsApp"
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="rounded-full w-11 h-11 border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                      onClick={shareOnFacebook}
-                      title="Facebook"
-                    >
-                      <Facebook className="w-5 h-5" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="rounded-full w-11 h-11 border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm"
-                      onClick={copyToClipboard}
-                      title={language === 'pt' ? 'Copiar Link' : 'Copy Link'}
-                    >
-                      <Link2 className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-
                  <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                     <div className="space-y-4">
