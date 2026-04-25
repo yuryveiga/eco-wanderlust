@@ -108,7 +108,7 @@ export function Footer() {
 
           <div className="flex flex-col">
             <h3 className="font-semibold text-lg mb-4 font-sans">{t("contato")}</h3>
-            <ul className="space-y-3 font-sans mb-8">
+            <ul className="space-y-3 font-sans mb-6">
               {contactEmail && (
                 <li className="flex items-center gap-2 text-[hsl(140,10%,96%)]/80 text-sm">
                   <Mail className="w-4 h-4 text-[hsl(145,40%,40%)]" />
@@ -130,51 +130,54 @@ export function Footer() {
                 </li>
               )}
             </ul>
+            
+            <div className="flex items-center gap-2 mt-auto">
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png"
+                alt="TripAdvisor"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png"
+                alt="Airbnb"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png"
+                alt="Google Reviews"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col">
             <h3 className="font-semibold text-lg mb-4 font-sans">{t("siga_nos")}</h3>
-            <div className="flex items-center gap-4 mb-8">
+            <div className="flex items-center gap-4 mb-6">
               {activeSocials.map((s) => (
                 <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[hsl(145,20%,20%)] flex items-center justify-center hover:bg-[hsl(145,40%,40%)] transition-colors" aria-label={s.platform}>
                   <s.icon className="w-5 h-5" />
                 </a>
               ))}
             </div>
-          </div>
-        </div>
 
-        <div className="mt-8 flex items-center gap-3">
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png"
-            alt="TripAdvisor"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png"
-            alt="Airbnb"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png"
-            alt="Google Reviews"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png"
-            alt="Viator"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png"
-            alt="Homefans"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png"
-            alt="Turismo Responsável"
-            className="flex-1 min-w-0 w-full h-auto opacity-90 hover:opacity-100 transition-opacity"
-          />
+            <div className="flex items-center gap-2 mt-auto">
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png"
+                alt="Viator"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png"
+                alt="Homefans"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png"
+                alt="Turismo Responsável"
+                className="w-16 h-auto opacity-80 hover:opacity-100 transition-opacity"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-[hsl(145,15%,22%)]">
