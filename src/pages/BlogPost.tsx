@@ -3,7 +3,7 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { fetchLovable, LovableBlogPost } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Calendar, ArrowLeft, Facebook, MessageCircle, Link2 } from "lucide-react";
+import { Calendar, ArrowLeft, MessageCircle, Facebook, Link2, ArrowRight, Compass } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -16,6 +16,38 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import "react-quill-new/dist/quill.snow.css";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCanonicalUrl } from "@/utils/seo";
+
+const InlineCTA = () => {
+  const { t, language } = useLocale();
+  return (
+    <div className="my-12 p-8 sm:p-12 rounded-[2rem] bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative group shadow-inner">
+      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 transition-transform group-hover:scale-150 duration-700" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/5 rounded-full -ml-12 -mb-12 transition-transform group-hover:scale-150 duration-1000" />
+      
+      <div className="relative z-10 text-left flex-1">
+        <div className="flex items-center gap-2 mb-4">
+          <Compass className="w-5 h-5 text-accent animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">
+            {language === 'pt' ? 'Experiência Exclusiva' : 'Exclusive Experience'}
+          </span>
+        </div>
+        <h4 className="font-serif text-2xl sm:text-3xl font-bold mb-3 text-foreground leading-tight">
+            {language === 'pt' ? 'Planejando sua visita ao Rio?' : 'Planning your visit to Rio?'}
+        </h4>
+        <p className="text-muted-foreground text-base font-sans max-w-md leading-relaxed">
+            {language === 'pt' ? 'Transforme sua leitura em realidade. Reserve um tour privativo com quem entende a alma carioca.' : 'Turn your reading into reality. Book a private tour with those who understand the soul of Rio.'}
+        </p>
+      </div>
+
+      <Link to="/#tours" className="relative z-10 shrink-0 w-full md:w-auto">
+        <Button className="w-full md:w-auto rounded-full px-10 h-16 font-black text-sm uppercase tracking-widest shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
+            {t("explorar_passeios")}
+            <ArrowRight className="w-5 h-5" />
+        </Button>
+      </Link>
+    </div>
+  );
+};
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -88,6 +120,18 @@ const BlogPost = () => {
     ?.replace(/&shy;/g, '')
     ?.replace(/&#173;/g, '')
     ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
+
+  const contentWithSplit = (() => {
+    if (!content) return { part1: "", part2: "" };
+    const paragraphs = content.split('</p>');
+    if (paragraphs.length < 5) return { part1: content, part2: "" };
+    
+    // Split at roughly 1/3 of the text
+    const splitIndex = 2; 
+    const part1 = paragraphs.slice(0, splitIndex).join('</p>') + '</p>';
+    const part2 = paragraphs.slice(splitIndex).join('</p>');
+    return { part1, part2 };
+  })();
 
   const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
 
@@ -290,8 +334,20 @@ const BlogPost = () => {
                   className="max-w-none ql-editor blog-content-area"
                   style={{ padding: 0 }}
                   lang={language}
-                  dangerouslySetInnerHTML={{ __html: content || "" }}
+                  dangerouslySetInnerHTML={{ __html: contentWithSplit.part1 || "" }}
                 />
+
+                {contentWithSplit.part2 && (
+                  <>
+                    <InlineCTA />
+                    <div 
+                      className="max-w-none ql-editor blog-content-area"
+                      style={{ padding: 0 }}
+                      lang={language}
+                      dangerouslySetInnerHTML={{ __html: contentWithSplit.part2 || "" }}
+                    />
+                  </>
+                )}
 
                 {/* BLOG CTA BLOCK */}
                 <div className="mt-16 p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 text-center animate-fade-in shadow-inner relative overflow-hidden group">
@@ -392,8 +448,20 @@ const BlogPost = () => {
                 className="max-w-none ql-editor blog-content-area"
                 style={{ padding: 0 }}
                 lang={language}
-                dangerouslySetInnerHTML={{ __html: content || "" }}
+                dangerouslySetInnerHTML={{ __html: contentWithSplit.part1 || "" }}
               />
+
+              {contentWithSplit.part2 && (
+                <>
+                  <InlineCTA />
+                  <div 
+                    className="max-w-none ql-editor blog-content-area"
+                    style={{ padding: 0 }}
+                    lang={language}
+                    dangerouslySetInnerHTML={{ __html: contentWithSplit.part2 || "" }}
+                  />
+                </>
+              )}
 
               {/* BLOG CTA BLOCK */}
               <div className="mt-16 p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 text-center animate-fade-in shadow-inner relative overflow-hidden group">

@@ -8,7 +8,7 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldCheck, Users, Plus, Minus } from "lucide-react";
+import { Trash2, Calendar, Clock, ArrowRight, ShoppingBag, CreditCard, ShieldCheck, Users, Plus, Minus, Check, Compass } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -323,12 +323,42 @@ const Cart = () => {
 
                 <div className="mt-8 space-y-4">
                   <div className="flex flex-col gap-6 bg-background/50 p-6 rounded-2xl border border-dashed border-border shadow-inner">
-                    <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
-                      <ShieldCheck className="w-8 h-8 text-green-600 flex-shrink-0" />
-                      <p className="leading-relaxed">{t("seguranca_stripe")}</p>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <ShieldCheck className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">{language === 'pt' ? 'Pagamento 100% Seguro' : '100% Secure Payment'}</p>
+                          <p className="text-[10px] text-muted-foreground leading-relaxed">{t("seguranca_stripe")}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 pt-4 border-t border-border/50">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">{language === 'pt' ? 'Cancelamento Flexível' : 'Flexible Cancellation'}</p>
+                          <p className="text-[10px] text-muted-foreground leading-relaxed">
+                            {language === 'pt' ? 'Cancele com até 24h de antecedência para reembolso total.' : 'Cancel up to 24h in advance for a full refund.'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 pt-4 border-t border-border/50">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Compass className="w-3 h-3 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">{language === 'pt' ? 'Suporte Especializado' : 'Expert Support'}</p>
+                          <p className="text-[10px] text-muted-foreground leading-relaxed">
+                            {language === 'pt' ? 'Estamos à disposição via WhatsApp para qualquer dúvida.' : 'We are available via WhatsApp for any questions.'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="pt-2 border-t border-border/50">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground/60 mb-3 tracking-widest">{language === 'pt' ? 'Métodos Aceitos' : 'Accepted Methods'}</p>
+
+                    <div className="pt-4 border-t border-border/50">
+                      <p className="text-[10px] font-black uppercase text-muted-foreground/60 mb-3 tracking-widest text-center">{language === 'pt' ? 'Métodos Aceitos' : 'Accepted Methods'}</p>
                       <PaymentLogos />
                     </div>
                   </div>

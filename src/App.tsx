@@ -16,6 +16,7 @@ import { useAnalytics } from "./hooks/useAnalytics";
 import { BUILD_ID } from "./version";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ScrollToHash } from "./components/ScrollToHash";
+import { MobileStickyCTA } from "./components/MobileStickyCTA";
 
 // Pages
 import Index from "./pages/Index";
@@ -73,6 +74,7 @@ const App = () => {
                     <CartProvider>
                       <AnalyticsTracker />
                         <Suspense fallback={<PageLoader />}>
+                          <MobileStickyCTA />
                           <FloatingButtons />
                           <Routes>
                           <Route path="/" element={<Index />} />

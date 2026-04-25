@@ -87,7 +87,11 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => scrollTo("tours")} className="text-lg px-8 py-6 font-sans w-full sm:w-auto shadow-lg shadow-primary/25">
+              <Button 
+                size="lg" 
+                onClick={() => scrollTo("tours")} 
+                className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
+              >
                 {t("nossos_passeios")}
               </Button>
             </div>
@@ -131,7 +135,11 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Button size="lg" onClick={() => scrollTo("tours")} className="w-full sm:w-auto text-lg px-8 py-6 font-sans">
+              <Button 
+                size="lg" 
+                onClick={() => scrollTo("tours")} 
+                className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
+              >
                 {t("nossos_passeios")}
               </Button>
               <Button size="lg" variant="outline" onClick={() => scrollTo("contact")} className="w-full sm:w-auto text-lg px-8 py-6 font-sans border-2">
@@ -165,7 +173,11 @@ export function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={() => scrollTo("tours")} className="text-lg px-8 py-6 font-sans">
+            <Button 
+              size="lg" 
+              onClick={() => scrollTo("tours")} 
+              className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
+            >
               {t("nossos_passeios")}
             </Button>
             <Button
