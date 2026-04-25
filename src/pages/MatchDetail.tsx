@@ -32,7 +32,7 @@ const partnerSupabase = createClient(MARACANA_PROJECT_URL, MARACANA_ANON_KEY);
 export default function MatchDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { language, t, formatPrice, currency } = useLocale();
+  const { language, t, formatPrice, currency, localizePath } = useLocale();
   const { rates } = useCurrency();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -156,7 +156,7 @@ export default function MatchDetail() {
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
-  if (!match) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">Jogo não encontrado</h1><Link to="/maracanacalendar"><Button className="mt-4">Voltar ao Calendário</Button></Link></div>;
+  if (!match) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">Jogo não encontrado</h1><Link to={localizePath("/maracanacalendar")}><Button className="mt-4">Voltar ao Calendário</Button></Link></div>;
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const matchDateRio = getMatchDateInRio(match.match_date);

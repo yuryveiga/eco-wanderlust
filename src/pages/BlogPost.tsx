@@ -20,7 +20,7 @@ const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState<LovableBlogPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { t, language } = useLocale();
+  const { t, language, localizePath } = useLocale();
   const { siteSettings, images, tours } = useSiteData();
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
@@ -55,7 +55,7 @@ const BlogPost = () => {
   }
 
   if (!post) {
-    return <Navigate to="/404" replace />;
+    return <Navigate to={localizePath("/404")} replace />;
   }
 
   const title = getTranslated('title');
@@ -227,7 +227,7 @@ const BlogPost = () => {
               <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
               
               <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
-                <Link to="/blog" className="inline-flex items-center text-white/80 hover:text-white font-sans mb-8 transition-colors">
+                <Link to={localizePath("/blog")} className="inline-flex items-center text-white/80 hover:text-white font-sans mb-8 transition-colors">
                   <ArrowLeft className="w-5 h-5 mr-2" /> {t("voltar_blog")}
                 </Link>
                 
@@ -256,7 +256,7 @@ const BlogPost = () => {
         ) : (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 relative z-10 mb-20">
             <div className="bg-card rounded-2xl shadow-xl p-8 sm:p-12 border border-border/50">
-              <Link to="/blog" className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
+              <Link to={localizePath("/blog")} className="inline-flex items-center text-primary font-medium font-sans mb-6 hover:underline">
                 <ArrowLeft className="w-4 h-4 mr-2" /> {t("voltar_blog")}
               </Link>
    
@@ -336,7 +336,7 @@ const BlogPost = () => {
             </div>
             
             <div className="mt-12 text-center">
-              <Link to="/#tours">
+              <Link to={localizePath("/#tours")}>
                 <Button size="lg" className="rounded-full px-10 font-bold h-14 text-sm uppercase tracking-widest shadow-xl shadow-primary/20">
                   {t("ver_todos_passeios") || (language === 'pt' ? 'Ver Todos os Passeios' : 'View All Tours')}
                 </Button>

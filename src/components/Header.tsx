@@ -104,7 +104,7 @@ export function Header() {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 md:h-26">
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
+          <Link to={localizePath("/")} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
               <div className={`relative flex items-center justify-center ${isScrolled ? "h-11 w-11 md:h-12 md:w-12 mt-1" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500 ease-in-out`}>
               <OptimizedImage 
@@ -194,7 +194,7 @@ export function Header() {
               </DropdownMenu>
             </div>
 
-            <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
+            <Link to={localizePath("/carrinho")} className="relative group" aria-label={t("meu_carrinho")}>
               <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
                 <ShoppingCart className="w-6 h-6" />
                 {items.length > 0 && (
@@ -220,7 +220,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <Link to="/carrinho" className="relative mr-2">
+            <Link to={localizePath("/carrinho")} className="relative mr-2">
                <div className="p-2 text-foreground/80">
                 <ShoppingCart className="w-6 h-6" />
                 {items.length > 0 && (

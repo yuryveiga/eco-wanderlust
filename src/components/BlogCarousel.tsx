@@ -17,7 +17,7 @@ import { OptimizedImage } from "./OptimizedImage";
 export function BlogCarousel() {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { t, language } = useLocale();
+  const { t, language, localizePath } = useLocale();
   const { images } = useSiteData();
   const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200";
 
@@ -91,7 +91,7 @@ export function BlogCarousel() {
                           </div>
                           
                           <Link 
-                            to={`/blog/${post.slug}`} 
+                            to={localizePath(`/blog/${post.slug}`)} 
                             className="mt-4 focus:outline-none focus:ring-2 focus:ring-white rounded-full translate-y-0 active:scale-95 transition-transform"
                             aria-label={`${t("explore_conosco")}: ${title}`}
                           >
