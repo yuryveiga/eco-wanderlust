@@ -122,14 +122,22 @@ export function Header() {
 
           <nav className="hidden lg:flex items-center gap-6">
             {allNavLinks.map((link) => (
-              <button 
+              <Link 
                 key={link.label} 
-                onClick={() => handleNav(link.href)} 
+                to={link.href.startsWith("#") && location.pathname === "/" ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)}
+                onClick={(e) => {
+                  if (link.href.startsWith("#") && location.pathname === "/") {
+                    e.preventDefault();
+                    handleNav(link.href);
+                  } else {
+                    setIsMenuOpen(false);
+                  }
+                }}
                 className={`text-sm font-semibold font-sans transition-all hover:text-primary relative group ${location.pathname === link.href ? "text-primary" : "text-foreground/80"}`}
               >
                 {link.label}
                 <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full ${location.pathname === link.href ? "w-full" : ""}`}></span>
-              </button>
+              </Link>
             ))}
           </nav>
 
@@ -280,9 +288,21 @@ export function Header() {
           <nav className="lg:hidden py-6 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
               {allNavLinks.map((link) => (
-                <button key={link.label} onClick={() => handleNav(link.href)} className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === link.href ? "text-primary" : "text-foreground"}`}>
+                <Link 
+                  key={link.label} 
+                  to={link.href.startsWith("#") && location.pathname === "/" ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)}
+                  onClick={(e) => {
+                    if (link.href.startsWith("#") && location.pathname === "/") {
+                      e.preventDefault();
+                      handleNav(link.href);
+                    } else {
+                      setIsMenuOpen(false);
+                    }
+                  }} 
+                  className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === link.href ? "text-primary" : "text-foreground"}`}
+                >
                   {link.label}
-                </button>
+                </Link>
               ))}
               <div className="flex items-center gap-6 pt-6 border-t border-border">
                 {activeSocials.map((s) => (

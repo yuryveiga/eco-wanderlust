@@ -1,4 +1,5 @@
 import { Instagram, MapPin, Mail, Phone, Facebook, Youtube, Music } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { OptimizedImage } from "./OptimizedImage";
@@ -88,9 +89,18 @@ export function Footer() {
             <ul className="space-y-3 font-sans">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <button onClick={() => scrollTo(link.href)} className="text-[hsl(140,10%,96%)]/80 hover:text-[hsl(145,40%,40%)] transition-colors text-sm">
+                  <Link 
+                    to={link.href.startsWith("#") ? `/${link.href}` : link.href}
+                    onClick={(e) => {
+                      if (link.href.startsWith("#") && window.location.pathname === "/") {
+                        e.preventDefault();
+                        scrollTo(link.href);
+                      }
+                    }}
+                    className="text-[hsl(140,10%,96%)]/80 hover:text-[hsl(145,40%,40%)] transition-colors text-sm"
+                  >
                     {link.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
