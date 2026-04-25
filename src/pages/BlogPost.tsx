@@ -98,7 +98,7 @@ const BlogPost = () => {
           hyphens: none !important;
           -webkit-hyphens: none !important;
           -ms-hyphens: none !important;
-          word-break: keep-all !important;
+          word-break: break-word !important;
           line-break: strict !important;
           overflow-wrap: break-word !important;
           }
@@ -110,7 +110,7 @@ const BlogPost = () => {
           margin-bottom: 1.2rem !important;
           line-height: 1.7 !important;
           text-align: left !important;
-          word-break: keep-all !important;
+          word-break: break-word !important;
           line-break: strict !important;
           overflow-wrap: break-word !important;
           hyphens: none !important;
