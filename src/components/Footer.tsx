@@ -103,6 +103,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li className="pt-2">
+                <Link 
+                  to="/admin"
+                  className="opacity-0 hover:opacity-100 transition-opacity text-[hsl(140,10%,96%)]/20 text-[10px] font-black uppercase tracking-widest cursor-default hover:cursor-pointer"
+                >
+                  ADMIN
+                </Link>
+              </li>
             </ul>
           </div>
 
