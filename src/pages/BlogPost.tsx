@@ -77,14 +77,17 @@ const BlogPost = () => {
   const rawContent = getTranslated('content');
   const excerpt = getTranslated('excerpt');
 
-  // Fix line breaks for hyphenated words like "mata-mata" or "bem-sucedidas"
-  // We use non-breaking hyphen (&#8209;) for hyphens between letters
-  // And remove soft hyphens (\u00AD, &shy;, &#173;) that might cause incorrect syllable splitting
+  // Fix line breaks for hyphenated words and non-breaking spaces
+  // 1. Replace non-breaking spaces (nbsp) with normal spaces to allow correct wrapping
+  // 2. Remove soft hyphens that cause incorrect syllable splitting
+  // 3. Protect compound words (mata-mata) with non-breaking hyphens
   const content = rawContent
-    ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3')
+    ?.replace(/\u00A0/g, ' ')
+    ?.replace(/&nbsp;/g, ' ')
     ?.replace(/\u00AD/g, '')
     ?.replace(/&shy;/g, '')
-    ?.replace(/&#173;/g, '');
+    ?.replace(/&#173;/g, '')
+    ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
 
   const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
 
