@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { Link } from "react-router-dom";
-import { Clock, Users, Star } from "lucide-react";
+import { Clock, Users, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
