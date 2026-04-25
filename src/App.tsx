@@ -60,9 +60,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <AuthProvider>
-          <CurrencyProvider>
-            <LocaleProvider>
-              <CartProvider>
+          <CartProvider>
               <HelmetProvider>
                 <TooltipProvider>
                   <Toaster />
@@ -124,9 +122,9 @@ const App = () => {
                   </BrowserRouter>
                 </TooltipProvider>
               </HelmetProvider>
-            </CartProvider>
-          </AuthProvider>
-        </ErrorBoundary>
+          </CartProvider>
+        </AuthProvider>
+      </ErrorBoundary>
 
     </QueryClientProvider>
   );
