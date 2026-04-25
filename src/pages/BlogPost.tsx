@@ -79,10 +79,12 @@ const BlogPost = () => {
 
   // Fix line breaks for hyphenated words like "mata-mata" or "bem-sucedidas"
   // We use non-breaking hyphen (&#8209;) for hyphens between letters
-  // And remove soft hyphens (\u00AD) that might cause incorrect syllable splitting
+  // And remove soft hyphens (\u00AD, &shy;, &#173;) that might cause incorrect syllable splitting
   const content = rawContent
     ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3')
-    ?.replace(/\u00AD/g, '');
+    ?.replace(/\u00AD/g, '')
+    ?.replace(/&shy;/g, '')
+    ?.replace(/&#173;/g, '');
 
   const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
 
@@ -105,6 +107,11 @@ const BlogPost = () => {
         .blog-content-area * {
           margin-top: 0 !important;
           margin-inline: 0 !important;
+          hyphens: none !important;
+          -webkit-hyphens: none !important;
+          -ms-hyphens: none !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
         }
         .blog-content-area p {
           margin-bottom: 1.2rem !important;
