@@ -98,7 +98,8 @@ const BlogPost = () => {
           hyphens: none !important;
           -webkit-hyphens: none !important;
           -ms-hyphens: none !important;
-          word-break: normal !important;
+          word-break: keep-all !important;
+          line-break: strict !important;
           overflow-wrap: break-word !important;
           }
         .blog-content-area * {
@@ -109,7 +110,8 @@ const BlogPost = () => {
           margin-bottom: 1.2rem !important;
           line-height: 1.7 !important;
           text-align: left !important;
-          word-break: normal !important;
+          word-break: keep-all !important;
+          line-break: strict !important;
           overflow-wrap: break-word !important;
           hyphens: none !important;
           -webkit-hyphens: none !important;
@@ -276,6 +278,7 @@ const BlogPost = () => {
                 <div 
                   className="max-w-none ql-editor blog-content-area"
                   style={{ padding: 0 }}
+                  lang={language}
                   dangerouslySetInnerHTML={{ __html: content || "" }}
                 />
 
@@ -377,6 +380,7 @@ const BlogPost = () => {
               <div 
                 className="max-w-none ql-editor blog-content-area"
                 style={{ padding: 0 }}
+                lang={language}
                 dangerouslySetInnerHTML={{ __html: content || "" }}
               />
 
