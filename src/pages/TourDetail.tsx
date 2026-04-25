@@ -30,6 +30,7 @@ import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const getYouTubeEmbedUrl = (url: string) => {
   if (!url) return "";
@@ -156,24 +157,24 @@ export function TourDetail() {
         "@type": "ListItem",
         "position": 1,
         "name": t("inicio"),
-        "item": "https://tocorimerio.com/"
+        "item": getCanonicalUrl("/")
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": t("passeios"),
-        "item": "https://tocorimerio.com/passeios"
+        "item": getCanonicalUrl("/#tours")
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": translatedTitle,
-        "item": `https://tocorimerio.com/passeio/${tour?.slug || tour?.id}`
+        "item": getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`)
       }
     ]
   };
 
-  const canonicalUrl = `https://tocorimerio.com/passeio/${tour?.slug || tour?.id}`;
+  const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -333,15 +334,13 @@ export function TourDetail() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`)} />
         <meta property="og:title" content={`${translatedTitle} | ${siteTitle}`} />
         <meta property="og:description" content={translatedShortDesc || siteSettings?.site_description} />
         <meta property="og:image" content={tour.image_url} />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={window.location.href} />
-        <meta name="twitter:title" content={`${translatedTitle} | ${siteTitle}`} />
         <meta name="twitter:description" content={translatedShortDesc || siteSettings?.site_description} />
         <meta name="twitter:image" content={tour.image_url} />
 

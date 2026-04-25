@@ -15,6 +15,8 @@ import { ptBR, enUS, es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { PaymentLogos } from "@/components/PaymentLogos";
+import { Helmet } from "react-helmet-async";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
@@ -122,6 +124,11 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col pt-20 bg-muted/20">
+      <Helmet>
+        <title>{t("meu_carrinho")} | Tocorime Rio</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href={getCanonicalUrl("/carrinho")} />
+      </Helmet>
       <Header />
       
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">

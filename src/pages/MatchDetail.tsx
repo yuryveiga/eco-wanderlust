@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase as localSupabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getCanonicalUrl } from "@/utils/seo";
 
 // Partner Project Config
 const MARACANA_PROJECT_URL = "https://mwxbskzggzznxvkwgrnz.supabase.co";
@@ -181,6 +182,8 @@ export default function MatchDetail() {
       <Helmet>
         <title>{match.home_team} x {match.away_team} | Maracanã Matchday Experience</title>
         <meta name="description" content={`Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`} />
+        <meta property="og:url" content={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
+        <link rel="canonical" href={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
       </Helmet>
       
       <Header />

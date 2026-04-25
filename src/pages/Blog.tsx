@@ -10,6 +10,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Helmet } from "react-helmet-async";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const Blog = () => {
   const [posts, setPosts] = useState<LovableBlogPost[]>([]);
@@ -47,7 +48,7 @@ const Blog = () => {
       <Helmet>
         <title>Blog - Tocorime Rio | Dicas de Passeios no Rio de Janeiro</title>
         <meta name="description" content="Dicas, roteiros e guias sobre passeios no Rio de Janeiro. Descubra trilhas, praias, gastronomia e experiências únicas com a Tocorime Rio." />
-        <link rel="canonical" href="https://tocorimerio.com/blog" />
+        <link rel="canonical" href={getCanonicalUrl("/blog")} />
       </Helmet>
       <Header />
       

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import "react-quill-new/dist/quill.snow.css";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -153,12 +154,12 @@ const BlogPost = () => {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={getCanonicalUrl(`/blog/${post.slug}`)} />
         <meta property="og:title" content={`${title} | ${siteTitle}`} />
         <meta property="og:description" content={excerpt || title} />
         <meta property="og:image" content={post.image_url || fallbackImage} />
 
-        <link rel="canonical" href={`https://tocorimerio.com/blog/${post.slug}`} />
+        <link rel="canonical" href={getCanonicalUrl(`/blog/${post.slug}`)} />
 
         <script type="application/ld+json">
           {JSON.stringify({
@@ -205,12 +206,9 @@ const BlogPost = () => {
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={window.location.href} />
-        <meta name="twitter:title" content={`${title} | ${siteTitle}`} />
         <meta name="twitter:description" content={excerpt || title} />
         <meta name="twitter:image" content={post.image_url || fallbackImage} />
 
-        <link rel="canonical" href={window.location.href} />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
       </Helmet>
       

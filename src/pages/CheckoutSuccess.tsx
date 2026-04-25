@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLocale } from "@/contexts/LocaleContext";
 import { toast } from "sonner";
 import { LovableSale } from "@/integrations/lovable/client";
+import { Helmet } from "react-helmet-async";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const CheckoutSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -117,6 +119,11 @@ const CheckoutSuccess = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/20">
+      <Helmet>
+        <title>Reserva Confirmada | Tocorime Rio</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href={getCanonicalUrl("/confirmacao")} />
+      </Helmet>
       <Header />
       
       <main className="flex-1 max-w-4xl mx-auto px-4 py-24 w-full">

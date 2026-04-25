@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getCanonicalUrl } from "@/utils/seo";
 
 // Lazy load sections below the fold
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
@@ -44,12 +45,12 @@ const Index = () => {
         <meta property="og:title" content={siteTitle} />
         <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tocorimerio.com/" />
+        <meta property="og:url" content={getCanonicalUrl("/")} />
         <meta property="og:site_name" content="Tocorime Rio" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:locale:alternate" content="pt_BR" />
         <meta property="og:locale:alternate" content="es_ES" />
-        <link rel="canonical" href="https://tocorimerio.com/" />
+        <link rel="canonical" href={getCanonicalUrl("/")} />
       </Helmet>
       <Header />
       <HeroSection />

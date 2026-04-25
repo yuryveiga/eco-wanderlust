@@ -1,5 +1,5 @@
 # Sitemap
-Sitemap: https://ogzasprtfgimjqrtcseg.supabase.co/functions/v1/sitemap
+Sitemap: https://tocorimerio.com/sitemap.xml
 
 # User agents
 User-agent: *

@@ -4,6 +4,8 @@ import { fetchLovable, LovablePage } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { Helmet } from "react-helmet-async";
+import { getCanonicalUrl } from "@/utils/seo";
 
 const GenericPage = () => {
   const { slug } = useParams();
@@ -36,6 +38,11 @@ const GenericPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col pt-20">
+      <Helmet>
+        <title>{page.title} | Tocorime Rio</title>
+        <meta name="description" content={page.content?.replace(/<[^>]*>/g, "").substring(0, 160) || page.title} />
+        <link rel="canonical" href={getCanonicalUrl(`/${slug}`)} />
+      </Helmet>
       <Header />
       
       <main className="flex-1 bg-background pb-16">
