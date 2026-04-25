@@ -15,6 +15,7 @@ import { ThemeApplier } from "./components/ThemeApplier";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { BUILD_ID } from "./version";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ScrollToHash } from "./components/ScrollToHash";
 
 // Pages
 import Index from "./pages/Index";
@@ -66,6 +67,7 @@ const App = () => {
                   <Sonner />
                   <ThemeApplier />
                   <BrowserRouter>
+                    <ScrollToHash />
                 <CurrencyProvider>
                   <LocaleProvider>
                     <CartProvider>

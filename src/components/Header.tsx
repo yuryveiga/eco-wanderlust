@@ -126,7 +126,7 @@ export function Header() {
                 key={link.label} 
                 to={link.href}
                 onClick={(e) => {
-                  if (link.href.startsWith("#") && location.pathname === "/") {
+                  if (link.href.startsWith("#")) {
                     e.preventDefault();
                     handleNav(link.href);
                   } else {
@@ -292,7 +292,7 @@ export function Header() {
                   key={link.label} 
                   to={link.href}
                   onClick={(e) => {
-                    if (link.href.startsWith("#") && location.pathname === "/") {
+                    if (link.href.startsWith("#")) {
                       e.preventDefault();
                       handleNav(link.href);
                     } else {
