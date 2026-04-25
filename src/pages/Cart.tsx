@@ -20,7 +20,7 @@ import { getCanonicalUrl } from "@/utils/seo";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
-  const { t, language, formatPrice, currency } = useLocale();
+  const { t, language, formatPrice, currency, localizePath } = useLocale();
   const { rates } = useCurrency();
   const dateLocale = language === 'pt' ? ptBR : language === 'es' ? es : enUS;
   const { siteSettings } = useSiteData();
@@ -146,7 +146,7 @@ const Cart = () => {
             {items.length === 0 ? (
               <div className="bg-card rounded-3xl p-12 text-center border border-border/50 shadow-sm">
                 <p className="text-muted-foreground font-sans text-lg mb-8">{t("carrinho_vazio")}</p>
-                <Link to="/#tours">
+                <Link to={localizePath("/#tours")}>
                   <Button className="font-sans px-8 h-12 rounded-full">
                     {t("explorar_passeios")}
                   </Button>
