@@ -30,7 +30,8 @@ serve(async (req) => {
   }
 
   try {
-    const { items, sale_ids, customer, currency = "brl" } = await req.json();
+    const reqData = await req.json();
+    const { items, sale_ids, customer, currency = "brl" } = reqData;
     const targetCurrency = currency.toLowerCase();
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -138,8 +139,8 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
       mode: "payment",
-      success_url: `${origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(sale_ids))}`,
-      cancel_url: `${origin}/carrinho?canceled=true`,
+      success_url: reqData.success_url || `${origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(sale_ids))}`,
+      cancel_url: reqData.cancel_url || `${origin}/carrinho?canceled=true`,
       customer_email: customer?.email,
       metadata: metadata,
     });

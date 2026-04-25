@@ -157,24 +157,24 @@ export function TourDetail() {
         "@type": "ListItem",
         "position": 1,
         "name": t("inicio"),
-        "item": getCanonicalUrl("/")
+        "item": getCanonicalUrl("/", language)
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": t("passeios"),
-        "item": getCanonicalUrl("/#tours")
+        "item": getCanonicalUrl("/#tours", language)
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": translatedTitle,
-        "item": getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`)
+        "item": getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`, language)
       }
     ]
   };
 
-  const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`);
+  const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`, language);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -334,7 +334,7 @@ export function TourDetail() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`)} />
+        <meta property="og:url" content={getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`, language)} />
         <meta property="og:title" content={`${translatedTitle} | ${siteTitle}`} />
         <meta property="og:description" content={translatedShortDesc || siteSettings?.site_description} />
         <meta property="og:image" content={tour.image_url} />

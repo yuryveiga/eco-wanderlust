@@ -43,8 +43,9 @@ async function generateSitemap() {
       return; // Stop gracefully
     }
 
+    const languages = ['pt', 'en', 'es'];
     const staticPages = [
-      { url: '/', priority: 1.0, changefreq: 'daily' },
+      { url: '', priority: 1.0, changefreq: 'daily' },
       { url: '/blog', priority: 0.9, changefreq: 'weekly' },
       { url: '/sobre', priority: 0.7, changefreq: 'monthly' },
       { url: '/contato', priority: 0.7, changefreq: 'monthly' },
@@ -55,34 +56,40 @@ async function generateSitemap() {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    // Static Pages
+    // Static Pages for each language
     staticPages.forEach(page => {
-      xml += `  <url>\n`;
-      xml += `    <loc>${siteUrl}${page.url}</loc>\n`;
-      xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
-      xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
-      xml += `    <priority>${page.priority}</priority>\n`;
-      xml += `  </url>\n`;
+      languages.forEach(lang => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${siteUrl}/${lang}${page.url}</loc>\n`;
+        xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
+        xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+        xml += `    <priority>${page.priority}</priority>\n`;
+        xml += `  </url>\n`;
+      });
     });
 
-    // Tours
+    // Tours for each language
     tours.forEach(tour => {
-      xml += `  <url>\n`;
-      xml += `    <loc>${siteUrl}/passeio/${tour.slug || tour.id}</loc>\n`;
-      xml += `    <lastmod>${(tour.updated_at || new Date().toISOString()).split('T')[0]}</lastmod>\n`;
-      xml += `    <changefreq>weekly</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
+      languages.forEach(lang => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${siteUrl}/${lang}/passeio/${tour.slug || tour.id}</loc>\n`;
+        xml += `    <lastmod>${(tour.updated_at || new Date().toISOString()).split('T')[0]}</lastmod>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>0.8</priority>\n`;
+        xml += `  </url>\n`;
+      });
     });
 
-    // Blog Posts
+    // Blog Posts for each language
     posts.forEach(post => {
-      xml += `  <url>\n`;
-      xml += `    <loc>${siteUrl}/blog/${post.slug}</loc>\n`;
-      xml += `    <lastmod>${(post.updated_at || new Date().toISOString()).split('T')[0]}</lastmod>\n`;
-      xml += `    <changefreq>monthly</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
+      languages.forEach(lang => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${siteUrl}/${lang}/blog/${post.slug}</loc>\n`;
+        xml += `    <lastmod>${(post.updated_at || new Date().toISOString()).split('T')[0]}</lastmod>\n`;
+        xml += `    <changefreq>monthly</changefreq>\n`;
+        xml += `    <priority>0.8</priority>\n`;
+        xml += `  </url>\n`;
+      });
     });
 
     xml += `</urlset>`;

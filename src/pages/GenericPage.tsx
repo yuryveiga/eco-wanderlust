@@ -41,7 +41,7 @@ const GenericPage = () => {
       <Helmet>
         <title>{page.title} | Tocorime Rio</title>
         <meta name="description" content={page.content?.replace(/<[^>]*>/g, "").substring(0, 160) || page.title} />
-        <link rel="canonical" href={getCanonicalUrl(`/${slug}`)} />
+        <link rel="canonical" href={getCanonicalUrl(`/${slug}`, language)} />
       </Helmet>
       <Header />
       

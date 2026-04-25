@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCurrency } from './CurrencyContext';
 
 type Language = 'pt' | 'en' | 'es';
@@ -11,6 +12,7 @@ interface LocaleContextType {
   setCurrency: (curr: Currency) => void;
   t: (key: string) => string;
   formatPrice: (priceBrl: number) => string;
+  localizePath: (path: string) => string;
 }
 
 const translations = {
@@ -661,8 +663,37 @@ const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>('en');
   const [currency, setCurrency] = useState<Currency>('USD');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const { rates } = useCurrency();
+
+  // Sync language from URL on mount and location change
+  useEffect(() => {
+    const pathParts = location.pathname.split('/');
+    const langInUrl = pathParts[1] as Language;
+    
+    if (['pt', 'en', 'es'].includes(langInUrl) && langInUrl !== language) {
+      setLanguage(langInUrl);
+    }
+  }, [location.pathname, language]);
+
+  const handleSetLanguage = (newLang: Language) => {
+    if (newLang === language) return;
+    
+    const pathParts = location.pathname.split('/');
+    // Check if current URL already has a language prefix
+    if (['pt', 'en', 'es'].includes(pathParts[1])) {
+      pathParts[1] = newLang;
+    } else {
+      // Add language prefix if it's not there
+      pathParts.splice(1, 0, newLang);
+    }
+    
+    const newPath = pathParts.join('/') || '/';
+    setLanguage(newLang);
+    navigate(newPath);
+  };
 
   const t = (key: string) => {
     return translations[language][key as keyof typeof translations.pt] || key;
@@ -682,8 +713,19 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     }).format(converted);
   };
 
+  const localizePath = (path: string) => {
+    if (!path) return `/${language}`;
+    if (path.startsWith('http') || path.startsWith('mailto:') || path.startsWith('tel:')) return path;
+    
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    // If path already starts with a lang, don't double it
+    if (path.match(/^\/(pt|en|es)(\/|$)/)) return cleanPath;
+    
+    return `/${language}${cleanPath === '/' ? '' : cleanPath}`;
+  };
+
   return (
-    <LocaleContext.Provider value={{ language, setLanguage, currency, setCurrency, t, formatPrice }}>
+    <LocaleContext.Provider value={{ language, setLanguage: handleSetLanguage, currency, setCurrency, t, formatPrice, localizePath }}>
       {children}
     </LocaleContext.Provider>
   );

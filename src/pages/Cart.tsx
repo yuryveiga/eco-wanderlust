@@ -106,7 +106,9 @@ const Cart = () => {
           })),
           sale_ids: saleIds,
           customer: customerInfo,
-          currency: currentCurrency
+          currency: currentCurrency,
+          success_url: `${window.location.origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(saleIds))}`,
+          cancel_url: `${window.location.origin}/carrinho?canceled=true`
         }
       });
 
