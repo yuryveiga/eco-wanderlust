@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { fetchLovable, LovablePage } from "@/integrations/lovable/client";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -9,6 +10,7 @@ import { getCanonicalUrl } from "@/utils/seo";
 
 const GenericPage = () => {
   const { slug } = useParams();
+  const { language } = useLocale();
   const [page, setPage] = useState<LovablePage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
