@@ -339,7 +339,7 @@ const Cart = () => {
                         <div>
                           <p className="text-xs font-bold text-foreground mb-1">{language === 'pt' ? 'Cancelamento Flexível' : 'Flexible Cancellation'}</p>
                           <p className="text-[10px] text-muted-foreground leading-relaxed">
-                            {language === 'pt' ? 'Cancele com até 24h de antecedência para reembolso total.' : 'Cancel up to 24h in advance for a full refund.'}
+                            {language === 'pt' ? 'Cancele com até 72h de antecedência para reembolso total.' : 'Cancel up to 72h in advance for a full refund.'}
                           </p>
                         </div>
                       </div>
