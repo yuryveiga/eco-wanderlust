@@ -67,7 +67,7 @@ export function Footer() {
               {logoUrl ? (
                 <OptimizedImage 
                   src={logoUrl} 
-                  alt="Logo" 
+                  alt="Tocorime Rio - Passeios Privados no Rio de Janeiro" 
                   width={100}
                   containerClassName="h-10 w-10 overflow-hidden"
                   className="rounded-full h-full w-full object-cover" 

@@ -109,7 +109,7 @@ export function Header() {
               <div className={`relative flex items-center justify-center ${isScrolled ? "h-11 w-11 md:h-12 md:w-12 mt-1" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500 ease-in-out`}>
               <OptimizedImage 
                 src={siteSettings?.logo_url || logoUrl} 
-                alt="Logo" 
+                alt="Tocorime Rio - Passeios Privados no Rio de Janeiro" 
                 fit="contain"
                 className="w-full h-full object-contain filter drop-shadow-sm transition-transform duration-500" 
               />
