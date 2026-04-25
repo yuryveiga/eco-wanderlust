@@ -74,8 +74,12 @@ const BlogPost = () => {
   }
 
   const title = getTranslated('title');
-  const content = getTranslated('content');
+  const rawContent = getTranslated('content');
   const excerpt = getTranslated('excerpt');
+
+  // Fix line breaks for hyphenated words like "mata-mata" or "bem-sucedidas"
+  // We use non-breaking hyphen (&#8209;) for hyphens between letters
+  const content = rawContent?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
 
   const blogHeroStyle = siteSettings?.blog_hero_style || "hero";
 
