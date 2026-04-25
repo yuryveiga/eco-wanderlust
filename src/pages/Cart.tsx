@@ -20,7 +20,7 @@ import { getCanonicalUrl } from "@/utils/seo";
 
 const Cart = () => {
   const { items, removeFromCart, total, clearCart, updateQuantity } = useCart();
-  const { t, language, formatPrice, currency, localizePath } = useLocale();
+  const { t, language, formatPrice, currency } = useLocale();
   const { rates } = useCurrency();
   const dateLocale = language === 'pt' ? ptBR : language === 'es' ? es : enUS;
   const { siteSettings } = useSiteData();
@@ -106,9 +106,7 @@ const Cart = () => {
           })),
           sale_ids: saleIds,
           customer: customerInfo,
-          currency: currentCurrency,
-          success_url: `${window.location.origin}/confirmacao?sale_ids=${encodeURIComponent(JSON.stringify(saleIds))}`,
-          cancel_url: `${window.location.origin}/carrinho?canceled=true`
+          currency: currentCurrency
         }
       });
 
@@ -146,7 +144,7 @@ const Cart = () => {
             {items.length === 0 ? (
               <div className="bg-card rounded-3xl p-12 text-center border border-border/50 shadow-sm">
                 <p className="text-muted-foreground font-sans text-lg mb-8">{t("carrinho_vazio")}</p>
-                <Link to={localizePath("/#tours")}>
+                <Link to="/#tours">
                   <Button className="font-sans px-8 h-12 rounded-full">
                     {t("explorar_passeios")}
                   </Button>
@@ -171,7 +169,7 @@ const Cart = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <Link to={localizePath(`/passeio/${item.slug || item.id}`)} className="font-serif text-xl font-bold mb-1 group-hover:text-primary transition-colors block">
+                      <Link to={`/passeio/${item.slug || item.id}`} className="font-serif text-xl font-bold mb-1 group-hover:text-primary transition-colors block">
                         {item.title}
                       </Link>
                       {item.selected_option && (

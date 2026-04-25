@@ -35,7 +35,7 @@ export type TourCardProps = {
 };
 
 export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
-  const { t, formatPrice, language, localizePath } = useLocale();
+  const { t, formatPrice, language } = useLocale();
 
   const getTranslated = (field: keyof TourCardProps) => {
     if (language === 'pt') return tour[field];
@@ -58,7 +58,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
     .replace(/minutos/gi, t("minutos"))
     .replace(/minuto/gi, t("minuto"));
 
-  const href = tour.external_url || localizePath(`/passeio/${tour.slug || tour.id}`);
+  const href = tour.external_url || `/passeio/${tour.slug || tour.id}`;
   const isExternal = !!tour.external_url;
 
   const CardContent = (

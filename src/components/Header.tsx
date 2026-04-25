@@ -21,7 +21,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { pages, socialMedia, images, siteSettings } = useSiteData();
-  const { language, setLanguage, currency, setCurrency, t, localizePath } = useLocale();
+  const { language, setLanguage, currency, setCurrency, t } = useLocale();
   const { items } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,7 +104,7 @@ export function Header() {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 md:h-26">
-          <Link to={localizePath("/")} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             {logoUrl ? (
               <div className={`relative flex items-center justify-center ${isScrolled ? "h-11 w-11 md:h-12 md:w-12 mt-1" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500 ease-in-out`}>
               <OptimizedImage 
@@ -124,9 +124,9 @@ export function Header() {
             {allNavLinks.map((link) => (
               <Link 
                 key={link.label} 
-                to={link.href.startsWith("#") ? (location.pathname === localizePath("/") ? link.href : localizePath(link.href)) : localizePath(link.href)}
+                to={link.href.startsWith("#") && location.pathname === "/" ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)}
                 onClick={(e) => {
-                  if (link.href.startsWith("#") && location.pathname === localizePath("/")) {
+                  if (link.href.startsWith("#") && location.pathname === "/") {
                     e.preventDefault();
                     handleNav(link.href);
                   } else {
@@ -194,7 +194,7 @@ export function Header() {
               </DropdownMenu>
             </div>
 
-            <Link to={localizePath("/carrinho")} className="relative group" aria-label={t("meu_carrinho")}>
+            <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
               <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
                 <ShoppingCart className="w-6 h-6" />
                 {items.length > 0 && (
@@ -220,7 +220,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <Link to={localizePath("/carrinho")} className="relative mr-2">
+            <Link to="/carrinho" className="relative mr-2">
                <div className="p-2 text-foreground/80">
                 <ShoppingCart className="w-6 h-6" />
                 {items.length > 0 && (
@@ -290,16 +290,16 @@ export function Header() {
               {allNavLinks.map((link) => (
                 <Link 
                   key={link.label} 
-                  to={link.href.startsWith("#") ? (location.pathname === localizePath("/") ? link.href : localizePath(link.href)) : localizePath(link.href)}
+                  to={link.href.startsWith("#") && location.pathname === "/" ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)}
                   onClick={(e) => {
-                    if (link.href.startsWith("#") && location.pathname === localizePath("/")) {
+                    if (link.href.startsWith("#") && location.pathname === "/") {
                       e.preventDefault();
                       handleNav(link.href);
                     } else {
                       setIsMenuOpen(false);
                     }
                   }} 
-                  className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === localizePath(link.href) ? "text-primary" : "text-foreground"}`}
+                  className={`text-lg font-bold font-sans transition-colors py-2 text-left ${location.pathname === link.href ? "text-primary" : "text-foreground"}`}
                 >
                   {link.label}
                 </Link>
