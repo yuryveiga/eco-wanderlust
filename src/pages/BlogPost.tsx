@@ -250,6 +250,30 @@ const BlogPost = () => {
                   style={{ padding: 0 }}
                   dangerouslySetInnerHTML={{ __html: content || "" }}
                 />
+
+                {/* BLOG CTA BLOCK */}
+                <div className="mt-16 p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 text-center animate-fade-in shadow-inner relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full -ml-12 -mb-12 transition-transform group-hover:scale-150 duration-700" />
+                  
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4 relative z-10">
+                    {language === 'pt' ? 'Gostou dessa dica?' : 
+                     language === 'es' ? '¿Te gustó este consejo?' : 
+                     'Did you like this tip?'}
+                  </h3>
+                  <p className="text-muted-foreground text-lg mb-8 font-sans max-w-2xl mx-auto relative z-10">
+                    {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
+                     language === 'es' ? 'Vive la emoción de descubrir Río de Janeiro con nuestros guías expertos y exclusivos.' : 
+                     'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
+                  </p>
+                  <Link to="/#tours" className="relative z-10 inline-block">
+                    <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
+                      {language === 'pt' ? 'Reservar Agora' : 
+                       language === 'es' ? 'Reservar Ahora' : 
+                       'Book Now'}
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </>
@@ -287,6 +311,29 @@ const BlogPost = () => {
                 style={{ padding: 0 }}
                 dangerouslySetInnerHTML={{ __html: content || "" }}
               />
+
+              {/* BLOG CTA BLOCK */}
+              <div className="mt-16 p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 text-center animate-fade-in shadow-inner relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
+                
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4 relative z-10">
+                  {language === 'pt' ? 'Gostou dessa dica?' : 
+                   language === 'es' ? '¿Te gustó este consejo?' : 
+                   'Did you like this tip?'}
+                </h3>
+                <p className="text-muted-foreground text-lg mb-8 font-sans max-w-2xl mx-auto relative z-10">
+                  {language === 'pt' ? 'Viva a emoção de descobrir o Rio de Janeiro com nossos guias especialistas e exclusivos.' : 
+                   language === 'es' ? 'Vive la emoción de descubrir Río de Janeiro con nuestros guías expertos y exclusivos.' : 
+                   'Experience the thrill of discovering Rio de Janeiro with our expert and exclusive guides.'}
+                </p>
+                <Link to="/#tours" className="relative z-10 inline-block">
+                  <Button size="lg" className="rounded-full px-12 font-bold h-16 text-base uppercase tracking-wider shadow-2xl shadow-primary/30 hover:scale-105 transition-all duration-300">
+                    {language === 'pt' ? 'Reservar Agora' : 
+                     language === 'es' ? 'Reservar Ahora' : 
+                     'Book Now'}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         )}
