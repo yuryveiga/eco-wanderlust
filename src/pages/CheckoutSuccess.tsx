@@ -16,7 +16,7 @@ import { getCanonicalUrl } from "@/utils/seo";
 const CheckoutSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { t, formatPrice } = useLocale();
+  const { t, formatPrice, localizePath } = useLocale();
   const [sales, setSales] = useState<LovableSale[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -89,7 +89,7 @@ const CheckoutSuccess = () => {
       }
 
       toast.success("Dados salvos com sucesso!");
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate(localizePath("/")), 2000);
     } catch (error) {
       console.error("Error saving participants:", error);
       toast.error("Erro ao salvar dados");
@@ -112,7 +112,7 @@ const CheckoutSuccess = () => {
         <CheckCircle2 className="w-20 h-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-serif font-bold mb-4">Pagamento Confirmado!</h1>
         <p className="text-muted-foreground mb-8">Sua reserva foi processada com sucesso.</p>
-        <Button onClick={() => navigate("/")}>Ir para a Home</Button>
+        <Button onClick={() => navigate(localizePath("/"))}>Ir para a Home</Button>
       </div>
     );
   }
