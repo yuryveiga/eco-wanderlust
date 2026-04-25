@@ -171,7 +171,7 @@ const Cart = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <Link to={`/passeio/${item.slug || item.id}`} className="font-serif text-xl font-bold mb-1 group-hover:text-primary transition-colors block">
+                      <Link to={localizePath(`/passeio/${item.slug || item.id}`)} className="font-serif text-xl font-bold mb-1 group-hover:text-primary transition-colors block">
                         {item.title}
                       </Link>
                       {item.selected_option && (
