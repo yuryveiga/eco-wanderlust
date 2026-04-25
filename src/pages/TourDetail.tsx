@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getTourMinPrice } from "@/utils/pricing";
+import { UrgencyBadges } from "@/components/UrgencyBadges";
 import { 
   Carousel, 
   CarouselContent, 
@@ -372,6 +373,7 @@ export function TourDetail() {
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-[1.1] tracking-tight">
                {translatedTitle}
             </h1>
+            <UrgencyBadges tourId={tour.id} tourSlug={tour.slug} />
           </div>
           <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
             <div className="text-right">
