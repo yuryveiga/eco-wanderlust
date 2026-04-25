@@ -154,7 +154,7 @@ export function UrgencyBadges({ tourId, tourSlug }: Props) {
       {currentSale && (
         <span
           key={currentSaleIdx}
-          className="inline-flex items-center gap-2 bg-primary/5 text-foreground border border-primary/20 px-3 py-1.5 rounded-full text-[11px] font-bold animate-fade-in"
+          className="inline-flex items-center gap-2 bg-primary/5 text-foreground border border-primary/20 px-3 py-1.5 rounded-full text-[11px] font-bold animate-fade-in-up"
         >
           <ShoppingBag className="w-3.5 h-3.5 text-primary" />
           {s.recentBooking(getFirstName(currentSale.customer_name), timeAgo(currentSale.created_at, lang))}
