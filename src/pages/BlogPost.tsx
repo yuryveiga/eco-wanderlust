@@ -94,7 +94,8 @@ const BlogPost = () => {
           text-align: left !important;
           hyphens: none !important;
           word-break: normal !important;
-          overflow-wrap: break-word !important;
+          overflow-wrap: normal !important;
+          text-wrap: pretty !important;
           }
         .blog-content-area * {
           margin-top: 0 !important;
@@ -105,6 +106,8 @@ const BlogPost = () => {
           line-height: 1.7 !important;
           text-align: left !important;
           word-break: normal !important;
+          overflow-wrap: normal !important;
+          hyphens: none !important;
         }
         /* Handle spacing for manual line breaks without forcing them to be blocks */
         .blog-content-area br {
