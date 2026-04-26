@@ -140,20 +140,29 @@ export function Footer() {
             </ul>
             
             <div className="flex items-center gap-2 mt-auto">
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/tripadvisor_dark_bg.png"
                 alt="TripAdvisor"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/airbnb_dark_bg.png"
                 alt="Airbnb"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/google_reviews_dark_bg.png"
                 alt="Google Reviews"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
             </div>
           </div>
@@ -169,20 +178,29 @@ export function Footer() {
             </div>
 
             <div className="flex items-center gap-2 mt-auto">
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/viator_dark_bg.png"
                 alt="Viator"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/homefans_dark_bg.png"
                 alt="Homefans"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
-              <img
+              <OptimizedImage
                 src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png"
                 alt="Turismo Responsável"
-                className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                width={150}
+                containerClassName="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="w-full h-full object-contain"
+                fit="contain"
               />
             </div>
           </div>
@@ -203,10 +221,13 @@ export function Footer() {
                 className="hover:scale-105 transition-transform"
                 aria-label="Ver certificado Cadastur (abre em nova aba)"
               >
-                <img 
+                <OptimizedImage 
                   src="https://logodownload.org/wp-content/uploads/2018/02/cadastur-logo-1.png" 
                   alt="Cadastur" 
-                  className="h-10 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                  width={150}
+                  containerClassName="h-10 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                  className="h-full w-full object-contain"
+                  fit="contain"
                 />
               </a>
             </div>

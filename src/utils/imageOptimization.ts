@@ -13,11 +13,9 @@ export function getOptimizedImage(
 ): string {
   if (!url) return "";
 
-  // Enable resizing ONLY for tiny placeholders (like the 20px blur prev)
-  const isPlaceholder = width <= 50;
-  const widthParam = isPlaceholder ? `&w=${width}` : "";
+  const widthParam = width ? `&w=${width}` : "";
   const heightParam = height ? `&h=${height}` : "";
-  const sbWidthParam = isPlaceholder ? `&width=${width}` : "";
+  const sbWidthParam = width ? `&width=${width}` : "";
   const sbHeightParam = height ? `&height=${height}` : "";
   const versionParam = version ? `&v=${version}` : "";
 
@@ -39,7 +37,7 @@ export function getOptimizedImage(
     if (url.includes("/object/public/")) {
         const renderUrl = url.replace("/object/public/", "/render/image/public/");
         const fmt = format ? `&format=${format}` : "";
-        const sbResize = isPlaceholder ? "" : `&resize=${fit}`;
+        const sbResize = width ? `&resize=${fit}` : "";
         return `${renderUrl}?quality=${quality}${sbWidthParam}${sbHeightParam}${fmt}${sbResize}${versionParam}`;
     }
   }
