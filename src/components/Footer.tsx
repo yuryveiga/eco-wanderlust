@@ -195,12 +195,25 @@ export function Footer() {
               <p className="text-[hsl(140,10%,96%)]/60 text-xs font-sans opacity-70 tracking-tight">{t("turismo_sustentavel")}</p>
             </div>
 
-            <div className="flex justify-center md:w-1/3">
+            <div className="flex justify-center items-center gap-6 md:w-1/3">
+              <a 
+                href="https://visitrio.com.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-transform"
+                aria-label="Visit Rio (abre em nova aba)"
+              >
+                <img 
+                  src="https://visitrio.com.br/wp-content/uploads/2024/05/logo-visitrio.png" 
+                  alt="Visit Rio" 
+                  className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity object-contain"
+                />
+              </a>
               <a 
                 href="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/CADASTUR%20TOCORIME.jpeg"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:scale-105 transition-transform"
+                className="hover:scale-105 transition-transform border-l border-white/10 pl-6"
                 aria-label="Ver certificado Cadastur (abre em nova aba)"
               >
                 <img 
