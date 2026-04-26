@@ -420,7 +420,7 @@ export function TourDetail() {
                 width={1200}
                 containerClassName="w-full h-full"
                 fit="cover"
-                className="w-full h-full object-cover transition-transform duration-[1500ms] ease-out group-hover/item:scale-110" 
+                className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
                 fetchPriority="high"
               />
               <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
@@ -439,7 +439,7 @@ export function TourDetail() {
                   width={800}
                   containerClassName="w-full h-full"
                   fit="cover"
-                  className="w-full h-full object-cover transition-transform duration-[1500ms] ease-out group-hover/item:scale-125" 
+                  className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-125" 
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
               </div>

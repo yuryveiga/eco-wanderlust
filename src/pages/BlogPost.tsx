@@ -305,7 +305,7 @@ const BlogPost = () => {
             {/* HERO SECTION FOR BLOG POST - NEW STYLE */}
             <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20000ms] hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[length:20000ms] hover:scale-110"
                 style={{ backgroundImage: `url('${post.image_url || fallbackImage}')` }}
               />
               <div className="absolute inset-0 bg-black/50" />
@@ -429,7 +429,7 @@ const BlogPost = () => {
                       width={1200}
                       containerClassName="w-full h-full"
                       fit="cover"
-                      className="w-full h-full transition-transform duration-[2000ms] group-hover:scale-105"
+                      className="w-full h-full transition-transform duration-[length:2000ms] group-hover:scale-105"
                       loading="eager"
                       fetchPriority="high"
                     />

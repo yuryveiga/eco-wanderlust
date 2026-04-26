@@ -197,7 +197,7 @@ export default function MatchDetail() {
                 alt="Maracanã Stadium" 
                 containerClassName="w-full h-full"
                 fit="cover"
-                className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-[length:2000ms] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               
