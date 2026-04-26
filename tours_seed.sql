@@ -10,7 +10,7 @@ VALUES
     'Trilha da Pedra do Telégrafo', 'trilha-pedra-do-telegrafo', 
     'A foto mais famosa do Rio! Uma caminhada moderada com vistas de tirar o fôlego das praias selvagens.', 
     180.00, '5h', 12, 
-    'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200', true, 'Aventura', true, true, 
+    '/maracana-hero.jpg', true, 'Aventura', true, true, 
     true, false, false,
     '[{"time": "06:00", "description": "Pick-up nos hotéis"}, {"time": "08:00", "description": "Início da trilha em Barra de Guaratiba"}, {"time": "09:30", "description": "Chegada à Pedra e tempo para fotos"}, {"time": "11:00", "description": "Descida e almoço livre"}]',
     '[{"icon": "MapPin", "text": "Guia Bilíngue"}, {"icon": "Shield", "text": "Seguro Aventura"}]'
@@ -55,7 +55,7 @@ VALUES
     'Favela Santa Marta & Arte Urbana', 'favela-santa-marta-cultural', 
     'Um mergulho na cultura local e nos grafites da primeira favela pacificada. Visita à estátua de Michael Jackson.', 
     150.00, '3h', 10, 
-    'https://images.unsplash.com/photo-148372d558449-99ef09a8c325?q=80&w=1200', false, 'Cultural', true, true, 
+    '/maracana-hero.jpg', false, 'Cultural', true, true, 
     true, true, false,
     '[{"time": "09:00", "description": "Encontro na Praça Corumbá"}, {"time": "09:30", "description": "Subida de Bondinho social"}, {"time": "11:00", "description": "Workshop de percussão ou grafite"}]',
     '[{"icon": "MapPin", "text": "Guia Comunitário"}, {"icon": "Shield", "text": "Contribuição para o Projeto"}]'

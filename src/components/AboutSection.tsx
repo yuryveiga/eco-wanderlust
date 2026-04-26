@@ -4,8 +4,8 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { OptimizedImage } from "./OptimizedImage";
 
 const DEFAULT_IMAGES = [
-  'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600',
-  'https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=600',
+  '/maracana-hero.jpg',
+  '/maracana-hero.jpg',
   'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=600',
   '/maracana-hero.jpg',
 ];

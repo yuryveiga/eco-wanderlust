@@ -36,7 +36,7 @@ VALUES
     'dicas-seguranca-transporte-rio', 
     '<h2>Viaje tranquilo com essas dicas essenciais</h2><p>O Rio é uma cidade grande e, como qualquer metrópole, exige atenção. Aqui estão as melhores formas de se locomover e como aproveitar sem sustos.</p><h3>Transporte Público</h3><p>O MetrôRio é excelente, seguro e cobre as principais áreas turísticas. Para curtas distâncias, o VLT no Centro é uma ótima opção.</p><h3>Aplicativos de Transporte</h3><p>Uber e 99 funcionam muito bem e são as formas mais práticas de voltar para o hotel à noite.</p><h3>Dicas de Ouro</h3><p>Evite usar joias ou relógios chamativos, prefira roupas descontraídas (o estilo carioca!) e tenha atenção redobrada ao usar o celular em locais muito movimentados.</p>', 
     'O Rio é uma cidade incrível, mas exige atenção. Saiba como se locomover com segurança e praticidade durante sua estada.', 
-    'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=1200', 
+    '/maracana-hero.jpg', 
     true, 
     NOW() + INTERVAL '3 hours'
 );
