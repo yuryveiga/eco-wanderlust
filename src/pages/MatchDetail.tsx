@@ -25,6 +25,7 @@ import { supabase as localSupabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCanonicalUrl } from "@/utils/seo";
 import { LovableMatch } from "@/types";
+import { PaymentLogos } from "@/components/PaymentLogos";
 
 // Partner Project Config
 const MARACANA_PROJECT_URL = "https://mwxbskzggzznxvkwgrnz.supabase.co";
