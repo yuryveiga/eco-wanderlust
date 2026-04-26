@@ -204,7 +204,7 @@ export function Footer() {
                 aria-label="Visit Rio (abre em nova aba)"
               >
                 <img 
-                  src="https://visitrio.com.br/wp-content/uploads/2024/05/logo-visitrio.png" 
+                  src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//Captura_de_tela_2026-04-26_092353-removebg-preview.png" 
                   alt="Visit Rio" 
                   className="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity object-contain"
                 />
