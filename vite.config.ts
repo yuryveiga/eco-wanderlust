@@ -16,19 +16,9 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('framer-motion')) return 'vendor-motion';
-            if (id.includes('lucide-react')) return 'vendor-icons';
-            if (id.includes('supabase')) return 'vendor-db';
-            if (id.includes('react-quill') || id.includes('quill')) return 'vendor-editor';
-            if (id.includes('recharts')) return 'vendor-charts';
-            if (id.includes('react') || id.includes('tanstack')) return 'vendor-core';
-            return 'vendor-misc';
-          }
-        }
-
+        // Letting Vite handle chunking automatically for better stability
       }
+
     },
     chunkSizeWarningLimit: 1000,
   },
