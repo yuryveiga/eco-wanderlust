@@ -305,7 +305,7 @@ const BlogPost = () => {
             {/* HERO SECTION FOR BLOG POST - NEW STYLE */}
             <section className="relative h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden bg-black">
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20000ms] hover:scale-110"
                 style={{ backgroundImage: `url('${post.image_url || fallbackImage}')` }}
               />
               <div className="absolute inset-0 bg-black/50" />
@@ -334,7 +334,7 @@ const BlogPost = () => {
                   className="max-w-none ql-editor blog-content-area"
                   style={{ padding: 0 }}
                   lang={language}
-                  dangerouslySetInnerHTML={{ __html: contentWithSplit.part1 || "" }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contentWithSplit.part1 || "") }}
                 />
 
                 {contentWithSplit.part2 && (
@@ -344,7 +344,7 @@ const BlogPost = () => {
                       className="max-w-none ql-editor blog-content-area"
                       style={{ padding: 0 }}
                       lang={language}
-                      dangerouslySetInnerHTML={{ __html: contentWithSplit.part2 || "" }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contentWithSplit.part2 || "") }}
                     />
                   </>
                 )}
@@ -429,7 +429,7 @@ const BlogPost = () => {
                       width={1200}
                       containerClassName="w-full h-full"
                       fit="cover"
-                      className="w-full h-full transition-transform duration-[2s] group-hover:scale-105"
+                      className="w-full h-full transition-transform duration-[2000ms] group-hover:scale-105"
                       loading="eager"
                       fetchPriority="high"
                     />

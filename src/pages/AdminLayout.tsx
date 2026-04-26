@@ -1,4 +1,4 @@
-import "./admin.css";
+import "@/admin.css";
 import { Navigate, Outlet } from "react-router-dom";
 import { Suspense } from "react";
 import { useAuth } from "@/hooks/useAuth";

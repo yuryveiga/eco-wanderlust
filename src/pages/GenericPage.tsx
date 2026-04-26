@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Helmet } from "react-helmet-async";
 import { getCanonicalUrl } from "@/utils/seo";
+import DOMPurify from "dompurify";
 
 const GenericPage = () => {
   const { slug } = useParams();
@@ -69,7 +70,7 @@ const GenericPage = () => {
           <div className="bg-card rounded-3xl shadow-2xl p-8 sm:p-12 border border-border/50">
             <div 
               className="prose prose-lg dark:prose-invert max-w-none font-sans leading-relaxed ql-viewer"
-              dangerouslySetInnerHTML={{ __html: page.content || "<p className='text-center text-muted-foreground font-sans'>Página em construção.</p>" }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content || "") || "<p className='text-center text-muted-foreground font-sans'>Página em construção.</p>" }}
             />
           </div>
         </div>

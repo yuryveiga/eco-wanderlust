@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tocorimerio.com</loc>
-    <lastmod>2026-04-25</lastmod>
+    <loc>https://tocorimerio.com/</loc>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://tocorimerio.com/blog</loc>
-    <lastmod>2026-04-25</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://tocorimerio.com/sobre</loc>
-    <lastmod>2026-04-25</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tocorimerio.com/contato</loc>
-    <lastmod>2026-04-25</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tocorimerio.com/passeios</loc>
-    <lastmod>2026-04-25</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://tocorimerio.com/carrinho</loc>
-    <lastmod>2026-04-25</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -74,7 +74,7 @@
   </url>
   <url>
     <loc>https://tocorimerio.com/passeio/favela-rio-tour-rocinha</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -92,7 +92,7 @@
   </url>
   <url>
     <loc>https://tocorimerio.com/passeio/city-tour-rio-completo</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -169,12 +169,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tocorimerio.com/blog/dicas-seguranca-transporte-rio</loc>
-    <lastmod>2026-04-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://tocorimerio.com/blog/melhores-trilhas-rio-de-janeiro</loc>
     <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -183,6 +177,12 @@
   <url>
     <loc>https://tocorimerio.com/blog/packing-list-for-rio-from-beach-to-rainforest</loc>
     <lastmod>2026-04-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tocorimerio.com/blog/dicas-seguranca-transporte-rio</loc>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -199,12 +199,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tocorimerio.com/blog/rock-climbing-beginners-rio-de-janeiro</loc>
-    <lastmod>2026-04-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://tocorimerio.com/blog/the-best-months-to-visit-rio-for-hiking-and-outdoor-activities</loc>
     <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
@@ -213,6 +207,12 @@
   <url>
     <loc>https://tocorimerio.com/blog/melhores-mirantes-gratuitos-rj</loc>
     <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tocorimerio.com/blog/rock-climbing-beginners-rio-de-janeiro</loc>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -301,14 +301,14 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tocorimerio.com/blog/rio-de-janeiro-with-kids-3-day-itinerary</loc>
-    <lastmod>2026-04-25</lastmod>
+    <loc>https://tocorimerio.com/blog/melhor-epoca-visitar-rio-de-janeiro</loc>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tocorimerio.com/blog/melhor-epoca-visitar-rio-de-janeiro</loc>
-    <lastmod>2026-04-10</lastmod>
+    <loc>https://tocorimerio.com/blog/rio-de-janeiro-with-kids-3-day-itinerary</loc>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -379,12 +379,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tocorimerio.com/blog/best-feijoada-rio-de-janeiro-tourists</loc>
-    <lastmod>2026-04-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://tocorimerio.com/blog/guia-arraial-do-cabo-caribe-brasileiro</loc>
     <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -398,6 +392,12 @@
   </url>
   <url>
     <loc>https://tocorimerio.com/blog/christ-the-redeemer-without-the-crowds</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tocorimerio.com/blog/best-feijoada-rio-de-janeiro-tourists</loc>
     <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
