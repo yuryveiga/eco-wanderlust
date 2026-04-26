@@ -3,18 +3,14 @@
   <head>
     <!-- Performance Optimization: Preconnect to critical origins -->
     <link rel="preconnect" href="https://ogzasprtfgimjqrtcseg.supabase.co">
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="dns-prefetch" href="https://images.unsplash.com/">
+    <link rel="modulepreload" href="/src/main.tsx">
     
-    <!-- Preload critical fonts to avoid flash of unstyled text and reduce main thread delay -->
+    <!-- Preload critical fonts - only the most essential ones for the initial view -->
+    <link rel="preload" href="/maracana-hero.jpg" as="image">
     <link rel="preload" href="/fonts/PlayfairDisplay-700.ttf" as="font" type="font/truetype" crossorigin>
+
     <link rel="preload" href="/fonts/Poppins-400.ttf" as="font" type="font/truetype" crossorigin>
     <link rel="preload" href="/fonts/Poppins-600.ttf" as="font" type="font/truetype" crossorigin>
-
-    <!-- Cache strategy: Allow caching but always revalidate to ensure the latest version -->
-    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="-1">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
@@ -23,14 +19,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Tocorime Admin">
     <link rel="apple-touch-icon" href="/logo.png">
-    <!-- Google tag (gtag.js) -->
+
+    <!-- Defer Google Tag Manager to improve initial page load speed -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R4PH55B7S7"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R4PH55B7S7');
+      window.onload = function() {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-R4PH55B7S7');
+      };
     </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- SEO Managed by React Helmet -->

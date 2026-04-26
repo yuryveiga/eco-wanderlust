@@ -18,6 +18,7 @@ interface OptimizedImageProps {
   height?: number;
   onDimensions?: (width: number, height: number) => void;
   version?: string | number;
+  showBlur?: boolean;
 }
 
 export function OptimizedImage({
@@ -35,20 +36,23 @@ export function OptimizedImage({
   height,
   onDimensions,
   version: propVersion,
+  showBlur = true,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [blurSrc, setBlurSrc] = useState("");
   const { version: siteVersion } = useSiteData();
   
   const version = propVersion || siteVersion;
+  const shouldShowBlur = showBlur && fetchPriority !== "high";
 
   useEffect(() => {
-    if (src) {
+    if (src && shouldShowBlur) {
       setBlurSrc(getBlurPlaceholder(src, fit, height, version));
       // Reset load state if src changes
       setIsLoaded(false);
     }
-  }, [src, fit, height, version]);
+  }, [src, fit, height, version, shouldShowBlur]);
+
 
   return (
     <div className={cn(
@@ -57,7 +61,7 @@ export function OptimizedImage({
       containerClassName
     )}>
       {/* Blurred Placeholder (LQIP) */}
-      {blurSrc && (
+      {shouldShowBlur && blurSrc && (
         <img
           src={blurSrc}
           alt=""
