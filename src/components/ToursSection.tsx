@@ -31,7 +31,7 @@ export type TourCardProps = {
   price_3_6_people?: number;
   price_7_19_people?: number;
   use_custom_options?: boolean;
-  custom_options_json?: any;
+  custom_options_json?: Record<string, unknown>[];
 };
 
 export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
@@ -39,7 +39,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
 
   const getTranslated = (field: keyof TourCardProps) => {
     if (language === 'pt') return tour[field];
-    return (tour as Record<string, any>)[`${field}_${language}`] || tour[field];
+    return (tour as Record<string, unknown>)[`${String(field)}_${language}`] || tour[field];
   };
 
   const title = getTranslated('title');

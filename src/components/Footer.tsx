@@ -24,9 +24,9 @@ export function Footer() {
     }
   };
 
-  const getPageLabel = (page: any) => {
-    if (language === 'pt') return page.title;
-    return page[`title_${language}`] || page.title;
+  const getPageLabel = (page: Record<string, unknown>) => {
+    if (language === 'pt') return String(page.title || "");
+    return String(page[`title_${language}`] || page.title || "");
   };
 
   const navLinks = pages.length > 0

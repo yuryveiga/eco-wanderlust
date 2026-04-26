@@ -72,7 +72,7 @@ export function UrgencyBadges({ tourId, tourSlug }: Props) {
         .gte("created_at", fiveMinAgo)
         .ilike("page_url", `%${slugMatch}%`);
       if (cancelled) return;
-      const unique = new Set((data || []).map((v: any) => v.session_id).filter(Boolean));
+      const unique = new Set((data || []).map((v: Record<string, unknown>) => v.session_id).filter(Boolean));
       // Conta o próprio visitante atual; mínimo 1
       setViewing(Math.max(1, unique.size));
     };

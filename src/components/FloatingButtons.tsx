@@ -21,8 +21,6 @@ export function FloatingButtons() {
     return () => clearTimeout(timer);
   }, [isAdmin]);
 
-  if (isAdmin) return null;
-
   const socialLinks = useMemo(() => {
     const tripAdvisor = socialMedia.find(s => 
       s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
@@ -43,6 +41,8 @@ export function FloatingButtons() {
 
     return { tripAdvisor, instagram, whatsapp, youtube };
   }, [socialMedia]);
+
+  if (isAdmin) return null;
 
   const { tripAdvisor, instagram, whatsapp, youtube } = socialLinks;
 

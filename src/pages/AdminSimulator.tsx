@@ -35,7 +35,7 @@ const AdminSimulator = () => {
       // 1. Criar a reserva (sale) como pendente
       toast({ title: "Passo 1/3", description: "Criando reserva no banco de dados..." });
       
-      const newSale = await insertLovable<any>("sales", {
+      const newSale = await insertLovable<Record<string, unknown>>("sales", {
         tour_id: selectedTourId,
         tour_title: tour?.title || "Passeio de Teste",
         tour_slug: tour?.slug || "teste",
@@ -58,7 +58,7 @@ const AdminSimulator = () => {
       const { error: updateError } = await supabase
         .from("sales")
         .update({ is_paid: true })
-        .eq("id", newSale.id);
+        .eq("id", String(newSale.id));
 
       if (updateError) throw updateError;
 
@@ -107,9 +107,10 @@ const AdminSimulator = () => {
         description: `Reserva para ${bookingDate} concluída com sucesso!`, 
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      toast({ title: "Erro na simulação", description: error.message, variant: "destructive" });
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      toast({ title: "Erro na simulação", description: message, variant: "destructive" });
     } finally {
       setIsSimulating(false);
     }

@@ -59,7 +59,7 @@ export function ContactSection() {
 
       toast({ title: t("msg_enviada"), description: t("contato_breve") });
       (e.target as HTMLFormElement).reset();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error sending contact email:", error);
       toast({ 
         title: "Erro ao enviar", 
