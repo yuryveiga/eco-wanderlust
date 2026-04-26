@@ -204,7 +204,15 @@ export function ToursSection() {
   const displayTours = useMemo(() => {
     return tours
       .filter(t => t.category?.toUpperCase().includes(activeCat?.value))
-      .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+      .sort((a, b) => {
+        const isMatchDayA = a.title?.includes('Maracanã MatchDay');
+        const isMatchDayB = b.title?.includes('Maracanã MatchDay');
+        
+        if (isMatchDayA && !isMatchDayB) return -1;
+        if (!isMatchDayA && isMatchDayB) return 1;
+        
+        return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      });
   }, [tours, activeCat]);
 
   
