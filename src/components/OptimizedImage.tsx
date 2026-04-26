@@ -25,7 +25,7 @@ export const OptimizedImage = memo(function OptimizedImage({
   src,
   alt,
   width = 800,
-  quality = 80,
+  quality = 70,
   className,
   containerClassName,
   loading = "lazy",

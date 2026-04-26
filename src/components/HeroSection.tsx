@@ -59,8 +59,8 @@ export function HeroSection() {
             <OptimizedImage
               src={bg}
               alt=""
-              width={1200}
-              quality={75}
+              width={1080}
+              quality={65}
               containerClassName="w-full h-full"
               fit="cover"
               className="w-full h-full object-cover"

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Cloud, Sun, CloudRain, Wind, Thermometer, MapPin, Loader2, Calendar, Clock as ClockIcon } from "lucide-react";
 import { format, addDays, startOfHour } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -63,25 +63,28 @@ export function WeatherSection() {
     return <CloudRain className="w-12 h-12 text-blue-500" />;
   };
 
-  const getSelectedIndex = () => {
+  const dateOptions = useMemo(() => Array.from({ length: 7 }).map((_, i) => addDays(new Date(), i)), []);
+  const hourOptions = useMemo(() => Array.from({ length: 24 }).map((_, i) => i), []);
+
+  const index = useMemo(() => {
     if (!forecast) return -1;
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     const hourStr = selectedHour.toString().padStart(2, "0");
     const target = `${dateStr}T${hourStr}:00`;
     return forecast.time.findIndex(t => t.startsWith(target));
-  };
+  }, [forecast, selectedDate, selectedHour]);
 
-  const index = getSelectedIndex();
-  const weather = index !== -1 && forecast ? {
-    temp: Math.round(forecast.temp[index]),
-    code: forecast.code[index],
-    wind: Math.round(forecast.wind[index]),
-    humidity: forecast.humidity[index],
-    description: getWeatherDesc(forecast.code[index])
-  } : null;
+  const weather = useMemo(() => {
+    if (index === -1 || !forecast) return null;
+    return {
+      temp: Math.round(forecast.temp[index]),
+      code: forecast.code[index],
+      wind: Math.round(forecast.wind[index]),
+      humidity: forecast.humidity[index],
+      description: getWeatherDesc(forecast.code[index])
+    };
+  }, [index, forecast, t]);
 
-  const dateOptions = Array.from({ length: 7 }).map((_, i) => addDays(new Date(), i));
-  const hourOptions = Array.from({ length: 24 }).map((_, i) => i);
 
   return (
     <section className="py-12 bg-primary/5">

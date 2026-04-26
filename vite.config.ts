@@ -16,11 +16,18 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query'],
-          'vendor-ui': ['framer-motion', 'lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-label', '@radix-ui/react-tooltip'],
-          'vendor-db': ['@supabase/supabase-js'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('supabase')) return 'vendor-db';
+            if (id.includes('react-quill') || id.includes('quill')) return 'vendor-editor';
+            if (id.includes('recharts')) return 'vendor-charts';
+            if (id.includes('react') || id.includes('tanstack')) return 'vendor-core';
+            return 'vendor-misc';
+          }
         }
+
       }
     },
     chunkSizeWarningLimit: 1000,
