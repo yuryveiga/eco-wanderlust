@@ -10,6 +10,7 @@ import { ViewFadeIn } from "@/components/ViewFadeIn";
 // Lazy load sections below the fold
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
 const ToursSection = lazy(() => import("@/components/ToursSection").then(m => ({ default: m.ToursSection })));
+const WhyChooseUs = lazy(() => import("@/components/WhyChooseUs").then(m => ({ default: m.WhyChooseUs })));
 const ReviewsSection = lazy(() => import("@/components/ReviewsSection").then(m => ({ default: m.ReviewsSection })));
 const AboutSection = lazy(() => import("@/components/AboutSection").then(m => ({ default: m.AboutSection })));
 const ContactSection = lazy(() => import("@/components/ContactSection").then(m => ({ default: m.ContactSection })));
@@ -44,6 +45,7 @@ const Index = () => {
       <Suspense fallback={<SectionLoader />}>
         <ViewFadeIn><WeatherSection /></ViewFadeIn>
         <ViewFadeIn><ToursSection /></ViewFadeIn>
+        <WhyChooseUs />
         <ViewFadeIn><ReviewsSection /></ViewFadeIn>
         <ViewFadeIn><AboutSection /></ViewFadeIn>
         <ViewFadeIn><ContactSection /></ViewFadeIn>

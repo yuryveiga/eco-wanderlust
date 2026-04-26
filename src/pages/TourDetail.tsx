@@ -13,6 +13,7 @@ import { Footer } from "@/components/Footer";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { getOptimizedImage } from "@/utils/imageOptimization";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getTourMinPrice } from "@/utils/pricing";
@@ -935,7 +936,7 @@ export function TourDetail() {
           </div>
           <Button onClick={handleBooking} className="flex-1 h-12 rounded-xl font-black">{t("reservar_agora")}</Button>
         </div>
-      </div>
+      <WhyChooseUs />
 
       {/* TripAdvisor Reviews Carousel */}
       <section className="py-24 bg-muted/30 border-t border-border/50">

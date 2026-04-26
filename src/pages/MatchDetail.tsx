@@ -25,6 +25,7 @@ import { supabase as localSupabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCanonicalUrl } from "@/utils/seo";
 import { LovableMatch } from "@/types";
+import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { PaymentLogos } from "@/components/PaymentLogos";
 
 // Partner Project Config
@@ -453,6 +454,8 @@ export default function MatchDetail() {
            </div>
         </div>
       </main>
+
+      <WhyChooseUs />
 
       {/* TripAdvisor Reviews Carousel */}
       <section className="py-24 bg-muted/30 border-t border-border/50">
