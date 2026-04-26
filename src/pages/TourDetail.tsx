@@ -224,8 +224,18 @@ export function TourDetail() {
       setShowStickyBar(window.scrollY > 600);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [id]);
+    const script = document.createElement("script");
+    script.src = "https://elfsightcdn.com/platform.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (tour) {
@@ -623,7 +633,7 @@ export function TourDetail() {
                              )}
                            </div>
 
-               <div className="space-y-4 pt-4 border-t border-primary/10">
+                           <div className="space-y-4 pt-4 border-t border-primary/10">
                              {/* Positives */}
                              {(option.positive_notices as string[] | undefined || []).length > 0 && (
                                <div className="space-y-2">
@@ -878,7 +888,20 @@ export function TourDetail() {
                      </div>
                    </div>
 
-                   <p className="text-center text-[10px] text-muted-foreground mt-6 font-bold uppercase tracking-widest">{t("pagamento_seguro")}</p>
+                    <div className="mt-6 pt-6 border-t border-primary/10">
+                      <p className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-4 text-center">{t("pagamento_seguro")}</p>
+                      <PaymentLogos variant="light" className="scale-90 origin-center" />
+                      
+                      <div className="mt-6 flex items-center gap-3 p-4 bg-green-50 rounded-2xl border border-green-100 group hover:bg-green-100 transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
+                          <ShieldCheck className="w-6 h-6 text-green-600" />
+                        </div>
+                        <div className="text-[10px]">
+                          <p className="font-black text-green-900 uppercase tracking-tighter">{language === 'pt' ? 'Garantia de Satisfação' : 'Satisfaction Guaranteed'}</p>
+                          <p className="text-green-700/70 font-medium">{language === 'pt' ? 'Sua felicidade é nossa prioridade' : 'Your happiness is our priority'}</p>
+                        </div>
+                      </div>
+                    </div>
                  </div>
 
                  {/* TripAdvisor Badge Link */}
@@ -912,6 +935,27 @@ export function TourDetail() {
           <Button onClick={handleBooking} className="flex-1 h-12 rounded-xl font-black">{t("reservar_agora")}</Button>
         </div>
       </div>
+
+      {/* TripAdvisor Reviews Carousel */}
+      <section className="py-24 bg-muted/30 border-t border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-serif font-black text-foreground mb-4">
+              {language === 'pt' ? 'O que dizem nossos viajantes' : language === 'es' ? 'Lo que dicen nuestros viajeros' : 'What our travelers say'}
+            </h2>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-emerald-500 text-emerald-500" />)}
+              </div>
+              <span className="font-bold text-emerald-700">Excellent 5.0</span>
+            </div>
+          </div>
+          
+          <div className="min-h-[300px]">
+            <div className="elfsight-app-bbfeb008-113f-47f2-bfa9-91793656db8e" data-elfsight-app-lazy></div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
 

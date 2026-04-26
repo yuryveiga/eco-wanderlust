@@ -156,6 +156,19 @@ export default function MatchDetail() {
     }
   };
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://elfsightcdn.com/platform.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   if (isLoading) return <div className="min-h-screen flex items-center justify-center animate-pulse bg-muted" />;
   if (!match) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">Jogo não encontrado</h1><Link to="/maracanacalendar"><Button className="mt-4">Voltar ao Calendário</Button></Link></div>;
 
@@ -247,6 +260,7 @@ export default function MatchDetail() {
       <Helmet>
         <title>{match.home_team} x {match.away_team} | Maracanã Matchday Experience</title>
         <meta name="description" content={`Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`} />
+        <meta property="og:title" content={`${translatedTitle} | ${siteTitle}`} />
         <meta property="og:url" content={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
         <link rel="canonical" href={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
         {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
@@ -403,11 +417,25 @@ export default function MatchDetail() {
                              </Button>
                           </div>
 
-                          <div className="mt-8 flex items-center gap-3 p-4 bg-muted/20 rounded-2xl border border-dashed text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
-                             <ShieldCheck className="h-6 w-6 text-green-600 shrink-0" />
-                             {t('venda_segura_sep')}
-                          </div>
-                       </div>
+                           <div className="mt-8 flex items-center gap-3 p-4 bg-muted/20 rounded-2xl border border-dashed text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                              <ShieldCheck className="h-6 w-6 text-green-600 shrink-0" />
+                              {t('venda_segura_sep')}
+                           </div>
+                           
+                           <div className="mt-6 pt-6 border-t border-primary/10">
+                             <PaymentLogos variant="light" className="scale-90 origin-center" />
+                             
+                             <div className="mt-6 flex items-center gap-3 p-4 bg-green-50 rounded-2xl border border-green-100 transition-colors">
+                               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
+                                 <ShieldCheck className="w-6 h-6 text-green-600" />
+                               </div>
+                               <div className="text-[10px]">
+                                 <p className="font-black text-green-900 uppercase tracking-tighter">{language === 'pt' ? 'Garantia de Satisfação' : 'Satisfaction Guaranteed'}</p>
+                                 <p className="text-green-700/70 font-medium">{language === 'pt' ? 'Sua felicidade é nossa prioridade' : 'Your happiness is our priority'}</p>
+                               </div>
+                             </div>
+                           </div>
+                        </div>
                     </div>
 
                     <div className="p-6 bg-secondary/20 rounded-2xl border flex items-center gap-4 group">
@@ -424,6 +452,21 @@ export default function MatchDetail() {
            </div>
         </div>
       </main>
+
+      {/* TripAdvisor Reviews Carousel */}
+      <section className="py-24 bg-muted/30 border-t border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-serif font-black text-foreground mb-4">
+              {language === 'pt' ? 'O que dizem nossos viajantes' : language === 'es' ? 'Lo que dicen nuestros viajeros' : 'What our travelers say'}
+            </h2>
+          </div>
+          
+          <div className="min-h-[300px]">
+            <div className="elfsight-app-bbfeb008-113f-47f2-bfa9-91793656db8e" data-elfsight-app-lazy></div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
 
