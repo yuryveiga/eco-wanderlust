@@ -89,7 +89,7 @@ async function cleanupAndReSeed() {
       title: "Planejando sua Viagem: Qual a melhor \u00e9poca para visitar o Rio?",
       slug: "melhor-epoca-visitar-rio-de-janeiro",
       excerpt: "Descubra quando ir ao Rio de Janeiro para aproveitar o sol ou curtir o Carnaval.",
-      image_url: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200",
+      image_url: "/maracana-hero.jpg",
       is_published: true,
       content: `
         <h2>Sol o Ano Inteiro?</h2>

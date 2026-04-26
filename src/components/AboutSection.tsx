@@ -7,7 +7,7 @@ const DEFAULT_IMAGES = [
   'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600',
   'https://images.unsplash.com/photo-1544989164-31dc3c645987?q=80&w=600',
   'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=600',
-  'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=600',
+  '/maracana-hero.jpg',
 ];
 
 export function AboutSection() {

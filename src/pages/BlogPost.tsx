@@ -58,7 +58,7 @@ const BlogPost = () => {
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Tocorime Rio";
-  const fallbackImage = images.hero_bg || "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920";
+  const fallbackImage = images.hero_bg || "/maracana-hero.jpg";
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -23,7 +23,7 @@ export function HeroSection() {
     images["hero_bg_3"]
   ].filter(Boolean);
 
-  const heroBgs = availableBgs.length > 0 ? availableBgs : ["https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070"];
+  const heroBgs = availableBgs.length > 0 ? availableBgs : ["/maracana-hero.jpg"];
 
 
 

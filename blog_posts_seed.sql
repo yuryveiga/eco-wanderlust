@@ -9,7 +9,7 @@ VALUES
     'melhores-mirantes-gratuitos-rj', 
     '<h2>Descubra as vistas mais incríveis da cidade sem gastar nada!</h2><p>O Rio de Janeiro é mundialmente famoso por sua geografia privilegiada, onde o mar e a montanha se encontram. Embora o Cristo Redentor e o Pão de Açúcar sejam paradas obrigatórias, existem mirantes gratuitos que oferecem ângulos igualmente espetaculares.</p><h3>1. Mirante Dona Marta</h3><p>Localizado no caminho para o Corcovado, oferece uma das vistas mais clássicas do Pão de Açúcar e da Baía de Guanabara.</p><h3>2. Parque das Ruínas (Santa Teresa)</h3><p>Além da vista panorâmica do Centro e da Lapa, você aproveita o ambiente cultural de um dos bairros mais charmosos do Rio.</p><h3>3. Vista Chinesa</h3><p>No coração da Floresta da Tijuca, este deck em estilo oriental proporciona uma visão deslumbrante da Lagoa e do Morro Dois Irmãos.</p>', 
     'Conheça os ângulos mais espetaculares da Cidade Maravilhosa sem gastar um centavo. Do Mirante Dona Marta à Vista Chinesa.', 
-    'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200', 
+    '/maracana-hero.jpg', 
     true, 
     NOW()
 ),
