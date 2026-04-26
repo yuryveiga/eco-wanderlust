@@ -180,7 +180,7 @@ export function Footer() {
                 className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer object-contain"
               />
               <img
-                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/redes/turismo_responsavel_dark.png"
+                src="https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/render/image/public/site-images/redes/turismo_responsavel_dark.png?width=150&quality=80&resize=contain"
                 alt="Turismo Responsável"
                 className="w-24 h-auto opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer object-contain"
               />
