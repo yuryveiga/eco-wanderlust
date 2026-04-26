@@ -936,6 +936,8 @@ export function TourDetail() {
           </div>
           <Button onClick={handleBooking} className="flex-1 h-12 rounded-xl font-black">{t("reservar_agora")}</Button>
         </div>
+      </div>
+
       <WhyChooseUs />
 
       {/* TripAdvisor Reviews Carousel */}
