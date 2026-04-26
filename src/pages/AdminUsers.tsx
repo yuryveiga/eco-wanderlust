@@ -63,10 +63,11 @@ const AdminUsers = () => {
       setNewPassword("");
       setIsDialogOpen(false);
       loadProfiles();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro ao criar usuário";
       toast({ 
         title: "Erro ao criar", 
-        description: error.message, 
+        description: message, 
         variant: "destructive" 
       });
     } finally {
@@ -224,8 +225,9 @@ const AdminUsers = () => {
                     toast({ title: "Senha alterada!", description: `A senha de ${resetEmail} foi imposta com sucesso.` });
                     setResetDialogOpen(false);
                     setResetNewPassword("");
-                  } catch (error: any) {
-                    toast({ title: "Erro", description: error.message, variant: "destructive" });
+                  } catch (error: unknown) {
+                    const message = error instanceof Error ? error.message : "Erro desconhecido";
+                    toast({ title: "Erro", description: message, variant: "destructive" });
                   } finally {
                     setIsResetting(false);
                   }

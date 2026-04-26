@@ -65,7 +65,7 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
         provider: "tour",
       });
 
-      const saleId = (savedSale as any)?.id;
+      const saleId = (savedSale as { id?: string })?.id;
 
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
@@ -98,8 +98,9 @@ export default function StripeCheckoutDialog({ open, onClose, tours }: Props) {
       } else {
         throw new Error("Nenhum link retornado");
       }
-    } catch (err: any) {
-      toast({ title: "Erro ao gerar link", description: err.message, variant: "destructive" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erro desconhecido";
+      toast({ title: "Erro ao gerar link", description: message, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

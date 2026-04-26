@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Locale } from "date-fns";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, addMonths, subMonths } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { getMatchDateInRio, isMatchOnDay, getDisplaySpots } from "@/lib/dateUtils";
@@ -15,7 +16,7 @@ import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
 import { getCanonicalUrl } from "@/utils/seo";
 
-const localeMap: Record<string, any> = { pt: ptBR, en: enUS, es };
+const localeMap: Record<string, Locale> = { pt: ptBR, en: enUS, es };
 
 const weekDaysByLang: Record<string, string[]> = {
   pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],

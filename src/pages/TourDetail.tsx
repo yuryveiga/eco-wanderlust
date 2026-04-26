@@ -37,7 +37,7 @@ const getYouTubeEmbedUrl = (url: string) => {
   if (!url) return "";
   
   // Extract video ID from various YouTube URL formats
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
   const match = url.match(regExp);
   
   const videoId = (match && match[2].length === 11) ? match[2] : null;
@@ -99,24 +99,25 @@ export function TourDetail() {
   );
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
-  const getTranslated = useCallback((field: string) => {
+  const getTranslated = useCallback((field: keyof LovableTour) => {
     if (!tour) return "";
-    if (language === 'pt') return (tour as any)[field];
-    return (tour as any)[`${field}_${language}`] || (tour as any)[field];
+    if (language === 'pt') return (tour as Record<string, unknown>)[field];
+    const translatedField = `${String(field)}_${language}` as keyof LovableTour;
+    return (tour as Record<string, unknown>)[translatedField] || (tour as Record<string, unknown>)[field];
   }, [language, tour]);
 
-  const translatedTitle = useMemo(() => getTranslated('title'), [getTranslated]);
-  const translatedShortDesc = useMemo(() => getTranslated('short_description'), [getTranslated]);
+  const translatedTitle = useMemo(() => getTranslated('title') as string, [getTranslated]);
+  const translatedShortDesc = useMemo(() => getTranslated('short_description') as string, [getTranslated]);
   
   const translatedCategory = useMemo(() => {
     const rawCat = tour?.category;
     if (rawCat === 'TRILHA') return t('trilhas');
     if (rawCat === 'CITY TOUR') return t('city_tours');
-    return getTranslated('category');
+    return getTranslated('category') as string;
   }, [tour, t, getTranslated]);
 
-  const translatedDifficulty = useMemo(() => getTranslated('difficulty'), [getTranslated]);
-  const translatedItinerary = useMemo(() => getTranslated(`itinerary_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.itinerary_json, [getTranslated, language, tour?.itinerary_json]);
+  const translatedDifficulty = useMemo(() => getTranslated('difficulty') as string, [getTranslated]);
+  const translatedItinerary = useMemo(() => getTranslated(`itinerary_json${language !== 'pt' ? `_${language}` : ""}`) as { time: string; description: string }[] || tour?.itinerary_json, [getTranslated, language, tour?.itinerary_json]);
   const translatedIncluded = useMemo(() => getTranslated(`included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json, [getTranslated, language, tour?.included_json]);
   const translatedFaq = useMemo(() => getTranslated(`faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json, [getTranslated, language, tour?.faq_json]);
   const translatedHighlights = useMemo(() => getTranslated(`highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json, [getTranslated, language, tour?.highlights_json]);
@@ -130,18 +131,58 @@ export function TourDetail() {
       .replace(/minuto/gi, t("minuto"));
   };
 
-  // JSON-LD Structured Data
   const jsonLd = tour ? {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": translatedTitle,
     "description": translatedShortDesc,
     "image": tour.image_url,
+    "sku": tour.slug || tour.id,
+    "brand": {
+      "@type": "Brand",
+      "name": siteTitle
+    },
     "offers": {
       "@type": "Offer",
       "price": tour.price,
       "priceCurrency": "BRL",
-      "availability": "https://schema.org/InStock"
+      "availability": "https://schema.org/InStock",
+      "url": window.location.href,
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "BR",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+        "merchantReturnDays": 3,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": 0,
+          "currency": "BRL"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "BR"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          }
+        }
+      }
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -231,8 +272,10 @@ export function TourDetail() {
     }
 
     // Add custom option price if active
-    if (tour.use_custom_options && tour.custom_options_json && tour.custom_options_json[selectedOptionIdx]) {
-      basePrice += (Number(tour.custom_options_json[selectedOptionIdx].price) || 0);
+    const options = tour.custom_options_json as Record<string, unknown>[] | undefined;
+    if (tour.use_custom_options && options && options[selectedOptionIdx]) {
+      const option = options[selectedOptionIdx];
+      basePrice += (Number(option.price) || 0);
     }
     
     return basePrice;
@@ -304,9 +347,9 @@ export function TourDetail() {
       price_7_19_people: tour.price_7_19_people,
       group_price: tour.pricing_model === 'group' ? tour.price : undefined,
       max_group_size: tour.max_group_size,
-      selected_option: tour.use_custom_options && tour.custom_options_json?.[selectedOptionIdx] ? {
-        title: tour.custom_options_json[selectedOptionIdx].title,
-        extra_price: tour.custom_options_json[selectedOptionIdx].price
+      selected_option: tour.use_custom_options && (tour.custom_options_json as Record<string, unknown>[])?.[selectedOptionIdx] ? {
+        title: String((tour.custom_options_json as Record<string, unknown>[])[selectedOptionIdx].title),
+        extra_price: Number((tour.custom_options_json as Record<string, unknown>[])[selectedOptionIdx].price)
       } : undefined
     });
 
@@ -332,8 +375,8 @@ export function TourDetail() {
 
   if (!tour) return <div className="min-h-screen flex flex-col items-center justify-center"><h1 className="text-2xl font-bold">{t("nao_encontrado")}</h1><Link to="/"><Button className="mt-4">{t("voltar_home")}</Button></Link></div>;
 
-  const highlights = (translatedHighlights as any[]) || [];
-  const faqItems = (translatedFaq as any[]) || [];
+  const highlights = (translatedHighlights as { icon: string; text: string }[]) || [];
+  const faqItems = (translatedFaq as { q: string; a: string }[]) || [];
 
   const openLightbox = (index: number, source: 'hero' | 'gallery' = 'hero') => {
     setLightboxIndex(index);
@@ -396,7 +439,7 @@ export function TourDetail() {
                 {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
               </span>
               <span className="text-4xl font-black text-primary">
-                {formatPrice(getTourMinPrice(tour as any))}
+                {formatPrice(getTourMinPrice(tour))}
               </span>
               <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
                 {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}
@@ -544,7 +587,7 @@ export function TourDetail() {
               </div>
 
                {/* Custom Options Selection */}
-               {tour.use_custom_options && tour.custom_options_json && tour.custom_options_json.length > 0 && (
+               {tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as Record<string, unknown>[]).length > 0 && (
                  <div className="space-y-8">
                    <h2 className="text-3xl font-serif font-black flex items-center gap-4 text-foreground">
                      <div className="w-2 h-10 bg-primary rounded-full" />
@@ -552,7 +595,7 @@ export function TourDetail() {
                    </h2>
                    
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     {tour.custom_options_json.map((option, idx) => (
+                     {(tour.custom_options_json as Record<string, unknown>[]).map((option, idx) => (
                        <div 
                          key={idx}
                          onClick={() => setSelectedOptionIdx(idx)}
@@ -582,10 +625,10 @@ export function TourDetail() {
 
                <div className="space-y-4 pt-4 border-t border-primary/10">
                              {/* Positives */}
-                             {(option.positive_notices || []).length > 0 && (
+                             {(option.positive_notices as string[] | undefined || []).length > 0 && (
                                <div className="space-y-2">
                                  <ul className="space-y-2">
-                                   {option.positive_notices.map((n, i) => (
+                                   {(option.positive_notices as string[] | undefined || []).map((n, i) => (
                                      <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
                                        <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                                        <span>{n}</span>
@@ -596,10 +639,10 @@ export function TourDetail() {
                              )}
 
                              {/* Negatives */}
-                             {(option.negative_notices || []).length > 0 && (
+                             {(option.negative_notices as string[] | undefined || []).length > 0 && (
                                <div className="space-y-2">
                                  <ul className="space-y-2">
-                                   {option.negative_notices.map((n, i) => (
+                                   {(option.negative_notices as string[] | undefined || []).map((n, i) => (
                                      <li key={i} className="flex items-start gap-2 text-sm text-foreground/60 italic">
                                        <X className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
                                        <span>{n}</span>
@@ -632,12 +675,12 @@ export function TourDetail() {
                )}
 
                {/* Itinerary */}
-               {translatedItinerary && (translatedItinerary as any[]).length > 0 && (
+               {translatedItinerary && (translatedItinerary as { time: string; description: string }[]).length > 0 && (
                  <div className="bg-card rounded-2xl border p-8 space-y-8">
                    <h2 className="text-2xl font-serif font-bold text-[#2A9D8F]">{t("itinerario_detalhes")}</h2>
                    <div className="relative space-y-8">
                      <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-dashed border-l-2 border-primary/20" />
-                     {(translatedItinerary as any[]).map((step, i) => (
+                     {(translatedItinerary as { time: string; description: string }[]).map((step, i) => (
                        <div key={i} className="relative pl-10">
                          <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] text-primary-foreground font-bold shadow-lg ring-4 ring-background">{i + 1}</div>
                          <h3 className="font-bold text-lg mb-1">{step.time}</h3>
@@ -653,7 +696,7 @@ export function TourDetail() {
                  <div className="bg-card rounded-2xl border p-8 space-y-6">
                    <h2 className="text-2xl font-serif font-bold flex items-center gap-3"><ChevronDown className="text-primary" /> {t("faq_titulo") || "Para seu conhecimento (FAQ)"}</h2>
                    <div className="space-y-3">
-                     {faqItems.map((item: any, i: number) => (
+                     {faqItems.map((item: { q: string; a: string }, i: number) => (
                        <div key={i} className="border rounded-xl overflow-hidden">
                          <button
                            className="w-full text-left p-5 flex items-center justify-between font-bold text-sm hover:bg-muted/30 transition-colors"
@@ -673,7 +716,7 @@ export function TourDetail() {
 
                {/* Tour Photo Gallery Carousel - uses carousel_images_json */}
                {(() => {
-                 const carouselImgs = (tour as any)?.carousel_images_json as string[] || [];
+                 const carouselImgs = tour.carousel_images_json as string[] || [];
                  if (carouselImgs.length === 0) return null;
                  return (
                    <div className="space-y-6">
@@ -861,7 +904,7 @@ export function TourDetail() {
             <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("a_partir_de")}</span>
             <div className="flex items-baseline gap-1">
                <div className="font-black text-xl text-primary">
-                {formatPrice(getTourMinPrice(tour as any))}
+                 {formatPrice(getTourMinPrice(tour))}
                </div>
                <span className="text-[9px] font-black text-muted-foreground uppercase opacity-70">/ {t("pessoa")}</span>
             </div>
@@ -878,12 +921,12 @@ export function TourDetail() {
           className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-0 backdrop-blur-sm"
           onKeyDown={(e) => {
             if (e.key === "Escape") setIsLightboxOpen(false);
-            if (e.key === "ArrowLeft") {
-              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              if (e.key === "ArrowLeft") {
+                const list = lightboxSource === 'gallery' ? (tour.carousel_images_json as string[] || []) : images;
               setLightboxIndex((prev) => (prev > 0 ? prev - 1 : list.length - 1));
             }
-            if (e.key === "ArrowRight") {
-              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              if (e.key === "ArrowRight") {
+                const list = lightboxSource === 'gallery' ? (tour.carousel_images_json as string[] || []) : images;
               setLightboxIndex((prev) => (prev < list.length - 1 ? prev + 1 : 0));
             }
           }}
@@ -901,7 +944,7 @@ export function TourDetail() {
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 md:px-10 z-[115] pointer-events-none">
             <button
               onClick={() => {
-                const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+                const list = lightboxSource === 'gallery' ? (tour.carousel_images_json as string[] || []) : images;
                 setLightboxIndex((prev) => (prev > 0 ? prev - 1 : list.length - 1));
               }}
               className="w-12 h-12 md:w-16 md:h-16 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-all pointer-events-auto border border-white/10 text-white group"
@@ -910,7 +953,7 @@ export function TourDetail() {
             </button>
             <button
               onClick={() => {
-                const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+                const list = lightboxSource === 'gallery' ? (tour.carousel_images_json as string[] || []) : images;
                 setLightboxIndex((prev) => (prev < list.length - 1 ? prev + 1 : 0));
               }}
               className="w-12 h-12 md:w-16 md:h-16 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center transition-all pointer-events-auto border border-white/10 text-white group"
@@ -922,7 +965,7 @@ export function TourDetail() {
           {/* Image Container - Absolute Center */}
           <div className="w-full h-full p-4 md:p-12 flex items-center justify-center">
             {(() => {
-              const list = lightboxSource === 'gallery' ? ((tour as any)?.carousel_images_json as string[] || []) : images;
+              const list = lightboxSource === 'gallery' ? (tour.carousel_images_json as string[] || []) : images;
               const img = list[lightboxIndex];
               const dims = imageDimensions[img];
               const isLandscape = dims ? dims.width > dims.height : false;

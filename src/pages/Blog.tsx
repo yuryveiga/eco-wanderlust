@@ -37,10 +37,10 @@ const Blog = () => {
     loadPosts();
   }, []);
 
-  const getTranslated = (obj: any, field: string) => {
+  const getTranslated = (obj: LovableBlogPost, field: keyof LovableBlogPost) => {
     if (!obj) return "";
-    if (language === 'pt') return obj[field];
-    return obj[`${field}_${language}`] || obj[field];
+    if (language === 'pt') return (obj as Record<string, unknown>)[field] as string;
+    return ((obj as Record<string, unknown>)[`${field}_${language}`] || obj[field]) as string;
   };
 
   return (

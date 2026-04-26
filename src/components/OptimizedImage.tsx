@@ -97,6 +97,7 @@ export const OptimizedImage = memo(function OptimizedImage({
           loading={loading}
           fetchPriority={fetchPriority}
           decoding={decoding}
+
           className={cn(
             "transition-all duration-700 ease-in-out",
             fill ? "w-full h-full" : "max-w-full max-h-full",

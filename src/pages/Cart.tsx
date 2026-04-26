@@ -63,7 +63,7 @@ const Cart = () => {
           quantity: item.quantity
         });
 
-        const { data, error } = await (supabase.from("sales") as any).insert({
+        const { data, error } = await supabase.from("sales").insert({
           tour_id: item.id,
           tour_title: item.title,
           tour_slug: item.slug,
@@ -114,9 +114,10 @@ const Cart = () => {
       if (functionData?.url) {
         window.location.href = functionData.url;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Checkout error details:", error);
-      alert("Houve um erro ao processar seu pagamento:\n" + (error.message || "Erro desconhecido"));
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      alert("Houve um erro ao processar seu pagamento:\n" + message);
     } finally {
       setIsProcessing(false);
     }

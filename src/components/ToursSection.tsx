@@ -87,7 +87,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
               {tour.pricing_model === 'group' ? t("por_grupo") : t("a_partir_de")}
             </span>
             <span className="text-xl font-black font-sans leading-none">
-              {formatPrice(getTourMinPrice(tour as any))}
+              {formatPrice(getTourMinPrice(tour))}
             </span>
           </div>
         )}

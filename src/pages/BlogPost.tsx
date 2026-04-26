@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
+import DOMPurify from "dompurify";
+
 import { fetchLovable, LovableBlogPost } from "@/integrations/lovable/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -90,7 +92,8 @@ const BlogPost = () => {
   const getTranslated = (field: keyof LovableBlogPost) => {
     if (!post) return "";
     if (language === 'pt') return post[field];
-    return (post as Record<string, any>)[`${field}_${language}`] || post[field];
+    const translatedField = `${String(field)}_${language}` as keyof LovableBlogPost;
+    return (post as Record<string, unknown>)[translatedField] || post[field];
   };
 
   if (isLoading) {

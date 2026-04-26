@@ -218,14 +218,14 @@ const AdminTours = () => {
       difficulty_es: tDifEs,
       meeting_point_address_en: tAddrEn,
       meeting_point_address_es: tAddrEs,
-      itinerary_json_en: tItineraryEn as any,
-      itinerary_json_es: tItineraryEs as any,
-      included_json_en: tIncludedEn as any,
-      included_json_es: tIncludedEs as any,
-      highlights_json_en: tHighlightsEn as any,
-      highlights_json_es: tHighlightsEs as any,
-      faq_json_en: tFaqEn as any,
-      faq_json_es: tFaqEs as any,
+      itinerary_json_en: tItineraryEn as LovableTour['itinerary_json'],
+      itinerary_json_es: tItineraryEs as LovableTour['itinerary_json'],
+      included_json_en: tIncludedEn as LovableTour['included_json'],
+      included_json_es: tIncludedEs as LovableTour['included_json'],
+      highlights_json_en: tHighlightsEn as LovableTour['highlights_json'],
+      highlights_json_es: tHighlightsEs as LovableTour['highlights_json'],
+      faq_json_en: tFaqEn as LovableTour['faq_json'],
+      faq_json_es: tFaqEs as LovableTour['faq_json'],
     };
   };
 
@@ -264,20 +264,23 @@ const AdminTours = () => {
 
   const updateJsonField = (field: keyof LovableTour, index: number, subField: string, value: string) => {
     if (!editing) return;
-    const arr = [...((editing[field] as any[]) || [])];
+    const currentArray = (editing[field] as JsonFieldItem[]) || [];
+    const arr = [...currentArray];
     arr[index] = { ...arr[index], [subField]: value };
     setEditing({ ...editing, [field]: arr });
   };
 
   const addJsonItem = (field: keyof LovableTour, newItem: JsonFieldItem) => {
     if (!editing) return;
-    const arr = [...((editing[field] as any[]) || []), newItem];
+    const currentArray = (editing[field] as JsonFieldItem[]) || [];
+    const arr = [...currentArray, newItem];
     setEditing({ ...editing, [field]: arr });
   };
 
   const removeJsonItem = (field: keyof LovableTour, index: number) => {
     if (!editing) return;
-    const arr = [...((editing[field] as any[]) || [])];
+    const currentArray = (editing[field] as JsonFieldItem[]) || [];
+    const arr = [...currentArray];
     arr.splice(index, 1);
     setEditing({ ...editing, [field]: arr });
   };

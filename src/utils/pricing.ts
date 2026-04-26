@@ -11,13 +11,13 @@ export type PricingTour = {
   price_3_6_people?: number;
   price_7_19_people?: number;
   use_custom_options?: boolean;
-  custom_options_json?: any;
+  custom_options_json?: { price: number }[];
 };
 
 /**
  * Safely converts a value to a positive number.
  */
-function asNumber(val: any): number {
+function asNumber(val: unknown): number {
   if (val === null || val === undefined) return 0;
   const n = Number(val);
   return isNaN(n) ? 0 : n;
@@ -67,7 +67,7 @@ export function getTourMinPrice(tour: PricingTour): number {
 
   // 4. If there are custom options and they are active, add the lowest possible required option price
   if (tour.use_custom_options && Array.isArray(tour.custom_options_json) && tour.custom_options_json.length > 0) {
-    const optionPrices = (tour.custom_options_json as any[])
+    const optionPrices = (tour.custom_options_json as { price: number }[])
       .map(o => asNumber(o.price))
       .filter(p => p >= 0);
     

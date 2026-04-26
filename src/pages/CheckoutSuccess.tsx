@@ -44,11 +44,11 @@ const CheckoutSuccess = () => {
           // Initialize participants state
           const initialParticipants: Record<string, { name: string; dob: string }[]> = {};
           data.forEach(sale => {
-            initialParticipants[sale.id] = Array.from({ length: sale.quantity }, () => ({ name: "", dob: "" }));
+            initialParticipants[sale.id] = Array.from({ length: sale.quantity || 1 }, () => ({ name: "", dob: "" }));
           });
           setParticipants(initialParticipants);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error loading sales:", error);
         toast.error("Erro ao carregar dados da reserva");
       } finally {
@@ -82,7 +82,7 @@ const CheckoutSuccess = () => {
       for (const saleId in participants) {
         const { error } = await supabase
           .from("sales")
-          .update({ passengers_json: participants[saleId] as unknown as any })
+          .update({ passengers_json: participants[saleId] as unknown })
           .eq("id", saleId);
 
         if (error) throw error;

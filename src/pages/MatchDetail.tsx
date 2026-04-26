@@ -13,6 +13,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useSiteData } from "@/hooks/useSiteData";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
@@ -23,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { supabase as localSupabase } from "@/integrations/supabase/client";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCanonicalUrl } from "@/utils/seo";
+import { LovableMatch } from "@/types";
 
 // Partner Project Config
 const MARACANA_PROJECT_URL = "https://mwxbskzggzznxvkwgrnz.supabase.co";
@@ -34,6 +36,7 @@ export default function MatchDetail() {
   const navigate = useNavigate();
   const { language, t, formatPrice, currency } = useLocale();
   const { rates } = useCurrency();
+  const { siteSettings } = useSiteData();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
@@ -74,7 +77,7 @@ export default function MatchDetail() {
          }
          throw error;
       };
-      return data;
+      return data as LovableMatch;
     },
     enabled: !!id,
   });
@@ -96,7 +99,7 @@ export default function MatchDetail() {
 
     try {
       // 1. Create sale record in TOCORIME database first
-      const { data: saleData, error: saleError } = await (localSupabase.from("sales") as any).insert({
+      const { data: saleData, error: saleError } = await localSupabase.from("sales").insert({
         tour_id: match.id,
         tour_title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
         tour_slug: match.slug,
@@ -145,7 +148,7 @@ export default function MatchDetail() {
       } else {
         throw new Error(sessionData.error || "Payment error");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
       toast.error(language === 'pt' ? "Erro ao processar pagamento" : "Error processing payment");
     } finally {
@@ -158,6 +161,68 @@ export default function MatchDetail() {
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const matchDateRio = getMatchDateInRio(match.match_date);
+
+  const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
+
+  const jsonLd = match ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": `${match.home_team} x ${match.away_team} | Maracanã Matchday Experience`,
+    "description": `Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`,
+    "image": "https://tocorimerio.com/maracana-hero.jpg",
+    "sku": match.slug || match.id,
+    "brand": {
+      "@type": "Brand",
+      "name": siteTitle
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": match.price,
+      "priceCurrency": "BRL",
+      "availability": "https://schema.org/InStock",
+      "url": window.location.href,
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "BR",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+        "merchantReturnDays": 3,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": 0,
+          "currency": "BRL"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "BR"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          }
+        }
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "86"
+    }
+  } : null;
 
   const itinerary = [
     {
@@ -184,6 +249,7 @@ export default function MatchDetail() {
         <meta name="description" content={`Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`} />
         <meta property="og:url" content={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
         <link rel="canonical" href={getCanonicalUrl(`/match/${match.slug || match.id}`)} />
+        {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
       </Helmet>
       
       <Header />

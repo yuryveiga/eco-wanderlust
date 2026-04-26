@@ -138,17 +138,28 @@ const AdminSales = () => {
     try {
       const selectedTour = tours.find(t => t.id === editing.tour_id);
       
-      const dataToSave = {
-        ...editing,
+      const { data: saleData, error: saleError } = await supabase.from("sales").insert({
+        tour_id: editing.tour_id,
         tour_title: selectedTour?.title || "",
         tour_slug: selectedTour?.slug || "",
-      };
+        customer_name: editing.customer_name,
+        customer_email: editing.customer_email,
+        customer_phone: editing.customer_phone,
+        quantity: editing.quantity,
+        total_price: editing.total_price,
+        selected_date: editing.selected_date,
+        selected_period: editing.selected_period,
+        is_paid: editing.is_paid || false,
+        currency: editing.currency || 'BRL',
+        provider: "manual"
+      }).select("id").single();
+
+      if (saleError) throw saleError;
 
       if (editing.id) {
-        await updateLovable("sales", editing.id, dataToSave);
+        await updateLovable("sales", editing.id, { ...editing, tour_title: selectedTour?.title || "", tour_slug: selectedTour?.slug || "" });
         toast({ title: "Venda atualizada!" });
       } else {
-        await insertLovable("sales", dataToSave);
         toast({ title: "Venda registrada!" });
       }
 
@@ -274,7 +285,7 @@ const AdminSales = () => {
             key={f.key}
             variant={filter === f.key ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter(f.key as any)}
+            onClick={() => setFilter(f.key as typeof filter)}
           >
             {f.label}
           </Button>
