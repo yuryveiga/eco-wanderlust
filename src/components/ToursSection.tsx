@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Users, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -165,7 +165,7 @@ export function ToursSection() {
   const count = Number(siteSettings['home_tours_count']) || 6;
   
   // Dynamic categories from settings (up to 3)
-  const categories = [
+  const categories = useMemo(() => [
     {
       value: siteSettings['home_category_1'] || 'CITY TOUR',
       label: language === 'pt' 
@@ -185,7 +185,7 @@ export function ToursSection() {
         ? (siteSettings['home_category_3_label'] || siteSettings['home_category_3'])
         : (siteSettings[`home_category_3_label_${language}`] || siteSettings['home_category_3_label'] || siteSettings['home_category_3']),
     }] : []),
-  ];
+  ], [siteSettings, language, t]);
 
   const handleTabChange = (idx: number) => {
     if (idx !== activeTab) {
@@ -200,9 +200,13 @@ export function ToursSection() {
                         columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3";
 
   const activeCat = categories[activeTab];
-  const displayTours = tours
-    .filter(t => t.category?.toUpperCase().includes(activeCat.value))
-    .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+  
+  const displayTours = useMemo(() => {
+    return tours
+      .filter(t => t.category?.toUpperCase().includes(activeCat?.value))
+      .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+  }, [tours, activeCat]);
+
   
   // Title and subtitle
   const toursSectionTitleKey = language === 'pt' ? 'tours_section_title' : `tours_section_title_${language}`;

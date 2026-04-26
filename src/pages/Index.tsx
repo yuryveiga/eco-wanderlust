@@ -1,11 +1,11 @@
 import { lazy, Suspense } from "react";
-import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getCanonicalUrl } from "@/utils/seo";
+import { ViewFadeIn } from "@/components/ViewFadeIn";
 
 // Lazy load sections below the fold
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
@@ -18,18 +18,6 @@ const BlogCarousel = lazy(() => import("@/components/BlogCarousel").then(m => ({
 const Footer = lazy(() => import("@/components/Footer").then(m => ({ default: m.Footer })));
 
 const SectionLoader = () => <div className="h-40 w-full flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
-
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5, delay, ease: "easeOut" }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
 
 const Index = () => {
   const { siteSettings } = useSiteData();
@@ -54,13 +42,13 @@ const Index = () => {
       <HeroSection />
       
       <Suspense fallback={<SectionLoader />}>
-        <FadeIn><WeatherSection /></FadeIn>
-        <FadeIn><ToursSection /></FadeIn>
-        <FadeIn><ReviewsSection /></FadeIn>
-        <FadeIn><AboutSection /></FadeIn>
-        <FadeIn><ContactSection /></FadeIn>
-        <FadeIn><GallerySection /></FadeIn>
-        <FadeIn><BlogCarousel /></FadeIn>
+        <ViewFadeIn><WeatherSection /></ViewFadeIn>
+        <ViewFadeIn><ToursSection /></ViewFadeIn>
+        <ViewFadeIn><ReviewsSection /></ViewFadeIn>
+        <ViewFadeIn><AboutSection /></ViewFadeIn>
+        <ViewFadeIn><ContactSection /></ViewFadeIn>
+        <ViewFadeIn><GallerySection /></ViewFadeIn>
+        <ViewFadeIn><BlogCarousel /></ViewFadeIn>
         <Footer />
       </Suspense>
     </main>

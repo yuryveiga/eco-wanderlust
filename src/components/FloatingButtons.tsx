@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useSiteData } from "@/hooks/useSiteData";
-import { useAuth } from "@/hooks/useAuth";
 
 export function FloatingButtons() {
   const { socialMedia } = useSiteData();
@@ -10,35 +9,42 @@ export function FloatingButtons() {
 
   useEffect(() => {
     if (isAdmin) return;
-    const script = document.createElement("script");
-    script.src = "https://elfsightcdn.com/platform.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
+    
+    // Delay non-critical script to improve initial TBT
+    const timer = setTimeout(() => {
+      const script = document.createElement("script");
+      script.src = "https://elfsightcdn.com/platform.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [isAdmin]);
 
   if (isAdmin) return null;
 
-  const tripAdvisor = socialMedia.find(s => 
-    s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
-  );
-  
-  const instagram = socialMedia.find(s => 
-    s.platform.toLowerCase().includes('instagram') && s.is_active !== false
-  );
-  
-  const whatsapp = socialMedia.find(s => 
-    s.platform.toLowerCase().includes('whatsapp') || 
-    s.icon_name.toLowerCase().includes('phone')
-  );
+  const socialLinks = useMemo(() => {
+    const tripAdvisor = socialMedia.find(s => 
+      s.platform.toLowerCase().includes('tripadvisor') && s.is_active !== false
+    );
+    
+    const instagram = socialMedia.find(s => 
+      s.platform.toLowerCase().includes('instagram') && s.is_active !== false
+    );
+    
+    const whatsapp = socialMedia.find(s => 
+      s.platform.toLowerCase().includes('whatsapp') || 
+      (s.icon_name && s.icon_name.toLowerCase().includes('phone'))
+    );
 
-  const youtube = socialMedia.find(s => 
-    s.platform.toLowerCase().includes('youtube') && s.is_active !== false
-  );
+    const youtube = socialMedia.find(s => 
+      s.platform.toLowerCase().includes('youtube') && s.is_active !== false
+    );
+
+    return { tripAdvisor, instagram, whatsapp, youtube };
+  }, [socialMedia]);
+
+  const { tripAdvisor, instagram, whatsapp, youtube } = socialLinks;
 
   const handleWhatsApp = () => {
     if (!whatsapp) return;

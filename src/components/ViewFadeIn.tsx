@@ -1,0 +1,62 @@
+import React, { useEffect, useRef, useState } from "react";
+
+interface ViewFadeInProps {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+  direction?: 'up' | 'down' | 'none';
+}
+
+export const ViewFadeIn = ({ 
+  children, 
+  delay = 0, 
+  className = "",
+  direction = 'up'
+}: ViewFadeInProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  const getTransform = () => {
+    if (isVisible) return 'translateY(0)';
+    if (direction === 'up') return 'translateY(20px)';
+    if (direction === 'down') return 'translateY(-20px)';
+    return 'none';
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: getTransform(),
+        transition: `opacity 0.5s ease-out ${delay}s, transform 0.5s ease-out ${delay}s`,
+        willChange: 'opacity, transform'
+      }}
+    >
+      {children}
+    </div>
+  );
+};

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { getOptimizedImage, getBlurPlaceholder } from "@/utils/imageOptimization";
 import { cn } from "@/lib/utils";
 import { useSiteData } from "@/hooks/useSiteData";
@@ -21,7 +21,7 @@ interface OptimizedImageProps {
   showBlur?: boolean;
 }
 
-export function OptimizedImage({
+export const OptimizedImage = memo(function OptimizedImage({
   src,
   alt,
   width = 800,
@@ -108,4 +108,5 @@ export function OptimizedImage({
       </picture>
     </div>
   );
-}
+});
+
