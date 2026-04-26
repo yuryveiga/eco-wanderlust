@@ -345,7 +345,8 @@ export function TourDetail() {
     <main className="min-h-screen bg-background font-sans overflow-x-hidden">
       <Helmet>
         <title>{translatedTitle} | {siteTitle}</title>
-        <meta name="description" content={translatedShortDesc || siteSettings?.site_description} />
+        <meta name="description" content={(translatedShortDesc || siteSettings?.site_description || "").replace(/<[^>]*>/g, "").substring(0, 160)} />
+
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />

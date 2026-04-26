@@ -235,7 +235,8 @@ const BlogPost = () => {
       `}</style>
       <Helmet>
         <title>{title} | {siteTitle}</title>
-        <meta name="description" content={excerpt || title} />
+        <meta name="description" content={(excerpt || content || title).replace(/<[^>]*>/g, "").substring(0, 160)} />
+
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />

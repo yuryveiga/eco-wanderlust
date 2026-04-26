@@ -92,12 +92,13 @@ const App = () => {
                           <Route path="/carrinho" element={<Cart />} />
                           <Route path="/confirmacao" element={<CheckoutSuccess />} />
                           <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
-                          <Route path="/maracana-calendario" element={<MaracanaCalendar />} />
-                          <Route path="/maracanacalendar" element={<MaracanaCalendar />} />
+                          <Route path="/maracana-calendario" element={<Navigate to="/maracanã-calendário" replace />} />
+                          <Route path="/maracanacalendar" element={<Navigate to="/maracanã-calendário" replace />} />
                           <Route path="/passeio/:id" element={<TourDetail />} />
                           <Route path="/match/:id" element={<MatchDetail />} />
-                          <Route path="/jogo/:id" element={<MatchDetail />} />
+                          <Route path="/jogo/:id" element={<Navigate to="/match/:id" replace />} />
                           <Route path="/:slug" element={<GenericPage />} />
+
 
                             {/* Admin routes (no language prefix needed for admin) */}
                             <Route path="/admin/login" element={<AdminLogin />} />
