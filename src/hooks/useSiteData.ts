@@ -108,7 +108,7 @@ export function useSiteData() {
     siteSettings: settingsQuery.data || cachedSettings,
     isLoading,
     isError: toursQuery.isError || pagesQuery.isError || imagesQuery.isError,
-    version: imagesQuery.dataUpdatedAt || settingsQuery.dataUpdatedAt || Date.now(),
+    version: imagesQuery.dataUpdatedAt || settingsQuery.dataUpdatedAt || 0,
   }), [
     toursQuery.data, 
     pagesQuery.data, 

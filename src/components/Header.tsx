@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, Instagram, MapPin, Phone, Mail, Music, Facebook, Youtube, Globe, DollarSign, ShoppingCart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -70,31 +70,35 @@ export function Header() {
     }
   };
 
-  const navLinks = [
-    { label: t("inicio"), href: "#top" },
-    { label: t("passeios"), href: "#tours" },
-    { label: t("sobre"), href: "#about" },
-    { label: t("contato"), href: "#contact" },
-    { label: "Blog", href: "/blog" },
-  ];
+  const allNavLinks = useMemo(() => {
+    const navLinks = [
+      { label: t("inicio"), href: "#top" },
+      { label: t("passeios"), href: "#tours" },
+      { label: t("sobre"), href: "#about" },
+      { label: t("contato"), href: "#contact" },
+      { label: "Blog", href: "/blog" },
+    ];
 
-  // Combine but filter out potential duplicates from CMS that point to same static locations
-  const staticHrefs = navLinks.map(l => l.href);
-  const filteredDynamicLinks = pages
-    .map(p => ({ label: p.title, href: p.href }))
-    .filter(link => !staticHrefs.includes(link.href));
+    const staticHrefs = navLinks.map(l => l.href);
+    const filteredDynamicLinks = pages
+      .map(p => ({ label: p.title, href: p.href }))
+      .filter(link => !staticHrefs.includes(link.href));
 
-  const allNavLinks = [...navLinks, ...filteredDynamicLinks];
+    return [...navLinks, ...filteredDynamicLinks];
+  }, [pages, t]);
 
-  const activeSocials = socialMedia.filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email').length > 0
-    ? socialMedia
-        .filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email')
-        .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
-        .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
-    : [
-        { platform: "instagram", url: "https://www.instagram.com/passeiorio/", icon: Instagram },
-        { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
-      ];
+  const activeSocials = useMemo(() => {
+    return socialMedia.filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email').length > 0
+      ? socialMedia
+          .filter(s => s.show_in_header !== false && s.platform.toLowerCase() !== 'email')
+          .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
+          .map((s) => ({ platform: s.platform, url: s.url, icon: iconMap[s.icon_name] || MapPin }))
+      : [
+          { platform: "instagram", url: "https://www.instagram.com/passeiorio/", icon: Instagram },
+          { platform: "tripadvisor", url: "https://www.tripadvisor.com.br/", icon: MapPin },
+        ];
+  }, [socialMedia]);
+
 
   console.log("socialMedia:", socialMedia);
 

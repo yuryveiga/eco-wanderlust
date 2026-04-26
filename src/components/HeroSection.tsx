@@ -9,6 +9,7 @@ export function HeroSection() {
   const { images, siteSettings } = useSiteData();
   const { t, language } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
+  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
   const heroStyle = siteSettings['hero_style'] || "style1";
   
   const heroTitleKey = language === 'pt' ? 'hero_title' : `hero_title_${language}`;
@@ -25,15 +26,14 @@ export function HeroSection() {
 
   const heroBgs = availableBgs.length > 0 ? availableBgs : ["/maracana-hero.jpg"];
 
-
-
   useEffect(() => {
-    if (heroBgs.length <= 1) return;
+    if (heroBgs.length <= 1 || !firstImageLoaded) return;
     const interval = setInterval(() => {
       setCurrentBg((prev) => (prev + 1) % heroBgs.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [heroBgs.length]);
+  }, [heroBgs.length, firstImageLoaded]);
+
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -41,25 +41,39 @@ export function HeroSection() {
 
   const renderSlideshowBackgrounds = () => (
     <>
-      {heroBgs.map((bg, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
-        >
-          <OptimizedImage
-            src={bg}
-            alt=""
-            width={1200}
-            quality={75}
-            containerClassName="w-full h-full"
-            fit="cover"
-            className="w-full h-full object-cover"
-            loading={index === 0 ? "eager" : "lazy"}
-            fetchPriority={index === 0 ? "high" : "low"}
-            decoding={index === 0 ? "sync" : "async"}
-          />
-        </div>
-      ))}
+      {heroBgs.map((bg, index) => {
+        const isCurrent = index === currentBg;
+        const isNext = index === (currentBg + 1) % heroBgs.length;
+        
+        // Only render current and next to save bandwidth and improve LCP
+        if (!isCurrent && !isNext) return null;
+        
+        // Don't even start loading the next one until the first one is done
+        if (isNext && !firstImageLoaded) return null;
+        
+        return (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${isCurrent ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <OptimizedImage
+              src={bg}
+              alt=""
+              width={1200}
+              quality={75}
+              containerClassName="w-full h-full"
+              fit="cover"
+              className="w-full h-full object-cover"
+              loading={index === 0 ? "eager" : "lazy"}
+              fetchPriority={index === 0 ? "high" : "low"}
+              decoding={index === 0 ? "sync" : "async"}
+              onDimensions={index === 0 ? () => setFirstImageLoaded(true) : undefined}
+            />
+          </div>
+        );
+
+      })}
+
       <div className="absolute inset-0 bg-black/40" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/20 to-transparent z-[5]" />
     </>

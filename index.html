@@ -20,16 +20,8 @@
     <meta name="apple-mobile-web-app-title" content="Tocorime Admin">
     <link rel="apple-touch-icon" href="/logo.png">
 
-    <!-- Defer Google Tag Manager to improve initial page load speed -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R4PH55B7S7"></script>
-    <script>
-      window.onload = function() {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-R4PH55B7S7');
-      };
-    </script>
+
+
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -58,7 +50,8 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script defer src="//www.instagram.com/embed.js"></script>
+
+
     <script>
       (function() {
         if ('serviceWorker' in navigator) {
@@ -69,6 +62,16 @@
           });
         }
       })();
+    </script>
+    <!-- Defer Google Tag Manager to the very end -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R4PH55B7S7"></script>
+    <script>
+      window.onload = function() {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-R4PH55B7S7');
+      };
     </script>
   </body>
 </html>
