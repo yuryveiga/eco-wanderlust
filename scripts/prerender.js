@@ -74,39 +74,37 @@ async function prerender() {
   console.log(`Found ${routes.length} routes to prerender.`);
 
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
+  const CONCURRENCY = 5; // Process 5 pages at a time
 
-  // Block images/fonts to speed up rendering (optional, but good for CI)
-  // We don't block everything so the layout still forms somewhat correctly if it depends on them
-  await page.route('**/*.{png,jpg,jpeg,svg,gif,webp,woff2}', route => route.fulfill({status: 200, body: ''}));
-  
-  for (const route of routes) {
-    console.log(`Prerendering ${route}...`);
-    try {
-      // Go to the page and wait for network to be idle
-      await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 45000 });
+  for (let i = 0; i < routes.length; i += CONCURRENCY) {
+    const batch = routes.slice(i, i + CONCURRENCY);
+    await Promise.all(batch.map(async (route) => {
+      const page = await browser.newPage();
+      // Block images/fonts to speed up rendering
+      await page.route('**/*.{png,jpg,jpeg,svg,gif,webp,woff2}', r => r.fulfill({status: 200, body: ''}));
       
-      // Wait a bit more for React Query and animations to settle
-      await page.waitForTimeout(2000); 
+      console.log(`Prerendering ${route}...`);
+      try {
+        await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 45000 });
+        await page.waitForTimeout(2000); 
 
-      let content = await page.content();
-      
-      // Remove any tracking scripts or dev server injected scripts if desired, 
-      // but leaving them is fine as they will just run on client side.
-      // We do need the JS for the SPA to hydrate!
-      
-      const savePath = route === '/' 
-        ? path.join(distPath, 'index.html')
-        : path.join(distPath, decodeURI(route), 'index.html');
-      
-      const dirPath = path.dirname(savePath);
-      await fs.mkdir(dirPath, { recursive: true });
-      
-      await fs.writeFile(savePath, content);
-      console.log(`✓ Saved ${savePath}`);
-    } catch (e) {
-      console.error(`✗ Error prerendering ${route}:`, e.message);
-    }
+        let content = await page.content();
+        
+        const savePath = route === '/' 
+          ? path.join(distPath, 'index.html')
+          : path.join(distPath, decodeURI(route), 'index.html');
+        
+        const dirPath = path.dirname(savePath);
+        await fs.mkdir(dirPath, { recursive: true });
+        
+        await fs.writeFile(savePath, content);
+        console.log(`✓ Saved ${savePath}`);
+      } catch (e) {
+        console.error(`✗ Error prerendering ${route}:`, e.message);
+      } finally {
+        await page.close();
+      }
+    }));
   }
 
   await browser.close();
