@@ -51,7 +51,11 @@ export function useSiteImages() {
         .filter(img => img.key?.startsWith('gallery'))
         .map(img => ({ id: img.id, url: img.image_url, key: img.key }));
 
-      return { imagesMap, galleryImages };
+      const maracanaGallery = data
+        .filter(img => img.key?.startsWith('gallery__maracana'))
+        .map(img => ({ id: img.id, url: img.image_url, key: img.key }));
+
+      return { imagesMap, galleryImages, maracanaGallery };
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -112,6 +116,7 @@ export function useSiteData() {
     pages: pagesQuery.data || [],
     images: imagesQuery.data?.imagesMap || {},
     gallery: imagesQuery.data?.galleryImages || [],
+    maracanaGallery: imagesQuery.data?.maracanaGallery || [],
     socialMedia: socialQuery.data || [],
     siteSettings: settingsQuery.data || cachedSettings,
     isLoading,

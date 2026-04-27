@@ -12,6 +12,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 
 const CATEGORIES = [
   { value: "todas", label: "Todas as categorias" },
+  { value: "maracana", label: "Maracanã" },
   { value: "praia", label: "Praia" },
   { value: "trilha", label: "Trilha" },
   { value: "city_tour", label: "City Tour" },
