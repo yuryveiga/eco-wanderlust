@@ -464,40 +464,60 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Masonry Gallery Section - Auto-Fitting (No Crop) */}
+      {/* Mosaic Gallery Section */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-          {images.map((img, idx) => (
+        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/20 border">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[350px] md:h-[400px] lg:h-[450px]">
+            {/* Main Image */}
             <div 
-              key={idx}
-              className="relative overflow-hidden cursor-pointer group/item rounded-2xl border border-primary/5 shadow-sm break-inside-avoid"
-              onClick={() => openLightbox(idx)}
-            >
-              <OptimizedImage 
-                src={img} 
-                alt={`${translatedTitle} ${idx + 1}`} 
-                width={800}
-                containerClassName="w-full h-auto"
-                fit="cover" // Even with cover, because height is auto, it won't crop much
-                className="w-full h-auto object-cover transition-all duration-[length:3000ms] ease-out group-hover/item:scale-110" 
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/10 transition-all duration-500" />
-            </div>
-          ))}
-
-          <div className="break-inside-avoid p-8 bg-muted/10 rounded-2xl border border-dashed border-primary/10 flex flex-col items-center justify-center gap-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Maximize2 className="w-6 h-6 text-primary" />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("galeria_fotos")}</p>
-            <Button 
-              variant="link" 
-              className="font-black text-xs uppercase tracking-tighter"
+              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
               onClick={() => openLightbox(0)}
             >
-              {t("ver_galeria_completa")}
-            </Button>
+              <OptimizedImage 
+                src={images[0] || "/placeholder.svg"} 
+                alt={translatedTitle} 
+                width={1200}
+                containerClassName="w-full h-full"
+                fit="cover"
+                className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
+                fetchPriority="high"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
+            </div>
+
+            {/* Sub-images Grid */}
+            {images.slice(1, 5).map((img, idx) => (
+              <div 
+                key={idx}
+                className="hidden md:block relative overflow-hidden cursor-pointer group/item"
+                onClick={() => openLightbox(idx + 1)}
+              >
+                <OptimizedImage 
+                  src={img} 
+                  alt={`${translatedTitle} ${idx + 1}`} 
+                  width={800}
+                  containerClassName="w-full h-full"
+                  fit="cover"
+                  className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-125" 
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
+              </div>
+            ))}
+
+            {/* Empty Slots */}
+            {images.length < 5 && Array.from({ length: 5 - images.length }).map((_, i) => (
+              <div key={`empty-${i}`} className="hidden md:block bg-muted/20 animate-pulse border border-white/10" />
+            ))}
           </div>
+
+          <Button 
+            variant="secondary" 
+            className="absolute bottom-10 right-10 gap-3 bg-white/90 backdrop-blur-2xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-14 rounded-2xl shadow-2xl transition-all hover:scale-105 ring-1 ring-black/5 active:scale-95"
+            onClick={() => openLightbox(0)}
+          >
+            <Maximize2 className="w-5 h-5 text-primary" />
+            {t("ver_galeria_completa")}
+          </Button>
         </div>
       </section>
 
