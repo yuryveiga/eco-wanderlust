@@ -448,19 +448,21 @@ export function TourDetail() {
             </h1>
             <UrgencyBadges tourId={tour.id} tourSlug={tour.slug} />
           </div>
-          <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
-            <div className="text-right">
-              <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">
-                {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
-              </span>
-              <span className="text-4xl font-black text-primary">
-                {formatPrice(getTourMinPrice(tour))}
-              </span>
-              <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
-                {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}
-              </span>
+          {!hidePrices && (
+            <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
+              <div className="text-right">
+                <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">
+                  {tour.pricing_model === 'group' ? t("valor_grupo") || "Valor por Grupo" : t("a_partir_de")}
+                </span>
+                <span className="text-4xl font-black text-primary">
+                  {formatPrice(getTourMinPrice(tour))}
+                </span>
+                <span className="text-[10px] font-black uppercase text-muted-foreground block text-right mt-1 opacity-60 tracking-tighter shrink-0">
+                  {tour.pricing_model === 'group' ? t("ate") || "até" : t("por_pessoa")} {tour.pricing_model === 'group' ? `${tour.max_group_size} ${t("pessoas")}` : ""}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
