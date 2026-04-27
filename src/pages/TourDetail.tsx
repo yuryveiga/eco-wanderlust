@@ -35,6 +35,8 @@ import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
 import { getCanonicalUrl, BASE_URL } from "@/utils/seo";
 
+const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
+
 const getYouTubeEmbedUrl = (url: string) => {
   if (!url) return "";
   
@@ -959,6 +961,9 @@ export function TourDetail() {
         </div>
       </div>
 
+      <Suspense fallback={<div className="h-20" />}>
+        <WeatherSection />
+      </Suspense>
       <WhyChooseUs />
 
       {/* TripAdvisor Reviews Carousel */}

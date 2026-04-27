@@ -50,10 +50,10 @@ const Index = () => {
       <ExitIntentPopup />
       
       <Suspense fallback={<SectionLoader />}>
-        <ViewFadeIn><WeatherSection /></ViewFadeIn>
         <ViewFadeIn><ToursSection /></ViewFadeIn>
         <WhyChooseUs />
         <ViewFadeIn><ReviewsSection /></ViewFadeIn>
+        <ViewFadeIn><WeatherSection /></ViewFadeIn>
         <ViewFadeIn><AboutSection /></ViewFadeIn>
         <ViewFadeIn><ContactSection /></ViewFadeIn>
         <ViewFadeIn><GallerySection /></ViewFadeIn>
