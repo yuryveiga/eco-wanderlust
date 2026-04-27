@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { translateText } from "@/utils/translate";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { Switch } from "@/components/ui/switch";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({ tours: 0, peopleServed: 0, totalReservations: 0, futureReservations: 0, totalRevenue: 0, futureRevenue: 0 });
@@ -100,6 +101,23 @@ const AdminDashboard = () => {
       toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
       setIsSavingGeneral(false);
+    }
+  };
+
+  const handleToggleHidePrices = async (checked: boolean) => {
+    const newValue = checked ? "true" : "false";
+    setSettings({ ...settings, hide_prices: newValue });
+    try {
+      const settingRecord = settingsList.find(s => s.key === 'hide_prices');
+      if (settingRecord?.id) {
+        await updateLovable("site_settings", settingRecord.id, { value: newValue });
+      } else {
+        const newRecord = await insertLovable<LovableSiteSetting>("site_settings", { key: 'hide_prices', value: newValue });
+        setSettingsList([...settingsList, newRecord]);
+      }
+      toast({ title: checked ? "Modo Orçamento ativado!" : "Modo Orçamento desativado!" });
+    } catch (err) {
+      toast({ title: "Erro ao atualizar modo", variant: "destructive" });
     }
   };
 
@@ -230,6 +248,32 @@ const AdminDashboard = () => {
                 onChange={(e) => setSettings({ ...settings, home_tours_count: e.target.value })} 
                 className="h-12 rounded-xl"
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Price Visibility Settings */}
+        <div className="bg-card border-2 border-primary/20 rounded-3xl p-8 shadow-sm space-y-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <DollarSign className="w-7 h-7 text-primary" />
+              <h2 className="text-2xl font-bold font-serif">Modo Orçamento</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                <div className="space-y-0.5">
+                  <Label className="text-base font-bold text-foreground">Ocultar Preços</Label>
+                  <p className="text-sm text-muted-foreground">Oculta todos os valores do site e substitui o botão de reserva por contato via WhatsApp.</p>
+                </div>
+                <Switch 
+                  checked={settings['hide_prices'] === 'true'} 
+                  onCheckedChange={handleToggleHidePrices}
+                />
+              </div>
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3">
+                <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800 italic">Dica: Use esta opção se os preços estiverem em atualização ou se preferir atendimento direto.</p>
+              </div>
             </div>
           </div>
         </div>

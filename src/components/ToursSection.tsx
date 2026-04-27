@@ -36,6 +36,8 @@ export type TourCardProps = {
 
 export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
+  const { siteSettings } = useSiteData();
+  const hidePrices = siteSettings['hide_prices'] === 'true';
 
   const getTranslated = (field: keyof TourCardProps): string => {
     if (language === 'pt') return String(tour[field] || "");
@@ -99,7 +101,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         })()}
 
         {/* Floating Price Badge */}
-        {(tour.price > 0 || tour.pricing_model === 'custom' || tour.pricing_model === 'dynamic') && (
+        {!hidePrices && (tour.price > 0 || tour.pricing_model === 'custom' || tour.pricing_model === 'dynamic') && (
           <div className="absolute bottom-4 right-4 bg-primary/95 text-white px-4 py-2 rounded-xl shadow-2xl backdrop-blur-md border border-white/20 z-10 animate-fade-in flex flex-col items-end">
             <span className="text-[8px] font-black uppercase tracking-tighter opacity-70 leading-none mb-1">
               {tour.pricing_model === 'group' ? t("por_grupo") : t("a_partir_de")}
@@ -132,11 +134,14 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
             )}
           </div>
           
-          <div className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 bg-primary group-hover:bg-accent group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center">
+          
+          <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 ${hidePrices ? 'bg-[#25D366] hover:bg-[#128C7E]' : 'bg-primary group-hover:bg-accent'} group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
             <div className="flex items-center gap-2">
-              {isExternal 
-                ? (language === 'pt' ? 'RESERVAR AGORA' : language === 'es' ? 'RESERVAR AHORA' : 'BOOK NOW') 
-                : t("reservar")}
+              {hidePrices 
+                ? (language === 'pt' ? 'SOLICITAR ORÇAMENTO' : language === 'es' ? 'SOLICITAR PRESUPUESTO' : 'REQUEST QUOTE')
+                : (isExternal 
+                    ? (language === 'pt' ? 'RESERVAR AGORA' : language === 'es' ? 'RESERVAR AHORA' : 'BOOK NOW') 
+                    : t("reservar"))}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -145,14 +150,18 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
     </>
   );
 
-  if (isExternal) {
+  if (isExternal || hidePrices) {
+    const finalHref = hidePrices 
+      ? `https://wa.me/5521999999999?text=${encodeURIComponent(language === 'pt' ? `Olá! Gostaria de um orçamento para o passeio: ${title}` : `Hello! I would like a quote for the tour: ${title}`)}`
+      : href;
+
     return (
       <a 
-        href={href} 
+        href={finalHref} 
         target="_blank" 
         rel="noopener noreferrer" 
         className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-primary"
-        aria-label={`${isExternal ? (language === 'pt' ? 'Saber mais sobre' : 'Learn more about') : t("reservar")} ${title}`}
+        aria-label={`${hidePrices ? (language === 'pt' ? 'Solicitar orçamento para' : 'Request quote for') : (isExternal ? (language === 'pt' ? 'Saber mais sobre' : 'Learn more about') : t("reservar"))} ${title}`}
       >
         {CardContent}
       </a>

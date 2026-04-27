@@ -794,9 +794,11 @@ export function TourDetail() {
                  <div className="bg-card rounded-[2.5rem] border border-primary/20 p-8 shadow-2xl relative overflow-hidden group">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150" />
                     <div className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="quantity-input" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest cursor-pointer">{t("quantas_pessoas")}</Label>
+                      {!hidePrices ? (
+                        <>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <Label htmlFor="quantity-input" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest cursor-pointer">{t("quantas_pessoas")}</Label>
                           {tour.pricing_model !== 'group' && (
                             <span className="text-[10px] font-bold text-primary">{formatPrice(currentUnitPrice)} / {t("pessoa")}</span>
                           )}
@@ -910,8 +912,44 @@ export function TourDetail() {
                             <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{t("valor_total")}</span>
                             <span className="text-base font-black text-primary">{formatPrice(currentUnitPrice * quantity)}</span>
                        </div>
-                     </div>
-                   </div>
+                         </div>
+                        </>
+                      ) : (
+                        <div className="pt-2 space-y-4 text-center">
+                          <p className="text-sm text-muted-foreground font-sans italic">
+                            {language === 'pt' 
+                              ? 'Os valores deste passeio estão sob consulta. Clique abaixo para falar diretamente com nosso guia pelo WhatsApp.' 
+                              : language === 'es' 
+                                ? 'Los valores de este tour son a pedido. Haga clic a continuación para falar directamente com nuestro guia por WhatsApp.' 
+                                : 'Prices for this tour are upon request. Click below to speak directly with our guide via WhatsApp.'}
+                          </p>
+                          {(() => {
+                              const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
+                              if (!wa) return null;
+                              const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
+                              const titleI18n = String((tour as Record<string, any>)[`title_${language}`] || tour.title || "");
+                              const msg = language === 'pt' 
+                                ? `Olá! Gostaria de um orçamento para o passeio: ${titleI18n}` 
+                                : language === 'es' 
+                                  ? `¡Hola! Me gostaria de un presupuesto para el tour: ${titleI18n}` 
+                                  : `Hello! I would like a quote for the tour: ${titleI18n}`;
+                              const href = wa.url.startsWith('http')
+                                ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
+                                : `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+                              return (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center justify-center gap-3 w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest bg-[#25D366] hover:bg-[#1ebe5a] text-white shadow-xl shadow-[#25D366]/30 active:scale-95 transition-all animate-bounce"
+                                >
+                                  <MessageSquare className="w-6 h-6" /> {language === 'pt' ? 'SOLICITAR ORÇAMENTO' : language === 'es' ? 'SOLICITAR PRESUPUESTO' : 'REQUEST QUOTE'}
+                                </a>
+                              );
+                            })()}
+                        </div>
+                      )}
+                    </div>
 
                     <div className="mt-6 pt-6 border-t border-primary/10">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-4 text-center">{t("pagamento_seguro")}</p>
@@ -948,16 +986,46 @@ export function TourDetail() {
       {/* Sticky Mobile Bar */}
       <div className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-xl border-t transform transition-transform duration-500 md:hidden ${showStickyBar ? "translate-y-0" : "translate-y-full"}`}>
         <div className="flex items-center justify-between gap-4">
-          <div>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("a_partir_de")}</span>
-            <div className="flex items-baseline gap-1">
-               <div className="font-black text-xl text-primary">
-                 {formatPrice(getTourMinPrice(tour))}
-               </div>
-               <span className="text-[9px] font-black text-muted-foreground uppercase opacity-70">/ {t("pessoa")}</span>
-            </div>
+          <div className="flex flex-col">
+            {!hidePrices ? (
+              <>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("a_partir_de")}</span>
+                <div className="flex items-baseline gap-1">
+                   <div className="font-black text-xl text-primary">
+                     {formatPrice(getTourMinPrice(tour))}
+                   </div>
+                   <span className="text-[9px] font-black text-muted-foreground uppercase opacity-70">/ {t("pessoa")}</span>
+                </div>
+              </>
+            ) : (
+              <span className="text-sm font-black text-primary uppercase leading-none">{language === 'pt' ? 'Sob Consulta' : 'Upon Request'}</span>
+            )}
           </div>
-          <Button onClick={handleBooking} className="flex-1 h-12 rounded-xl font-black">{t("reservar_agora")}</Button>
+          {(() => {
+            const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
+            if (!wa) return null;
+            const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
+            const titleI18n = String((tour as Record<string, any>)[`title_${language}`] || tour.title || "");
+            const msg = hidePrices 
+              ? (language === 'pt' ? `Olá! Gostaria de um orçamento para o passeio: ${titleI18n}` : `Hello! I would like a quote for the tour: ${titleI18n}`)
+              : t("wa_message").replace("{tour}", titleI18n);
+            const href = wa.url.startsWith('http')
+              ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
+              : `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 text-white shadow-lg ${hidePrices ? 'bg-[#25D366]' : 'bg-primary'}`}
+              >
+                {hidePrices ? <MessageSquare className="w-5 h-5" /> : <ShoppingCart className="w-5 h-5" />}
+                {hidePrices 
+                  ? (language === 'pt' ? 'ORÇAMENTO' : 'QUOTE') 
+                  : t("reservar_agora")}
+              </a>
+            );
+          })()}
         </div>
       </div>
 
