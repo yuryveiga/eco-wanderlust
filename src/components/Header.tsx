@@ -107,6 +107,8 @@ export function Header() {
 
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/images__1_-removebg-preview.png";
 
+  const showCart = !siteSettings?.hide_prices || items.length > 0;
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
       <div className="pointer-events-auto">
@@ -195,16 +197,18 @@ export function Header() {
               </DropdownMenu>
             )}
 
-            <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
-              <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
-                <ShoppingCart className="w-6 h-6" />
-                {mounted && items.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center animate-bounce shadow-sm">
-                    {items.length}
-                  </span>
-                )}
-              </div>
-            </Link>
+            {showCart && (
+              <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
+                <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
+                  <ShoppingCart className="w-6 h-6" />
+                  {mounted && items.length > 0 && (
+                    <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center animate-bounce shadow-sm">
+                      {items.length}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )}
 
             <Button 
               onClick={() => handleNav("#tours")} 
@@ -216,16 +220,18 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <Link to="/carrinho" className="relative mr-2">
-               <div className="p-2 text-foreground/80">
-                <ShoppingCart className="w-6 h-6" />
-                {mounted && items.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center shadow-sm">
-                    {items.length}
-                  </span>
-                )}
-              </div>
-            </Link>
+            {showCart && (
+              <Link to="/carrinho" className="relative mr-2">
+                 <div className="p-2 text-foreground/80">
+                  <ShoppingCart className="w-6 h-6" />
+                  {mounted && items.length > 0 && (
+                    <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center shadow-sm">
+                      {items.length}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )}
             {mounted && (
               <div className="flex items-center border border-border rounded-full px-1 py-0.5 bg-muted/30">
                 <DropdownMenu>
