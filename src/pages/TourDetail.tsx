@@ -464,52 +464,61 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Photo Gallery Section - Reverted to Original Carousel */}
+      {/* Mosaic Gallery Section - Restored and Optimized to avoid cropping */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        {(() => {
-          const carouselImgs = tour.carousel_images_json as string[] || images;
-          if (carouselImgs.length === 0) return null;
-          return (
-            <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-card border p-4">
-              <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-                <CarouselContent className="-ml-4">
-                  {carouselImgs.map((img: string, i: number) => (
-                    <CarouselItem key={i} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                      <div 
-                        className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group/gal border shadow-sm relative"
-                        onClick={() => openLightbox(i, 'gallery')}
-                      >
-                        <OptimizedImage 
-                          src={img} 
-                          alt={`${translatedTitle} ${i + 1}`} 
-                          width={1200}
-                          containerClassName="w-full h-full"
-                          fit="cover"
-                          className="w-full h-full object-cover group-hover/gal:scale-110 transition-transform duration-700" 
-                          loading={i === 0 ? "eager" : "lazy"}
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover/gal:bg-black/10 transition-colors" />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <div className="hidden md:block">
-                  <CarouselPrevious className="-left-4 bg-background shadow-xl hover:bg-primary hover:text-white" />
-                  <CarouselNext className="-right-4 bg-background shadow-xl hover:bg-primary hover:text-white" />
-                </div>
-                
-                <Button 
-                  variant="secondary" 
-                  className="absolute bottom-6 right-6 gap-2 bg-white/90 backdrop-blur-md hover:bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 h-10 rounded-xl shadow-xl transition-all hover:scale-105 active:scale-95"
-                  onClick={() => openLightbox(0, 'gallery')}
-                >
-                  <Maximize2 className="w-4 h-4 text-primary" />
-                  {t("ver_galeria_completa")}
-                </Button>
-              </Carousel>
+        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-card border border-primary/5">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[400px] md:h-[500px] lg:h-[600px]">
+            {/* Main Image */}
+            <div 
+              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item bg-muted"
+              onClick={() => openLightbox(0)}
+            >
+              <OptimizedImage 
+                src={images[0] || "/placeholder.svg"} 
+                alt={translatedTitle} 
+                width={1200}
+                containerClassName="w-full h-full"
+                fit="cover"
+                className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-105" 
+                fetchPriority="high"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/10 transition-all duration-500" />
             </div>
-          );
-        })()}
+
+            {/* Sub-images Grid */}
+            {images.slice(1, 5).map((img, idx) => (
+              <div 
+                key={idx}
+                className="hidden md:block relative overflow-hidden cursor-pointer group/item bg-muted/30"
+                onClick={() => openLightbox(idx + 1)}
+              >
+                <OptimizedImage 
+                  src={img} 
+                  alt={`${translatedTitle} ${idx + 1}`} 
+                  width={800}
+                  containerClassName="w-full h-full"
+                  fit="contain"
+                  className="w-full h-full object-contain transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/5 transition-all duration-500" />
+              </div>
+            ))}
+
+            {/* Empty Slots */}
+            {images.length < 5 && Array.from({ length: 5 - images.length }).map((_, i) => (
+              <div key={`empty-${i}`} className="hidden md:block bg-muted/10 animate-pulse border border-white/5" />
+            ))}
+          </div>
+
+          <Button 
+            variant="secondary" 
+            className="absolute bottom-8 right-8 gap-3 bg-white/90 backdrop-blur-xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-12 rounded-2xl shadow-2xl transition-all hover:scale-105 active:scale-95"
+            onClick={() => openLightbox(0)}
+          >
+            <Maximize2 className="w-5 h-5 text-primary" />
+            {t("ver_galeria_completa")}
+          </Button>
+        </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
