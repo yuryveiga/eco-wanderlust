@@ -911,31 +911,63 @@ export function TourDetail() {
                             </a>
                           );
                         })()}
-                       <div className="flex items-center justify-between mt-3 px-1">
+                         <div className="flex items-center justify-between mt-3 px-1">
                             <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{t("valor_total")}</span>
                             <span className="text-base font-black text-primary">{formatPrice(currentUnitPrice * quantity)}</span>
                        </div>
                          </div>
                         </>
                       ) : (
-                        <div className="pt-2 space-y-4 text-center">
-                          <p className="text-sm text-muted-foreground font-sans italic">
-                            {language === 'pt' 
-                              ? 'Os valores deste passeio estão sob consulta. Clique abaixo para falar diretamente com nosso guia pelo WhatsApp.' 
-                              : language === 'es' 
-                                ? 'Los valores de este tour son a pedido. Haga clic a continuación para falar directamente com nuestro guia por WhatsApp.' 
-                                : 'Prices for this tour are upon request. Click below to speak directly with our guide via WhatsApp.'}
+                        <div className="pt-2 space-y-5">
+                          {/* Icon + heading */}
+                          <div className="flex flex-col items-center gap-2 text-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                              <MessageSquare className="w-6 h-6 text-primary" />
+                            </div>
+                            <p className="text-base font-black text-foreground">
+                              {language === 'pt'
+                                ? 'Experiência Exclusiva & Personalizada'
+                                : language === 'es'
+                                  ? 'Experiencia Exclusiva & Personalizada'
+                                  : 'Exclusive & Personalised Experience'}
+                            </p>
+                          </div>
+
+                          {/* Body copy */}
+                          <p className="text-sm text-muted-foreground font-sans text-center leading-relaxed">
+                            {language === 'pt'
+                              ? 'Este passeio é feito sob medida para você. Os valores são personalizados de acordo com o grupo, data e preferências — fale com nosso guia pelo WhatsApp e monte a experiência perfeita.'
+                              : language === 'es'
+                                ? 'Este tour está hecho a tu medida. Los precios se adaptan según el grupo, la fecha y tus preferencias — habla con nuestro guía por WhatsApp y diseña la experiencia perfecta.'
+                                : 'This tour is tailored just for you. Pricing adapts to your group size, date and preferences — chat with our guide on WhatsApp and design your perfect experience.'}
                           </p>
+
+                          {/* Bullet perks */}
+                          <ul className="space-y-2 text-xs text-muted-foreground">
+                            {(language === 'pt'
+                              ? ['Roteiro adaptado ao seu grupo', 'Horário e ritmo no seu estilo', 'Atendimento rápido, sem burocracia']
+                              : language === 'es'
+                                ? ['Itinerario adaptado a tu grupo', 'Horario y ritmo a tu estilo', 'Atención rápida y sin burocracia']
+                                : ['Itinerary tailored to your group', 'Schedule and pace on your terms', 'Fast response, no hassle']
+                            ).map((item, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <Check className="w-4 h-4 text-primary shrink-0" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          {/* WhatsApp CTA */}
                           {(() => {
                               const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
                               if (!wa) return null;
                               const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
                               const titleI18n = String((tour as Record<string, any>)[`title_${language}`] || tour.title || "");
-                              const msg = language === 'pt' 
-                                ? `Olá! Gostaria de um orçamento para o passeio: ${titleI18n}` 
-                                : language === 'es' 
-                                  ? `¡Hola! Me gostaria de un presupuesto para el tour: ${titleI18n}` 
-                                  : `Hello! I would like a quote for the tour: ${titleI18n}`;
+                              const msg = language === 'pt'
+                                ? `Olá! Gostaria de montar um passeio personalizado: ${titleI18n}`
+                                : language === 'es'
+                                  ? `¡Hola! Me gustaría diseñar un tour personalizado: ${titleI18n}`
+                                  : `Hello! I'd love to design a personalised tour: ${titleI18n}`;
                               const href = wa.url.startsWith('http')
                                 ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
                                 : `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
@@ -944,9 +976,10 @@ export function TourDetail() {
                                   href={href}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center justify-center gap-3 w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest bg-[#25D366] hover:bg-[#1ebe5a] text-white shadow-xl shadow-[#25D366]/30 active:scale-95 transition-all animate-bounce"
+                                  className="flex items-center justify-center gap-3 w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest bg-[#25D366] hover:bg-[#1ebe5a] text-white shadow-xl shadow-[#25D366]/30 active:scale-95 transition-all"
                                 >
-                                  <MessageSquare className="w-6 h-6" /> {language === 'pt' ? 'SOLICITAR ORÇAMENTO' : language === 'es' ? 'SOLICITAR PRESUPUESTO' : 'REQUEST QUOTE'}
+                                  <MessageSquare className="w-6 h-6" />
+                                  {language === 'pt' ? 'MONTAR MEU PASSEIO' : language === 'es' ? 'DISEÑAR MI TOUR' : 'BUILD MY TOUR'}
                                 </a>
                               );
                             })()}
