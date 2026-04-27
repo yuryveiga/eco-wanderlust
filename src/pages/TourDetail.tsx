@@ -481,19 +481,10 @@ export function TourDetail() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center justify-center gap-3 bg-[#25D366]/10 border-2 border-[#25D366]/30 hover:bg-[#25D366]/20 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-[#25D366]/5 transition-all group/wa shrink-0"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366]/20 text-[#25D366] font-bold text-sm transition-all shrink-0 h-fit"
               >
-                <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover/wa:scale-110 transition-transform">
-                  <MessageSquare className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-center">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#25D366] mb-0.5">
-                    {language === 'pt' ? 'Atendimento direto' : language === 'es' ? 'Atención directa' : 'Direct contact'}
-                  </p>
-                  <p className="text-base font-black text-foreground leading-tight">
-                    {language === 'pt' ? 'Solicitar Orçamento' : language === 'es' ? 'Solicitar Presupuesto' : 'Request a Quote'}
-                  </p>
-                </div>
+                <MessageSquare className="w-4 h-4" />
+                {language === 'pt' ? 'Solicitar Orçamento' : language === 'es' ? 'Solicitar Presupuesto' : 'Request a Quote'}
               </a>
             );
           })()}
