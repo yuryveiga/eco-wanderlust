@@ -257,7 +257,19 @@ export function TourDetail() {
   const [lightboxSource, setLightboxSource] = useState<'hero' | 'gallery'>('hero');
 
   const images = useMemo(() => {
-    let imgs = tour?.images_json as string[] || [];
+    const jsonImgs = tour?.images_json as string[] || [];
+    const carouselImgs = tour?.carousel_images_json as string[] || [];
+    
+    // Combine both but prioritize images_json if it has enough content
+    let imgs = [...jsonImgs];
+    
+    // Fill from carousel_images_json to reach at least 5 if possible
+    carouselImgs.forEach(url => {
+      if (url && typeof url === 'string' && !imgs.includes(url) && imgs.length < 5) {
+        imgs.push(url);
+      }
+    });
+
     if (imgs.length === 0 && tour?.image_url) imgs = [tour.image_url];
     return imgs.filter(url => url && typeof url === 'string');
   }, [tour]);
