@@ -81,6 +81,23 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         )}
         <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-[10px] font-black px-3 py-1.5 rounded-full font-sans uppercase tracking-[0.15em] border border-border/50 shadow-sm z-10">{category}</div>
         
+        {/* Scarcity Badge */}
+        {(() => {
+          const scarcityMessages = {
+            pt: ["Esgota rápido!", "Apenas 2 vagas p/ amanhã", "Mais reservado hoje", "Últimas vagas!", "Oferta termina logo"],
+            en: ["Sells out fast!", "Only 2 spots for tomorrow", "Most booked today", "Last spots!", "Offer ends soon"],
+            es: ["¡Se agota rápido!", "Solo 2 cupos para mañana", "Más reservado hoy", "¡Últimos cupos!", "Oferta termina pronto"]
+          };
+          const hash = tour.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          const message = scarcityMessages[language as keyof typeof scarcityMessages]?.[hash % scarcityMessages.pt.length] || scarcityMessages.en[hash % scarcityMessages.en.length];
+          
+          return (
+            <div className="absolute top-12 right-4 bg-red-600 text-white text-[9px] font-black px-3 py-1 rounded-full font-sans uppercase tracking-widest shadow-lg z-10 animate-pulse border border-white/20">
+              {message}
+            </div>
+          );
+        })()}
+
         {/* Floating Price Badge */}
         {(tour.price > 0 || tour.pricing_model === 'custom' || tour.pricing_model === 'dynamic') && (
           <div className="absolute bottom-4 right-4 bg-primary/95 text-white px-4 py-2 rounded-xl shadow-2xl backdrop-blur-md border border-white/20 z-10 animate-fade-in flex flex-col items-end">

@@ -135,36 +135,22 @@ export function ContactSection() {
                 <Input id="name" name="name" required placeholder={t("seu_nome")} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-sans">{t("email")}</Label>
-                <Input id="email" name="email" type="email" required placeholder={t("seu_email")} />
+                <Label htmlFor="phone" className="font-sans">WhatsApp / {t("telefone")}</Label>
+                <Input id="phone" name="phone" required placeholder="+55 21 99999-9999" />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="font-sans">{t("telefone")}</Label>
-                <Input id="phone" name="phone" placeholder="+55 21 99999-9999" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="tour-select" className="font-sans">{t("passeio_interesse")}</Label>
-                <Select name="tour_interest">
-                  <SelectTrigger id="tour-select">
-                    <SelectValue placeholder={t("selecione_passeio")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tours.map((tour) => (
-                      <SelectItem key={tour.id} value={tour.slug || tour.id}>{tour.title}</SelectItem>
-                    ))}
-                    <SelectItem value="outro">Outro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email" className="font-sans">{t("email")} <span className="text-muted-foreground text-[10px] font-normal">({t("opcional") || "Opcional"})</span></Label>
+              <Input id="email" name="email" type="email" placeholder={t("seu_email")} />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="message" className="font-sans">{t("mensagem")}</Label>
               <Textarea id="message" name="message" required placeholder={t("conte_planos")} rows={4} />
             </div>
-            <Button type="submit" size="lg" className="w-full font-sans" disabled={isSubmitting}>
-              <Send className="w-4 h-4 mr-2" />
+            <Button type="submit" size="lg" className="w-full font-sans font-bold py-6 text-lg rounded-xl" disabled={isSubmitting}>
+              <Send className="w-5 h-5 mr-2" />
               {isSubmitting ? t("enviando") : t("enviar_mensagem")}
             </Button>
           </form>
