@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sitemap": "node --env-file=.env scripts/generate-sitemap.js",
-    "prerender": "node --env-file=.env scripts/prerender.js",
+    "prerender": "npx playwright install chromium && node --env-file=.env scripts/prerender.js",
     "postbuild": "npm run sitemap && npm run prerender"
   },
   "dependencies": {
