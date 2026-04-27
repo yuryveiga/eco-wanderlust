@@ -214,7 +214,7 @@ const AdminGallery = () => {
 
     if (!error) {
       toast({ title: "Categoria atualizada!" });
-      await loadImages();
+      setImages(prev => prev.map(item => item.id === img.id ? { ...item, key: newKey } : item));
     } else {
       toast({ title: "Erro", description: "Não foi possível atualizar a categoria.", variant: "destructive" });
     }
