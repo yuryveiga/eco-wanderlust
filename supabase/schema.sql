@@ -61,10 +61,6 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 -- =============================================
 -- INSERIR DADOS DE EXEMPLO
 -- =============================================
