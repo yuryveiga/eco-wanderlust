@@ -55,7 +55,7 @@ const AnalyticsTracker = () => {
   return null;
 };
 
-const App = ({ location, queryClient: externalQueryClient }: { location?: string; queryClient?: QueryClient }) => {
+const App = ({ queryClient: externalQueryClient }: { queryClient?: QueryClient }) => {
   const [queryClient] = useState(() => externalQueryClient || new QueryClient({
     defaultOptions: {
       queries: {
@@ -67,96 +67,66 @@ const App = ({ location, queryClient: externalQueryClient }: { location?: string
     },
   }));
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <AuthProvider>
-                <TooltipProvider>
-                  {mounted && (
-                    <>
-                      <Toaster />
-                      <Sonner />
-                    </>
-                  )}
-                  <ThemeApplier />
-                  {location ? (
-                    <StaticRouter location={location}>
-                      <AppContent mounted={mounted} />
-                    </StaticRouter>
-                  ) : (
-                    <BrowserRouter>
-                      <AppContent mounted={mounted} />
-                    </BrowserRouter>
-                  )}
-              </TooltipProvider>
-          </AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <ThemeApplier />
+            <BrowserRouter>
+              <ScrollToHash />
+              <CurrencyProvider>
+                <LocaleProvider>
+                  <CartProvider>
+                    <AnalyticsTracker />
+                    <Suspense fallback={<PageLoader />}>
+                      <MobileStickyCTA />
+                      <FloatingButtons />
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:slug" element={<BlogPost />} />
+                        <Route path="/carrinho" element={<Cart />} />
+                        <Route path="/confirmacao" element={<CheckoutSuccess />} />
+                        <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
+                        <Route path="/maracana-calendario" element={<Navigate to="/maracanã-calendário" replace />} />
+                        <Route path="/maracanacalendar" element={<Navigate to="/maracanã-calendário" replace />} />
+                        <Route path="/passeio/:id" element={<TourDetail />} />
+                        <Route path="/match/:id" element={<MatchDetail />} />
+                        <Route path="/jogo/:id" element={<Navigate to="/match/:id" replace />} />
+                        <Route path="/:slug" element={<GenericPage />} />
+                        <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/admin/reset-password" element={<AdminResetPassword />} />
+                        <Route path="/admin" element={<AdminLayout />}>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="blog" element={<AdminBlog />} />
+                          <Route path="hero" element={<AdminHero />} />
+                          <Route path="theme" element={<AdminTheme />} />
+                          <Route path="users" element={<AdminUsers />} />
+                          <Route path="tours" element={<AdminTours />} />
+                          <Route path="images" element={<AdminImages />} />
+                          <Route path="social" element={<AdminSocial />} />
+                          <Route path="gallery" element={<AdminGallery />} />
+                          <Route path="sales" element={<AdminSales />} />
+                          <Route path="simulator" element={<AdminSimulator />} />
+                          <Route path="calendar" element={<AdminCalendar />} />
+                          <Route path="pages" element={<AdminPages />} />
+                          <Route path="optimizer" element={<AdminImagesOptimizer />} />
+                          <Route path="analytics" element={<AdminAnalytics />} />
+                        </Route>
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </CartProvider>
+                </LocaleProvider>
+              </CurrencyProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </ErrorBoundary>
-      </QueryClientProvider>
-  );
-};
-
-const AppContent = ({ mounted }: { mounted: boolean }) => {
-  if (!mounted) return <PageLoader />;
-
-  return (
-    <>
-      <ScrollToHash />
-      <CurrencyProvider>
-        <LocaleProvider>
-          <CartProvider>
-            <AnalyticsTracker />
-              <Suspense fallback={<PageLoader />}>
-                <MobileStickyCTA />
-                <FloatingButtons />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                          <Route path="/blog" element={<Blog />} />
-                          <Route path="/blog/:slug" element={<BlogPost />} />
-                          <Route path="/carrinho" element={<Cart />} />
-                          <Route path="/confirmacao" element={<CheckoutSuccess />} />
-                          <Route path="/maracanã-calendário" element={<MaracanaCalendar />} />
-                          <Route path="/maracana-calendario" element={<Navigate to="/maracanã-calendário" replace />} />
-                          <Route path="/maracanacalendar" element={<Navigate to="/maracanã-calendário" replace />} />
-                          <Route path="/passeio/:id" element={<TourDetail />} />
-                          <Route path="/match/:id" element={<MatchDetail />} />
-                          <Route path="/jogo/:id" element={<Navigate to="/match/:id" replace />} />
-                          <Route path="/:slug" element={<GenericPage />} />
-
-
-                            {/* Admin routes (no language prefix needed for admin) */}
-                            <Route path="/admin/login" element={<AdminLogin />} />
-                            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
-                            <Route path="/admin" element={<AdminLayout />}>
-                              <Route index element={<AdminDashboard />} />
-                              <Route path="blog" element={<AdminBlog />} />
-                              <Route path="hero" element={<AdminHero />} />
-                              <Route path="theme" element={<AdminTheme />} />
-                              <Route path="users" element={<AdminUsers />} />
-                              <Route path="tours" element={<AdminTours />} />
-                              <Route path="images" element={<AdminImages />} />
-                              <Route path="social" element={<AdminSocial />} />
-                              <Route path="gallery" element={<AdminGallery />} />
-                              <Route path="sales" element={<AdminSales />} />
-                              <Route path="simulator" element={<AdminSimulator />} />
-                              <Route path="calendar" element={<AdminCalendar />} />
-                              <Route path="pages" element={<AdminPages />} />
-                              <Route path="optimizer" element={<AdminImagesOptimizer />} />
-                              <Route path="analytics" element={<AdminAnalytics />} />
-                            </Route>
-
-                            {/* Catch-all to 404 or redirect */}
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </Suspense>
-                      </CartProvider>
-                    </LocaleProvider>
-                  </CurrencyProvider>
-    </>
+    </QueryClientProvider>
   );
 };
 

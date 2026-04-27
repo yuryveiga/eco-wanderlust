@@ -38,7 +38,14 @@ export function useSiteImages() {
     queryFn: async () => {
       const data = await fetchLovable<LovableSiteImage>("site_images");
       const imagesMap: Record<string, string> = {};
-      data.forEach((img) => { imagesMap[img.key] = img.image_url; });
+      data.forEach((img) => { 
+        // Prevent loading the deleted Maracana image
+        if (img.image_url?.includes('maracana-hero')) {
+          imagesMap[img.key] = "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070";
+        } else {
+          imagesMap[img.key] = img.image_url; 
+        }
+      });
       
       const galleryImages = data
         .filter(img => img.key?.startsWith('gallery'))
