@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { UrgencyBar } from "@/components/UrgencyBar";
-import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getCanonicalUrl, generateLocalBusinessSchema } from "@/utils/seo";
@@ -47,7 +46,6 @@ const Index = () => {
       <UrgencyBar />
       <Header />
       <HeroSection />
-      <ExitIntentPopup />
       
       <Suspense fallback={<SectionLoader />}>
         <ViewFadeIn><ToursSection /></ViewFadeIn>
