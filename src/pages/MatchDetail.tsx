@@ -347,35 +347,7 @@ export default function MatchDetail() {
                     </div>
                  </section>
 
-                  {maracanaGallery && maracanaGallery.length > 0 && (
-                     <section className="space-y-6">
-                        <h2 className="text-3xl font-serif font-black flex items-center gap-4">
-                           <div className="w-2 h-10 bg-primary rounded-full" />
-                           {language === 'pt' ? 'Galeria de Fotos' : language === 'es' ? 'Galería de Fotos' : 'Photo Gallery'}
-                        </h2>
-                        <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-                           <CarouselContent className="-ml-4">
-                              {maracanaGallery.map((img, i) => (
-                                 <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3">
-                                    <div className="aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm group">
-                                       <OptimizedImage 
-                                          src={img.url} 
-                                          alt={`Maracanã ${i + 1}`} 
-                                          width={600}
-                                          containerClassName="w-full h-full"
-                                          fit="cover"
-                                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                                          loading="lazy"
-                                       />
-                                    </div>
-                                 </CarouselItem>
-                              ))}
-                           </CarouselContent>
-                           <CarouselPrevious className="-left-4 bg-card shadow-lg" />
-                           <CarouselNext className="-right-4 bg-card shadow-lg" />
-                        </Carousel>
-                     </section>
-                  )}
+
 
                  <section className="space-y-10">
                     <h2 className="text-3xl font-serif font-black flex items-center gap-4">
@@ -504,6 +476,40 @@ export default function MatchDetail() {
           </div>
         </div>
       </section>
+
+      {/* Maracana Gallery Carousel */}
+      {maracanaGallery && maracanaGallery.length > 0 && (
+         <section className="py-24 bg-background">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+               <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-5xl font-serif font-black text-foreground mb-4">
+                     {language === 'pt' ? 'Galeria de Fotos' : language === 'es' ? 'Galería de Fotos' : 'Photo Gallery'}
+                  </h2>
+               </div>
+               <Carousel opts={{ loop: true, align: "start" }} className="w-full">
+                  <CarouselContent className="-ml-4">
+                     {maracanaGallery.map((img, i) => (
+                        <CarouselItem key={i} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                           <div className="aspect-[4/3] rounded-3xl overflow-hidden border shadow-sm group">
+                              <OptimizedImage 
+                                 src={img.url} 
+                                 alt={`Maracanã ${i + 1}`} 
+                                 width={600}
+                                 containerClassName="w-full h-full"
+                                 fit="cover"
+                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                 loading="lazy"
+                              />
+                           </div>
+                        </CarouselItem>
+                     ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="-left-4 bg-card shadow-lg" />
+                  <CarouselNext className="-right-4 bg-card shadow-lg" />
+               </Carousel>
+            </div>
+         </section>
+      )}
 
       <Footer />
 
