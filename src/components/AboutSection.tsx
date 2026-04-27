@@ -50,7 +50,7 @@ export function AboutSection() {
                   alt="About 1"
                   containerClassName="w-full h-full"
                   className="w-full h-full object-cover"
-                  fit="cover"
+                  fit="contain"
                 />
               </div>
               <div className="h-32 lg:h-40 rounded-2xl overflow-hidden relative">
@@ -59,7 +59,7 @@ export function AboutSection() {
                   alt="About 2"
                   containerClassName="w-full h-full"
                   className="w-full h-full object-cover"
-                  fit="cover"
+                  fit="contain"
                 />
               </div>
             </div>
@@ -70,7 +70,7 @@ export function AboutSection() {
                   alt="About 3"
                   containerClassName="w-full h-full"
                   className="w-full h-full object-cover"
-                  fit="cover"
+                  fit="contain"
                 />
               </div>
               <div className="h-48 lg:h-64 rounded-2xl overflow-hidden relative">
@@ -79,7 +79,7 @@ export function AboutSection() {
                   alt="About 4"
                   containerClassName="w-full h-full"
                   className="w-full h-full object-cover"
-                  fit="cover"
+                  fit="contain"
                 />
               </div>
             </div>
