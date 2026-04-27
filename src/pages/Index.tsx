@@ -6,7 +6,7 @@ import { UrgencyBar } from "@/components/UrgencyBar";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
-import { getCanonicalUrl } from "@/utils/seo";
+import { getCanonicalUrl, generateLocalBusinessSchema } from "@/utils/seo";
 import { ViewFadeIn } from "@/components/ViewFadeIn";
 
 // Lazy load sections below the fold

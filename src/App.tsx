@@ -1,7 +1,7 @@
 // Force clean build after dependency cleanup
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -76,8 +76,7 @@ const App = () => {
                   <Toaster />
                   <Sonner />
                   <ThemeApplier />
-                  <BrowserRouter>
-                    <ScrollToHash />
+                  <ScrollToHash />
                 <CurrencyProvider>
                   <LocaleProvider>
                     <CartProvider>
@@ -128,7 +127,6 @@ const App = () => {
                       </CartProvider>
                     </LocaleProvider>
                   </CurrencyProvider>
-                </BrowserRouter>
               </TooltipProvider>
             </HelmetProvider>
           </AuthProvider>
