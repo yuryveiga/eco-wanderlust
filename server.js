@@ -9,7 +9,7 @@ async function createServer() {
   const app = express()
 
   // Servir arquivos estáticos com cache de 1 ano
-  app.use(express.static(path.resolve(__dirname, 'dist/client'), {
+  app.use(express.static(path.resolve(__dirname, 'dist'), {
     maxAge: '1y',
     immutable: true,
     index: false
@@ -20,7 +20,7 @@ async function createServer() {
       const url = req.originalUrl
 
       let template = await fs.readFile(
-        path.resolve(__dirname, 'dist/client/index.html'),
+        path.resolve(__dirname, 'dist/index.html'),
         'utf-8'
       )
 
