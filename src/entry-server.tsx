@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { StaticRouter } from 'react-router-dom/server'
 import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
@@ -20,9 +19,7 @@ export function render(url: string, context: any) {
     <React.StrictMode>
       <HelmetProvider context={helmetContext}>
         <QueryClientProvider client={queryClient}>
-          <StaticRouter location={url} context={context}>
-            <App />
-          </StaticRouter>
+          <App location={url} />
         </QueryClientProvider>
       </HelmetProvider>
     </React.StrictMode>

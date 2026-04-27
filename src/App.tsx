@@ -1,7 +1,8 @@
 // Force clean build after dependency cleanup
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { StaticRouter } from "react-router-dom/server";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -66,7 +67,10 @@ const AnalyticsTracker = () => {
   return null;
 };
 
-const App = () => {
+const App = ({ location }: { location?: string }) => {
+  const Router = location ? StaticRouter : BrowserRouter;
+  const routerProps = location ? { location } : {};
+
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
@@ -76,7 +80,8 @@ const App = () => {
                   <Toaster />
                   <Sonner />
                   <ThemeApplier />
-                  <ScrollToHash />
+                  <Router {...routerProps}>
+                    <ScrollToHash />
                 <CurrencyProvider>
                   <LocaleProvider>
                     <CartProvider>
@@ -127,6 +132,7 @@ const App = () => {
                       </CartProvider>
                     </LocaleProvider>
                   </CurrencyProvider>
+                  </Router>
               </TooltipProvider>
             </HelmetProvider>
           </AuthProvider>
