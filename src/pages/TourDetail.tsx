@@ -464,13 +464,13 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Mosaic Gallery Section - Optimized for non-cropping */}
+      {/* Mosaic Gallery Section */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/10 border border-primary/5">
-          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[400px] md:h-[500px] lg:h-[600px]">
+        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/20 border">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[350px] md:h-[400px] lg:h-[450px]">
             {/* Main Image */}
             <div 
-              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item bg-muted/20"
+              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
               onClick={() => openLightbox(0)}
             >
               <OptimizedImage 
@@ -478,18 +478,18 @@ export function TourDetail() {
                 alt={translatedTitle} 
                 width={1200}
                 containerClassName="w-full h-full"
-                fit="contain"
-                className="w-full h-full object-contain transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-105" 
+                fit="cover"
+                className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
                 fetchPriority="high"
               />
-              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/5 transition-all duration-500" />
+              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
             </div>
 
             {/* Sub-images Grid */}
             {images.slice(1, 5).map((img, idx) => (
               <div 
                 key={idx}
-                className="hidden md:block relative overflow-hidden cursor-pointer group/item bg-muted/10"
+                className="hidden md:block relative overflow-hidden cursor-pointer group/item"
                 onClick={() => openLightbox(idx + 1)}
               >
                 <OptimizedImage 
@@ -497,22 +497,22 @@ export function TourDetail() {
                   alt={`${translatedTitle} ${idx + 1}`} 
                   width={800}
                   containerClassName="w-full h-full"
-                  fit="contain"
-                  className="w-full h-full object-contain transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
+                  fit="cover"
+                  className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-125" 
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/5 transition-all duration-500" />
+                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
               </div>
             ))}
 
             {/* Empty Slots */}
             {images.length < 5 && Array.from({ length: 5 - images.length }).map((_, i) => (
-              <div key={`empty-${i}`} className="hidden md:block bg-muted/5 animate-pulse border border-white/5" />
+              <div key={`empty-${i}`} className="hidden md:block bg-muted/20 animate-pulse border border-white/10" />
             ))}
           </div>
 
           <Button 
             variant="secondary" 
-            className="absolute bottom-8 right-8 gap-3 bg-white/90 backdrop-blur-xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-12 rounded-2xl shadow-2xl transition-all hover:scale-105 active:scale-95"
+            className="absolute bottom-10 right-10 gap-3 bg-white/90 backdrop-blur-2xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-14 rounded-2xl shadow-2xl transition-all hover:scale-105 ring-1 ring-black/5 active:scale-95"
             onClick={() => openLightbox(0)}
           >
             <Maximize2 className="w-5 h-5 text-primary" />
