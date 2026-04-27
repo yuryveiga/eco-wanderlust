@@ -184,7 +184,7 @@ export default function MatchDetail() {
     "@type": "Product",
     "name": `${match.home_team} x ${match.away_team} | Maracanã Matchday Experience`,
     "description": `Assista ao vivo ${match.home_team} x ${match.away_team} no Maracanã com transporte e guia incluso.`,
-    "image": images['maracana_hero'] || "https://tocorimerio.com/maracana-hero.jpg",
+    "image": images['maracana_hero'] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//WhatsApp Image 2026-04-14 at 15.41.21.jpeg",
     "sku": match.slug || match.id,
     "brand": {
       "@type": "Brand",
@@ -277,7 +277,7 @@ export default function MatchDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
            <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group">
               <OptimizedImage 
-                src={images['maracana_hero'] || "/maracana-hero.jpg"} 
+                src={images['maracana_hero'] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//WhatsApp Image 2026-04-14 at 15.41.21.jpeg"} 
                 alt="Maracanã Stadium" 
                 containerClassName="w-full h-full"
                 fit="cover"
