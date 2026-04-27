@@ -1,5 +1,5 @@
-import React, { useState, useEffect, memo } from "react";
-import { getOptimizedImage, getBlurPlaceholder } from "@/utils/imageOptimization";
+import React, { useState, useEffect, memo, useMemo } from "react";
+import { getOptimizedImage, getBlurPlaceholder, isOptimizable } from "@/utils/imageOptimization";
 import { cn } from "@/lib/utils";
 import { useSiteData } from "@/hooks/useSiteData";
 
@@ -43,6 +43,7 @@ export const OptimizedImage = memo(function OptimizedImage({
   const { version: siteVersion } = useSiteData();
   
   const version = propVersion || siteVersion;
+  const optimizable = useMemo(() => isOptimizable(src), [src]);
   const shouldShowBlur = showBlur && fetchPriority !== "high";
 
   useEffect(() => {
@@ -76,14 +77,18 @@ export const OptimizedImage = memo(function OptimizedImage({
 
       {/* Main Image with modern format support */}
       <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
-        <source 
-          srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height, version)} 
-          type="image/avif" 
-        />
-        <source 
-          srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height, version)} 
-          type="image/webp" 
-        />
+        {optimizable && (
+          <>
+            <source 
+              srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height, version)} 
+              type="image/avif" 
+            />
+            <source 
+              srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height, version)} 
+              type="image/webp" 
+            />
+          </>
+        )}
         <img
           src={getOptimizedImage(src, width, quality, undefined, fit, height, version)}
           alt={alt}

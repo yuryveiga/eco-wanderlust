@@ -68,11 +68,11 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- Inserir Passeios
 INSERT INTO tours (title, short_description, price, duration, max_group_size, image_url, is_featured, category, is_active, sort_order)
 VALUES
-  ('City Tour Rio Completo', 'Conheça os pontos turísticos mais icônicos do Rio de Janeiro: Cristo Redentor, Pão de Açúcar, Escadaria Selarón e muito mais!', 250, '8 horas', 15, '/maracana-hero.jpg', true, 'City Tour', true, 1),
-  ('Arraial do Cabo', 'Descubra o Caribe Brasileiro com águas cristalinas e praias paradisíacas. Mergulho e snorkel inclusos!', 180, '12 horas', 20, 'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=1200', true, 'Praia', true, 2),
-  ('Angra dos Reis', 'Navegue pelas ilhas paradisíacas de Angra dos Reis. Praias escondidas e águas cristalinas.', 200, '10 horas', 25, '/maracana-hero.jpg', true, 'Barco', true, 3),
-  ('Arraial + Cabo Frio', 'Combine o melhor de Arraial do Cabo com as praias de Cabo Frio em um dia completo.', 220, '14 horas', 20, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200', true, 'Praia', true, 4),
-  ('Niterói e Museums', 'Visite o MAC, o Mosquito Museum e conheça a incrível vista do Rio com漿 oelas da outra margem.', 180, '6 horas', 15, '/maracana-hero.jpg', false, 'Cultura', true, 5),
+  ('City Tour Rio Completo', 'Conheça os pontos turísticos mais icônicos do Rio de Janeiro: Cristo Redentor, Pão de Açúcar, Escadaria Selarón e muito mais!', 250, '8 horas', 15, '/placeholder.svg', true, 'City Tour', true, 1),
+  ('Arraial do Cabo', 'Descubra o Caribe Brasileiro com águas cristalinas, areia branca e passeios de barco inesquecíveis.', 180, '12 horas', 20, 'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=1200', true, 'Praia', true, 2),
+  ('Angra dos Reis', 'Navegue pelas ilhas paradisíacas de Angra dos Reis. Praias escondidas e águas cristalinas.', 200, '10 horas', 25, '/placeholder.svg', true, 'Barco', true, 3),
+  ('Búzios Day Trip', 'Explore a charmosa vila de pescadores que encantou Brigitte Bardot. Praias lindas e Rua das Pedras.', 220, '12 horas', 15, 'https://images.unsplash.com/photo-1589146010751-48820f47360a?q=80&w=1200', true, 'Praia', true, 4),
+  ('Niterói e Museums', 'Visite o MAC, o Mosquito Museum e conheça a incrível vista do Rio com漿 oelas da outra margem.', 180, '6 horas', 15, '/placeholder.svg', false, 'Cultura', true, 5),
   ('Pedra Bonita e beaches', 'Trilha na Pedra Bonita com vista panorâmica e depois relax nas melhores praias da zona oeste.', 150, '8 horas', 12, 'https://images.unsplash.com/photo-1552799446-159ba9523315?q=80&w=1200', false, 'Trilha', true, 6)
 ON CONFLICT DO NOTHING;
 
@@ -89,13 +89,13 @@ ON CONFLICT DO NOTHING;
 INSERT INTO site_images (key, image_url, label)
 VALUES
   ('logo', '', 'Logo do Site'),
-  ('hero_bg', '/maracana-hero.jpg', 'Fundo do Hero'),
-  ('gallery_1', '/maracana-hero.jpg', 'Galeria 1'),
-  ('gallery_2', 'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=1200', 'Galeria 2'),
-  ('gallery_3', '/maracana-hero.jpg', 'Galeria 3'),
-  ('gallery_4', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200', 'Galeria 4'),
-  ('gallery_5', 'https://images.unsplash.com/photo-1552799446-159ba9523315?q=80&w=1200', 'Galeria 5'),
-  ('gallery_6', '/maracana-hero.jpg', 'Galeria 6')
+  ('hero_bg', '/placeholder.svg', 'Fundo do Hero'),
+  ('gallery_1', '/placeholder.svg', 'Galeria 1'),
+  ('gallery_2', 'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=600', 'Galeria 2'),
+  ('gallery_3', '/placeholder.svg', 'Galeria 3'),
+  ('gallery_4', 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=600', 'Galeria 4'),
+  ('gallery_5', 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600', 'Galeria 5'),
+  ('gallery_6', '/placeholder.svg', 'Galeria 6')
 ON CONFLICT (key) DO NOTHING;
 
 -- Inserir Redes Sociais

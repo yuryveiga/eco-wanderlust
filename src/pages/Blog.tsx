@@ -17,7 +17,7 @@ const Blog = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { t, language } = useLocale();
   const { images } = useSiteData();
-  const fallbackImage = images.hero_bg || "/maracana-hero.jpg";
+  const fallbackImage = images.hero_bg || "/placeholder.svg";
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 

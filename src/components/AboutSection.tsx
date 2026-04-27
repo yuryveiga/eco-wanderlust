@@ -4,10 +4,10 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { OptimizedImage } from "./OptimizedImage";
 
 const DEFAULT_IMAGES = [
-  '/maracana-hero.jpg',
-  '/maracana-hero.jpg',
+  '/placeholder.svg',
+  '/placeholder.svg',
   'https://images.unsplash.com/photo-1516834611397-8d633eaec5c0?q=80&w=600',
-  '/maracana-hero.jpg',
+  '/placeholder.svg',
 ];
 
 export function AboutSection() {

@@ -60,7 +60,7 @@ const BlogPost = () => {
 
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Tocorime Rio";
-  const fallbackImage = images.hero_bg || "/maracana-hero.jpg";
+  const fallbackImage = images.hero_bg || "/placeholder.svg";
 
   useEffect(() => {
     window.scrollTo(0, 0);

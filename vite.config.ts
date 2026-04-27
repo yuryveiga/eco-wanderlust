@@ -22,6 +22,9 @@ export default defineConfig(({ mode }) => ({
     },
     chunkSizeWarningLimit: 1000,
   },
+  ssr: {
+    noExternal: ["@tanstack/react-query", "react-helmet-async", "lucide-react", "embla-carousel-react"],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

@@ -51,7 +51,7 @@ const GenericPage = () => {
         <div className="w-full h-[35vh] md:h-[50vh] relative bg-primary/10 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-10" />
           <OptimizedImage 
-            src="/maracana-hero.jpg" 
+            src="/placeholder.svg" 
             alt="Fundo" 
             width={1600}
             containerClassName="w-full h-full"

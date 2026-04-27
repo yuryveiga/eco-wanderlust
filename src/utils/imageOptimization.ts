@@ -1,4 +1,12 @@
 /**
+ * Helper to check if a URL can be optimized by external services (Unsplash or Supabase)
+ */
+export function isOptimizable(url: string): boolean {
+  if (!url) return false;
+  return url.includes("images.unsplash.com") || url.includes("supabase.co/storage/v1/object/public");
+}
+
+/**
  * Optimizes image URLs by appending resizing, quality, and format parameters.
  * Supports Unsplash and Supabase Storage (if transformation is enabled).
  */
@@ -44,8 +52,8 @@ export function getOptimizedImage(
     }
   }
 
-  // Add version to other URLs if provided
-  if (versionParam) {
+  // Add version to other URLs if provided (ONLY for non-local assets to avoid preload mismatch)
+  if (versionParam && !url.startsWith("/")) {
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}v=${version}`;
   }
