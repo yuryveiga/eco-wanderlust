@@ -464,60 +464,45 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Mosaic Gallery Section - Smart Cover Fit */}
+      {/* Justified Gallery Section - Flickr Style (No Aggressive Cropping) */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/20 border">
-          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[350px] md:h-[400px] lg:h-[450px]">
-            {/* Main Image */}
+        <div className="flex flex-wrap gap-2 group">
+          {images.map((img, idx) => (
             <div 
-              className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer group/item"
-              onClick={() => openLightbox(0)}
+              key={idx}
+              className="relative overflow-hidden cursor-pointer group/item rounded-xl border border-primary/5 shadow-sm"
+              style={{ 
+                flex: `1 1 auto`, 
+                height: '280px',
+                minWidth: '200px'
+              }}
+              onClick={() => openLightbox(idx)}
             >
               <OptimizedImage 
-                src={images[0] || "/placeholder.svg"} 
-                alt={translatedTitle} 
-                width={1200}
+                src={img} 
+                alt={`${translatedTitle} ${idx + 1}`} 
+                width={800}
                 containerClassName="w-full h-full"
                 fit="cover"
                 className="w-full h-full object-cover object-[center_25%] transition-all duration-[length:3000ms] ease-out group-hover/item:scale-110 group-hover/item:object-[center_50%]" 
-                fetchPriority="high"
+                onDimensions={(w, h) => {
+                  // Optional: use dimensions to adjust flex-basis if needed
+                }}
               />
               <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
             </div>
+          ))}
 
-            {/* Sub-images Grid */}
-            {images.slice(1, 5).map((img, idx) => (
-              <div 
-                key={idx}
-                className="hidden md:block relative overflow-hidden cursor-pointer group/item"
-                onClick={() => openLightbox(idx + 1)}
-              >
-                <OptimizedImage 
-                  src={img} 
-                  alt={`${translatedTitle} ${idx + 1}`} 
-                  width={800}
-                  containerClassName="w-full h-full"
-                  fit="cover"
-                  className="w-full h-full object-cover object-[center_25%] transition-all duration-[length:3000ms] ease-out group-hover/item:scale-125 group-hover/item:object-[center_50%]" 
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
-              </div>
-            ))}
-
-            {/* Empty Slots */}
-            {images.length < 5 && Array.from({ length: 5 - images.length }).map((_, i) => (
-              <div key={`empty-${i}`} className="hidden md:block bg-muted/20 animate-pulse border border-white/10" />
-            ))}
+          <div className="flex-1 min-w-[200px] flex items-center justify-center p-4 bg-muted/10 rounded-xl border border-dashed border-primary/10">
+            <Button 
+              variant="ghost" 
+              className="gap-3 font-black text-[10px] uppercase tracking-widest px-6 h-12 rounded-xl transition-all hover:scale-105 active:scale-95"
+              onClick={() => openLightbox(0)}
+            >
+              <Maximize2 className="w-5 h-5 text-primary" />
+              {t("ver_galeria_completa")}
+            </Button>
           </div>
-
-          <Button 
-            variant="secondary" 
-            className="absolute bottom-10 right-10 gap-3 bg-white/90 backdrop-blur-2xl hover:bg-white text-black font-black text-[11px] uppercase tracking-widest px-8 h-14 rounded-2xl shadow-2xl transition-all hover:scale-105 ring-1 ring-black/5 active:scale-95"
-            onClick={() => openLightbox(0)}
-          >
-            <Maximize2 className="w-5 h-5 text-primary" />
-            {t("ver_galeria_completa")}
-          </Button>
         </div>
       </section>
 
