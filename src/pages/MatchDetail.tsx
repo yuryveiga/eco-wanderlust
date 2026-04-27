@@ -275,12 +275,13 @@ export default function MatchDetail() {
       <main className="pt-24 pb-20">
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-           <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10">
+           <div className="relative w-full aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white/10">
               <OptimizedImage 
                 src={images['maracana_hero'] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//WhatsApp Image 2026-04-14 at 15.41.21.jpeg"} 
                 alt="Maracanã Stadium" 
                 containerClassName="w-full h-full"
-                className="w-full h-full object-contain"
+                fit="cover"
+                className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               
