@@ -280,8 +280,7 @@ export default function MatchDetail() {
                 src={images['maracana_hero'] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images//WhatsApp Image 2026-04-14 at 15.41.21.jpeg"} 
                 alt="Maracanã Stadium" 
                 containerClassName="w-full h-full"
-                fit="cover"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               
