@@ -3,7 +3,6 @@ import { ChevronDown, Star, ArrowRight, ShieldCheck, Award, Lock, Flame } from "
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
-import { OptimizedImage } from "./OptimizedImage";
 
 export function HeroSection() {
   const { images, siteSettings } = useSiteData();
@@ -113,20 +112,9 @@ export function HeroSection() {
       {heroBgs.map((bg, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
-        >
-          <OptimizedImage
-            src={bg}
-            alt=""
-            width={1600}
-            containerClassName="w-full h-full"
-            fit="cover"
-            className="w-full h-full object-cover"
-            loading={index === 0 ? "eager" : "lazy"}
-            fetchPriority={index === 0 ? "high" : "low"}
-            decoding={index === 0 ? "sync" : "async"}
-          />
-        </div>
+          className={`absolute inset-0 transition-opacity duration-1000 bg-cover bg-center bg-no-repeat ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
+          style={{ backgroundImage: `url(${bg})` }}
+        />
       ))}
       <div className="absolute inset-0 bg-black/50" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/20 to-transparent z-[5]" />
