@@ -132,14 +132,14 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
             )}
           </div>
           
-          <Button className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 bg-primary group-hover:bg-accent group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white">
+          <div className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 bg-primary group-hover:bg-accent group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center">
             <div className="flex items-center gap-2">
               {isExternal 
                 ? (language === 'pt' ? 'RESERVAR AGORA' : language === 'es' ? 'RESERVAR AHORA' : 'BOOK NOW') 
                 : t("reservar")}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
-          </Button>
+          </div>
         </div>
       </div>
     </>
