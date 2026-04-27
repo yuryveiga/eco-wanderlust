@@ -103,14 +103,15 @@ export function Header() {
   console.log("socialMedia:", socialMedia);
 
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/images__1_-removebg-preview.png";
+  const siteName = siteSettings?.site_name || "Tocorime Rio";
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 md:h-26">
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3 group">
             {logoUrl ? (
-              <div className={`relative flex items-center justify-center ${isScrolled ? "h-11 w-11 md:h-12 md:w-12 mt-1" : "h-16 w-16 md:h-22 md:w-22"} transition-all duration-500 ease-in-out`}>
+              <div className={`relative flex items-center justify-center ${isScrolled ? "h-20 w-20 md:h-24 md:w-24 mt-1" : "h-28 w-28 md:h-40 md:w-40"} transition-all duration-500 ease-in-out`}>
               <OptimizedImage 
                 src={siteSettings?.logo_url || logoUrl} 
                 alt="Tocorime Rio - Passeios Privados no Rio de Janeiro" 
@@ -118,10 +119,13 @@ export function Header() {
                 className="w-full h-full object-contain filter drop-shadow-sm transition-transform duration-500" 
               />
             </div>) : (
-              <div className="w-16 h-16 md:h-22 md:w-22 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-28 h-28 md:h-40 md:w-40 bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-primary-foreground font-bold text-2xl font-sans">P</span>
               </div>
             )}
+            <span className={`font-serif font-bold tracking-tight text-foreground transition-all duration-500 ${isScrolled ? "text-xl md:text-2xl" : "text-2xl md:text-4xl"} hidden sm:inline-block`}>
+              {siteName}
+            </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6">
