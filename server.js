@@ -25,7 +25,7 @@ async function createServer() {
     index: false
   }))
 
-  app.use('*', async (req, res) => {
+  app.use(async (req, res) => {
     try {
       const url = req.originalUrl
 

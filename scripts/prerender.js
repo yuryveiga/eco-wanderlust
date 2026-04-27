@@ -26,7 +26,7 @@ async function startServer() {
   app.use(express.static(distPath));
 
   // Fallback to index.html for SPA routing
-  app.get('*', async (req, res) => {
+  app.use((req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 

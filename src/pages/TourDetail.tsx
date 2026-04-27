@@ -136,6 +136,8 @@ export function TourDetail() {
       .replace(/minuto/gi, t("minuto"));
   };
 
+  const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`);
+
   const jsonLd = tour ? {
     "@context": "https://schema.org",
     "@graph": [
@@ -170,12 +172,10 @@ export function TourDetail() {
         "@type": "ListItem",
         "position": 3,
         "name": translatedTitle,
-        "item": getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`)
+        "item": canonicalUrl
       }
     ]
   };
-
-  const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`);
 
   const reviewsRef = useRef<HTMLDivElement>(null);
  
