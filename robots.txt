@@ -9,9 +9,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
-Disallow: /*.js$
-Disallow: /*.css$
-Disallow: /*.map$
 
 # Crawl delay for aggressive bots
 Crawl-delay: 1
