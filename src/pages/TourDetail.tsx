@@ -597,6 +597,34 @@ export function TourDetail() {
                 <p className="text-xl text-muted-foreground leading-relaxed font-sans first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1 whitespace-pre-wrap">{translatedShortDesc}</p>
               </div>
 
+               {/* What's Included */}
+               {translatedIncluded && (Array.isArray(translatedIncluded) ? translatedIncluded.length > 0 : !!translatedIncluded) && (
+                 <div className="space-y-8">
+                   <h2 className="text-3xl font-serif font-black flex items-center gap-4 text-foreground">
+                     <div className="w-2 h-10 bg-primary rounded-full" />
+                     {t("o_que_inclui")}
+                   </h2>
+                   
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     {(Array.isArray(translatedIncluded) ? translatedIncluded : [translatedIncluded]).map((item: any, i: number) => {
+                       const text = typeof item === 'string' ? item : item.text || item.title || "";
+                       if (!text) return null;
+                       return (
+                        <div key={i} className="flex items-start gap-4 p-6 bg-card rounded-[2rem] border border-primary/10 shadow-lg group hover:shadow-xl hover:border-primary/30 transition-all duration-300">
+                          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <Check className="w-6 h-6 text-primary" />
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-sm font-black text-foreground/90 leading-tight block">{text}</span>
+                            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{t("inclui")}</span>
+                          </div>
+                        </div>
+                       );
+                     })}
+                   </div>
+                 </div>
+               )}
+
                {/* Custom Options Selection */}
                {tour.use_custom_options && tour.custom_options_json && (tour.custom_options_json as Record<string, unknown>[]).length > 0 && (
                  <div className="space-y-8">
