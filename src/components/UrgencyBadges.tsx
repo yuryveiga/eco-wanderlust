@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Eye, TrendingUp, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSiteData } from "@/hooks/useSiteData";
 
 interface Props {
   tourId: string;
@@ -52,8 +53,12 @@ function timeAgo(iso: string, lang: "pt" | "en" | "es") {
 
 export function UrgencyBadges({ tourId, tourSlug }: Props) {
   const { language } = useLocale();
+  const { siteSettings } = useSiteData();
+  const hideUrgency = siteSettings?.['hide_urgency'] === 'true';
   const lang = (["pt", "en", "es"].includes(language) ? language : "pt") as "pt" | "en" | "es";
   const s = STRINGS[lang];
+
+  if (hideUrgency) return null;
 
   const [viewing, setViewing] = useState<number>(0);
   const [weekBookings, setWeekBookings] = useState<number>(0);

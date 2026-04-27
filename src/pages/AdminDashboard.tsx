@@ -121,6 +121,23 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleToggleUrgency = async (checked: boolean) => {
+    const newValue = checked ? "true" : "false";
+    setSettings({ ...settings, hide_urgency: newValue });
+    try {
+      const settingRecord = settingsList.find(s => s.key === 'hide_urgency');
+      if (settingRecord?.id) {
+        await updateLovable("site_settings", settingRecord.id, { value: newValue });
+      } else {
+        const newRecord = await insertLovable<LovableSiteSetting>("site_settings", { key: 'hide_urgency', value: newValue });
+        setSettingsList([...settingsList, newRecord]);
+      }
+      toast({ title: checked ? "Mensagens de urgência ocultadas!" : "Mensagens de urgência ativadas!" });
+    } catch (err) {
+      toast({ title: "Erro ao atualizar", variant: "destructive" });
+    }
+  };
+
   const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   const cards = [
@@ -273,6 +290,32 @@ const AdminDashboard = () => {
               <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3">
                 <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800 italic">Dica: Use esta opção se os preços estiverem em atualização ou se preferir atendimento direto.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Urgency Messages Settings */}
+        <div className="bg-card border-2 border-orange-200 rounded-3xl p-8 shadow-sm space-y-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <Sparkles className="w-7 h-7 text-orange-500" />
+              <h2 className="text-2xl font-bold font-serif">Mensagens de Urgência</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                <div className="space-y-0.5">
+                  <Label className="text-base font-bold text-foreground">Ocultar Urgência</Label>
+                  <p className="text-sm text-muted-foreground">Oculta os badges de "esgota rápido", "X pessoas vendo agora" e notificações de reservas recentes.</p>
+                </div>
+                <Switch 
+                  checked={settings['hide_urgency'] === 'true'} 
+                  onCheckedChange={handleToggleUrgency}
+                />
+              </div>
+              <div className="bg-orange-50 border border-orange-200 p-4 rounded-xl flex gap-3">
+                <Sparkles className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                <p className="text-xs text-orange-800 italic">Dica: Desative se quiser uma aparência mais clean, sem elementos de escassez e prova social nos passeios.</p>
               </div>
             </div>
           </div>

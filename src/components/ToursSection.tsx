@@ -38,6 +38,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
   const { siteSettings } = useSiteData();
   const hidePrices = siteSettings['hide_prices'] === 'true';
+  const hideUrgency = siteSettings['hide_urgency'] === 'true';
 
   const getTranslated = (field: keyof TourCardProps): string => {
     if (language === 'pt') return String(tour[field] || "");
@@ -84,7 +85,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
         <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm text-foreground text-[10px] font-black px-3 py-1.5 rounded-full font-sans uppercase tracking-[0.15em] border border-border/50 shadow-sm z-10">{category}</div>
         
         {/* Scarcity Badge */}
-        {(() => {
+        {!hideUrgency && (() => {
           const scarcityMessages = {
             pt: ["Esgota rápido!", "Apenas 2 vagas p/ amanhã", "Mais reservado hoje", "Últimas vagas!", "Oferta termina logo"],
             en: ["Sells out fast!", "Only 2 spots for tomorrow", "Most booked today", "Last spots!", "Offer ends soon"],
