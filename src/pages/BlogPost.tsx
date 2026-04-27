@@ -93,7 +93,7 @@ const BlogPost = () => {
     if (!post) return "";
     if (language === 'pt') return String(post[field] || "");
     const translatedField = `${String(field)}_${language}` as keyof LovableBlogPost;
-    const translated = (post as Record<string, any>)[translatedField];
+    const translated = (post as unknown as Record<string, string>)[translatedField];
     return String(translated || post[field] || "");
   };
 

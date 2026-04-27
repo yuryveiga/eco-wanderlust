@@ -105,9 +105,9 @@ export function TourDetail() {
 
   const getTranslated = useCallback((field: string) => {
     if (!tour) return "";
-    if (language === 'pt') return (tour as Record<string, any>)[field];
+    if (language === 'pt') return (tour as Record<string, unknown>)[field];
     const translatedField = `${field}_${language}`;
-    return (tour as Record<string, any>)[translatedField] || (tour as Record<string, any>)[field];
+    return (tour as Record<string, unknown>)[translatedField] || (tour as Record<string, unknown>)[field];
   }, [language, tour]);
 
   const translatedTitle = useMemo(() => getTranslated('title') as string, [getTranslated]);
@@ -610,7 +610,7 @@ export function TourDetail() {
                    </h2>
                    
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     {(tour.custom_options_json as any[]).map((option: any, idx) => (
+                     {(tour.custom_options_json as Record<string, unknown>[]).map((option, idx) => (
                        <div 
                          key={idx}
                          onClick={() => setSelectedOptionIdx(idx)}
@@ -887,10 +887,10 @@ export function TourDetail() {
                          <ShoppingCart className="w-5 h-5" /> {t("reservar_agora")}
                        </Button>
                         {(() => {
-                          const wa = socialMedia.find((s: any) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
+                          const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
                           if (!wa) return null;
                           const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
-                          const titleI18n = (tour as any)[`title_${language}`] || tour.title;
+                          const titleI18n = (tour as Record<string, unknown>)[`title_${language}`] || tour.title;
                           const msg = t("wa_message").replace("{tour}", titleI18n);
                           const href = wa.url.startsWith('http')
                             ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`

@@ -4,7 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
 
-export function render(url: string, context: any) {
+export function render(url: string, context: Record<string, unknown>) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
