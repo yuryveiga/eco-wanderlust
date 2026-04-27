@@ -96,6 +96,7 @@ export function TourDetail() {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
 
   const siteTitle = siteSettings?.site_title?.split('|')[0].trim() || "Eco-Wanderlust";
+  const hidePrices = siteSettings?.['hide_prices'] === 'true';
 
   // TripAdvisor data
   const tripAdvisorSocial = socialMedia.find(s => 
