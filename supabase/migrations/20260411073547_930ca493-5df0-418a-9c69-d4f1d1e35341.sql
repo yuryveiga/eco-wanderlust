@@ -1,6 +1,6 @@
 
 -- Add is_archived column
-ALTER TABLE public.sales ADD COLUMN is_archived boolean DEFAULT false;
+ALTER TABLE public.sales ADD COLUMN IF NOT EXISTS is_archived boolean DEFAULT false;
 
 -- Create function to auto-archive paid sales past their date
 CREATE OR REPLACE FUNCTION public.auto_archive_sales()
