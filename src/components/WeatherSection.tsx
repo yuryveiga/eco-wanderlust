@@ -19,6 +19,9 @@ export function WeatherSection() {
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
   const [mounted, setMounted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(() => new Date("2024-01-01T00:00:00Z"));
+  const [selectedHour, setSelectedHour] = useState(12);
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   
   useEffect(() => {
     setMounted(true);
