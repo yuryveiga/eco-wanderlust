@@ -18,13 +18,13 @@ export function WeatherSection() {
   
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
-  // Fixed date for hydration stability
-  const [selectedDate, setSelectedDate] = useState(() => new Date("2024-01-01T00:00:00Z"));
-  const [selectedHour, setSelectedHour] = useState(12);
-
+  const [mounted, setMounted] = useState(false);
+  
   useEffect(() => {
+    setMounted(true);
     // Set actual current time after mount on client
     const now = new Date();
+    setCurrentDate(now);
     setSelectedDate(now);
     setSelectedHour(startOfHour(now).getHours());
   }, []);
@@ -70,16 +70,20 @@ export function WeatherSection() {
     return <CloudRain className="w-12 h-12 text-blue-500" />;
   };
 
-  const dateOptions = useMemo(() => Array.from({ length: 7 }).map((_, i) => addDays(new Date(), i)), []);
+  const dateOptions = useMemo(() => {
+    if (!currentDate) return [];
+    return Array.from({ length: 7 }).map((_, i) => addDays(currentDate, i));
+  }, [currentDate]);
+  
   const hourOptions = useMemo(() => Array.from({ length: 24 }).map((_, i) => i), []);
 
   const index = useMemo(() => {
-    if (!forecast) return -1;
+    if (!forecast || !mounted) return -1;
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     const hourStr = selectedHour.toString().padStart(2, "0");
     const target = `${dateStr}T${hourStr}:00`;
     return forecast.time.findIndex(t => t.startsWith(target));
-  }, [forecast, selectedDate, selectedHour]);
+  }, [forecast, selectedDate, selectedHour, mounted]);
 
   const weather = useMemo(() => {
     if (index === -1 || !forecast) return null;
@@ -92,6 +96,13 @@ export function WeatherSection() {
     };
   }, [index, forecast, t]);
 
+  if (!mounted) return (
+    <section className="py-12 bg-primary/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-card rounded-3xl border border-border/50 p-6 md:p-10 shadow-sm h-[400px] animate-pulse" />
+      </div>
+    </section>
+  );
 
   return (
     <section className="py-12 bg-primary/5">
