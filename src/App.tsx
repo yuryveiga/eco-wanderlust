@@ -10,7 +10,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { CartProvider } from "@/contexts/CartContext";
-import { HelmetProvider } from "react-helmet-async";
 import { FloatingButtons } from "./components/FloatingButtons";
 import { ThemeApplier } from "./components/ThemeApplier";
 import { useAnalytics } from "./hooks/useAnalytics";
@@ -75,7 +74,6 @@ const App = ({ location }: { location?: string }) => {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <AuthProvider>
-          <HelmetProvider>
                 <TooltipProvider>
                   <Toaster />
                   <Sonner />
@@ -134,9 +132,8 @@ const App = ({ location }: { location?: string }) => {
                   </CurrencyProvider>
                   </Router>
               </TooltipProvider>
-            </HelmetProvider>
           </AuthProvider>
-        </ErrorBoundary>
+      </ErrorBoundary>
       </QueryClientProvider>
   );
 };
