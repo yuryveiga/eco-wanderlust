@@ -75,7 +75,7 @@ const App = ({ queryClient: externalQueryClient }: { queryClient?: QueryClient }
             <Toaster />
             <Sonner />
             <ThemeApplier />
-            <BrowserRouter>
+            <BrowserRouter basename="/eco-wanderlust">
               <ScrollToHash />
               <CurrencyProvider>
                 <LocaleProvider>
