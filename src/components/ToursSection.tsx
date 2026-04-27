@@ -135,10 +135,10 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
           </div>
           
           
-          <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 ${hidePrices ? 'bg-[#25D366] hover:bg-[#128C7E]' : 'bg-primary group-hover:bg-accent'} group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
+          <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 ${hidePrices ? 'bg-primary' : 'bg-primary group-hover:bg-accent'} group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
             <div className="flex items-center gap-2">
               {hidePrices 
-                ? (language === 'pt' ? 'SOLICITAR ORÇAMENTO' : language === 'es' ? 'SOLICITAR PRESUPUESTO' : 'REQUEST QUOTE')
+                ? (language === 'pt' ? 'VER DETALHES' : language === 'es' ? 'VER DETALLES' : 'VIEW DETAILS')
                 : (isExternal 
                     ? (language === 'pt' ? 'RESERVAR AGORA' : language === 'es' ? 'RESERVAR AHORA' : 'BOOK NOW') 
                     : t("reservar"))}
@@ -150,18 +150,14 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
     </>
   );
 
-  if (isExternal || hidePrices) {
-    const finalHref = hidePrices 
-      ? `https://wa.me/5521999999999?text=${encodeURIComponent(language === 'pt' ? `Olá! Gostaria de um orçamento para o passeio: ${title}` : `Hello! I would like a quote for the tour: ${title}`)}`
-      : href;
-
+  if (isExternal) {
     return (
       <a 
-        href={finalHref} 
+        href={href} 
         target="_blank" 
         rel="noopener noreferrer" 
         className="block bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 group hover:shadow-xl transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-primary"
-        aria-label={`${hidePrices ? (language === 'pt' ? 'Solicitar orçamento para' : 'Request quote for') : (isExternal ? (language === 'pt' ? 'Saber mais sobre' : 'Learn more about') : t("reservar"))} ${title}`}
+        aria-label={`${isExternal ? (language === 'pt' ? 'Saber mais sobre' : 'Learn more about') : t("reservar")} ${title}`}
       >
         {CardContent}
       </a>
