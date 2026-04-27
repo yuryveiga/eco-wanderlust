@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef, lazy, Suspense } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, X, Star, Shield, ShieldCheck, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart, Facebook, MessageCircle, Link2, MessageSquare } from "lucide-react";
