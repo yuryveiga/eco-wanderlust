@@ -55,8 +55,8 @@ const AnalyticsTracker = () => {
   return null;
 };
 
-const App = ({ location }: { location?: string }) => {
-  const [queryClient] = useState(() => new QueryClient({
+const App = ({ location, queryClient: externalQueryClient }: { location?: string; queryClient?: QueryClient }) => {
+  const [queryClient] = useState(() => externalQueryClient || new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -101,6 +101,8 @@ const App = ({ location }: { location?: string }) => {
 };
 
 const AppContent = ({ mounted }: { mounted: boolean }) => {
+  if (!mounted) return <PageLoader />;
+
   return (
     <>
       <ScrollToHash />
@@ -109,12 +111,8 @@ const AppContent = ({ mounted }: { mounted: boolean }) => {
           <CartProvider>
             <AnalyticsTracker />
               <Suspense fallback={<PageLoader />}>
-                {mounted && (
-                  <>
-                    <MobileStickyCTA />
-                    <FloatingButtons />
-                  </>
-                )}
+                <MobileStickyCTA />
+                <FloatingButtons />
                 <Routes>
                   <Route path="/" element={<Index />} />
                           <Route path="/blog" element={<Blog />} />
