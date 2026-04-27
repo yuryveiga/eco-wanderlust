@@ -107,7 +107,11 @@ export function Header() {
   const logoUrl = images["logo"] || "https://ogzasprtfgimjqrtcseg.supabase.co/storage/v1/object/public/site-images/images__1_-removebg-preview.png";
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
+    <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="pointer-events-auto">
+        <UrgencyBar />
+      </div>
+      <header className={`pointer-events-auto transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md py-1" : "bg-background/80 backdrop-blur-sm py-2.5 border-b border-border/50"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 md:h-26">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
@@ -309,6 +313,6 @@ export function Header() {
           </nav>
         )}
       </div>
-    </header>
+    </div>
   );
 }

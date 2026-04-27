@@ -43,7 +43,6 @@ const Index = () => {
           {JSON.stringify(generateLocalBusinessSchema("Tocorime Rio", siteDescription))}
         </script>
       </Helmet>
-      <UrgencyBar />
       <Header />
       <HeroSection />
       
