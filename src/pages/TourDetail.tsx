@@ -33,7 +33,7 @@ import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
-import { getCanonicalUrl, BASE_URL } from "@/utils/seo";
+import { getCanonicalUrl, BASE_URL, generateTouristAttractionSchema, generateTourPackageSchema } from "@/utils/seo";
 
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
 
@@ -139,46 +139,14 @@ export function TourDetail() {
   const jsonLd = tour ? {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Product",
-        "name": translatedTitle,
-        "description": translatedShortDesc,
-        "image": tour.image_url,
-        "sku": tour.slug || tour.id,
-        "brand": {
-          "@type": "Brand",
-          "name": siteTitle
-        },
-        "offers": {
-          "@type": "Offer",
-          "price": tour.price,
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": window.location.href
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "reviewCount": "128"
-        }
-      },
-      {
-        "@type": "Tour",
-        "name": translatedTitle,
-        "description": translatedShortDesc,
-        "image": tour.image_url,
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": siteTitle,
-          "url": BASE_URL
-        },
-        "duration": tour.duration,
-        "itinerary": (translatedItinerary as { time: string; description: string }[] || []).map((step, i) => ({
-          "@type": "City",
-          "name": step.time,
-          "description": step.description
-        }))
-      }
+      generateTouristAttractionSchema(translatedTitle, translatedShortDesc, tour.image_url),
+      generateTourPackageSchema(
+        translatedTitle,
+        translatedShortDesc,
+        tour.image_url,
+        canonicalUrl,
+        getTourMinPrice(tour)
+      )
     ]
   } : null;
 

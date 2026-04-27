@@ -12,14 +12,16 @@ export const getCanonicalUrl = (path: string = "") => {
   return `${BASE_URL}${finalPath}`;
 };
 
-export const generateLocalBusinessSchema = (siteTitle: string, description: string) => {
+export const generateLocalBusinessSchema = (siteTitle: string, description: string, imageUrl?: string) => {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": siteTitle,
+    "image": imageUrl || `${BASE_URL}/og-image.png`,
     "description": description,
     "url": BASE_URL,
     "telephone": "+5521999999999",
+    "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Rio de Janeiro",
@@ -36,6 +38,56 @@ export const generateLocalBusinessSchema = (siteTitle: string, description: stri
       "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
       "opens": "08:00",
       "closes": "20:00"
+    }
+  };
+};
+
+export const generateTouristAttractionSchema = (name: string, description: string, imageUrl: string) => {
+  return {
+    "@type": "TouristAttraction",
+    "name": name,
+    "description": description,
+    "image": imageUrl,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Rio de Janeiro",
+      "addressRegion": "RJ",
+      "addressCountry": "BR"
+    }
+  };
+};
+
+export const generateTourPackageSchema = (
+  name: string,
+  description: string,
+  imageUrl: string,
+  url: string,
+  price: number,
+  currency: string = "BRL"
+) => {
+  return {
+    "@type": "TourPackage",
+    "name": name,
+    "description": description,
+    "image": imageUrl,
+    "url": url,
+    "offers": {
+      "@type": "Offer",
+      "price": price,
+      "priceCurrency": currency,
+      "availability": "https://schema.org/InStock",
+      "url": url
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Tocorime Rio",
+      "url": BASE_URL
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "bestRating": "5",
+      "ratingCount": "128"
     }
   };
 };
