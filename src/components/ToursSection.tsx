@@ -31,15 +31,16 @@ export type TourCardProps = {
   price_3_6_people?: number;
   price_7_19_people?: number;
   use_custom_options?: boolean;
-  custom_options_json?: Record<string, unknown>[];
+  custom_options_json?: any[];
 };
 
 export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
 
-  const getTranslated = (field: keyof TourCardProps) => {
-    if (language === 'pt') return tour[field];
-    return (tour as Record<string, unknown>)[`${String(field)}_${language}`] || tour[field];
+  const getTranslated = (field: keyof TourCardProps): string => {
+    if (language === 'pt') return String(tour[field] || "");
+    const translated = (tour as Record<string, any>)[`${String(field)}_${language}`];
+    return String(translated || tour[field] || "");
   };
 
   const title = getTranslated('title');

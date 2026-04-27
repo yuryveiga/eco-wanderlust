@@ -82,7 +82,7 @@ const CheckoutSuccess = () => {
       for (const saleId in participants) {
         const { error } = await supabase
           .from("sales")
-          .update({ passengers_json: participants[saleId] as unknown })
+          .update({ passengers_json: participants[saleId] as any })
           .eq("id", saleId);
 
         if (error) throw error;

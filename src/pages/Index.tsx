@@ -40,6 +40,9 @@ const Index = () => {
         <meta property="og:site_name" content="Tocorime Rio" />
         <meta property="og:locale" content={language === 'pt' ? 'pt_BR' : language === 'es' ? 'es_ES' : 'en_US'} />
         <link rel="canonical" href={getCanonicalUrl("/")} />
+        <script type="application/ld+json">
+          {JSON.stringify(generateLocalBusinessSchema("Tocorime Rio", siteDescription))}
+        </script>
       </Helmet>
       <UrgencyBar />
       <Header />

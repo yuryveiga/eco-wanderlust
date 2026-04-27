@@ -45,7 +45,7 @@ export function fileToBase64(file: File): Promise<string> {
 export async function fetchLovable<T>(table: string, columns: string = '*'): Promise<T[]> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let query = supabase.from(table as never).select(columns);
+    let query = supabase.from(table as any).select(columns);
     
     if (table === 'tours' || table === 'pages' || table === 'social_media') {
       query = query.order('sort_order');
@@ -72,8 +72,8 @@ export async function insertLovable<T>(table: string, data: Partial<T>): Promise
     
     const { data: result, error } = await supabase
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from(table as never)
-      .insert(sanitizedData)
+      .from(table as any)
+      .insert(sanitizedData as any)
       .select()
       .single();
       
@@ -94,8 +94,8 @@ export async function updateLovable<T>(table: string, id: string, data: Partial<
 
     const { error } = await supabase
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from(table as never)
-      .update(sanitizedData)
+      .from(table as any)
+      .update(sanitizedData as any)
       .eq('id', id)
       .select();
       
@@ -114,7 +114,7 @@ export async function deleteLovable(table: string, id: string): Promise<boolean>
   try {
     const { error } = await supabase
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from(table as never)
+      .from(table as any)
       .delete()
       .eq('id', id);
       

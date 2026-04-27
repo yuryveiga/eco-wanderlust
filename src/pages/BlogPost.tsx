@@ -89,11 +89,12 @@ const BlogPost = () => {
     toast.success(language === 'pt' ? 'Link copiado!' : language === 'es' ? '¡Enlace copiado!' : 'Link copied!');
   };
 
-  const getTranslated = (field: keyof LovableBlogPost) => {
+  const getTranslated = (field: keyof LovableBlogPost): string => {
     if (!post) return "";
-    if (language === 'pt') return post[field];
+    if (language === 'pt') return String(post[field] || "");
     const translatedField = `${String(field)}_${language}` as keyof LovableBlogPost;
-    return (post as Record<string, unknown>)[translatedField] || post[field];
+    const translated = (post as Record<string, any>)[translatedField];
+    return String(translated || post[field] || "");
   };
 
   if (isLoading) {
@@ -116,13 +117,13 @@ const BlogPost = () => {
   // 1. Replace non-breaking spaces (nbsp) with normal spaces to allow correct wrapping
   // 2. Remove soft hyphens that cause incorrect syllable splitting
   // 3. Protect compound words (mata-mata) with non-breaking hyphens
-  const content = rawContent
-    ?.replace(/\u00A0/g, ' ')
-    ?.replace(/&nbsp;/g, ' ')
-    ?.replace(/\u00AD/g, '')
-    ?.replace(/&shy;/g, '')
-    ?.replace(/&#173;/g, '')
-    ?.replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
+  const content = String(rawContent || "")
+    .replace(/\u00A0/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\u00AD/g, '')
+    .replace(/&shy;/g, '')
+    .replace(/&#173;/g, '')
+    .replace(/([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])(-)([a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ])/g, '$1&#8209;$3');
 
   const contentWithSplit = (() => {
     if (!content) return { part1: "", part2: "" };

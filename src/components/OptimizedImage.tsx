@@ -54,7 +54,17 @@ export const OptimizedImage = memo(function OptimizedImage({
     }
   }, [src, fit, height, version, shouldShowBlur]);
 
-
+  const getSrcSet = (fmt?: 'webp' | 'avif') => {
+    if (!optimizable) return undefined;
+    const widths = [400, 800, 1200, 1600];
+    return widths
+      .map(w => `${getOptimizedImage(src, w, quality, fmt, fit, height, version)} ${w}w`)
+      .join(", ");
+  };
+ 
+  const srcSetAvif = useMemo(() => getSrcSet('avif'), [src, quality, fit, height, version, optimizable]);
+  const srcSetWebp = useMemo(() => getSrcSet('webp'), [src, quality, fit, height, version, optimizable]);
+ 
   return (
     <div className={cn(
       "relative bg-muted/20",
@@ -74,18 +84,20 @@ export const OptimizedImage = memo(function OptimizedImage({
           aria-hidden="true"
         />
       )}
-
+ 
       {/* Main Image with modern format support */}
       <picture className={cn(!fill && "flex items-center justify-center w-full h-full")}>
         {optimizable && (
           <>
             <source 
-              srcSet={getOptimizedImage(src, width, quality, 'avif', fit, height, version)} 
+              srcSet={srcSetAvif} 
               type="image/avif" 
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
             <source 
-              srcSet={getOptimizedImage(src, width, quality, 'webp', fit, height, version)} 
+              srcSet={srcSetWebp} 
               type="image/webp" 
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </>
         )}

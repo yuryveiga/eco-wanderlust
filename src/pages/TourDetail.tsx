@@ -33,7 +33,7 @@ import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
-import { getCanonicalUrl } from "@/utils/seo";
+import { getCanonicalUrl, BASE_URL } from "@/utils/seo";
 
 const getYouTubeEmbedUrl = (url: string) => {
   if (!url) return "";
@@ -101,11 +101,11 @@ export function TourDetail() {
   );
   const tripAdvisorUrl = tripAdvisorSocial?.url || "https://www.tripadvisor.com.br/";
 
-  const getTranslated = useCallback((field: keyof LovableTour) => {
+  const getTranslated = useCallback((field: string) => {
     if (!tour) return "";
-    if (language === 'pt') return (tour as Record<string, unknown>)[field];
-    const translatedField = `${String(field)}_${language}` as keyof LovableTour;
-    return (tour as Record<string, unknown>)[translatedField] || (tour as Record<string, unknown>)[field];
+    if (language === 'pt') return (tour as Record<string, any>)[field];
+    const translatedField = `${field}_${language}`;
+    return (tour as Record<string, any>)[translatedField] || (tour as Record<string, any>)[field];
   }, [language, tour]);
 
   const translatedTitle = useMemo(() => getTranslated('title') as string, [getTranslated]);
@@ -135,62 +135,48 @@ export function TourDetail() {
 
   const jsonLd = tour ? {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "name": translatedTitle,
-    "description": translatedShortDesc,
-    "image": tour.image_url,
-    "sku": tour.slug || tour.id,
-    "brand": {
-      "@type": "Brand",
-      "name": siteTitle
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": tour.price,
-      "priceCurrency": "BRL",
-      "availability": "https://schema.org/InStock",
-      "url": window.location.href,
-      "hasMerchantReturnPolicy": {
-        "@type": "MerchantReturnPolicy",
-        "applicableCountry": "BR",
-        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
-        "merchantReturnDays": 3,
-        "returnMethod": "https://schema.org/ReturnByMail",
-        "returnFees": "https://schema.org/FreeReturn"
-      },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingRate": {
-          "@type": "MonetaryAmount",
-          "value": 0,
-          "currency": "BRL"
+    "@graph": [
+      {
+        "@type": "Product",
+        "name": translatedTitle,
+        "description": translatedShortDesc,
+        "image": tour.image_url,
+        "sku": tour.slug || tour.id,
+        "brand": {
+          "@type": "Brand",
+          "name": siteTitle
         },
-        "shippingDestination": {
-          "@type": "DefinedRegion",
-          "addressCountry": "BR"
+        "offers": {
+          "@type": "Offer",
+          "price": tour.price,
+          "priceCurrency": "BRL",
+          "availability": "https://schema.org/InStock",
+          "url": window.location.href
         },
-        "deliveryTime": {
-          "@type": "ShippingDeliveryTime",
-          "handlingTime": {
-            "@type": "QuantitativeValue",
-            "minValue": 0,
-            "maxValue": 1,
-            "unitCode": "DAY"
-          },
-          "transitTime": {
-            "@type": "QuantitativeValue",
-            "minValue": 0,
-            "maxValue": 1,
-            "unitCode": "DAY"
-          }
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "128"
         }
+      },
+      {
+        "@type": "Tour",
+        "name": translatedTitle,
+        "description": translatedShortDesc,
+        "image": tour.image_url,
+        "provider": {
+          "@type": "LocalBusiness",
+          "name": siteTitle,
+          "url": BASE_URL
+        },
+        "duration": tour.duration,
+        "itinerary": (translatedItinerary as { time: string; description: string }[] || []).map((step, i) => ({
+          "@type": "City",
+          "name": step.time,
+          "description": step.description
+        }))
       }
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "128"
-    }
+    ]
   } : null;
 
   const breadcrumbsLd = {
@@ -220,21 +206,36 @@ export function TourDetail() {
 
   const canonicalUrl = getCanonicalUrl(`/passeio/${tour?.slug || tour?.id}`);
 
+  const reviewsRef = useRef<HTMLDivElement>(null);
+ 
   useEffect(() => {
     window.scrollTo(0, 0);
     const handleScroll = () => {
       setShowStickyBar(window.scrollY > 600);
     };
     window.addEventListener('scroll', handleScroll);
-    const script = document.createElement("script");
-    script.src = "https://elfsightcdn.com/platform.js";
-    script.async = true;
-    document.body.appendChild(script);
-
+ 
+    // Lazy load TripAdvisor script
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        const script = document.createElement("script");
+        script.src = "https://elfsightcdn.com/platform.js";
+        script.async = true;
+        document.body.appendChild(script);
+        observer.disconnect();
+      }
+    }, { rootMargin: '200px' });
+ 
+    if (reviewsRef.current) {
+      observer.observe(reviewsRef.current);
+    }
+ 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
+      observer.disconnect();
+      const existingScript = document.querySelector('script[src="https://elfsightcdn.com/platform.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
       }
     };
   }, []);
@@ -607,7 +608,7 @@ export function TourDetail() {
                    </h2>
                    
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     {(tour.custom_options_json as Record<string, unknown>[]).map((option, idx) => (
+                     {(tour.custom_options_json as any[]).map((option: any, idx) => (
                        <div 
                          key={idx}
                          onClick={() => setSelectedOptionIdx(idx)}
@@ -626,11 +627,11 @@ export function TourDetail() {
                          <div className="space-y-4">
                            <div className="space-y-1">
                              <h3 className={`text-xl font-black transition-colors ${selectedOptionIdx === idx ? 'text-primary' : 'text-foreground'}`}>
-                               {option.title}
+                               {String(option.title || "")}
                              </h3>
-                             {option.price > 0 && (
+                             {Number(option.price || 0) > 0 && (
                                <p className="text-primary font-black text-sm">
-                                 +{formatPrice(option.price)} / {t("pessoa")}
+                                 +{formatPrice(Number(option.price))} / {t("pessoa")}
                                </p>
                              )}
                            </div>
@@ -975,7 +976,7 @@ export function TourDetail() {
             </div>
           </div>
           
-          <div className="min-h-[300px]">
+          <div className="min-h-[300px]" ref={reviewsRef}>
             <div className="elfsight-app-bbfeb008-113f-47f2-bfa9-91793656db8e" data-elfsight-app-lazy></div>
           </div>
         </div>

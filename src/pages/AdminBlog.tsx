@@ -26,9 +26,9 @@ import { translateText, translateHtml } from "@/utils/translate";
 import { slugify } from "@/utils/slugify";
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-// @ts-expect-error - No types available for this module
+// @ts-ignore - No types available for this module
 import ImageResize from "quill-image-resize-module-react";
-Quill.register("modules/imageResize", ImageResize as unknown);
+Quill.register("modules/imageResize", ImageResize as any);
 
 const AdminBlog = () => {
   const [searchParams] = useSearchParams();
@@ -236,7 +236,7 @@ const AdminBlog = () => {
   };
 
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
-  const quillRef = useRef<ReactQuill>(null);
+  const quillRef = useRef<any>(null);
 
   const imageHandler = useCallback(() => {
     const choice = true; // Forcing gallery for consistency/UI
