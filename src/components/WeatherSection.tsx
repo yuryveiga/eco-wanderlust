@@ -18,9 +18,16 @@ export function WeatherSection() {
   
   const dateLocale = language === 'en' ? enUS : language === 'es' ? es : ptBR;
 
-  // Selection state
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedHour, setSelectedHour] = useState(startOfHour(new Date()).getHours());
+  // Fixed date for hydration stability
+  const [selectedDate, setSelectedDate] = useState(() => new Date("2024-01-01T00:00:00Z"));
+  const [selectedHour, setSelectedHour] = useState(12);
+
+  useEffect(() => {
+    // Set actual current time after mount on client
+    const now = new Date();
+    setSelectedDate(now);
+    setSelectedHour(startOfHour(now).getHours());
+  }, []);
 
   useEffect(() => {
     const fetchWeather = async () => {
