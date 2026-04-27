@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, Star } from "lucide-react";
+import { ChevronDown, Star, ArrowRight, ShieldCheck, Award, Lock, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -9,210 +9,227 @@ export function HeroSection() {
   const { images, siteSettings } = useSiteData();
   const { t, language } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
-  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
   const heroStyle = siteSettings['hero_style'] || "style1";
-  
+
   const heroTitleKey = language === 'pt' ? 'hero_title' : `hero_title_${language}`;
   const heroSubtitleKey = language === 'pt' ? 'hero_subtitle' : `hero_subtitle_${language}`;
-  
+
   const heroTitle = siteSettings[heroTitleKey] || siteSettings['hero_title'] || `${t("conheca_melhor")} ${t("rio_janeiro")}`;
   const heroSubtitle = siteSettings[heroSubtitleKey] || siteSettings['hero_subtitle'] || t("hero_desc");
-  
+
+  const siteName = siteSettings['site_name'] || 'Tocorime Rio';
+  const logoUrl = siteSettings?.logo_url || images['logo'];
+
   const availableBgs = [
     images["hero_bg"],
     images["hero_bg_2"],
     images["hero_bg_3"]
   ].filter(Boolean);
 
-  const heroBgs = availableBgs.length > 0 ? availableBgs : ["/maracana-hero.jpg"];
+  const heroBgs = availableBgs.length > 0 ? availableBgs : ["https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070"];
 
   useEffect(() => {
-    if (heroBgs.length <= 1 || !firstImageLoaded) return;
+    if (heroBgs.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentBg((prev) => (prev + 1) % heroBgs.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [heroBgs.length, firstImageLoaded]);
-
+  }, [heroBgs.length]);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // ======== Reusable hero content blocks (shared across all 3 styles) ========
+  const MiniBrand = ({ light = true }: { light?: boolean }) => (
+    <div className={`flex items-center justify-center gap-2.5 mb-4 ${light ? 'text-white/90' : 'text-foreground/85'}`}>
+      {logoUrl && (
+        <img
+          src={logoUrl}
+          alt={siteName}
+          className="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow"
+          loading="eager"
+        />
+      )}
+      <span className="font-serif text-base sm:text-lg font-semibold tracking-tight">{siteName}</span>
+    </div>
+  );
+
+  const SocialProofChip = ({ light = true }: { light?: boolean }) => (
+    <div className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 ${light ? 'bg-white/10 backdrop-blur-sm text-white border border-white/20' : 'bg-primary/10 text-primary border border-primary/20'}`}>
+      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+      <span className="text-xs sm:text-sm font-bold font-sans">
+        4.9 · {t('social_proof_chip')} · TripAdvisor
+      </span>
+    </div>
+  );
+
+  const Audience = ({ light = true }: { light?: boolean }) => (
+    <p className={`text-sm sm:text-base font-sans font-medium mb-5 ${light ? 'text-white/80' : 'text-muted-foreground'}`}>
+      {t('hero_audience')}
+    </p>
+  );
+
+  const Guarantees = ({ light = true }: { light?: boolean }) => (
+    <div className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-7 text-xs sm:text-sm font-medium ${light ? 'text-white/85' : 'text-muted-foreground'}`}>
+      <span className="inline-flex items-center gap-1.5"><Award className="w-4 h-4 text-accent" />{t('guarantee_guides')}</span>
+      <span className="inline-flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-accent" />{t('guarantee_entry')}</span>
+      <span className="inline-flex items-center gap-1.5"><Lock className="w-4 h-4 text-accent" />{t('guarantee_payment')}</span>
+    </div>
+  );
+
+  const HeroCTAs = ({ light = true }: { light?: boolean }) => (
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto mx-auto">
+      <Button
+        size="lg"
+        onClick={() => scrollTo("tours")}
+        className="group h-14 sm:h-12 text-base sm:text-lg px-8 font-bold font-sans bg-accent hover:bg-accent/90 text-accent-foreground shadow-[0_8px_30px_-4px_hsl(var(--accent)/0.5)] hover:shadow-[0_12px_40px_-4px_hsl(var(--accent)/0.7)] transition-all hover:scale-[1.02]"
+      >
+        {t('cta_book_now')}
+        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+      </Button>
+      <Button
+        size="lg"
+        variant="outline"
+        onClick={() => scrollTo("tours")}
+        className={`h-14 sm:h-12 text-base sm:text-lg px-8 font-semibold font-sans border-2 ${light ? 'bg-white/10 backdrop-blur-sm border-white/40 text-white hover:bg-white hover:text-foreground' : ''}`}
+      >
+        {t('cta_see_tours')}
+      </Button>
+    </div>
+  );
+
+  const ScarcityBadge = ({ light = true }: { light?: boolean }) => (
+    <div className="mt-6 flex justify-center">
+      <span className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold animate-pulse ${light ? 'bg-accent/95 text-accent-foreground shadow-lg' : 'bg-accent/15 text-accent border border-accent/40'}`}>
+        <Flame className="w-4 h-4" />
+        {t('last_spots_week')}
+      </span>
+    </div>
+  );
+
   const renderSlideshowBackgrounds = () => (
     <>
-      {heroBgs.map((bg, index) => {
-        const isCurrent = index === currentBg;
-        const isNext = index === (currentBg + 1) % heroBgs.length;
-        
-        // Only render current and next to save bandwidth and improve LCP
-        if (!isCurrent && !isNext) return null;
-        
-        // Don't even start loading the next one until the first one is done
-        if (isNext && !firstImageLoaded) return null;
-        
-        return (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${isCurrent ? 'opacity-100' : 'opacity-0'}`}
-          >
-            <OptimizedImage
-              src={bg}
-              alt=""
-              width={1080}
-              quality={65}
-              containerClassName="w-full h-full"
-              fit="cover"
-              className="w-full h-full object-cover"
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : "low"}
-              decoding={index === 0 ? "sync" : "async"}
-              onDimensions={index === 0 ? () => setFirstImageLoaded(true) : undefined}
-            />
-          </div>
-        );
-
-      })}
-
-      <div className="absolute inset-0 bg-black/40" />
+      {heroBgs.map((bg, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBg ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <OptimizedImage
+            src={bg}
+            alt=""
+            width={1600}
+            containerClassName="w-full h-full"
+            fit="cover"
+            className="w-full h-full object-cover"
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "low"}
+            decoding={index === 0 ? "sync" : "async"}
+          />
+        </div>
+      ))}
+      <div className="absolute inset-0 bg-black/50" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/20 to-transparent z-[5]" />
     </>
   );
 
+  // ============================ STYLE 3: Glassmorphism ============================
   if (heroStyle === "style3") {
-    // Style 3: Imersão Glassmorphism
     return (
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
         {renderSlideshowBackgrounds()}
         <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 mt-16 animate-fade-in-up">
-          <div className="bg-background/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
-            
-            <div className="inline-flex items-center gap-2 bg-primary/20 text-white border border-primary/30 rounded-full px-4 py-1.5 mb-6">
-              <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="text-sm font-medium font-sans uppercase tracking-widest">{t("avaliados")}</span>
-            </div>
+          <div className="bg-background/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-12 text-center shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-60"></div>
 
-            <h1 className="font-serif text-4xl sm:text-6xl font-bold mb-6 text-white text-balance drop-shadow-lg">
+            <MiniBrand />
+            <div className="flex justify-center"><SocialProofChip /></div>
+
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold mb-4 text-white text-balance drop-shadow-lg leading-tight">
               {heroTitle}
             </h1>
 
-            <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-10 font-sans font-light">
+            <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto mb-3 font-sans">
               {heroSubtitle}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button 
-                size="lg" 
-                onClick={() => scrollTo("tours")} 
-                className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
-              >
-                {t("nossos_passeios")}
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/10 text-white/80 font-sans text-sm">
-              <div className="flex flex-col items-center gap-2"><div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-1"><Star className="w-5 h-5 text-primary" /></div>{t("turistas_felizes")}</div>
-              <div className="flex flex-col items-center gap-2"><div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-1"><svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22ZM11 19.93C7.05 19.44 4 16.08 4 12C4 11.38 4.08 10.79 4.21 10.21L9 15V16C9 17.1 9.9 18 11 18V19.93Z" /></svg></div>{t("saidas_diarias")}</div>
-              <div className="flex flex-col items-center gap-2"><div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-1"><svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" /></svg></div>{t("guias_espec")}</div>
-            </div>
+            <Audience />
+            <Guarantees />
+            <HeroCTAs />
+            <ScarcityBadge />
           </div>
         </div>
       </section>
     );
   }
 
+  // ============================ STYLE 2: Split Screen ============================
   if (heroStyle === "style2") {
-    // Style 2: Modern Split Screen with Smooth Gradient
     return (
       <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background">
         <div className="absolute inset-0 w-full lg:w-[70%] lg:left-[30%] z-0 h-[50vh] lg:h-full top-0 lg:top-0 mt-16 lg:mt-0">
           {renderSlideshowBackgrounds()}
-          {/* Horizontal gradient for desktop */}
           <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-background via-background/90 to-transparent w-full lg:w-64 z-10 hidden lg:block"></div>
-          {/* Vertical gradient for mobile */}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/90 to-transparent h-32 z-10 block lg:hidden"></div>
         </div>
 
-        <div className="w-full lg:w-[55%] relative z-10 flex items-center justify-center p-8 sm:p-16 lg:p-24 bg-background lg:bg-transparent lg:bg-gradient-to-r lg:from-background lg:via-background lg:to-transparent mt-[50vh] lg:mt-0">
-          <div className="max-w-xl animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-2 mb-6 border border-primary/20">
-              <Star className="w-4 h-4 fill-primary" />
-              <span className="text-sm font-medium font-sans">{t("avaliados")}</span>
-            </div>
+        <div className="w-full lg:w-[55%] relative z-10 flex items-center justify-center p-6 sm:p-12 lg:p-20 bg-background lg:bg-transparent lg:bg-gradient-to-r lg:from-background lg:via-background lg:to-transparent mt-[50vh] lg:mt-0">
+          <div className="max-w-xl w-full text-center lg:text-left animate-fade-in-up">
+            <div className="lg:justify-start"><MiniBrand light={false} /></div>
+            <SocialProofChip light={false} />
 
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 text-foreground text-balance leading-[1.1]">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-extrabold mb-4 text-foreground text-balance leading-[1.05]">
               {heroTitle}
             </h1>
 
-            <p className="text-lg text-muted-foreground mb-8 font-sans leading-relaxed">
+            <p className="text-base sm:text-lg text-muted-foreground mb-3 font-sans leading-relaxed">
               {heroSubtitle}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Button 
-                size="lg" 
-                onClick={() => scrollTo("tours")} 
-                className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
-              >
-                {t("nossos_passeios")}
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => scrollTo("contact")} className="w-full sm:w-auto text-lg px-8 py-6 font-sans border-2">
-                {t("passeio_pers")}
-              </Button>
-            </div>
+            <Audience light={false} />
+
+            <div className="lg:[&>div]:justify-start"><Guarantees light={false} /></div>
+
+            <div className="lg:[&>div]:!mx-0 lg:[&>div]:justify-start"><HeroCTAs light={false} /></div>
+
+            <div className="lg:[&>div]:!justify-start"><ScarcityBadge light={false} /></div>
           </div>
         </div>
       </section>
     );
   }
 
-  // Style 1: Clássico Slideshow (Default)
+  // ============================ STYLE 1: Classic (default) ============================
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
       {renderSlideshowBackgrounds()}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white mt-16">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white mt-16">
         <div className="animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-            <Star className="w-4 h-4 text-primary fill-primary" />
-            <span className="text-sm font-medium font-sans">{t("avaliados")}</span>
-          </div>
+          <MiniBrand />
+          <div className="flex justify-center"><SocialProofChip /></div>
 
-          <h1 className="font-serif text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 text-white text-balance drop-shadow-2xl leading-[1.05] tracking-tight">
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold mb-4 text-white text-balance drop-shadow-2xl leading-[1.05] tracking-tight">
             {heroTitle}
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto mb-8 font-sans drop-shadow">
+          <p className="text-base sm:text-xl text-white/90 max-w-3xl mx-auto mb-3 font-sans drop-shadow">
             {heroSubtitle}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
-              size="lg" 
-              onClick={() => scrollTo("tours")} 
-              className="text-lg px-10 py-7 font-black uppercase tracking-widest w-full sm:w-auto shadow-2xl shadow-accent/30 bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
-            >
-              {t("nossos_passeios")}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => scrollTo("contact")}
-              className="text-lg px-8 py-6 bg-black/20 border-white/30 text-white hover:bg-white hover:text-black font-sans transition-colors"
-            >
-              {t("passeio_pers")}
-            </Button>
-          </div>
+          <Audience />
+          <Guarantees />
+          <HeroCTAs />
+          <ScarcityBadge />
         </div>
       </div>
 
-      <button 
+      <button
         onClick={() => scrollTo("tours")}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce p-2 hover:text-primary transition-colors focus:outline-none"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce p-2 hover:text-accent transition-colors focus:outline-none"
         aria-label={language === 'pt' ? "Rolar para passeios" : "Scroll to tours"}
       >
-        <ChevronDown className="w-8 h-8 text-white/70" />
+        <ChevronDown className="w-7 h-7 text-white/70" />
       </button>
     </section>
   );
