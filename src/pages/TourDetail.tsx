@@ -464,42 +464,37 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Justified Gallery Section - Flickr Style (No Aggressive Cropping) */}
+      {/* Masonry Gallery Section - Auto-Fitting (No Crop) */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="flex flex-wrap gap-2 group">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
           {images.map((img, idx) => (
             <div 
               key={idx}
-              className="relative overflow-hidden cursor-pointer group/item rounded-xl border border-primary/5 shadow-sm"
-              style={{ 
-                flex: `1 1 auto`, 
-                height: '280px',
-                minWidth: '200px'
-              }}
+              className="relative overflow-hidden cursor-pointer group/item rounded-2xl border border-primary/5 shadow-sm break-inside-avoid"
               onClick={() => openLightbox(idx)}
             >
               <OptimizedImage 
                 src={img} 
                 alt={`${translatedTitle} ${idx + 1}`} 
                 width={800}
-                containerClassName="w-full h-full"
-                fit="cover"
-                className="w-full h-full object-cover object-[center_25%] transition-all duration-[length:3000ms] ease-out group-hover/item:scale-110 group-hover/item:object-[center_50%]" 
-                onDimensions={(w, h) => {
-                  // Optional: use dimensions to adjust flex-basis if needed
-                }}
+                containerClassName="w-full h-auto"
+                fit="cover" // Even with cover, because height is auto, it won't crop much
+                className="w-full h-auto object-cover transition-all duration-[length:3000ms] ease-out group-hover/item:scale-110" 
               />
-              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
+              <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/10 transition-all duration-500" />
             </div>
           ))}
 
-          <div className="flex-1 min-w-[200px] flex items-center justify-center p-4 bg-muted/10 rounded-xl border border-dashed border-primary/10">
+          <div className="break-inside-avoid p-8 bg-muted/10 rounded-2xl border border-dashed border-primary/10 flex flex-col items-center justify-center gap-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Maximize2 className="w-6 h-6 text-primary" />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("galeria_fotos")}</p>
             <Button 
-              variant="ghost" 
-              className="gap-3 font-black text-[10px] uppercase tracking-widest px-6 h-12 rounded-xl transition-all hover:scale-105 active:scale-95"
+              variant="link" 
+              className="font-black text-xs uppercase tracking-tighter"
               onClick={() => openLightbox(0)}
             >
-              <Maximize2 className="w-5 h-5 text-primary" />
               {t("ver_galeria_completa")}
             </Button>
           </div>
