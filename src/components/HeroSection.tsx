@@ -47,11 +47,11 @@ export function HeroSection() {
         <img
           src={logoUrl}
           alt={siteName}
-          className="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow"
+          className="h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-lg"
           loading="eager"
         />
       )}
-      <span className="font-serif text-base sm:text-lg font-semibold tracking-tight">{siteName}</span>
+      <span className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight">{siteName}</span>
     </div>
   );
 
