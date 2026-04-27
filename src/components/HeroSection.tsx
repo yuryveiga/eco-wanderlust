@@ -5,7 +5,7 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export function HeroSection() {
-  const { images, siteSettings } = useSiteData();
+  const { images, siteSettings, socialMedia } = useSiteData();
   const { t, language } = useLocale();
   const [currentBg, setCurrentBg] = useState(0);
   const heroStyle = siteSettings['hero_style'] || "style1";
@@ -37,6 +37,23 @@ export function HeroSection() {
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleWhatsAppClick = () => {
+    const whatsapp = socialMedia.find(s => 
+      s.platform.toLowerCase().includes('whatsapp') || 
+      (s.icon_name && s.icon_name.toLowerCase().includes('phone'))
+    );
+    if (whatsapp) {
+      const cleanNumber = whatsapp.url.replace(/[^\d+]/g, "");
+      const url = whatsapp.url.startsWith('http') 
+        ? whatsapp.url 
+        : `https://wa.me/${cleanNumber.replace('+', '')}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      // Fallback
+      window.open('https://wa.me/5521999999999', '_blank');
+    }
   };
 
   // ======== Reusable hero content blocks (shared across all 3 styles) ========
@@ -81,10 +98,10 @@ export function HeroSection() {
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto mx-auto">
       <Button
         size="lg"
-        onClick={() => scrollTo("tours")}
+        onClick={handleWhatsAppClick}
         className="group h-14 sm:h-12 text-base sm:text-lg px-8 font-bold font-sans bg-accent hover:bg-accent/90 text-accent-foreground shadow-[0_8px_30px_-4px_hsl(var(--accent)/0.5)] hover:shadow-[0_12px_40px_-4px_hsl(var(--accent)/0.7)] transition-all hover:scale-[1.02]"
       >
-        {t('cta_book_now')}
+        {language === 'pt' ? 'Tour Personalizado' : language === 'es' ? 'Tour Personalizado' : 'Custom Tour'}
         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
       </Button>
       <Button
