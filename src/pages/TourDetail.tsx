@@ -464,7 +464,7 @@ export function TourDetail() {
         </div>
       </section>
 
-      {/* Mosaic Gallery Section */}
+      {/* Mosaic Gallery Section - Smart Cover Fit */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
         <div className="relative group overflow-hidden rounded-[2rem] shadow-xl bg-muted/20 border">
           <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[350px] md:h-[400px] lg:h-[450px]">
@@ -479,7 +479,7 @@ export function TourDetail() {
                 width={1200}
                 containerClassName="w-full h-full"
                 fit="cover"
-                className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-110" 
+                className="w-full h-full object-cover object-[center_25%] transition-all duration-[length:3000ms] ease-out group-hover/item:scale-110 group-hover/item:object-[center_50%]" 
                 fetchPriority="high"
               />
               <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
@@ -498,7 +498,7 @@ export function TourDetail() {
                   width={800}
                   containerClassName="w-full h-full"
                   fit="cover"
-                  className="w-full h-full object-cover transition-transform duration-[length:1500ms] ease-out group-hover/item:scale-125" 
+                  className="w-full h-full object-cover object-[center_25%] transition-all duration-[length:3000ms] ease-out group-hover/item:scale-125 group-hover/item:object-[center_50%]" 
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-all duration-500" />
               </div>
