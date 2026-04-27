@@ -15,6 +15,7 @@ const PRESET_KEYS = [
   { key: "about_2", label: "Sobre a Eco-Wanderlust - Imagem 2" },
   { key: "about_3", label: "Sobre a Eco-Wanderlust - Imagem 3" },
   { key: "about_4", label: "Sobre a Eco-Wanderlust - Imagem 4" },
+  { key: "maracana_hero", label: "Imagem de Fundo - Maracanã" },
 ];
 
 const AdminImages = () => {
