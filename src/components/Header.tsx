@@ -145,58 +145,46 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center space-x-1 mr-2 border-r pr-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button 
-                    className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5"
-                    aria-label={language === 'pt' ? "Alterar idioma" : "Change language"}
-                  >
-                    <span>{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : '🇪🇸'}</span>
-                    <span className="uppercase">{language}</span>
-                    <ChevronDown className="w-3 h-3 opacity-50" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[120px] rounded-xl p-1 shadow-2xl border-primary/10">
-                  <DropdownMenuItem onClick={() => setLanguage('pt')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>🇧🇷</span> Português
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLanguage('en')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>🇺🇸</span> English
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLanguage('es')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>🇪🇸</span> Español
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="flex items-center space-x-1 border-r pr-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button 
-                    className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-8 px-2 rounded-lg hover:bg-primary/5"
-                    aria-label={language === 'pt' ? "Alterar moeda" : "Change currency"}
-                  >
-                    <span>{currency === 'BRL' ? 'R$' : currency === 'USD' ? '$' : '€'}</span>
-                    <span className="uppercase">{currency}</span>
-                    <ChevronDown className="w-3 h-3 opacity-50" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[120px] rounded-xl p-1 shadow-2xl border-primary/10">
-                  <DropdownMenuItem onClick={() => setCurrency('BRL')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>R$</span> BRL
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setCurrency('USD')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>$</span> USD
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setCurrency('EUR')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
-                    <span>€</span> EUR
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <div className="hidden lg:flex items-center gap-6">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors outline-none h-9 px-3 rounded-full border border-border/50 hover:bg-primary/5"
+                  aria-label={language === 'pt' ? "Preferências" : "Preferences"}
+                >
+                  <Globe className="w-4 h-4 opacity-70" />
+                  <span className="uppercase">{language}</span>
+                  <span className="text-muted-foreground/30 mx-0.5">|</span>
+                  <span className="uppercase">{currency}</span>
+                  <ChevronDown className="w-3 h-3 opacity-50" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[180px] rounded-2xl p-2 shadow-2xl border-primary/10">
+                <div className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">{t("idioma") || "Idioma"}</div>
+                <DropdownMenuItem onClick={() => setLanguage('pt')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span>🇧🇷</span> Português
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('en')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span>🇺🇸</span> English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('es')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span>🇪🇸</span> Español
+                </DropdownMenuItem>
+                
+                <div className="h-px bg-border/50 my-2" />
+                
+                <div className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">{t("moeda") || "Moeda"}</div>
+                <DropdownMenuItem onClick={() => setCurrency('BRL')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span className="w-4 text-center">R$</span> BRL
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setCurrency('USD')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span className="w-4 text-center">$</span> USD
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setCurrency('EUR')} className="gap-2 font-bold text-xs rounded-lg cursor-pointer">
+                  <span className="w-4 text-center">€</span> EUR
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Link to="/carrinho" className="relative group" aria-label={t("meu_carrinho")}>
               <div className="p-2 transition-transform active:scale-95 text-foreground/80 hover:text-primary">
@@ -209,15 +197,10 @@ export function Header() {
               </div>
             </Link>
 
-            {activeSocials.map((s) => (
-              <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-all hover:scale-110" aria-label={s.platform}>
-                <s.icon className="w-5 h-5" />
-              </a>
-            ))}
             <Button 
               onClick={() => handleNav("#tours")} 
               size="sm" 
-              className={`font-bold px-6 transition-all duration-500 ${isScrolled ? "shadow-[0_0_20px_rgba(231,111,81,0.4)] scale-110" : "shadow-lg shadow-primary/20"}`}
+              className={`font-bold px-6 h-10 rounded-full transition-all duration-500 ${isScrolled ? "shadow-[0_0_20px_rgba(231,111,81,0.4)] scale-105" : "shadow-lg shadow-primary/20"}`}
             >
               {t("reservar")}
             </Button>
