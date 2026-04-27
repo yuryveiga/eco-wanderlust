@@ -5,7 +5,10 @@ import "./index.css";
 
 const rootElement = document.getElementById("root")!;
 
-if (rootElement.hasChildNodes()) {
+// Check if the root has real content (not just comments or empty whitespace)
+const hasSSRContent = rootElement.innerHTML.trim().length > 0 && !rootElement.innerHTML.includes('<!--ssr-outlet-->');
+
+if (hasSSRContent) {
   hydrateRoot(rootElement, (
     <HelmetProvider>
       <App />
