@@ -220,6 +220,37 @@ const AdminGallery = () => {
     }
   };
 
+  const handleChangeCategoryBulk = async (newCategory: string) => {
+    if (selectedIds.size === 0) return;
+    
+    const updates: { id: string, key: string }[] = [];
+    const updatedImages = images.map(img => {
+      if (selectedIds.has(img.id)) {
+        const parts = img.key.split('__');
+        let newKey = img.key;
+        if (parts.length >= 3 && parts[0] === 'gallery') {
+          newKey = `gallery__${newCategory}__${parts[2]}`;
+        } else {
+          newKey = `gallery__${newCategory}__${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+        }
+        updates.push({ id: img.id, key: newKey });
+        return { ...img, key: newKey };
+      }
+      return img;
+    });
+
+    try {
+      for (const update of updates) {
+         await supabase.from('site_images').update({ key: update.key }).eq('id', update.id);
+      }
+      toast({ title: `${updates.length} fotos atualizadas para ${CATEGORIES.find(c => c.value === newCategory)?.label}!` });
+      setImages(updatedImages);
+      setSelectedIds(new Set());
+    } catch (err) {
+      toast({ title: "Erro", description: "Falha ao atualizar categorias em lote.", variant: "destructive" });
+    }
+  };
+
   const getCategoryFromKey = (key: string) => {
     const parts = key.split('__');
     if (parts.length >= 3 && parts[0] === 'gallery') {
@@ -324,9 +355,23 @@ const AdminGallery = () => {
       ) : (
         <>
           {selectedIds.size > 0 && (
-            <div className="flex items-center justify-between bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3">
-              <span className="text-sm font-medium text-destructive">{selectedIds.size} foto(s) selecionada(s)</span>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 gap-4 mb-4">
+              <span className="text-sm font-bold text-primary">{selectedIds.size} foto(s) selecionada(s)</span>
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                  <span className="text-xs font-semibold whitespace-nowrap">Mover para:</span>
+                  <Select onValueChange={(val) => { if (val) handleChangeCategoryBulk(val); }}>
+                    <SelectTrigger className="h-8 text-xs bg-background w-32">
+                      <SelectValue placeholder="Categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.filter(c => c.value !== "todas").map(c => (
+                        <SelectItem key={c.value} value={c.value} className="text-xs">{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="h-4 w-px bg-border hidden sm:block"></div>
                 <Button variant="outline" size="sm" onClick={() => setSelectedIds(new Set())}>Cancelar</Button>
                 <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
                   <Trash2 className="w-4 h-4 mr-1" /> Excluir
