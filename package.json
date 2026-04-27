@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sitemap": "node --env-file=.env scripts/generate-sitemap.js",
-    "postbuild": "npm run sitemap"
+    "prerender": "node --env-file=.env scripts/prerender.js",
+    "postbuild": "npm run sitemap && npm run prerender"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -92,6 +93,7 @@
     "globals": "^15.15.0",
     "jsdom": "^20.0.3",
     "lovable-tagger": "^1.1.13",
+    "playwright": "^1.59.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",

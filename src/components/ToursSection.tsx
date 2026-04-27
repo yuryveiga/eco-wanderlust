@@ -136,7 +136,7 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
           </div>
           
           
-          <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/10 ${hidePrices ? 'bg-primary' : 'bg-primary group-hover:bg-accent'} group-hover:shadow-accent/30 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
+          <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-accent/20 ${hidePrices ? 'bg-accent' : 'bg-accent hover:brightness-110'} hover:shadow-accent/40 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
             <div className="flex items-center gap-2">
               {hidePrices 
                 ? (language === 'pt' ? 'VER DETALHES' : language === 'es' ? 'VER DETALLES' : 'VIEW DETAILS')
