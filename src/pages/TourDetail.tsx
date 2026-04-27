@@ -449,7 +449,7 @@ export function TourDetail() {
             </h1>
             <UrgencyBadges tourId={tour.id} tourSlug={tour.slug} />
           </div>
-          {!hidePrices && (
+          {!hidePrices ? (
             <div className="flex items-center gap-6 bg-card border border-primary/10 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-primary/5">
               <div className="text-right">
                 <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest block mb-1 opacity-70">
@@ -463,7 +463,41 @@ export function TourDetail() {
                 </span>
               </div>
             </div>
-          )}
+          ) : (() => {
+            const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
+            if (!wa) return null;
+            const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
+            const titleI18n = String((tour as Record<string, any>)[`title_${language}`] || tour.title || "");
+            const msg = language === 'pt'
+              ? `Olá! Gostaria de montar um passeio personalizado: ${titleI18n}`
+              : language === 'es'
+                ? `¡Hola! Me gustaría diseñar un tour personalizado: ${titleI18n}`
+                : `Hello! I'd love to design a personalised tour: ${titleI18n}`;
+            const href = wa.url.startsWith('http')
+              ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
+              : `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center gap-3 bg-[#25D366]/10 border-2 border-[#25D366]/30 hover:bg-[#25D366]/20 px-8 py-6 rounded-[2rem] shadow-xl h-fit ring-4 ring-[#25D366]/5 transition-all group/wa shrink-0"
+              >
+                <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover/wa:scale-110 transition-transform">
+                  <MessageSquare className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#25D366] mb-0.5">
+                    {language === 'pt' ? 'Atendimento direto' : language === 'es' ? 'Atención directa' : 'Direct contact'}
+                  </p>
+                  <p className="text-base font-black text-foreground leading-tight">
+                    {language === 'pt' ? 'Solicitar Orçamento' : language === 'es' ? 'Solicitar Presupuesto' : 'Request a Quote'}
+                  </p>
+                </div>
+              </a>
+            );
+          })()}
+
         </div>
       </section>
 
