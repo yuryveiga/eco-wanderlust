@@ -1,5 +1,5 @@
 // Force clean build after dependency cleanup
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server";
@@ -72,9 +72,6 @@ const App = ({ location }: { location?: string }) => {
     setMounted(true);
   }, []);
 
-  const Router = location ? StaticRouter : BrowserRouter;
-  const routerProps = location ? { location } : {};
-
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
@@ -87,21 +84,39 @@ const App = ({ location }: { location?: string }) => {
                     </>
                   )}
                   <ThemeApplier />
-                  <Router {...routerProps}>
-                    <ScrollToHash />
-                <CurrencyProvider>
-                  <LocaleProvider>
-                    <CartProvider>
-                      <AnalyticsTracker />
-                        <Suspense fallback={<PageLoader />}>
-                          {mounted && (
-                            <>
-                              <MobileStickyCTA />
-                              <FloatingButtons />
-                            </>
-                          )}
-                          <Routes>
-                          <Route path="/" element={<Index />} />
+                  {location ? (
+                    <StaticRouter location={location}>
+                      <AppContent mounted={mounted} />
+                    </StaticRouter>
+                  ) : (
+                    <BrowserRouter>
+                      <AppContent mounted={mounted} />
+                    </BrowserRouter>
+                  )}
+              </TooltipProvider>
+          </AuthProvider>
+      </ErrorBoundary>
+      </QueryClientProvider>
+  );
+};
+
+const AppContent = ({ mounted }: { mounted: boolean }) => {
+  return (
+    <>
+      <ScrollToHash />
+      <CurrencyProvider>
+        <LocaleProvider>
+          <CartProvider>
+            <AnalyticsTracker />
+              <Suspense fallback={<PageLoader />}>
+                {mounted && (
+                  <>
+                    <MobileStickyCTA />
+                    <FloatingButtons />
+                  </>
+                )}
+                <Routes>
+                  <Route path="/" element={<Index />} />
                           <Route path="/blog" element={<Blog />} />
                           <Route path="/blog/:slug" element={<BlogPost />} />
                           <Route path="/carrinho" element={<Cart />} />
@@ -143,11 +158,7 @@ const App = ({ location }: { location?: string }) => {
                       </CartProvider>
                     </LocaleProvider>
                   </CurrencyProvider>
-                  </Router>
-              </TooltipProvider>
-          </AuthProvider>
-      </ErrorBoundary>
-      </QueryClientProvider>
+    </>
   );
 };
 

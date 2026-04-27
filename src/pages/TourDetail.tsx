@@ -890,7 +890,7 @@ export function TourDetail() {
                           const wa = socialMedia.find((s) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
                           if (!wa) return null;
                           const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
-                          const titleI18n = (tour as Record<string, unknown>)[`title_${language}`] || tour.title;
+                          const titleI18n = String((tour as Record<string, any>)[`title_${language}`] || tour.title || "");
                           const msg = t("wa_message").replace("{tour}", titleI18n);
                           const href = wa.url.startsWith('http')
                             ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
