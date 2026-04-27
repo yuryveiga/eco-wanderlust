@@ -48,17 +48,6 @@ const GenericPage = lazy(() => import("./pages/GenericPage"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const MatchDetail = lazy(() => import("./pages/MatchDetail"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
 const PageLoader = () => <div className="min-h-screen flex items-center justify-center bg-background"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
 
 const AnalyticsTracker = () => {
@@ -67,6 +56,22 @@ const AnalyticsTracker = () => {
 };
 
 const App = ({ location }: { location?: string }) => {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        gcTime: 1000 * 60 * 30, // 30 minutes
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const Router = location ? StaticRouter : BrowserRouter;
   const routerProps = location ? { location } : {};
 
@@ -75,8 +80,12 @@ const App = ({ location }: { location?: string }) => {
       <ErrorBoundary>
         <AuthProvider>
                 <TooltipProvider>
-                  <Toaster />
-                  <Sonner />
+                  {mounted && (
+                    <>
+                      <Toaster />
+                      <Sonner />
+                    </>
+                  )}
                   <ThemeApplier />
                   <Router {...routerProps}>
                     <ScrollToHash />
@@ -85,8 +94,12 @@ const App = ({ location }: { location?: string }) => {
                     <CartProvider>
                       <AnalyticsTracker />
                         <Suspense fallback={<PageLoader />}>
-                          <MobileStickyCTA />
-                          <FloatingButtons />
+                          {mounted && (
+                            <>
+                              <MobileStickyCTA />
+                              <FloatingButtons />
+                            </>
+                          )}
                           <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/blog" element={<Blog />} />
