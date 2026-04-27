@@ -69,7 +69,7 @@ export function useSiteSettings() {
       const settingsMap: Record<string, string> = {};
       data.forEach((s) => { settingsMap[s.key] = s.value; });
       
-      if (data.length > 0) {
+      if (data.length > 0 && typeof window !== 'undefined') {
         localStorage.setItem('site_settings', JSON.stringify(settingsMap));
       }
       
@@ -90,8 +90,9 @@ export function useSiteData() {
   // isLoading is true ONLY during the very first fetch of ANY critical resource
   const isLoading = toursQuery.isPending || pagesQuery.isPending || imagesQuery.isPending || socialQuery.isPending || settingsQuery.isPending;
 
-  // Handle cached settings fallback
+  // Handle cached settings fallback - MUST be stable for hydration
   const cachedSettings = useMemo(() => {
+    if (typeof window === 'undefined') return {};
     try {
       return JSON.parse(localStorage.getItem('site_settings') || '{}');
     } catch {
