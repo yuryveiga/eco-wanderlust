@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, X, Star, Shield, ShieldCheck, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart, Facebook, MessageCircle, Link2 } from "lucide-react";
+import { Clock, Users, MapPin, Calendar, Check, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, X, Star, Shield, ShieldCheck, Utensils, Activity, Sun, Sunrise, Moon, Plus, Minus, Gauge, Youtube, Cloud, Droplets, Wind, ShoppingCart, Facebook, MessageCircle, Link2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
@@ -883,6 +883,26 @@ export function TourDetail() {
                        <Button onClick={handleBooking} size="lg" className="w-full h-14 rounded-xl font-black text-sm uppercase tracking-widest gap-2 shadow-xl shadow-primary/10 hover:bg-accent hover:shadow-accent/20 active:scale-95 transition-all">
                          <ShoppingCart className="w-5 h-5" /> {t("reservar_agora")}
                        </Button>
+                        {(() => {
+                          const wa = socialMedia.find((s: any) => s.platform?.toLowerCase().includes('whatsapp') && s.is_active !== false);
+                          if (!wa) return null;
+                          const cleanNumber = wa.url.replace(/[^\d+]/g, "").replace('+', '');
+                          const titleI18n = (tour as any)[`title_${language}`] || tour.title;
+                          const msg = t("wa_message").replace("{tour}", titleI18n);
+                          const href = wa.url.startsWith('http')
+                            ? `${wa.url}${wa.url.includes('?') ? '&' : '?'}text=${encodeURIComponent(msg)}`
+                            : `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+                          return (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-3 flex items-center justify-center gap-2 w-full h-12 rounded-xl font-bold text-sm uppercase tracking-wider bg-[#25D366] hover:bg-[#1ebe5a] text-white shadow-lg shadow-[#25D366]/20 active:scale-95 transition-all"
+                            >
+                              <MessageSquare className="w-4 h-4" /> {t("wa_book")}
+                            </a>
+                          );
+                        })()}
                        <div className="flex items-center justify-between mt-3 px-1">
                             <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-60">{t("valor_total")}</span>
                             <span className="text-base font-black text-primary">{formatPrice(currentUnitPrice * quantity)}</span>
