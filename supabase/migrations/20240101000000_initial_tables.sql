@@ -1,4 +1,5 @@
 -- Initial creation of sales table to support later migrations
+-- We only include base columns to avoid "already exists" errors in subsequent migrations
 CREATE TABLE IF NOT EXISTS public.sales (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tour_id UUID,
@@ -13,8 +14,6 @@ CREATE TABLE IF NOT EXISTS public.sales (
   selected_period TEXT,
   is_private BOOLEAN DEFAULT false,
   is_paid BOOLEAN DEFAULT false,
-  is_archived BOOLEAN DEFAULT false,
-  is_cancelled BOOLEAN DEFAULT false,
   currency TEXT DEFAULT 'BRL',
   provider TEXT DEFAULT 'tour',
   payment_intent_id TEXT,
