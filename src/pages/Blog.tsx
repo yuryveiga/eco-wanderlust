@@ -85,7 +85,7 @@ const Blog = () => {
                       alt={getTranslated(post, 'title')}
                       width={600}
                       containerClassName="w-full h-full"
-                      fit="contain"
+                      fit="cover"
                       className="w-full h-full group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
