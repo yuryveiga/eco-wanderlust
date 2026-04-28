@@ -64,12 +64,13 @@ export default function MatchDetail() {
       const { data, error } = await query.single();
       if (error) {
          // Fallback mock for demo if not found in real DB
-         if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia") {
+         if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia" || id === "flamengo-x-vasco") {
+            const isVasco = id === "flamengo-x-vasco";
             return {
-               id: "mock-match-1",
+               id: isVasco ? "mock-match-vasco" : "mock-match-1",
                home_team: "Flamengo",
-               away_team: "Bahia",
-               match_date: new Date(Date.now() + 86400000 * 2).toISOString(),
+               away_team: isVasco ? "Vasco" : "Bahia",
+               match_date: new Date(Date.now() + 86400000 * (isVasco ? 5 : 2)).toISOString(),
                venue: "Maracanã",
                stadium: "Estádio Jornalista Mário Filho",
                price: 350,
@@ -80,6 +81,7 @@ export default function MatchDetail() {
                high_demand: true,
                sectors_json: [
                   { name: "Norte", price: 350 },
+                  { name: "Leste Inferior", price: 480 },
                   { name: "Maracanã Mais", price: 850 }
                ]
             };
