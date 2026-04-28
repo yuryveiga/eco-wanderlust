@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "sitemap": "node --env-file=.env scripts/generate-sitemap.js",
     "prerender": "npx playwright install chromium && node --env-file=.env scripts/prerender.js",
-    "postbuild": "npm run sitemap"
+    "postbuild": "npm run sitemap && npm run prerender"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
