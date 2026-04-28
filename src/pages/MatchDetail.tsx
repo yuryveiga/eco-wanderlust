@@ -179,12 +179,12 @@ export default function MatchDetail() {
     const rate = rates[currency] || 1;
     
     // Get correct price from selected sector or base price
-    const basePrice = processedSectors && processedSectors[selectedSectorIdx] 
-      ? processedSectors[selectedSectorIdx].price 
+    const basePrice = finalSectors && finalSectors[selectedSectorIdx] 
+      ? finalSectors[selectedSectorIdx].price 
       : match.price;
       
-    const sectorName = processedSectors && processedSectors[selectedSectorIdx]
-      ? processedSectors[selectedSectorIdx].title
+    const sectorName = finalSectors && finalSectors[selectedSectorIdx]
+      ? finalSectors[selectedSectorIdx].title
       : "Standard";
 
     const unitPrice = Math.round((basePrice * rate) * 100) / 100;
@@ -472,7 +472,7 @@ export default function MatchDetail() {
                              <div>
                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2">{t('valor_por_pessoa')}</span>
                                                                  <span className="text-5xl font-black text-primary">
-                                   {formatPrice(processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price)}
+                                   {formatPrice(finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price)}
                                  </span>
                              </div>
                              {match.high_demand && (
@@ -492,7 +492,7 @@ export default function MatchDetail() {
                                  </div>
                               </div>
 
-                              {processedSectors.length > 0 && (
+                              {finalSectors.length > 0 && (
                                 <div className="space-y-3">
                                   <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('escolha_setor')}</label>
                                   <RadioGroup 
@@ -500,45 +500,69 @@ export default function MatchDetail() {
                                     onValueChange={(val) => setSelectedSectorIdx(parseInt(val))}
                                     className="grid grid-cols-1 gap-2"
                                   >
-                                    {processedSectors.map((sector, idx) => (
-                                      <div key={idx} className="relative">
-                                        <RadioGroupItem
-                                          value={idx.toString()}
-                                          id={`sector-${idx}`}
-                                          className="peer sr-only"
-                                        />
-                                        <Label
-                                          htmlFor={`sector-${idx}`}
-                                          className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
-                                        >
-                                          <div className="flex flex-col">
-                                            <span className="font-bold text-sm">{sector.title}</span>
-                                            <span className="text-[10px] text-muted-foreground uppercase">{t('setor')}</span>
-                                          </div>
-                                          <span className="font-black text-primary">
-                                            {formatPrice(sector.price)}
-                                          </span>
-                                        </Label>
-                                      </div>
-                                    ))}
+                                    {finalSectors.map((sector: any, idx: number) => {
+                                      const isLow = sector.remaining !== undefined && sector.remaining > 0 && sector.remaining <= 3;
+                                      return (
+                                        <div key={idx} className="relative">
+                                          <RadioGroupItem
+                                            value={idx.toString()}
+                                            id={`sector-${idx}`}
+                                            className="peer sr-only"
+                                          />
+                                          <Label
+                                            htmlFor={`sector-${idx}`}
+                                            className="flex flex-col gap-2 p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
+                                          >
+                                            <div className="flex items-start justify-between gap-3">
+                                              <div className="flex flex-col flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                  <span className="font-bold text-sm">{sector.title}</span>
+                                                  {sector.badge && (
+                                                    <span 
+                                                      className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded text-white tracking-wider"
+                                                      style={{ backgroundColor: sector.highlight_color || 'hsl(var(--primary))' }}
+                                                    >
+                                                      {sector.badge}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                {isLow && (
+                                                  <span className="text-[10px] font-bold text-orange-600 mt-0.5">
+                                                    {language === 'pt' ? `Restam ${sector.remaining}` : language === 'es' ? `Quedan ${sector.remaining}` : `${sector.remaining} left`}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <span className="font-black text-primary whitespace-nowrap">
+                                                {formatPrice(sector.price)}
+                                              </span>
+                                            </div>
+                                            {sector.description && idx === selectedSectorIdx && (
+                                              <p className="text-[11px] text-muted-foreground leading-snug font-medium">
+                                                {sector.description}
+                                              </p>
+                                            )}
+                                          </Label>
+                                        </div>
+                                      );
+                                    })}
                                   </RadioGroup>
                                 </div>
                               )}
 
-                             <div className="pt-6 border-t border-dashed border-border space-y-2">
-                                <div className="flex items-center justify-between text-muted-foreground">
-                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
-                                   <span className="text-lg font-bold">{formatPrice((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity)}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-muted-foreground">
-                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
-                                   <span className="text-lg font-bold">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
-                                </div>
-                                <div className="flex items-center justify-between pt-2">
-                                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
-                                   <span className="text-2xl font-black text-foreground">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
-                                </div>
-                             </div>
+                              <div className="pt-6 border-t border-dashed border-border space-y-2">
+                                 <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
+                                    <span className="text-lg font-bold">{formatPrice((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity)}</span>
+                                 </div>
+                                 <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
+                                    <span className="text-lg font-bold">{formatPrice(((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
+                                 </div>
+                                 <div className="flex items-center justify-between pt-2">
+                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
+                                    <span className="text-2xl font-black text-foreground">{formatPrice(((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
+                                 </div>
+                              </div>
 
                              <Button 
                                 onClick={() => setIsBookingModalOpen(true)}
