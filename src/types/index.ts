@@ -162,6 +162,7 @@ export type LovableMatch = {
   includes_guide?: boolean;
   includes_ticket?: boolean;
   includes_transfer?: boolean;
+  sectors_json?: { name: string; price: number }[];
 };
 
 export interface SiteSettingsData {

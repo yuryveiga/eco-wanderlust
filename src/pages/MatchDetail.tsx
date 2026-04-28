@@ -7,6 +7,7 @@ import {
   Smartphone, CreditCard, ChevronDown, ChevronUp, Plus, Minus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { Header } from "@/components/Header";
@@ -44,6 +45,7 @@ export default function MatchDetail() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", whatsapp: "", email: "" });
   const [quantity, setQuantity] = useState(1);
+  const [selectedSectorIdx, setSelectedSectorIdx] = useState(0);
 
   const { data: match, isLoading } = useQuery({
     queryKey: ["partner-match", id],
@@ -75,7 +77,11 @@ export default function MatchDetail() {
                sold_count: 5,
                status: "available",
                slug: id,
-               high_demand: true
+               high_demand: true,
+               sectors_json: [
+                  { name: "Norte", price: 350 },
+                  { name: "Maracanã Mais", price: 850 }
+               ]
             };
          }
          throw error;
@@ -94,8 +100,17 @@ export default function MatchDetail() {
     setIsProcessing(true);
     const currentCurrency = currency.toLowerCase();
     const rate = rates[currency] || 1;
-    // Agora rate é multiplicador (ex: 0.20 para USD)
-    const unitPrice = Math.round((match.price * rate) * 100) / 100;
+    
+    // Get correct price from selected sector or base price
+    const basePrice = match.sectors_json && match.sectors_json[selectedSectorIdx] 
+      ? match.sectors_json[selectedSectorIdx].price 
+      : match.price;
+      
+    const sectorName = match.sectors_json && match.sectors_json[selectedSectorIdx]
+      ? match.sectors_json[selectedSectorIdx].name
+      : "Standard";
+
+    const unitPrice = Math.round((basePrice * rate) * 100) / 100;
     const itemTotal = unitPrice * quantity;
     const itemFee = Math.round((itemTotal * 0.05) * 100) / 100;
     const totalWithFee = Math.round((itemTotal + itemFee) * 100) / 100;
@@ -104,7 +119,7 @@ export default function MatchDetail() {
       // 1. Create sale record in TOCORIME database first
       const { data: saleData, error: saleError } = await localSupabase.from("sales").insert({
         tour_id: match.id,
-        tour_title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
+        tour_title: `${match.home_team} x ${match.away_team} - ${sectorName} - Maracanã Experience`,
         tour_slug: match.slug,
         customer_name: customerInfo.name,
         customer_email: customerInfo.email,
@@ -131,9 +146,9 @@ export default function MatchDetail() {
           },
           body: JSON.stringify({
             items: [{
-              title: `${match.home_team} x ${match.away_team} - Maracanã Experience`,
+              title: `${match.home_team} x ${match.away_team} - ${sectorName} - Maracanã Experience`,
               price: unitPrice,
-              price_brl: match.price,
+              price_brl: basePrice,
               quantity: quantity,
               date: format(new Date(match.match_date), "yyyy-MM-dd"),
               period: "match_time"
@@ -379,7 +394,9 @@ export default function MatchDetail() {
                           <div className="flex justify-between items-start mb-8">
                              <div>
                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2">{t('valor_por_pessoa')}</span>
-                                <span className="text-5xl font-black text-primary">{formatPrice(match.price)}</span>
+                                                                 <span className="text-5xl font-black text-primary">
+                                   {formatPrice(match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price)}
+                                 </span>
                              </div>
                              {match.high_demand && (
                                 <div className="bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded-full animate-pulse shadow-lg">
@@ -398,18 +415,51 @@ export default function MatchDetail() {
                                  </div>
                               </div>
 
+                              {match.sectors_json && match.sectors_json.length > 0 && (
+                                <div className="space-y-3">
+                                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('escolha_setor')}</label>
+                                  <RadioGroup 
+                                    value={selectedSectorIdx.toString()} 
+                                    onValueChange={(val) => setSelectedSectorIdx(parseInt(val))}
+                                    className="grid grid-cols-1 gap-2"
+                                  >
+                                    {match.sectors_json.map((sector, idx) => (
+                                      <div key={idx} className="relative">
+                                        <RadioGroupItem
+                                          value={idx.toString()}
+                                          id={`sector-${idx}`}
+                                          className="peer sr-only"
+                                        />
+                                        <Label
+                                          htmlFor={`sector-${idx}`}
+                                          className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
+                                        >
+                                          <div className="flex flex-col">
+                                            <span className="font-bold text-sm">{sector.name}</span>
+                                            <span className="text-[10px] text-muted-foreground uppercase">{t('setor')}</span>
+                                          </div>
+                                          <span className="font-black text-primary">
+                                            {formatPrice(sector.price)}
+                                          </span>
+                                        </Label>
+                                      </div>
+                                    ))}
+                                  </RadioGroup>
+                                </div>
+                              )}
+
                              <div className="pt-6 border-t border-dashed border-border space-y-2">
                                 <div className="flex items-center justify-between text-muted-foreground">
                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
-                                   <span className="text-lg font-bold">{formatPrice(match.price * quantity)}</span>
+                                   <span className="text-lg font-bold">{formatPrice((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity)}</span>
                                 </div>
                                 <div className="flex items-center justify-between text-muted-foreground">
                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
-                                   <span className="text-lg font-bold">{formatPrice((match.price * quantity) * 0.05)}</span>
+                                   <span className="text-lg font-bold">{formatPrice(((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
                                 </div>
                                 <div className="flex items-center justify-between pt-2">
                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
-                                   <span className="text-2xl font-black text-foreground">{formatPrice((match.price * quantity) * 1.05)}</span>
+                                   <span className="text-2xl font-black text-foreground">{formatPrice(((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
                                 </div>
                              </div>
 

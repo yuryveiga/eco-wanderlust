@@ -21,6 +21,7 @@ export interface Match {
   stadium?: string;
   slug?: string;
   high_demand?: boolean;
+  sectors_json?: { name: string; price: number }[];
 }
 
 export function useMatches() {
