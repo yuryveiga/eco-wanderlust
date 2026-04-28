@@ -19,9 +19,22 @@ const AdminCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState<string | null>(null);
 
   useEffect(() => {
     fetchLovable<LovableSale>("sales").then(setSales);
+    
+    // Buscar data da última atualização de um jogo
+    const { supabase } = import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase
+        .from('matches')
+        .select('updated_at')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .then(({ data }) => {
+          if (data && data[0]) setLastSync(data[0].updated_at);
+        });
+    });
   }, []);
 
   const year = currentDate.getFullYear();
@@ -96,19 +109,26 @@ const AdminCalendar = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-3xl font-bold text-foreground">Calendário</h1>
-        <Button 
-          onClick={handleSyncMatches} 
-          disabled={isSyncing}
-          variant="outline" 
-          className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold"
-        >
-          {isSyncing ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <RefreshCw className="w-4 h-4" />
+        <div className="flex flex-col items-end gap-1">
+          <Button 
+            onClick={handleSyncMatches} 
+            disabled={isSyncing}
+            variant="outline" 
+            className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold shadow-sm"
+          >
+            {isSyncing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4" />
+            )}
+            {isSyncing ? "Solicitando..." : "Sincronizar Jogos"}
+          </Button>
+          {lastSync && (
+            <span className="text-[10px] text-muted-foreground font-medium">
+              Última atualização: {new Date(lastSync).toLocaleString('pt-BR')}
+            </span>
           )}
-          {isSyncing ? "Sincronizando..." : "Sincronizar Jogos"}
-        </Button>
+        </div>
       </div>
 
       {/* Reservas do Site */}
