@@ -127,6 +127,17 @@ const FlamengoVascoMaracana = () => {
         <meta property="og:image" content={heroImg} />
         <meta property="og:type" content="website" />
         <link rel="canonical" href="https://tocorimerio.com/flamengo-x-vasco-maracana" />
+        
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18075082892"></script>
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18075082892');
+          `}
+        </script>
       </Helmet>
 
       {/* ============ HEADER ============ */}
