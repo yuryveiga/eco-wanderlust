@@ -74,19 +74,21 @@ async function prerender() {
   console.log(`Found ${routes.length} routes to prerender.`);
 
   const browser = await chromium.launch({ headless: true });
-  const CONCURRENCY = 5; // Process 5 pages at a time
+  const CONCURRENCY = 3; // Reduced concurrency to save resources
 
   for (let i = 0; i < routes.length; i += CONCURRENCY) {
     const batch = routes.slice(i, i + CONCURRENCY);
     await Promise.all(batch.map(async (route) => {
       const page = await browser.newPage();
-      // Block images/fonts to speed up rendering
-      await page.route('**/*.{png,jpg,jpeg,svg,gif,webp,woff2}', r => r.fulfill({status: 200, body: ''}));
+      // Block images/fonts/analytics to speed up rendering
+      await page.route('**/*.{png,jpg,jpeg,svg,gif,webp,woff2,google-analytics,doubleclick,facebook}', r => r.fulfill({status: 200, body: ''}));
       
       console.log(`Prerendering ${route}...`);
       try {
-        await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 45000 });
-        await page.waitForTimeout(2000); 
+        // Use 'load' instead of 'networkidle' for better compatibility with external scripts
+        await page.goto(`${baseUrl}${route}`, { waitUntil: 'load', timeout: 60000 });
+        // Give time for hydration/React to finish rendering
+        await page.waitForTimeout(3000); 
 
         let content = await page.content();
         
