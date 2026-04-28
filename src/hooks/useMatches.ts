@@ -21,7 +21,8 @@ export interface Match {
   stadium?: string;
   slug?: string;
   high_demand?: boolean;
-  sectors_json?: { name: string; price: number }[];
+  custom_options_json?: { title: string; price: number }[];
+  price_premium?: number;
 }
 
 export function useMatches() {

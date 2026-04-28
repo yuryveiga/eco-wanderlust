@@ -62,6 +62,11 @@ export default function MatchDetail() {
       }
       
       const { data, error } = await query.single();
+      
+      if (data) {
+        console.log("Dados recebidos do dono do calendário:", data);
+      }
+
       if (error) {
          // Fallback mock for demo if not found in real DB
          if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia" || id === "flamengo-x-vasco") {
@@ -79,10 +84,10 @@ export default function MatchDetail() {
                status: "available",
                slug: id,
                high_demand: true,
-               sectors_json: [
-                  { name: "Norte", price: 350 },
-                  { name: "Leste Inferior", price: 480 },
-                  { name: "Maracanã Mais", price: 850 }
+               custom_options_json: [
+                  { title: "Norte", price: 350 },
+                  { title: "Leste Inferior", price: 480 },
+                  { title: "Maracanã Mais", price: 850 }
                ]
             };
          }
@@ -92,6 +97,25 @@ export default function MatchDetail() {
     },
     enabled: !!id,
   });
+
+  const processedSectors = useMemo(() => {
+    if (!match) return [];
+    
+    // Priority 1: custom_options_json (standard pattern)
+    if (match.custom_options_json && match.custom_options_json.length > 0) {
+      return match.custom_options_json;
+    }
+    
+    // Priority 2: price_premium fallback (standard vs premium)
+    if (match.price_premium && match.price_premium > 0) {
+      return [
+        { title: language === 'pt' ? "Setor Padrão" : "Standard Sector", price: match.price },
+        { title: language === 'pt' ? "Setor Premium / VIP" : "Premium / VIP Sector", price: match.price_premium }
+      ];
+    }
+    
+    return [];
+  }, [match, language]);
 
   const handleCheckout = async () => {
     if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
@@ -104,12 +128,12 @@ export default function MatchDetail() {
     const rate = rates[currency] || 1;
     
     // Get correct price from selected sector or base price
-    const basePrice = match.sectors_json && match.sectors_json[selectedSectorIdx] 
-      ? match.sectors_json[selectedSectorIdx].price 
+    const basePrice = processedSectors && processedSectors[selectedSectorIdx] 
+      ? processedSectors[selectedSectorIdx].price 
       : match.price;
       
-    const sectorName = match.sectors_json && match.sectors_json[selectedSectorIdx]
-      ? match.sectors_json[selectedSectorIdx].name
+    const sectorName = processedSectors && processedSectors[selectedSectorIdx]
+      ? processedSectors[selectedSectorIdx].title
       : "Standard";
 
     const unitPrice = Math.round((basePrice * rate) * 100) / 100;
@@ -397,7 +421,7 @@ export default function MatchDetail() {
                              <div>
                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2">{t('valor_por_pessoa')}</span>
                                                                  <span className="text-5xl font-black text-primary">
-                                   {formatPrice(match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price)}
+                                   {formatPrice(processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price)}
                                  </span>
                              </div>
                              {match.high_demand && (
@@ -417,7 +441,7 @@ export default function MatchDetail() {
                                  </div>
                               </div>
 
-                              {match.sectors_json && match.sectors_json.length > 0 && (
+                              {processedSectors.length > 0 && (
                                 <div className="space-y-3">
                                   <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('escolha_setor')}</label>
                                   <RadioGroup 
@@ -425,7 +449,7 @@ export default function MatchDetail() {
                                     onValueChange={(val) => setSelectedSectorIdx(parseInt(val))}
                                     className="grid grid-cols-1 gap-2"
                                   >
-                                    {match.sectors_json.map((sector, idx) => (
+                                    {processedSectors.map((sector, idx) => (
                                       <div key={idx} className="relative">
                                         <RadioGroupItem
                                           value={idx.toString()}
@@ -437,7 +461,7 @@ export default function MatchDetail() {
                                           className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
                                         >
                                           <div className="flex flex-col">
-                                            <span className="font-bold text-sm">{sector.name}</span>
+                                            <span className="font-bold text-sm">{sector.title}</span>
                                             <span className="text-[10px] text-muted-foreground uppercase">{t('setor')}</span>
                                           </div>
                                           <span className="font-black text-primary">
@@ -453,15 +477,15 @@ export default function MatchDetail() {
                              <div className="pt-6 border-t border-dashed border-border space-y-2">
                                 <div className="flex items-center justify-between text-muted-foreground">
                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
-                                   <span className="text-lg font-bold">{formatPrice((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity)}</span>
+                                   <span className="text-lg font-bold">{formatPrice((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity)}</span>
                                 </div>
                                 <div className="flex items-center justify-between text-muted-foreground">
                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
-                                   <span className="text-lg font-bold">{formatPrice(((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
+                                   <span className="text-lg font-bold">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
                                 </div>
                                 <div className="flex items-center justify-between pt-2">
                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
-                                   <span className="text-2xl font-black text-foreground">{formatPrice(((match.sectors_json && match.sectors_json[selectedSectorIdx] ? match.sectors_json[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
+                                   <span className="text-2xl font-black text-foreground">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
                                 </div>
                              </div>
 

@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS public.matches (
   high_demand BOOLEAN DEFAULT false,
   slug TEXT UNIQUE,
   stadium TEXT DEFAULT 'Maracanã',
-  sectors_json JSONB,
+  custom_options_json JSONB,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
