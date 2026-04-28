@@ -122,6 +122,52 @@ export default function MatchDetail() {
     ];
   }, [match, language]);
 
+  // Fetch all available sectors/packages from partner DB (match_packages + package_types)
+  const { data: partnerPackages } = useQuery({
+    queryKey: ["partner-packages", match?.id],
+    queryFn: async () => {
+      if (!match?.id) return [];
+      const { data, error } = await partnerSupabase
+        .from("match_packages")
+        .select("id, price_brl, price_usd, price_eur, price_gbp, total_stock, sold_count, is_active, is_on_request, package_type:package_type_id (id, slug, display_order, name_pt, name_en, name_es, description_pt, description_en, description_es, badge_pt, badge_en, badge_es, highlight_color, includes_transfer, includes_food, includes_drinks, includes_parking_access)")
+        .eq("match_id", match.id);
+      if (error) {
+        console.warn("Could not fetch partner packages:", error);
+        return [];
+      }
+      return (data || [])
+        .filter((p: any) => p.is_active && (p.price_brl ?? 0) > 0)
+        .sort((a: any, b: any) => (a.package_type?.display_order ?? 99) - (b.package_type?.display_order ?? 99));
+    },
+    enabled: !!match?.id,
+  });
+
+  // Final sector list — prefer live partner packages when available
+  const finalSectors = useMemo(() => {
+    if (partnerPackages && partnerPackages.length > 0) {
+      return partnerPackages.map((p: any) => {
+        const pt = p.package_type;
+        const title = language === 'en' ? (pt?.name_en || pt?.name_pt) : language === 'es' ? (pt?.name_es || pt?.name_pt) : pt?.name_pt;
+        const description = language === 'en' ? pt?.description_en : language === 'es' ? pt?.description_es : pt?.description_pt;
+        const badge = language === 'en' ? pt?.badge_en : language === 'es' ? pt?.badge_es : pt?.badge_pt;
+        const remaining = Math.max(0, (p.total_stock || 0) - (p.sold_count || 0));
+        return {
+          title: title || "Setor",
+          price: Number(p.price_brl) || 0,
+          description,
+          badge,
+          highlight_color: pt?.highlight_color,
+          remaining,
+          includes_transfer: pt?.includes_transfer,
+          includes_food: pt?.includes_food,
+          includes_drinks: pt?.includes_drinks,
+          includes_parking_access: pt?.includes_parking_access,
+        };
+      });
+    }
+    return processedSectors;
+  }, [partnerPackages, processedSectors, language]);
+
   const handleCheckout = async () => {
     if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
       toast.error(language === 'pt' ? "Preencha todos os campos" : "Please fill all fields");
