@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { chromium } from 'playwright';
 
 // Configurações do Supabase local (Tocorime)
-const LOCAL_SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://mwxbskzggzznxvkwgrnz.supabase.co"; // Usando a URL do parceiro como fallback se não houver env
-const LOCAL_SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || ""; 
+const LOCAL_SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const LOCAL_SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY; 
 
 // Cliente do parceiro para pegar a lista básica de jogos
 const PARTNER_PROJECT_URL = "https://mwxbskzggzznxvkwgrnz.supabase.co";
