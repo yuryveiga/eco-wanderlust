@@ -19,7 +19,7 @@ export function render(url: string, context: Record<string, unknown>) {
     <React.StrictMode>
       <HelmetProvider context={helmetContext}>
         <QueryClientProvider client={queryClient}>
-          <App location={url} queryClient={queryClient} />
+          <App queryClient={queryClient} />
         </QueryClientProvider>
       </HelmetProvider>
     </React.StrictMode>

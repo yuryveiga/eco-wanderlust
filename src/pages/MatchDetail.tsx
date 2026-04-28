@@ -5,7 +5,7 @@ import {
   Clock, Users, MapPin, Calendar, Check, ChevronLeft, 
   ArrowRight, ShieldCheck, Bus, Ticket, Camera, Info,
   Smartphone, CreditCard, ChevronDown, ChevronUp, Plus, Minus,
-  X, Ban, AlertTriangle, Backpack, HeartHandshake
+  X, Ban, AlertTriangle, Backpack, HeartHandshake, Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";

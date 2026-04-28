@@ -163,6 +163,7 @@ export type LovableMatch = {
   includes_ticket?: boolean;
   includes_transfer?: boolean;
   custom_options_json?: { title: string; price: number }[];
+  price_premium?: number;
   included_json?: { text: string }[];
   not_included_json?: { text: string }[];
   bring_json?: { text: string }[];

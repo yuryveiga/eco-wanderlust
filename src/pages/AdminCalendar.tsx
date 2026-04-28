@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { fetchLovable, LovableSale } from "@/integrations/lovable/client";
 import { ChevronLeft, ChevronRight, CalendarDays, Users, RefreshCw, Loader2 } from "lucide-react";
 import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
+import { toast } from "sonner";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const MONTHS = [
@@ -25,7 +26,7 @@ const AdminCalendar = () => {
     fetchLovable<LovableSale>("sales").then(setSales);
     
     // Buscar data da última atualização de um jogo
-    const { supabase } = import("@/integrations/supabase/client").then(({ supabase }) => {
+    import("@/integrations/supabase/client").then(({ supabase }) => {
       supabase
         .from('matches')
         .select('updated_at')
