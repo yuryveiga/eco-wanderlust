@@ -86,9 +86,11 @@ export default function MatchDetail() {
                slug: id,
                high_demand: true,
                custom_options_json: [
-                  { title: "Norte", price: 350 },
-                  { title: "Leste Inferior", price: 480 },
-                  { title: "Maracanã Mais", price: 850 }
+                  { title: "Leste Inferior", price: 570 },
+                  { title: "Oeste Superior", price: 650 },
+                  { title: "Oeste Inferior", price: 700 },
+                  { title: "Maracanã Club", price: 900 },
+                  { title: "Maracanã Mais", price: 1300 }
                ]
             };
          }
