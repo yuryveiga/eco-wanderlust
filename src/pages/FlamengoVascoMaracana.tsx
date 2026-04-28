@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { Calendar, MapPin, Star, Check, Clock, Bus, Users, ShieldCheck, Hotel, Headphones, Ticket, Wine, ChevronDown, Flame, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImg from "@/assets/maracana-hero.jpg";
@@ -113,6 +114,8 @@ const youtubeVideos = [
 
 const FlamengoVascoMaracana = () => {
   const { days, hours, minutes, seconds } = useCountdown(MATCH_DATE);
+
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen">
@@ -350,24 +353,47 @@ const FlamengoVascoMaracana = () => {
             <p className="max-w-2xl mx-auto text-white/70 font-sans">Real footage from our matchday experiences. This is what awaits you at Maracanã.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {youtubeVideos.map((v) => (
-              <a key={v.id} href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener noreferrer" className="group block rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-[#c9a84c]/50 transition-all">
-                <div className="relative aspect-video bg-black">
-                  <img src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                    <div className="w-14 h-14 rounded-full bg-[#e63946] flex items-center justify-center shadow-lg">
-                      <svg className="w-5 h-5 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {youtubeVideos.map((v) => (
+                <CarouselItem key={v.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/6">
+                  <div className="group block rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-[#c9a84c]/50 transition-all h-full">
+                    <div className="relative aspect-[9/16] bg-black">
+                      {activeVideo === v.id ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1`}
+                          title={v.title}
+                          className="absolute inset-0 w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <button 
+                          onClick={() => setActiveVideo(v.id)}
+                          className="absolute inset-0 w-full h-full group"
+                        >
+                          <img src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-full bg-[#e63946] flex items-center justify-center shadow-lg">
+                              <svg className="w-5 h-5 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-sm font-semibold leading-snug line-clamp-2">{v.title}</h3>
+                      <p className="text-xs text-white/50 mt-1">{v.views}</p>
                     </div>
                   </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-sm font-semibold leading-snug line-clamp-2">{v.title}</h3>
-                  <p className="text-xs text-white/50 mt-1">{v.views}</p>
-                </div>
-              </a>
-            ))}
-          </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden sm:block">
+              <CarouselPrevious className="lg:hidden -left-4 bg-black/50 border-white/20 hover:bg-[#e63946] hover:border-[#e63946]" />
+              <CarouselNext className="lg:hidden -right-4 bg-black/50 border-white/20 hover:bg-[#e63946] hover:border-[#e63946]" />
+            </div>
+          </Carousel>
 
           <div className="text-center mt-10">
             <Button asChild variant="outline" className="bg-transparent border-white/30 hover:bg-white hover:text-black rounded-md">

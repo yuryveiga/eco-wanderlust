@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchLovable, LovableSale } from "@/integrations/lovable/client";
-import { ChevronLeft, ChevronRight, CalendarDays, Users, RefreshCw, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, Users } from "lucide-react";
 import SaleDetailDialog from "@/components/admin/SaleDetailDialog";
 import { toast } from "sonner";
 
@@ -19,7 +19,6 @@ const AdminCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [viewingSale, setViewingSale] = useState<LovableSale | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,26 +74,6 @@ const AdminCalendar = () => {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
   const goToday = () => setCurrentDate(new Date());
-  
-  const handleSyncMatches = async () => {
-    setIsSyncing(true);
-    try {
-      // Tentar chamar a Edge Function do Supabase (se existir)
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data, error } = await supabase.functions.invoke('sync-matches');
-      
-      if (error) {
-        throw new Error(error.message || "Erro ao iniciar sincronização");
-      }
-      
-      toast.success("Sincronização iniciada com sucesso!");
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Para sincronizar via painel, é necessário configurar a Edge Function 'sync-matches'. Por enquanto, use o comando 'npm run sync:matches' no terminal.");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const todayStr = new Date().toISOString().split("T")[0];
 
@@ -110,26 +89,11 @@ const AdminCalendar = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-3xl font-bold text-foreground">Calendário</h1>
-        <div className="flex flex-col items-end gap-1">
-          <Button 
-            onClick={handleSyncMatches} 
-            disabled={isSyncing}
-            variant="outline" 
-            className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold shadow-sm"
-          >
-            {isSyncing ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <RefreshCw className="w-4 h-4" />
-            )}
-            {isSyncing ? "Solicitando..." : "Sincronizar Jogos"}
-          </Button>
-          {lastSync && (
-            <span className="text-[10px] text-muted-foreground font-medium">
-              Última atualização: {new Date(lastSync).toLocaleString('pt-BR')}
-            </span>
-          )}
-        </div>
+        {lastSync && (
+          <span className="text-[10px] text-muted-foreground font-medium bg-muted/50 px-3 py-1 rounded-full border">
+            Dados sincronizados em: {new Date(lastSync).toLocaleString('pt-BR')}
+          </span>
+        )}
       </div>
 
       {/* Reservas do Site */}
