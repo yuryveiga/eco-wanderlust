@@ -66,9 +66,22 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
     .replace(/minuto/gi, t("minuto"));
 
   const included = useMemo(() => {
-    if (language === 'pt') return tour.included_json || [];
-    const translated = (tour as Record<string, any>)[`included_json_${language}`];
-    return translated || tour.included_json || [];
+    let baseItems = [];
+    if (language === 'pt') {
+      baseItems = tour.included_json || [];
+    } else {
+      const translated = (tour as Record<string, any>)[`included_json_${language}`];
+      baseItems = translated || tour.included_json || [];
+    }
+
+    // Se for o passeio do Maracanã e não tiver itens, injeta os solicitados como fallback
+    if (tour.title?.includes('Maracanã MatchDay') && baseItems.length === 0) {
+      if (language === 'pt') return ["Transfer", "Ingressos", "Guia Bilíngue"];
+      if (language === 'es') return ["Traslado", "Entradas", "Guía Bilingüe"];
+      return ["Transfer", "Tickets", "Bilingual Guide"];
+    }
+
+    return baseItems;
   }, [language, tour]);
 
   const href = tour.external_url || `/passeio/${tour.slug || tour.id}`;

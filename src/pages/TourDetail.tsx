@@ -123,7 +123,18 @@ export function TourDetail() {
 
   const translatedDifficulty = useMemo(() => getTranslated('difficulty') as string, [getTranslated]);
   const translatedItinerary = useMemo(() => getTranslated(`itinerary_json${language !== 'pt' ? `_${language}` : ""}`) as { time: string; description: string }[] || tour?.itinerary_json, [getTranslated, language, tour?.itinerary_json]);
-  const translatedIncluded = useMemo(() => getTranslated(`included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json, [getTranslated, language, tour?.included_json]);
+  const translatedIncluded = useMemo(() => {
+    const items = getTranslated(`included_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.included_json;
+    
+    // Se for o passeio do Maracanã e não tiver itens, injeta os solicitados como fallback
+    if (tour?.title?.includes('Maracanã MatchDay') && (!items || (Array.isArray(items) && items.length === 0))) {
+      if (language === 'pt') return [{ text: "Transfer" }, { text: "Ingressos" }, { text: "Guia Bilíngue" }];
+      if (language === 'es') return [{ text: "Traslado" }, { text: "Entradas" }, { text: "Guía Bilingüe" }];
+      return [{ text: "Transfer" }, { text: "Tickets" }, { text: "Bilingual Guide" }];
+    }
+    
+    return items;
+  }, [getTranslated, language, tour?.included_json, tour?.title]);
   const translatedFaq = useMemo(() => getTranslated(`faq_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.faq_json, [getTranslated, language, tour?.faq_json]);
   const translatedHighlights = useMemo(() => getTranslated(`highlights_json${language !== 'pt' ? `_${language}` : ""}`) || tour?.highlights_json, [getTranslated, language, tour?.highlights_json]);
 
