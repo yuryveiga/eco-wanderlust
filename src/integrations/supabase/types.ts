@@ -70,22 +70,28 @@ export type Database = {
       }
       matches: {
         Row: {
+          attention_json: Json | null
           available_spots: number
           away_team: string
           away_team_logo: string | null
+          bring_json: Json | null
           competition: string
           created_at: string
           description_en: string | null
           description_pt: string | null
+          dont_bring_json: Json | null
           high_demand: boolean | null
           home_team: string
           home_team_logo: string | null
           id: string
           image_url: string | null
+          included_json: Json | null
           includes_guide: boolean
           includes_ticket: boolean
           includes_transfer: boolean
           match_date: string
+          not_included_json: Json | null
+          not_suitable_json: Json | null
           price: number
           sectors_json: Json | null
           slug: string | null
@@ -96,22 +102,28 @@ export type Database = {
           venue: string
         }
         Insert: {
+          attention_json?: Json | null
           available_spots?: number
           away_team: string
           away_team_logo?: string | null
+          bring_json?: Json | null
           competition?: string
           created_at?: string
           description_en?: string | null
           description_pt?: string | null
+          dont_bring_json?: Json | null
           high_demand?: boolean | null
           home_team: string
           home_team_logo?: string | null
           id?: string
           image_url?: string | null
+          included_json?: Json | null
           includes_guide?: boolean
           includes_ticket?: boolean
           includes_transfer?: boolean
           match_date: string
+          not_included_json?: Json | null
+          not_suitable_json?: Json | null
           price: number
           sectors_json?: Json | null
           slug?: string | null
@@ -122,22 +134,28 @@ export type Database = {
           venue?: string
         }
         Update: {
+          attention_json?: Json | null
           available_spots?: number
           away_team?: string
           away_team_logo?: string | null
+          bring_json?: Json | null
           competition?: string
           created_at?: string
           description_en?: string | null
           description_pt?: string | null
+          dont_bring_json?: Json | null
           high_demand?: boolean | null
           home_team?: string
           home_team_logo?: string | null
           id?: string
           image_url?: string | null
+          included_json?: Json | null
           includes_guide?: boolean
           includes_ticket?: boolean
           includes_transfer?: boolean
           match_date?: string
+          not_included_json?: Json | null
+          not_suitable_json?: Json | null
           price?: number
           sectors_json?: Json | null
           slug?: string | null
