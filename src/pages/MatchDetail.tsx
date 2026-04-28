@@ -70,8 +70,8 @@ export default function MatchDetail() {
 
       if (error) {
          // Fallback mock for demo if not found in real DB
-         if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia" || id === "flamengo-x-vasco") {
-            const isVasco = id === "flamengo-x-vasco";
+         if (id === "flamengo-x-bahia" || id === "flamengo-vs-bahia" || id === "flamengo-x-vasco" || id.includes("flamengo-vs-vasco")) {
+            const isVasco = id.includes("vasco");
             return {
                id: isVasco ? "mock-match-vasco" : "mock-match-1",
                home_team: "Flamengo",
@@ -115,7 +115,9 @@ export default function MatchDetail() {
       ];
     }
     
-    return [];
+    return [
+      { title: language === 'pt' ? "Setor Padrão" : "Standard Sector", price: match.price }
+    ];
   }, [match, language]);
 
   const handleCheckout = async () => {
