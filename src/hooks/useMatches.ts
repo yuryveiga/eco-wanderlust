@@ -23,6 +23,12 @@ export interface Match {
   high_demand?: boolean;
   custom_options_json?: { title: string; price: number }[];
   price_premium?: number;
+  included_json?: { text: string }[];
+  not_included_json?: { text: string }[];
+  bring_json?: { text: string }[];
+  dont_bring_json?: { text: string }[];
+  attention_json?: { text: string }[];
+  not_suitable_json?: { text: string }[];
 }
 
 export function useMatches() {

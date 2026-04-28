@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet-async";
 import { 
   Clock, Users, MapPin, Calendar, Check, ChevronLeft, 
   ArrowRight, ShieldCheck, Bus, Ticket, Camera, Info,
-  Smartphone, CreditCard, ChevronDown, ChevronUp, Plus, Minus
+  Smartphone, CreditCard, ChevronDown, ChevronUp, Plus, Minus,
+  X, Ban, AlertTriangle, Backpack, HeartHandshake
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -535,6 +536,121 @@ export default function MatchDetail() {
            </div>
         </div>
       </main>
+      
+      {/* Informative Boxes Section */}
+      <section className="py-24 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* INCLUDES */}
+            {match?.included_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mb-6">
+                  <Check className="h-7 w-7 text-green-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'O que inclui' : 'What includes'}</h3>
+                <ul className="space-y-3">
+                  {match.included_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* NOT INCLUDED */}
+            {match?.not_included_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mb-6">
+                  <X className="h-7 w-7 text-red-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'Não inclui' : 'Not included'}</h3>
+                <ul className="space-y-3">
+                  {match.not_included_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* BRING */}
+            {match?.bring_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
+                  <Backpack className="h-7 w-7 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'O que levar' : 'What to bring'}</h3>
+                <ul className="space-y-3">
+                  {match.bring_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* DON'T BRING */}
+            {match?.dont_bring_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center mb-6">
+                  <Ban className="h-7 w-7 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'O que NÃO levar' : "DON'T bring"}</h3>
+                <ul className="space-y-3">
+                  {match.dont_bring_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* ATTENTION */}
+            {match?.attention_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center mb-6">
+                  <AlertTriangle className="h-7 w-7 text-yellow-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'Atenção' : 'Attention'}</h3>
+                <ul className="space-y-3">
+                  {match.attention_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* NOT SUITABLE FOR */}
+            {match?.not_suitable_json && (
+              <div className="bg-card p-8 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center mb-6">
+                  <Activity className="h-7 w-7 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{language === 'pt' ? 'Não indicado para' : 'Not suitable for'}</h3>
+                <ul className="space-y-3">
+                  {match.not_suitable_json.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-sm font-medium text-muted-foreground leading-relaxed">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
 
       <WhyChooseUs />
 

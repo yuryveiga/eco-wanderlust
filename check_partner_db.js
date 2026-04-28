@@ -5,25 +5,31 @@ const MARACANA_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const maracanaSupabase = createClient(MARACANA_PROJECT_URL, MARACANA_ANON_KEY);
 
-async function checkMatches() {
+async function getVascoDetails() {
   const { data, error } = await maracanaSupabase
     .from('matches')
-    .select('id, home_team, away_team, price, price_premium, highlights, full_description')
-    .order('match_date', { ascending: false })
-    .limit(5);
+    .select('*')
+    .ilike('home_team', '%Flamengo%')
+    .ilike('away_team', '%Vasco%')
+    .order('match_date', { ascending: true });
 
   if (error) {
     console.error(error);
     return;
   }
 
-  data.forEach(m => {
-    console.log(`Match: ${m.home_team} x ${m.away_team}`);
-    console.log(`Price: ${m.price}, Premium: ${m.price_premium}`);
-    console.log(`Highlights: ${m.highlights}`);
-    console.log(`Description: ${m.full_description?.substring(0, 50)}...`);
-    console.log('---');
-  });
+  if (data && data.length > 0) {
+    data.forEach(match => {
+      console.log(`Jogo: ${match.home_team} x ${match.away_team}`);
+      console.log(`Data: ${match.match_date}`);
+      console.log(`Preço Base: R$ ${match.price}`);
+      console.log(`Preço Premium: ${match.price_premium ? 'R$ ' + match.price_premium : 'Não disponível'}`);
+      console.log(`Opções Customizadas: ${match.custom_options_json ? JSON.stringify(match.custom_options_json) : 'Nenhuma'}`);
+      console.log('---');
+    });
+  } else {
+    console.log("Nenhum jogo Flamengo x Vasco encontrado no banco do parceiro.");
+  }
 }
 
-checkMatches();
+getVascoDetails();

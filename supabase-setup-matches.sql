@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS public.matches (
   slug TEXT UNIQUE,
   stadium TEXT DEFAULT 'Maracanã',
   custom_options_json JSONB,
+  included_json JSONB,
+  not_included_json JSONB,
+  bring_json JSONB,
+  dont_bring_json JSONB,
+  attention_json JSONB,
+  not_suitable_json JSONB,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
