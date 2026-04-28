@@ -122,6 +122,52 @@ export default function MatchDetail() {
     ];
   }, [match, language]);
 
+  // Fetch all available sectors/packages from partner DB (match_packages + package_types)
+  const { data: partnerPackages } = useQuery({
+    queryKey: ["partner-packages", match?.id],
+    queryFn: async () => {
+      if (!match?.id) return [];
+      const { data, error } = await partnerSupabase
+        .from("match_packages")
+        .select("id, price_brl, price_usd, price_eur, price_gbp, total_stock, sold_count, is_active, is_on_request, package_type:package_type_id (id, slug, display_order, name_pt, name_en, name_es, description_pt, description_en, description_es, badge_pt, badge_en, badge_es, highlight_color, includes_transfer, includes_food, includes_drinks, includes_parking_access)")
+        .eq("match_id", match.id);
+      if (error) {
+        console.warn("Could not fetch partner packages:", error);
+        return [];
+      }
+      return (data || [])
+        .filter((p: any) => p.is_active && (p.price_brl ?? 0) > 0)
+        .sort((a: any, b: any) => (a.package_type?.display_order ?? 99) - (b.package_type?.display_order ?? 99));
+    },
+    enabled: !!match?.id,
+  });
+
+  // Final sector list — prefer live partner packages when available
+  const finalSectors = useMemo(() => {
+    if (partnerPackages && partnerPackages.length > 0) {
+      return partnerPackages.map((p: any) => {
+        const pt = p.package_type;
+        const title = language === 'en' ? (pt?.name_en || pt?.name_pt) : language === 'es' ? (pt?.name_es || pt?.name_pt) : pt?.name_pt;
+        const description = language === 'en' ? pt?.description_en : language === 'es' ? pt?.description_es : pt?.description_pt;
+        const badge = language === 'en' ? pt?.badge_en : language === 'es' ? pt?.badge_es : pt?.badge_pt;
+        const remaining = Math.max(0, (p.total_stock || 0) - (p.sold_count || 0));
+        return {
+          title: title || "Setor",
+          price: Number(p.price_brl) || 0,
+          description,
+          badge,
+          highlight_color: pt?.highlight_color,
+          remaining,
+          includes_transfer: pt?.includes_transfer,
+          includes_food: pt?.includes_food,
+          includes_drinks: pt?.includes_drinks,
+          includes_parking_access: pt?.includes_parking_access,
+        };
+      });
+    }
+    return processedSectors;
+  }, [partnerPackages, processedSectors, language]);
+
   const handleCheckout = async () => {
     if (!customerInfo.name || !customerInfo.whatsapp || !customerInfo.email) {
       toast.error(language === 'pt' ? "Preencha todos os campos" : "Please fill all fields");
@@ -133,12 +179,12 @@ export default function MatchDetail() {
     const rate = rates[currency] || 1;
     
     // Get correct price from selected sector or base price
-    const basePrice = processedSectors && processedSectors[selectedSectorIdx] 
-      ? processedSectors[selectedSectorIdx].price 
+    const basePrice = finalSectors && finalSectors[selectedSectorIdx] 
+      ? finalSectors[selectedSectorIdx].price 
       : match.price;
       
-    const sectorName = processedSectors && processedSectors[selectedSectorIdx]
-      ? processedSectors[selectedSectorIdx].title
+    const sectorName = finalSectors && finalSectors[selectedSectorIdx]
+      ? finalSectors[selectedSectorIdx].title
       : "Standard";
 
     const unitPrice = Math.round((basePrice * rate) * 100) / 100;
@@ -426,7 +472,7 @@ export default function MatchDetail() {
                              <div>
                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2">{t('valor_por_pessoa')}</span>
                                                                  <span className="text-5xl font-black text-primary">
-                                   {formatPrice(processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price)}
+                                   {formatPrice(finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price)}
                                  </span>
                              </div>
                              {match.high_demand && (
@@ -446,7 +492,7 @@ export default function MatchDetail() {
                                  </div>
                               </div>
 
-                              {processedSectors.length > 0 && (
+                              {finalSectors.length > 0 && (
                                 <div className="space-y-3">
                                   <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('escolha_setor')}</label>
                                   <RadioGroup 
@@ -454,45 +500,69 @@ export default function MatchDetail() {
                                     onValueChange={(val) => setSelectedSectorIdx(parseInt(val))}
                                     className="grid grid-cols-1 gap-2"
                                   >
-                                    {processedSectors.map((sector, idx) => (
-                                      <div key={idx} className="relative">
-                                        <RadioGroupItem
-                                          value={idx.toString()}
-                                          id={`sector-${idx}`}
-                                          className="peer sr-only"
-                                        />
-                                        <Label
-                                          htmlFor={`sector-${idx}`}
-                                          className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
-                                        >
-                                          <div className="flex flex-col">
-                                            <span className="font-bold text-sm">{sector.title}</span>
-                                            <span className="text-[10px] text-muted-foreground uppercase">{t('setor')}</span>
-                                          </div>
-                                          <span className="font-black text-primary">
-                                            {formatPrice(sector.price)}
-                                          </span>
-                                        </Label>
-                                      </div>
-                                    ))}
+                                    {finalSectors.map((sector: any, idx: number) => {
+                                      const isLow = sector.remaining !== undefined && sector.remaining > 0 && sector.remaining <= 3;
+                                      return (
+                                        <div key={idx} className="relative">
+                                          <RadioGroupItem
+                                            value={idx.toString()}
+                                            id={`sector-${idx}`}
+                                            className="peer sr-only"
+                                          />
+                                          <Label
+                                            htmlFor={`sector-${idx}`}
+                                            className="flex flex-col gap-2 p-4 bg-muted/30 rounded-2xl border-2 border-transparent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all hover:bg-muted/50"
+                                          >
+                                            <div className="flex items-start justify-between gap-3">
+                                              <div className="flex flex-col flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                  <span className="font-bold text-sm">{sector.title}</span>
+                                                  {sector.badge && (
+                                                    <span 
+                                                      className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded text-white tracking-wider"
+                                                      style={{ backgroundColor: sector.highlight_color || 'hsl(var(--primary))' }}
+                                                    >
+                                                      {sector.badge}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                {isLow && (
+                                                  <span className="text-[10px] font-bold text-orange-600 mt-0.5">
+                                                    {language === 'pt' ? `Restam ${sector.remaining}` : language === 'es' ? `Quedan ${sector.remaining}` : `${sector.remaining} left`}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <span className="font-black text-primary whitespace-nowrap">
+                                                {formatPrice(sector.price)}
+                                              </span>
+                                            </div>
+                                            {sector.description && idx === selectedSectorIdx && (
+                                              <p className="text-[11px] text-muted-foreground leading-snug font-medium">
+                                                {sector.description}
+                                              </p>
+                                            )}
+                                          </Label>
+                                        </div>
+                                      );
+                                    })}
                                   </RadioGroup>
                                 </div>
                               )}
 
-                             <div className="pt-6 border-t border-dashed border-border space-y-2">
-                                <div className="flex items-center justify-between text-muted-foreground">
-                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
-                                   <span className="text-lg font-bold">{formatPrice((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity)}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-muted-foreground">
-                                   <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
-                                   <span className="text-lg font-bold">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
-                                </div>
-                                <div className="flex items-center justify-between pt-2">
-                                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
-                                   <span className="text-2xl font-black text-foreground">{formatPrice(((processedSectors && processedSectors[selectedSectorIdx] ? processedSectors[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
-                                </div>
-                             </div>
+                              <div className="pt-6 border-t border-dashed border-border space-y-2">
+                                 <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('subtotal')}</span>
+                                    <span className="text-lg font-bold">{formatPrice((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity)}</span>
+                                 </div>
+                                 <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('taxas')} (5%)</span>
+                                    <span className="text-lg font-bold">{formatPrice(((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity) * 0.05)}</span>
+                                 </div>
+                                 <div className="flex items-center justify-between pt-2">
+                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('total')}</span>
+                                    <span className="text-2xl font-black text-foreground">{formatPrice(((finalSectors && finalSectors[selectedSectorIdx] ? finalSectors[selectedSectorIdx].price : match.price) * quantity) * 1.05)}</span>
+                                 </div>
+                              </div>
 
                              <Button 
                                 onClick={() => setIsBookingModalOpen(true)}

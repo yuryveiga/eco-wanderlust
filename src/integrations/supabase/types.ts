@@ -77,6 +77,7 @@ export type Database = {
           bring_json: Json | null
           competition: string
           created_at: string
+          custom_options_json: Json | null
           description_en: string | null
           description_pt: string | null
           dont_bring_json: Json | null
@@ -93,6 +94,7 @@ export type Database = {
           not_included_json: Json | null
           not_suitable_json: Json | null
           price: number
+          price_premium: number | null
           sectors_json: Json | null
           slug: string | null
           sold_count: number
@@ -109,6 +111,7 @@ export type Database = {
           bring_json?: Json | null
           competition?: string
           created_at?: string
+          custom_options_json?: Json | null
           description_en?: string | null
           description_pt?: string | null
           dont_bring_json?: Json | null
@@ -125,6 +128,7 @@ export type Database = {
           not_included_json?: Json | null
           not_suitable_json?: Json | null
           price: number
+          price_premium?: number | null
           sectors_json?: Json | null
           slug?: string | null
           sold_count?: number
@@ -141,6 +145,7 @@ export type Database = {
           bring_json?: Json | null
           competition?: string
           created_at?: string
+          custom_options_json?: Json | null
           description_en?: string | null
           description_pt?: string | null
           dont_bring_json?: Json | null
@@ -157,6 +162,7 @@ export type Database = {
           not_included_json?: Json | null
           not_suitable_json?: Json | null
           price?: number
+          price_premium?: number | null
           sectors_json?: Json | null
           slug?: string | null
           sold_count?: number
