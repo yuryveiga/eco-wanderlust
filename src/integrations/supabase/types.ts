@@ -87,6 +87,7 @@ export type Database = {
           includes_transfer: boolean
           match_date: string
           price: number
+          sectors_json: Json | null
           slug: string | null
           sold_count: number
           stadium: string | null
@@ -112,6 +113,7 @@ export type Database = {
           includes_transfer?: boolean
           match_date: string
           price: number
+          sectors_json?: Json | null
           slug?: string | null
           sold_count?: number
           stadium?: string | null
@@ -137,6 +139,7 @@ export type Database = {
           includes_transfer?: boolean
           match_date?: string
           price?: number
+          sectors_json?: Json | null
           slug?: string | null
           sold_count?: number
           stadium?: string | null
