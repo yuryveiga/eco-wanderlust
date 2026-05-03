@@ -6,6 +6,8 @@ import { useSiteData } from "@/hooks/useSiteData";
 import { useLocale } from "@/contexts/LocaleContext";
 import { OptimizedImage } from "./OptimizedImage";
 import { getTourMinPrice } from "@/utils/pricing";
+import { useMatches } from "@/hooks/useMatches";
+import { getMatchDateInRio } from "@/lib/dateUtils";
 
 export type TourCardProps = {
   id: string;
@@ -214,13 +216,16 @@ TourCard.displayName = "TourCard";
 
 
 export function ToursSection() {
-  const { tours, siteSettings, isLoading } = useSiteData();
+  const { tours, siteSettings, isLoading: siteDataLoading } = useSiteData();
+  const { data: matches, isLoading: matchesLoading } = useMatches();
   const { t, language } = useLocale();
   const [activeTab, setActiveTab] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const isLoading = siteDataLoading || matchesLoading;
   const columns = Number(siteSettings['home_tours_columns']) || 3;
   const count = Number(siteSettings['home_tours_count']) || 6;
+  const homeMatchesCount = Number(siteSettings['home_matches_count']) || 0;
   
   // Dynamic categories from settings (up to 3)
   const categories = useMemo(() => [
