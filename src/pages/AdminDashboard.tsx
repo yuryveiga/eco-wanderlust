@@ -57,7 +57,7 @@ const AdminDashboard = () => {
   const handleSaveSettings = async () => {
     setIsSaving(true);
     try {
-      const keys = ['home_tours_columns', 'home_tours_count', 'home_category_1', 'home_category_1_label', 'home_category_1_label_en', 'home_category_1_label_es', 'home_category_2', 'home_category_2_label', 'home_category_2_label_en', 'home_category_2_label_es', 'home_category_3', 'home_category_3_label', 'home_category_3_label_en', 'home_category_3_label_es'];
+      const keys = ['home_tours_columns', 'home_tours_count', 'home_matches_count', 'home_category_1', 'home_category_1_label', 'home_category_1_label_en', 'home_category_1_label_es', 'home_category_2', 'home_category_2_label', 'home_category_2_label_en', 'home_category_2_label_es', 'home_category_3', 'home_category_3_label', 'home_category_3_label_en', 'home_category_3_label_es'];
       for (const key of keys) {
         if (settings[key] !== undefined) {
           const settingRecord = settingsList.find(s => s.key === key);
