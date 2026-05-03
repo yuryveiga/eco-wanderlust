@@ -293,7 +293,9 @@ export function ToursSection() {
           max_group_size: 15,
           image_url: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070",
           is_featured: true,
-          category: language === 'pt' ? 'FUTEBOL' : language === 'es' ? 'FÚTBOL' : 'FOOTBALL',
+          category: 'CITY TOUR',
+          category_en: 'CITY TOUR',
+          category_es: 'CITY TOUR',
           external_url: `/match/${m.slug || m.id}`,
           included_json: language === 'pt' ? ["Ingresso", "Guia", "Transfer"] : language === 'es' ? ["Entrada", "Guía", "Traslado"] : ["Ticket", "Guide", "Transfer"],
           pricing_model: 'fixed'
