@@ -723,6 +723,73 @@ export function PasseioDetalhe() {
                  </div>
                )}
 
+               {/* Boteco Tour Specific Options */}
+               {translatedTitle?.toLowerCase().includes('boteco') && (
+                 <div className="bg-card rounded-[2.5rem] border border-primary/10 p-10 space-y-8 shadow-xl ring-1 ring-primary/5">
+                   <h2 className="text-3xl font-serif font-black flex items-center gap-4 text-foreground">
+                     <div className="w-2 h-10 bg-primary rounded-full" />
+                     {language === 'pt' ? 'Escolha sua Experiência' : language === 'es' ? 'Elige tu Experiencia' : 'Choose your Experience'}
+                   </h2>
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                     <button 
+                       onClick={() => setSelectedPeriod('morning')}
+                       className={`group relative p-8 rounded-[2rem] border-2 transition-all flex flex-col items-center text-center gap-4 ${
+                         selectedPeriod === 'morning' 
+                           ? "border-primary bg-primary/5 shadow-xl ring-4 ring-primary/5" 
+                           : "border-border bg-card hover:border-primary/30 hover:bg-muted/30"
+                       }`}
+                     >
+                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                         selectedPeriod === 'morning' ? "bg-primary text-white scale-110" : "bg-primary/10 text-primary"
+                       }`}>
+                         <Sunrise className="w-8 h-8" />
+                       </div>
+                       <div>
+                         <span className={`block text-lg font-black uppercase tracking-widest ${selectedPeriod === 'morning' ? "text-primary" : "text-foreground"}`}>
+                           {language === 'pt' ? 'Diurno' : language === 'es' ? 'Diurno' : 'Daytime'}
+                         </span>
+                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter opacity-70">
+                           {language === 'pt' ? 'Tradicional e Histórico' : language === 'es' ? 'Tradicional e Histórico' : 'Traditional & Historic'}
+                         </span>
+                       </div>
+                       {selectedPeriod === 'morning' && (
+                         <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                           <Check className="w-4 h-4" />
+                         </div>
+                       )}
+                     </button>
+                     
+                     <button 
+                       onClick={() => setSelectedPeriod('night')}
+                       className={`group relative p-8 rounded-[2rem] border-2 transition-all flex flex-col items-center text-center gap-4 ${
+                         selectedPeriod === 'night' 
+                           ? "border-primary bg-primary/5 shadow-xl ring-4 ring-primary/5" 
+                           : "border-border bg-card hover:border-primary/30 hover:bg-muted/30"
+                       }`}
+                     >
+                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                         selectedPeriod === 'night' ? "bg-primary text-white scale-110" : "bg-primary/10 text-primary"
+                       }`}>
+                         <Moon className="w-8 h-8" />
+                       </div>
+                       <div>
+                         <span className={`block text-lg font-black uppercase tracking-widest ${selectedPeriod === 'night' ? "text-primary" : "text-foreground"}`}>
+                           {language === 'pt' ? 'Noturno' : language === 'es' ? 'Nocturno' : 'Nighttime'}
+                         </span>
+                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter opacity-70">
+                           {language === 'pt' ? 'Vibrante e Boêmio' : language === 'es' ? 'Vibrante y Bohemio' : 'Vibrant & Bohemian'}
+                         </span>
+                       </div>
+                       {selectedPeriod === 'night' && (
+                         <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                           <Check className="w-4 h-4" />
+                         </div>
+                       )}
+                     </button>
+                   </div>
+                 </div>
+               )}
+
                {/* Highlights */}
                {highlights.length > 0 && (
                  <div className="bg-card rounded-2xl border p-8 space-y-6">
