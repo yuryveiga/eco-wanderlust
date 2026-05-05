@@ -55,9 +55,9 @@ const menuGroups = [
     label: "Ferramentas",
     items: [
       { title: "Simulador", url: "/admin/simulator", icon: Calculator },
-      { title: "Otimizador", url: "/admin/optimizer", icon: Zap },
     ]
   },
+
   {
     label: "Catálogo & Conteúdo",
     items: [

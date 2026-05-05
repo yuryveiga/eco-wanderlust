@@ -9,7 +9,7 @@ import { useTourForm } from "@/hooks/admin/useTourForm";
 import { LovableTour, LovableSiteImage, fetchLovable } from "@/integrations/lovable/client";
 import { TourJsonList } from "./TourJsonList";
 import { TourGalleryTab } from "./TourGalleryTab";
-import { TourSEOAudit } from "./TourSEOAudit";
+
 
 interface TourFormDialogProps {
   editing: Partial<LovableTour> | null;
@@ -145,9 +145,6 @@ export function TourFormDialog({
                             Traduzir para EN e ES
                           </Button>
                         </div>
-
-                        <TourSEOAudit values={form.watch()} />
-
                       </div>
                   </div>
                 </TabsContent>

@@ -37,8 +37,8 @@ const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminSales = lazy(() => import("./pages/AdminSales"));
 const AdminSimulator = lazy(() => import("./pages/AdminSimulator"));
 const AdminCalendar = lazy(() => import("./pages/AdminCalendar"));
-const AdminImagesOptimizer = lazy(() => import("./pages/AdminImagesOptimizer"));
 const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
+
 const TourDetail = lazy(() => import("./pages/TourDetail").then(m => ({ default: m.TourDetail })));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -114,8 +114,8 @@ const App = ({ queryClient: externalQueryClient }: { queryClient?: QueryClient }
                         <Route path="simulator" element={<AdminSimulator />} />
                         <Route path="calendar" element={<AdminCalendar />} />
                         <Route path="pages" element={<AdminPages />} />
-                        <Route path="optimizer" element={<AdminImagesOptimizer />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
+
                       </Route>
                       <Route path="*" element={<NotFound />} />
                     </Routes>
