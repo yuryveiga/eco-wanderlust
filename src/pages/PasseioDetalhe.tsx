@@ -787,6 +787,21 @@ export function PasseioDetalhe() {
                        )}
                      </button>
                    </div>
+
+                   {/* Displaying selected bars */}
+                   {((selectedPeriod === 'morning' ? (tour as any).bares_diurnos : (tour as any).bares_noturnos) as string) && (
+                     <div className="pt-8 border-t border-primary/10 animate-in fade-in slide-in-from-top-4 duration-500">
+                       <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-4 flex items-center gap-3">
+                         <Utensils className="w-4 h-4" />
+                         {language === 'pt' ? 'Roteiro Sugerido de Bares' : language === 'es' ? 'Ruta Sugerida de Bares' : 'Suggested Bar Route'}
+                       </h3>
+                       <div className="bg-muted/30 rounded-3xl p-6 border border-primary/5">
+                         <p className="text-foreground/80 text-sm leading-relaxed whitespace-pre-line font-medium">
+                           {selectedPeriod === 'morning' ? (tour as any).bares_diurnos : (tour as any).bares_noturnos}
+                         </p>
+                       </div>
+                     </div>
+                   )}
                  </div>
                )}
 
