@@ -2,32 +2,29 @@ import { useState } from "react";
 import { LovableTour } from "@/integrations/lovable/client";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function useAdminTours() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const { toast } = useToast();
 
-  const [pageSize] = useState(12);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(24);
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['admin-tours', currentPage, categoryFilter, activeFilter],
-    queryFn: async () => {
-      const from = (currentPage - 1) * pageSize;
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+    queryKey: ['admin-tours', categoryFilter, activeFilter],
+    queryFn: async ({ pageParam = 0 }) => {
+      const from = pageParam * pageSize;
       const to = from + pageSize - 1;
 
       let query = supabase
         .from('tours')
         .select('*', { count: 'exact' });
 
-      // Apply category filter at database level
       if (categoryFilter !== 'all') {
         query = query.eq('category', categoryFilter);
       }
 
-      // Apply status filter at database level
       if (activeFilter === 'active') {
         query = query.eq('is_active', true);
       } else if (activeFilter === 'inactive') {
@@ -35,7 +32,7 @@ export function useAdminTours() {
       }
 
       const { data, count, error } = await query
-        .order('sort_order')
+        .order('sort_order', { ascending: true })
         .range(from, to);
 
       if (error) {
@@ -45,10 +42,15 @@ export function useAdminTours() {
 
       return {
         tours: data || [],
+        nextPage: (data?.length || 0) < pageSize ? undefined : pageParam + 1,
         totalCount: count || 0
       };
-    }
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
   });
+
+  const allToursFlat = data?.pages.flatMap(page => page.tours) || [];
 
   const handleDelete = async (id: string) => {
     try {
@@ -62,16 +64,17 @@ export function useAdminTours() {
   };
 
   return {
-    tours: data?.tours || [],
-    allTours: data?.tours || [], // Keeping compatibility, though we don't have all tours anymore
+    tours: allToursFlat,
+    allTours: allToursFlat,
     isLoading,
     categoryFilter,
     setCategoryFilter,
     activeFilter,
     setActiveFilter,
-    currentPage,
-    setCurrentPage,
-    totalCount: data?.totalCount || 0,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    totalCount: data?.pages[0]?.totalCount || 0,
     pageSize,
     loadTours: refetch,
     handleDelete

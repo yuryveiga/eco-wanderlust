@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLovable, insertLovable, updateLovable, deleteLovable, uploadLovableFile, LovableBlogPost, LovableSiteImage } from "@/integrations/lovable/client";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loader2, Star, FolderOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Upload, Type, Sparkles, Loader2, Star, FolderOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
@@ -47,6 +47,8 @@ const AdminBlog = () => {
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [galleryItemToDelete, setGalleryItemToDelete] = useState<string | null>(null);
   const [isTranslateAllConfirmOpen, setIsTranslateAllConfirmOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 30; // 5 lines of 6 columns
   const { toast } = useToast();
 
 
@@ -106,6 +108,13 @@ const AdminBlog = () => {
       toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
     }
   };
+
+  const paginatedPosts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return posts.slice(start, start + pageSize);
+  }, [posts, currentPage, pageSize]);
+
+  const totalPages = Math.ceil(posts.length / pageSize);
 
   const handleDelete = async (id: string) => {
     await deleteLovable("blog_posts", id);
@@ -367,11 +376,11 @@ const AdminBlog = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto pb-12 pr-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto pb-6 pr-1">
         {isLoading ? (
           <div className="col-span-full text-center py-24 text-muted-foreground animate-pulse font-sans">Carregando Biblioteca de Posts...</div>
         ) : (
-          posts.map((post) => (
+          paginatedPosts.map((post) => (
             <div key={post.id} className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm flex flex-col group hover:shadow-xl transition-all duration-300">
               <div className="relative h-44 bg-muted">
                 {post.image_url ? (
@@ -399,6 +408,34 @@ const AdminBlog = () => {
           ))
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4 py-6 border-t shrink-0">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            disabled={currentPage === 1} 
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            className="h-10 w-10 rounded-xl"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Página</span>
+            <span className="font-serif font-bold text-lg">{currentPage}</span>
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">de {totalPages}</span>
+          </div>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            disabled={currentPage === totalPages} 
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            className="h-10 w-10 rounded-xl"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-w-[1400px] w-[95vw] min-h-[85vh] h-[95vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>

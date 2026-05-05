@@ -9,6 +9,7 @@ import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useInView } from "react-intersection-observer";
 
 const AdminTours = () => {
   const { 
@@ -19,13 +20,21 @@ const AdminTours = () => {
     setCategoryFilter, 
     activeFilter, 
     setActiveFilter, 
-    currentPage,
-    setCurrentPage,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     totalCount,
-    pageSize,
     loadTours, 
     handleDelete 
   } = useAdminTours();
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const [editing, setEditing] = useState<any | null>(null);
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
@@ -117,27 +126,17 @@ const AdminTours = () => {
               ))}
             </div>
 
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center gap-4">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  disabled={currentPage === 1} 
-                  onClick={() => setCurrentPage(prev => prev - 1)}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <span className="font-bold text-sm">Página {currentPage} de {totalPages}</span>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  disabled={currentPage === totalPages} 
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+            <div ref={ref} className="h-20 flex items-center justify-center mt-8">
+              {isFetchingNextPage && (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Carregando mais...</span>
+                </div>
+              )}
+              {!hasNextPage && tours.length > 0 && (
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-50">Fim dos resultados</span>
+              )}
+            </div>
           </>
         )}
       </div>
