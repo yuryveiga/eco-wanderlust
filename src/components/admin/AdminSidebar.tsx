@@ -24,7 +24,7 @@ import {
 
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/useAuth";
 import { useSiteData } from "@/hooks/useSiteData";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import {
