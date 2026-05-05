@@ -23,7 +23,10 @@ export function UrgencyBar() {
   const dismiss = () => {
     try {
       localStorage.setItem(STORAGE_KEY, String(Date.now()));
-    } catch {}
+    } catch (e) {
+      // Silently fail if localStorage is disabled
+      console.warn("Could not save urgency bar dismissal state", e);
+    }
     setVisible(false);
   };
 

@@ -33,12 +33,13 @@ export type TourCardProps = {
   price_3_6_people?: number;
   price_7_19_people?: number;
   use_custom_options?: boolean;
-  custom_options_json?: any[];
-  included_json?: any[];
-  included_json_en?: any[];
-  included_json_es?: any[];
+  custom_options_json?: Array<{ price: number; label?: string }>;
+  included_json?: Array<string | { text: string; title?: string }>;
+  included_json_en?: Array<string | { text: string; title?: string }>;
+  included_json_es?: Array<string | { text: string; title?: string }>;
   match_date?: string;
 };
+
 
 export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
   const { t, formatPrice, language } = useLocale();
@@ -173,16 +174,19 @@ export const TourCard = memo(({ tour }: { tour: TourCardProps }) => {
           
           {included.length > 0 && (
             <ul className="space-y-1.5 mb-6">
-              {included.slice(0, 3).map((item: any, i: number) => (
+              {included.slice(0, 3).map((item, i: number) => (
                 <li key={i} className="flex items-center gap-2 text-[11px] font-bold text-foreground/70">
                   <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Check className="w-2.5 h-2.5 text-primary" />
                   </div>
-                  <span className="line-clamp-1">{typeof item === 'string' ? item : item.text || item.title}</span>
+                  <span className="line-clamp-1">
+                    {typeof item === 'string' ? item : (item as { text: string; title?: string }).text || (item as { text: string; title?: string }).title}
+                  </span>
                 </li>
               ))}
             </ul>
           )}
+
           
           <div className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-accent/20 ${hidePrices ? 'bg-accent' : 'bg-accent hover:brightness-110'} hover:shadow-accent/40 group-hover:scale-[1.02] transition-all duration-500 border-none text-white flex items-center justify-center`}>
             <div className="flex items-center gap-2">
