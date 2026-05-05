@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Loader2, ExternalLink, Youtube, MapPin, List, Info, Star, HelpCircle } from "lucide-react";
+import { Sparkles, Loader2, ExternalLink, Youtube, MapPin, List, Info, Star, HelpCircle, Sunrise, Moon } from "lucide-react";
 import { useTourForm } from "@/hooks/admin/useTourForm";
 import { LovableTour, LovableSiteImage, fetchLovable } from "@/integrations/lovable/client";
 import { TourJsonList } from "./TourJsonList";
