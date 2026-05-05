@@ -33,7 +33,8 @@ import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
 import { ptBR, enUS, es } from "date-fns/locale";
-import { getCanonicalUrl, BASE_URL, generateTouristAttractionSchema, generateTourPackageSchema } from "@/utils/seo";
+import { getCanonicalUrl, BASE_URL, generateTouristAttractionSchema, generateTourPackageSchema, generateFAQSchema } from "@/utils/seo";
+
 
 const WeatherSection = lazy(() => import("@/components/WeatherSection").then(m => ({ default: m.WeatherSection })));
 
@@ -159,9 +160,11 @@ export function TourDetail() {
         tour.image_url,
         canonicalUrl,
         getTourMinPrice(tour)
-      )
+      ),
+      ...(faqItems && faqItems.length > 0 ? [generateFAQSchema(faqItems)] : [])
     ]
   } : null;
+
 
   const breadcrumbsLd = {
     "@context": "https://schema.org",
