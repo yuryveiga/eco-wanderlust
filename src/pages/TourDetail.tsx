@@ -10,7 +10,7 @@ import { LovableTour } from "@/integrations/lovable/client";
 import { useSiteData } from "@/hooks/useSiteData";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { TourCard } from "@/components/ToursSection";
+import { TourCard, TourCardProps } from "@/components/TourCard";
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCart } from "@/contexts/CartContext";
