@@ -12,7 +12,7 @@ import { ptBR, enUS, es } from "date-fns/locale";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Helmet } from "react-helmet-async";
 import { useSiteData } from "@/hooks/useSiteData";
-import { TourCard, TourCardProps } from "@/components/ToursSection";
+import { TourItem, TourCardProps } from "@/components/TourItem";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import "react-quill-new/dist/quill.snow.css";
@@ -565,7 +565,7 @@ const BlogPost = () => {
                     return sortedTours.map((tour) => (
                       <CarouselItem key={tour.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
                         <div className="p-1">
-                          <TourCard tour={tour as TourCardProps} />
+                          <TourItem tour={tour} />
                         </div>
                       </CarouselItem>
                     ));
