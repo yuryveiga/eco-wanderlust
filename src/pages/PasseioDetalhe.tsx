@@ -34,7 +34,7 @@ import { Maximize2, Calendar as CalendarIcon } from "lucide-react";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, parseISO, isPast, isToday } from "date-fns";
-import { ptBR, enUS, es } from "date-fns/locale";
+import { ptBR, enUS, es as esLocale } from "date-fns/locale";
 import { getCanonicalUrl, BASE_URL, generateTouristAttractionSchema, generateTourPackageSchema, generateFAQSchema } from "@/utils/seo";
 
 
