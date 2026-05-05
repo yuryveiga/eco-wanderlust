@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { translationsPt, translationsEn, translationsEs } from "@/translations";
-import { useCurrency, Currency } from "@/hooks/useCurrency";
+import { useCurrency } from './CurrencyContext';
 
 type Language = 'pt' | 'en' | 'es';
+type Currency = 'BRL' | 'USD' | 'EUR';
 
 interface LocaleContextType {
   language: Language;
