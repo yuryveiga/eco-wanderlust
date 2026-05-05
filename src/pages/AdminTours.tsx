@@ -95,7 +95,7 @@ const AdminTours = () => {
 
       <div className="flex-1 overflow-auto pr-2 pb-8">
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[1, 2, 3, 4, 5, 6].map(i => (
               <div key={i} className="space-y-4">
                 <Skeleton className="h-48 w-full rounded-2xl" />
@@ -106,7 +106,7 @@ const AdminTours = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {tours.map((tour) => (
                 <TourCard 
                   key={tour.id} 
