@@ -1161,7 +1161,7 @@ export function PasseioDetalhe() {
           >
             <CarouselContent className="-ml-4 pb-8">
               {relatedTours.map((item) => (
-                <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/5">
+                <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div className="h-full transition-transform hover:scale-[1.02] duration-300">
                     <TourItem tour={item as any} />
                   </div>

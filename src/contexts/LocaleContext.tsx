@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCurrency } from './CurrencyContext';
+import { pt, en, es } from "./translations";
 
 type Language = 'pt' | 'en' | 'es';
 type Currency = 'BRL' | 'USD' | 'EUR';
@@ -14,20 +15,17 @@ interface LocaleContextType {
   formatPrice: (priceBrl: number) => string;
 }
 
-import { translations } from '@/translations';
-
-
-
+const translationsMap = { pt, en, es };
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
 export const LocaleProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [language, setLanguage] = useState<Language>('pt');
+  const [currency, setCurrency] = useState<Currency>('BRL');
   const { rates } = useCurrency();
 
   const t = (key: string) => {
-    return translations[language][key as keyof typeof translations.pt] || key;
+    return (translationsMap[language] as any)[key] || key;
   };
 
   const formatPrice = (priceBrl: number) => {
