@@ -16,7 +16,10 @@ import {
   Layout,
   CalendarDays,
   Zap,
-  BarChart3
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  Menu
 } from "lucide-react";
 
 import { NavLink } from "@/components/NavLink";
@@ -33,11 +36,11 @@ import {
   SidebarMenuItem,
   SidebarFooter,
   SidebarHeader,
-  SidebarTrigger,
+  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const menuGroups = [
   {
@@ -99,12 +102,29 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b h-14 flex items-center justify-between px-4 shrink-0">
-        {!collapsed && <span className="font-serif font-bold text-sm tracking-tight">Eco Wanderlust</span>}
-        <SidebarTrigger className={collapsed ? "mx-auto" : ""} />
+    <Sidebar collapsible="icon" className="border-r border-border/50 group">
+      <SidebarHeader className="h-16 flex items-center justify-between px-3 shrink-0 border-b border-border/40 bg-card/50 backdrop-blur-sm relative">
+        <div className={cn("flex items-center gap-3 transition-all duration-300", collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto")}>
+          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+            <Zap className="w-4 h-4 text-white fill-white" />
+          </div>
+          <span className="font-serif font-black text-lg tracking-tight whitespace-nowrap">EcoWander</span>
+        </div>
+        
+        {/* Floating Toggle Handle */}
+        <button 
+          onClick={() => toggleSidebar()}
+          className={cn(
+            "absolute -right-3 top-1/2 -translate-y-1/2 z-50 h-6 w-6 rounded-full border bg-background shadow-md flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100",
+            collapsed ? "-right-3" : "-right-3"
+          )}
+          title={collapsed ? "Expandir Menu" : "Recolher Menu"}
+        >
+          {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+        </button>
       </SidebarHeader>
-      <SidebarContent className="gap-0 py-2 overflow-x-hidden">
+      
+      <SidebarContent className="gap-0 py-4 overflow-x-hidden scrollbar-thin">
         {menuGroups.map((group) => (
           <SidebarGroup key={group.label} className="py-1">
             {!collapsed && (
@@ -148,6 +168,7 @@ export function AdminSidebar() {
           {!collapsed && <span className="font-semibold">Sair</span>}
         </Button>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

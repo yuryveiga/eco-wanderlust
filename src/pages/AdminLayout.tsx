@@ -38,8 +38,9 @@ const AdminLayout = () => {
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center justify-between border-b border-border px-4 bg-background">
-            <div className="flex items-center">
-              <h2 className="font-sans font-medium text-foreground">Painel Admin</h2>
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors border border-border/50 shadow-sm" />
+              <h2 className="font-sans font-bold text-lg tracking-tight text-foreground">Painel Administrativo</h2>
             </div>
             <Button variant="outline" size="sm" asChild className="gap-2">
               <a href="/" target="_blank" rel="noopener noreferrer">
