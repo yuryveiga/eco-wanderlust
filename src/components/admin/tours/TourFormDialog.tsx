@@ -147,6 +147,7 @@ export function TourFormDialog({
                         </div>
 
                         <TourSEOAudit values={form.watch()} />
+
                       </div>
                   </div>
                 </TabsContent>

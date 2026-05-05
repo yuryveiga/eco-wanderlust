@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,33 @@ export function useTourForm(initialData: Partial<LovableTour> | null, onSuccess:
       ...initialData,
     } as TourFormValues,
   });
+
+  // Reset form when initialData changes (essential for editing existing items)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        title: "",
+        short_description: "",
+        price: 0,
+        duration: "",
+        max_group_size: 1,
+        image_url: "",
+        is_featured: false,
+        category: "CITY TOUR",
+        is_active: true,
+        itinerary_json: [],
+        included_json: [],
+        highlights_json: [],
+        faq_json: [],
+        difficulty: "Leve",
+        youtube_video_url: "",
+        external_url: "",
+        pricing_model: "fixed",
+        ...initialData,
+      } as TourFormValues);
+    }
+  }, [initialData, form]);
+
 
   const translateTourData = async (data: TourFormValues): Promise<TourFormValues> => {
     const [tTitleEn, tTitleEs, tCatEn, tCatEs, tDescEn, tDescEs, tDifEn, tDifEs, tAddrEn, tAddrEs] = await Promise.all([

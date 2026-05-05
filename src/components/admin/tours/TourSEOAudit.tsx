@@ -7,34 +7,41 @@ interface TourSEOAuditProps {
 }
 
 export function TourSEOAudit({ values }: TourSEOAuditProps) {
+  // Debug to verify if data is arriving
+  console.log("SEO Audit Values:", values);
+  
   const issues: { type: 'error' | 'warning' | 'success'; message: string }[] = [];
+  const title = values?.title || "";
+  const description = values?.short_description || "";
+  const imageUrl = values?.image_url || "";
 
   // Title analysis
-  if (!values.title) {
+  if (!title) {
     issues.push({ type: 'error', message: 'Título é obrigatório para SEO.' });
-  } else if (values.title.length < 30) {
+  } else if (title.length < 30) {
     issues.push({ type: 'warning', message: 'Título muito curto. Tente entre 50-60 caracteres para melhor visibilidade no Google.' });
   } else {
     issues.push({ type: 'success', message: 'Comprimento do título está bom.' });
   }
 
   // Description analysis
-  if (!values.short_description) {
+  if (!description) {
     issues.push({ type: 'error', message: 'Descrição (meta description) ausente.' });
-  } else if (values.short_description.length < 120) {
+  } else if (description.length < 120) {
     issues.push({ type: 'warning', message: 'Descrição muito curta. O ideal é entre 120 e 160 caracteres.' });
   } else {
     issues.push({ type: 'success', message: 'Meta descrição está com bom tamanho.' });
   }
 
   // Media analysis
-  if (!values.image_url) {
+  if (!imageUrl) {
     issues.push({ type: 'error', message: 'Falta imagem principal. Google prioriza resultados com imagens.' });
   }
 
-  if (!values.youtube_video_url) {
+  if (!values?.youtube_video_url) {
     issues.push({ type: 'warning', message: 'Dica: Vídeos do YouTube aumentam o tempo de permanência na página.' });
   }
+
 
   return (
     <div className="space-y-4 bg-muted/20 p-6 rounded-3xl border border-border/50">
